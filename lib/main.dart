@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'routes/app_pages.dart';
 import 'translations/translations.dart';
+import 'services/config_service.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await initServices();
   runApp(const MPaxApp());
 }
 
@@ -24,4 +27,8 @@ class MPaxApp extends StatelessWidget {
       getPages: MPaxPages.routes,
     );
   }
+}
+
+Future<void> initServices() async {
+  await Get.putAsync(() async => await ConfigService());
 }
