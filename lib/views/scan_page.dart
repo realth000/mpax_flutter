@@ -70,6 +70,9 @@ class _scanController extends GetxController {
 
   void add(String path) {
     scanList.value ??= <String>[];
+    if (scanList.value!.contains(path)) {
+      return;
+    }
     scanList.value!.add(path);
     update();
     configService.saveStringList('ScanTargetList', scanList.value!);
@@ -87,7 +90,7 @@ class _scanController extends GetxController {
       subtitle: Text(dirPath),
       trailing: IconButton(
         icon: const Icon(Icons.delete),
-        onPressed: () => {},
+        onPressed: () => {delete(dirPath)},
       ),
     );
   }
