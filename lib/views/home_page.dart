@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mpax_flutter/routes/app_pages.dart';
+import 'package:mpax_flutter/widgets/app_app_bar.dart';
+import 'package:mpax_flutter/widgets/app_drawer.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -8,6 +10,8 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: MPaxAppBar(title: "Welcome".tr,),
+      drawer: const MPaxDrawer(),
       body: Center(
         child: SizedBox(
           width: 300,
