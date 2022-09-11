@@ -66,15 +66,19 @@ class _scanController extends GetxController {
   // TODO: Make this not null!!
   Rx<List<String>?> scanList = Get.find<ConfigService>().getStringList(
       'ScanTargetList').obs;
+  ConfigService configService = Get.find<ConfigService>();
+
   void add(String path) {
     scanList.value ??= <String>[];
     scanList.value!.add(path);
     update();
+    configService.saveStringList('ScanTargetList', scanList.value!);
   }
   void delete(String path) {
     scanList.value ??= <String>[];
     scanList.value!.remove(path);
     update();
+    configService.saveStringList('ScanTargetList', scanList.value!);
   }
 
   ListTile buildScanTargetItem(String dirPath) {
