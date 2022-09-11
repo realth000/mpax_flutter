@@ -1,6 +1,6 @@
 const Map<String, String> translationEnUs = <String, String>{
   'Welcome to MPax': 'Welcome to MPax',
-  'Scan on device': 'Scan on device',
+  'Scan music': 'Scan music',
   'Welcome': 'Welcome',
   'Library': 'Media Library',
   'Music': 'Music',

@@ -25,7 +25,7 @@ class HomePage extends StatelessWidget {
                 onPressed: () {
                   Get.toNamed(MPaxRoutes.scan);
                 },
-                child: Text("Scan on device".tr),
+                child: Text("Scan music".tr),
               ),
             ],
           ),
