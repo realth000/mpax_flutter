@@ -1,13 +1,10 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mpax_flutter/routes/app_pages.dart';
 import 'package:mpax_flutter/widgets/app_app_bar.dart';
 import 'package:mpax_flutter/widgets/app_drawer.dart';
-import 'package:get/get.dart';
 import 'package:mpax_flutter/services/config_service.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:path/path.dart' as path;
 
 class ScanPage extends StatelessWidget {
   const ScanPage({super.key});
@@ -80,10 +77,10 @@ class _scanController extends GetxController {
     update();
   }
 
-  ListTile buildScanTargetItem(String path) {
+  ListTile buildScanTargetItem(String dirPath) {
     return ListTile(
-      title: Text(Directory(path).path),
-      subtitle: Text(path),
+      title: Text(path.split(dirPath).last),
+      subtitle: Text(dirPath),
       trailing: IconButton(
         icon: const Icon(Icons.delete),
         onPressed: () => {},
