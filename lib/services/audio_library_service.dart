@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:mpax_flutter/models/play_content.model.dart';
 
@@ -16,9 +15,6 @@ class AudioLibraryService extends GetxService {
       return false;
     }
     _contentList.add(playContent);
-    if (kDebugMode) {
-      print('Add content!!!: ${playContent.contentPath}');
-    }
     return true;
   }
 

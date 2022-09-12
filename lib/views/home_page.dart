@@ -10,7 +10,9 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: MPaxAppBar(title: "Welcome".tr,),
+      appBar: MPaxAppBar(
+        title: "Welcome".tr,
+      ),
       drawer: const MPaxDrawer(),
       body: Center(
         child: SizedBox(

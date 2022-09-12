@@ -1,15 +1,14 @@
 import 'dart:io';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mpax_flutter/models/play_content.model.dart';
 import 'package:mpax_flutter/services/audio_library_service.dart';
+import 'package:mpax_flutter/services/config_service.dart';
 import 'package:mpax_flutter/widgets/app_app_bar.dart';
 import 'package:mpax_flutter/widgets/app_drawer.dart';
-import 'package:mpax_flutter/services/config_service.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:path/path.dart' as path;
-
-import '../models/play_content.model.dart';
 
 class ScanPage extends StatelessWidget {
   const ScanPage({super.key});
@@ -27,7 +26,7 @@ class ScanPage extends StatelessWidget {
 }
 
 class _ScanBodyWidget extends StatelessWidget {
-  final _targetListWidget = _ScanTargetListWidget();
+  final _ScanTargetListWidget _targetListWidget = _ScanTargetListWidget();
 
   @override
   Widget build(BuildContext context) {
@@ -60,10 +59,6 @@ class _ScanBodyWidget extends StatelessWidget {
 }
 
 class _ScanTargetListWidget extends StatelessWidget {
-  // _ScanTargetListWidget(){Get.put(() => _ScanController());}
-  // // Not work?
-  // final _ScanController _scanController = Get.find<_ScanController>();
-
   @override
   Widget build(BuildContext context) {
     return GetBuilder<_ScanController>(
@@ -102,7 +97,7 @@ class _ScanController extends GetxController {
   void delete(String path) {
     scanList.value ??= <String>[];
     scanList.value!.remove(path);
-    for (var element in targetItemList) {
+    for (_ScanTargetItemWidget element in targetItemList) {
       if (element.targetPath == path) {
         targetItemList.remove(element);
         break;
@@ -113,8 +108,7 @@ class _ScanController extends GetxController {
   }
 
   void scanTargetList() async {
-    print("!!! START: length=${targetItemList.length}");
-    for (var element in targetItemList) {
+    for (_ScanTargetItemWidget element in targetItemList) {
       await element.controller.startScan();
     }
   }
@@ -126,7 +120,7 @@ class _ScanController extends GetxController {
       return Column(children: const []);
     }
     targetItemList.clear();
-    for (var path in scanList.value!) {
+    for (String path in scanList.value!) {
       targetItemList.add(buildScanTargetItem(path) as _ScanTargetItemWidget);
       s.add(targetItemList.last);
     }
@@ -170,7 +164,7 @@ class _ScanTargetItemController extends GetxController {
         deleteIcon.value = const Icon(Icons.refresh);
         break;
       case ScanTargetStatus.finished:
-        deleteIcon.value =  const Icon(Icons.delete);
+        deleteIcon.value = const Icon(Icons.delete);
         break;
       default:
         deleteIcon.value = const Icon(Icons.question_mark);
@@ -184,9 +178,8 @@ class _ScanTargetItemController extends GetxController {
       return;
     }
     setStatus(ScanTargetStatus.scanning);
-    print("Start scan: $target, ${deleteIcon.value.icon}");
     await Future.delayed(const Duration(seconds: 1));
-    final Directory d = Directory(target);
+    Directory d = Directory(target);
     // FileSystemEntity.isFileSync(entry.toString())
     for (FileSystemEntity entry
         in d.listSync(recursive: true, followLinks: false)) {
@@ -202,14 +195,13 @@ class _ScanTargetItemController extends GetxController {
     }
     setStatus(ScanTargetStatus.ready);
     update();
-    print("Finish scan: $target");
   }
 
   Future<void> scan(String targetPath) async {
     if (targetPath.isEmpty) {
       return;
     }
-    final Directory d = Directory(targetPath);
+    Directory d = Directory(targetPath);
     // FileSystemEntity.isFileSync(entry.toString())
     await for (FileSystemEntity entry
         in d.list(recursive: true, followLinks: false)) {
@@ -227,13 +219,11 @@ class _ScanTargetItemController extends GetxController {
 }
 
 class _ScanTargetItemWidget extends ListTile {
-
-  _ScanTargetItemWidget(this.targetPath){
+  _ScanTargetItemWidget(this.targetPath) {
     controller = _ScanTargetItemController();
   }
 
   late final _ScanTargetItemController controller;
-
 
   final String targetPath;
 

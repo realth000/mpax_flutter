@@ -6,7 +6,7 @@ const Map<String, Type> configMap = <String, Type>{
 };
 
 class ConfigService extends GetxService {
-  ConfigService(){
+  ConfigService() {
     init();
   }
 
@@ -50,7 +50,6 @@ class ConfigService extends GetxService {
   double? getDouble(String key) {
     return _config.getDouble(key);
   }
-
 
   Future<bool> saveDouble(String key, double value) async {
     if (!_configMap.containsKey(key)) {

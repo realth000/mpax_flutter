@@ -7,7 +7,7 @@ part 'app_routes.dart';
 class MPaxPages {
   static const initialPage = MPaxRoutes.home;
 
-  static final routes = [
+  static final List<GetPage> routes = [
     GetPage(
       name: MPaxRoutes.home,
       page: () => const HomePage(),
