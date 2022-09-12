@@ -71,9 +71,12 @@ class _ScanTargetListWidget extends StatelessWidget {
 }
 
 class _ScanController extends GetxController {
-  // TODO: Make this not null!!
-  Rx<List<String>?> scanList =
-      Get.find<ConfigService>().getStringList('ScanTargetList').obs;
+  _ScanController() {
+    scanList.value =
+        Get.find<ConfigService>().getStringList('ScanTargetList') ?? <String>[];
+  }
+
+  var scanList = <String>[].obs;
   ConfigService configService = Get.find<ConfigService>();
 
   List<_ScanTargetItemWidget> targetItemList = <_ScanTargetItemWidget>[];
@@ -85,18 +88,16 @@ class _ScanController extends GetxController {
   // }
 
   void add(String path) {
-    scanList.value ??= <String>[];
-    if (scanList.value!.contains(path)) {
+    if (scanList.contains(path)) {
       return;
     }
-    scanList.value!.add(path);
+    scanList.add(path);
     update();
-    configService.saveStringList('ScanTargetList', scanList.value!);
+    configService.saveStringList('ScanTargetList', scanList);
   }
 
   void delete(String path) {
-    scanList.value ??= <String>[];
-    scanList.value!.remove(path);
+    scanList.remove(path);
     for (_ScanTargetItemWidget element in targetItemList) {
       if (element.targetPath == path) {
         targetItemList.remove(element);
@@ -104,7 +105,7 @@ class _ScanController extends GetxController {
       }
     }
     update();
-    configService.saveStringList('ScanTargetList', scanList.value!);
+    configService.saveStringList('ScanTargetList', scanList);
   }
 
   void scanTargetList() async {
@@ -116,11 +117,8 @@ class _ScanController extends GetxController {
   // Build UI Widget.
   Widget buildScanTarget() {
     List<ListTile> s = <ListTile>[];
-    if (scanList.value == null) {
-      return Column(children: const []);
-    }
     targetItemList.clear();
-    for (String path in scanList.value!) {
+    for (String path in scanList) {
       targetItemList.add(buildScanTargetItem(path) as _ScanTargetItemWidget);
       s.add(targetItemList.last);
     }
@@ -178,7 +176,7 @@ class _ScanTargetItemController extends GetxController {
       return;
     }
     setStatus(ScanTargetStatus.scanning);
-    await Future.delayed(const Duration(seconds: 1));
+    await Future.delayed(const Duration(milliseconds: 200));
     Directory d = Directory(target);
     // FileSystemEntity.isFileSync(entry.toString())
     for (FileSystemEntity entry
