@@ -39,10 +39,8 @@ class MediaLibraryPage extends GetView<MediaLibraryService> {
       drawer: const MPaxDrawer(),
       body: Scrollbar(
         child: SingleChildScrollView(
-          child: Expanded(
-            child: Column(
-              children: _buildMediaList(),
-            ),
+          child: Column(
+            children: _buildMediaList(),
           ),
         ),
       ),
