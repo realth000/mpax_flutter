@@ -10,6 +10,8 @@ import 'package:mpax_flutter/widgets/app_app_bar.dart';
 import 'package:mpax_flutter/widgets/app_drawer.dart';
 import 'package:path/path.dart' as path;
 
+import '../widgets/app_player_widget.dart';
+
 class ScanPage extends StatelessWidget {
   const ScanPage({super.key});
 
@@ -19,6 +21,7 @@ class ScanPage extends StatelessWidget {
       appBar: MPaxAppBar(
         title: "Scan music".tr,
       ),
+      bottomNavigationBar: MPaxPlayerWidget(),
       drawer: const MPaxDrawer(),
       body: _ScanBodyWidget(),
     );

@@ -4,6 +4,8 @@ import 'package:mpax_flutter/routes/app_pages.dart';
 import 'package:mpax_flutter/widgets/app_app_bar.dart';
 import 'package:mpax_flutter/widgets/app_drawer.dart';
 
+import '../widgets/app_player_widget.dart';
+
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
@@ -14,6 +16,7 @@ class HomePage extends StatelessWidget {
         title: "Welcome".tr,
       ),
       drawer: const MPaxDrawer(),
+      bottomNavigationBar: MPaxPlayerWidget(),
       body: Center(
         child: SizedBox(
           width: 300,

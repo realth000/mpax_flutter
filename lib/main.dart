@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:mpax_flutter/routes/app_pages.dart';
 import 'package:mpax_flutter/services/config_service.dart';
 import 'package:mpax_flutter/services/media_library_service.dart';
+import 'package:mpax_flutter/services/player_service.dart';
 import 'package:mpax_flutter/translations/translations.dart';
 
 void main() async {
@@ -31,4 +32,5 @@ class MPaxApp extends StatelessWidget {
 Future<void> initServices() async {
   await Get.putAsync(() async => await ConfigService());
   await Get.putAsync(() async => await MediaLibraryService());
+  await Get.putAsync(() async => await PlayerService());
 }

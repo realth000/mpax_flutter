@@ -6,6 +6,8 @@ import 'package:mpax_flutter/widgets/app_app_bar.dart';
 import 'package:mpax_flutter/widgets/app_drawer.dart';
 import 'package:path/path.dart' as path;
 
+import '../widgets/app_player_widget.dart';
+
 class MediaLibraryPage extends GetView<MediaLibraryService> {
   const MediaLibraryPage({super.key});
 
@@ -33,6 +35,7 @@ class MediaLibraryPage extends GetView<MediaLibraryService> {
       appBar: MPaxAppBar(
         title: 'Media Library'.tr,
       ),
+      bottomNavigationBar: MPaxPlayerWidget(),
       drawer: const MPaxDrawer(),
       body: Scrollbar(
         child: SingleChildScrollView(
