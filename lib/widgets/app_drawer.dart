@@ -22,32 +22,32 @@ class MPaxDrawer extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.library_music),
             title: Text('Library'.tr),
-            onTap: () => Get.toNamed(MPaxRoutes.library),
+            onTap: () => Get.offAllNamed(MPaxRoutes.library),
           ),
           ListTile(
             leading: const Icon(Icons.music_note),
             title: Text('Music'.tr),
-            onTap: () => Get.toNamed(MPaxRoutes.library),
+            onTap: () => Get.offAllNamed(MPaxRoutes.library),
           ),
           ListTile(
             leading: const Icon(Icons.featured_play_list),
             title: Text('Playlist'.tr),
-            onTap: () => Get.toNamed(MPaxRoutes.playlist),
+            onTap: () => Get.offAllNamed(MPaxRoutes.playlist),
           ),
           ListTile(
             leading: const Icon(Icons.search),
             title: Text('Scan'.tr),
-            onTap: () => Get.toNamed(MPaxRoutes.scan),
+            onTap: () => Get.offAllNamed(MPaxRoutes.scan),
           ),
           ListTile(
             leading: const Icon(Icons.settings),
             title: Text('Settings'.tr),
-            onTap: () => Get.toNamed(MPaxRoutes.settings),
+            onTap: () => Get.offAllNamed(MPaxRoutes.settings),
           ),
           ListTile(
             leading: const Icon(Icons.info),
             title: Text('About'.tr),
-            onTap: () => Get.toNamed(MPaxRoutes.about),
+            onTap: () => Get.offAllNamed(MPaxRoutes.about),
           ),
         ],
       ),

@@ -10,4 +10,5 @@ const Map<String, String> translationZhCn = <String, String>{
   'About': '关于',
   'Start scan': '开始扫描',
   'Add directory to scan': '添加扫描文件夹',
+  'Media Library': '媒体库',
 };

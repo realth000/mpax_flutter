@@ -1,8 +1,8 @@
 import 'package:get/get.dart';
 import 'package:mpax_flutter/models/play_content.model.dart';
 
-class AudioLibraryService extends GetxService {
-  AudioLibraryService() {
+class MediaLibraryService extends GetxService {
+  MediaLibraryService() {
     init();
   }
 
@@ -18,7 +18,7 @@ class AudioLibraryService extends GetxService {
     return true;
   }
 
-  Future<AudioLibraryService> init() async {
+  Future<MediaLibraryService> init() async {
     // Load audio from storage (SQLite?)
     return this;
   }

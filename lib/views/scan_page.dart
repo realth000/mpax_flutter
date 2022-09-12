@@ -4,8 +4,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mpax_flutter/models/play_content.model.dart';
-import 'package:mpax_flutter/services/audio_library_service.dart';
 import 'package:mpax_flutter/services/config_service.dart';
+import 'package:mpax_flutter/services/media_library_service.dart';
 import 'package:mpax_flutter/widgets/app_app_bar.dart';
 import 'package:mpax_flutter/widgets/app_drawer.dart';
 import 'package:path/path.dart' as path;
@@ -144,8 +144,8 @@ class _ScanTargetItemController extends GetxController {
 
   String target = "";
   ScanTargetStatus _status = ScanTargetStatus.ready;
-  final AudioLibraryService audioLibraryService =
-      Get.find<AudioLibraryService>();
+  final MediaLibraryService mediaLibraryService =
+      Get.find<MediaLibraryService>();
 
   void setStatus(ScanTargetStatus status) {
     _status = status;
@@ -186,7 +186,7 @@ class _ScanTargetItemController extends GetxController {
           continue;
         }
         // Add to list
-        audioLibraryService.addContent(PlayContent.fromEntry(entry));
+        mediaLibraryService.addContent(PlayContent.fromEntry(entry));
       } else if (entry.statSync().type == FileSystemEntityType.directory) {
         scan(entry.path);
       }
@@ -208,7 +208,7 @@ class _ScanTargetItemController extends GetxController {
           continue;
         }
         // Add to list
-        audioLibraryService.addContent(PlayContent.fromEntry(entry));
+        mediaLibraryService.addContent(PlayContent.fromEntry(entry));
       } else if (entry.statSync().type == FileSystemEntityType.directory) {
         scan(entry.path);
       }

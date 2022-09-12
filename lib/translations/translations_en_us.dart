@@ -10,4 +10,5 @@ const Map<String, String> translationEnUs = <String, String>{
   'About': 'About',
   'Start scan': 'Start scan',
   'Add directory to scan': 'Add directory',
+  'Media Library': 'Media Library',
 };
