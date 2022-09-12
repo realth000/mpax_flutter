@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mpax_flutter/services/audio_library_service.dart';
 import 'routes/app_pages.dart';
 import 'translations/translations.dart';
 import 'services/config_service.dart';
@@ -31,4 +32,5 @@ class MPaxApp extends StatelessWidget {
 
 Future<void> initServices() async {
   await Get.putAsync(() async => await ConfigService());
+  await Get.putAsync(() async => await AudioLibraryService());
 }
