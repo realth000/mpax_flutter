@@ -2,11 +2,14 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mpax_flutter/services/audio_library_service.dart';
 import 'package:mpax_flutter/widgets/app_app_bar.dart';
 import 'package:mpax_flutter/widgets/app_drawer.dart';
 import 'package:mpax_flutter/services/config_service.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:path/path.dart' as path;
+
+import '../models/play_content.model.dart';
 
 class ScanPage extends StatelessWidget {
   const ScanPage({super.key});
@@ -42,7 +45,7 @@ class _scanBodyWidget extends StatelessWidget {
         ),
         ListTile(
           leading: const Icon(Icons.add),
-          title: Text('Add directory'.tr),
+          title: Text('Add directory to scan'.tr),
           onTap: () async {
             String? d = await FilePicker.platform.getDirectoryPath();
             if (d == null) {
@@ -121,14 +124,16 @@ class _scanController extends GetxController {
 class _scanDirectories {
   final List<String> _scanList =
       Get.find<ConfigService>().getStringList('ScanTargetList') ?? <String>[];
+  AudioLibraryService audioLibraryService = Get.find<AudioLibraryService>();
 
   void scanTargetList() async {
+    print('!! Start scan!!${_scanList}');
     for (var e in _scanList) {
-      _scan(e);
+      await _scan(e);
     }
   }
 
-  void _scan(String targetPath) async {
+  Future<void> _scan(String targetPath) async {
     if (targetPath.isEmpty) {
       return;
     }
@@ -141,6 +146,7 @@ class _scanDirectories {
           continue;
         }
         // Add to list
+        audioLibraryService.addContent(PlayContent.fromEntry(entry));
       } else if (entry.statSync().type == FileSystemEntityType.directory) {
         _scan(entry.path);
       }

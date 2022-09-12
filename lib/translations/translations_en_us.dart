@@ -8,4 +8,6 @@ const Map<String, String> translationEnUs = <String, String>{
   'Scan': 'Scan Music',
   'Settings': 'Settings',
   'About': 'About',
+  'Start scan': 'Start scan',
+  'Add directory to scan': 'Add directory',
 };
