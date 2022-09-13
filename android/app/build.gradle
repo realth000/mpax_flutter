@@ -43,6 +43,7 @@ android {
     }
 
     defaultConfig {
+        multiDexEnabled true
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId "kzs.th000.mpax_flutter"
         // You can update the following values to match your application needs.

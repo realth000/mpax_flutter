@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:path/path.dart' as path;
 
 class PlayContent {
+  PlayContent();
+
   PlayContent.fromEntry(FileSystemEntity file) {
     if (file.statSync().type != FileSystemEntityType.file) {
       return;
