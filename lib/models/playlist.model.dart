@@ -1,10 +1,13 @@
-import 'package:get/get.dart';
 import 'package:mpax_flutter/models/play_content.model.dart';
 
 class PlaylistModel {
-  PlaylistModel(this.name, this.tableName, this.content);
+  PlaylistModel(this.name, this.tableName, this.contentList);
 
-  final String name;
-  final String tableName;
-  List<PlayContent> content;
+  String name;
+  String tableName;
+  List<PlayContent> contentList;
+
+  void clearContent() {
+    contentList.clear();
+  }
 }

@@ -81,7 +81,7 @@ class _ScanController extends GetxController {
 
   var scanList = <String>[].obs;
   ConfigService configService = Get.find<ConfigService>();
-
+  MediaLibraryService libraryService = Get.find<MediaLibraryService>();
   List<_ScanTargetItemWidget> targetItemList = <_ScanTargetItemWidget>[];
 
   // Future<void> setScanningState() async {
@@ -112,6 +112,7 @@ class _ScanController extends GetxController {
   }
 
   void scanTargetList() async {
+    libraryService.resetLibrary();
     for (_ScanTargetItemWidget element in targetItemList) {
       await element.controller.startScan();
     }
