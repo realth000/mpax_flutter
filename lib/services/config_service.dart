@@ -3,6 +3,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 const Map<String, Type> configMap = <String, Type>{
   "ScanTargetList": List<String>,
+  "CurrentMedia": String,
+  "PlayMode": String,
 };
 
 class ConfigService extends GetxService {
@@ -13,6 +15,8 @@ class ConfigService extends GetxService {
   late final SharedPreferences _config;
 
   static final Map _configMap = Map.from(configMap);
+
+  Map get configs => _configMap;
 
   // const Map _saveMethodMap = Map.from({int: _configMap.setInt()});
   Future<ConfigService> init() async {

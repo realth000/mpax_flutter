@@ -4,12 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:mpax_flutter/models/play_content.model.dart';
+import 'package:mpax_flutter/services/config_service.dart';
 import 'package:path/path.dart' as path;
-import 'package:shared_preferences/shared_preferences.dart';
-
-const Map<String, Type> configMap = <String, Type>{
-  "CurrentMedia": String,
-};
 
 class PlayerService extends GetxService {
   PlayerService() {
@@ -20,11 +16,13 @@ class PlayerService extends GetxService {
   static const IconData _playIcon = Icons.play_arrow;
   static const IconData _pauseIcon = Icons.pause;
   static const IconData _repeatIcon = Icons.repeat;
+  static const _repeatString = 'Repeat';
+  static const _repeatOneString = 'RepeatOne';
+  static const _shuffleString = 'Shuffle';
   static const IconData _repeatOneIcon = Icons.repeat_one;
   static const IconData _shuffleIcon = Icons.shuffle;
 
-  late final SharedPreferences _config;
-  static final Map _configMap = Map.from(configMap);
+  final _configService = Get.find<ConfigService>();
   final _player = AudioPlayer();
   PlayContent content = PlayContent();
 
@@ -36,12 +34,30 @@ class PlayerService extends GetxService {
   Rx<IconData> playModeIcon = _repeatIcon.obs;
 
   Future<PlayerService> init() async {
-    _config = await SharedPreferences.getInstance();
-    _configMap['CurrentMedia'] = _config.getString('CurrentMedia');
+    // Load configs.
+    final File currentMediaString =
+        File(_configService.getString('CurrentMedia') ?? "");
+    print('load currentMediaString:$currentMediaString');
+    if (currentMediaString.existsSync()) {
+      setCurrentContent(PlayContent.fromEntry(currentMediaString));
+    }
+    final playModeString =
+        _configService.getString('PlayMode') ?? _repeatString;
+    print('load play mode string:$playModeString');
+    switch (playModeString) {
+      case _repeatString:
+        playButtonIcon.value = _repeatIcon;
+        break;
+      case _repeatOneString:
+        playButtonIcon.value = _repeatOneIcon;
+        break;
+      case _shuffleString:
+        playButtonIcon.value = _shuffleIcon;
+    }
     return this;
   }
 
-  void play(PlayContent playContent) {
+  void setCurrentContent(PlayContent playContent) {
     final File f = File(playContent.contentPath);
     if (!f.existsSync()) {
       print("!! PlayerService::play: FIle not exists: ${f.path}");
@@ -49,8 +65,6 @@ class PlayerService extends GetxService {
       return;
     }
     _player.setFilePath(playContent.contentPath);
-    print("!! PlayerService::play: start play");
-    _player.play();
     content = playContent;
     titleText.value =
         content.title.isEmpty ? content.contentName : content.title;
@@ -58,6 +72,12 @@ class PlayerService extends GetxService {
     albumText.value = content.albumTitle.isEmpty
         ? path.dirname(content.contentPath)
         : content.albumTitle;
+  }
+
+  void play() {
+    _player.play();
+    _configService.saveString('CurrentMedia', content.contentPath);
+    print("SAVE CURRENT MEDIA:${content.contentPath}");
   }
 
   void playOrPause() {
@@ -74,15 +94,35 @@ class PlayerService extends GetxService {
     }
   }
 
-  void switchPlayMode() {
+  void switchPlayMode([String? mode]) {
+    print("SAVE playmode");
+    if (mode != null) {
+      if (mode == _repeatString) {
+        playModeIcon.value = _repeatIcon;
+        return;
+      } else if (mode == _repeatOneString) {
+        playModeIcon.value == _repeatOneIcon;
+        return;
+      } else if (mode == _shuffleString) {
+        playModeIcon.value == _shuffleIcon;
+        return;
+      }
+    }
     if (playModeIcon.value == _repeatIcon) {
       playModeIcon.value = _repeatOneIcon;
-      return;
+      _player.setLoopMode(LoopMode.one);
+      _player.setShuffleModeEnabled(false);
+      _configService.saveString("PlayMode", _repeatOneString);
     } else if (playModeIcon.value == _repeatOneIcon) {
       playModeIcon.value = _shuffleIcon;
-      return;
+      _player.setLoopMode(LoopMode.off);
+      _player.setShuffleModeEnabled(true);
+      _configService.saveString("PlayMode", _shuffleString);
     } else {
       playModeIcon.value = _repeatIcon;
+      _player.setLoopMode(LoopMode.all);
+      _player.setShuffleModeEnabled(false);
+      _configService.saveString("PlayMode", _repeatString);
     }
   }
 }
