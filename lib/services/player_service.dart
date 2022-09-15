@@ -42,13 +42,13 @@ class PlayerService extends GetxService {
     print('load play mode string:$playModeString');
     switch (playModeString) {
       case _repeatString:
-        playButtonIcon.value = _repeatIcon;
+        playModeIcon.value = _repeatIcon;
         break;
       case _repeatOneString:
-        playButtonIcon.value = _repeatOneIcon;
+        playModeIcon.value = _repeatOneIcon;
         break;
       case _shuffleString:
-        playButtonIcon.value = _shuffleIcon;
+        playModeIcon.value = _shuffleIcon;
     }
     return this;
   }
