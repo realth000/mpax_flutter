@@ -11,7 +11,7 @@ class PlayContent {
     }
     File f = File(file.path);
     contentPath = f.path;
-    contentName = path.split(f.path).last;
+    contentName = path.basename(f.path);
     contentSize = f.lengthSync();
   }
 

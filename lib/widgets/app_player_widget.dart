@@ -9,17 +9,17 @@ class MPaxPlayerWidget extends GetView<PlayerService> {
   Widget build(BuildContext context) {
     return DecoratedBox(
       decoration: BoxDecoration(
-        border: Border.all(
-          color: Colors.grey,
-          width: 2.0,
-        ),
-        borderRadius: BorderRadius.circular(1.0),
-        boxShadow: const [
-          BoxShadow(
-            color: Colors.grey,
+          // border: Border.all(
+          // color: Colors.grey,
+          // width: 2.0,
+          // ),
+          // borderRadius: BorderRadius.circular(1.0),
+          // boxShadow: const [
+          //   BoxShadow(
+          //     color: Colors.grey,
+          //   ),
+          // ],
           ),
-        ],
-      ),
       child: ConstrainedBox(
         constraints: const BoxConstraints(
           maxHeight: 60.0,
@@ -36,15 +36,27 @@ class MPaxPlayerWidget extends GetView<PlayerService> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Expanded(
-                        child: Text(
-                          "Title",
-                          textAlign: TextAlign.center,
+                        child: Obx(
+                          () => Text(
+                            "${controller.titleText}",
+                            textAlign: TextAlign.center,
+                          ),
                         ),
                       ),
                       Expanded(
-                        child: Text(
-                          "Artist",
-                          textAlign: TextAlign.center,
+                        child: Obx(
+                          () => Text(
+                            "${controller.artistText}",
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: Obx(
+                          () => Text(
+                            "${controller.albumText}",
+                            textAlign: TextAlign.center,
+                          ),
                         ),
                       ),
                     ],
@@ -53,12 +65,16 @@ class MPaxPlayerWidget extends GetView<PlayerService> {
               ),
             ),
             IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.play_circle),
+              onPressed: () {
+                controller.playOrPause();
+              },
+              icon: Obx(() => Icon(controller.playButtonIcon.value)),
             ),
             IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.playlist_play),
+              onPressed: () {
+                controller.switchPlayMode();
+              },
+              icon: Obx(() => Icon(controller.playModeIcon.value)),
             ),
           ],
         ),
