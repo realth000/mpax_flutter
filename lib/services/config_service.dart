@@ -8,10 +8,6 @@ const Map<String, Type> configMap = <String, Type>{
 };
 
 class ConfigService extends GetxService {
-  ConfigService() {
-    init();
-  }
-
   late final SharedPreferences _config;
 
   static final Map _configMap = Map.from(configMap);

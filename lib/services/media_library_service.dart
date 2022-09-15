@@ -3,10 +3,6 @@ import 'package:mpax_flutter/models/play_content.model.dart';
 import 'package:mpax_flutter/models/playlist.model.dart';
 
 class MediaLibraryService extends GetxService {
-  MediaLibraryService() {
-    init();
-  }
-
   List<PlaylistModel> _playlistModel = <PlaylistModel>[];
   PlaylistModel _allContentModel =
       PlaylistModel("MEDIA_ALL", "uninit_table", <PlayContent>[]);

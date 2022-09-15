@@ -8,10 +8,6 @@ import 'package:mpax_flutter/services/config_service.dart';
 import 'package:path/path.dart' as path;
 
 class PlayerService extends GetxService {
-  PlayerService() {
-    init();
-  }
-
   // State
   static const IconData _playIcon = Icons.play_arrow;
   static const IconData _pauseIcon = Icons.pause;

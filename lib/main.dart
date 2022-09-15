@@ -30,7 +30,8 @@ class MPaxApp extends StatelessWidget {
 }
 
 Future<void> initServices() async {
-  await Get.putAsync(() async => await ConfigService());
-  await Get.putAsync(() async => await MediaLibraryService());
-  await Get.putAsync(() async => await PlayerService());
+  // Use service.init() here to make sure service is init.
+  await Get.putAsync(() async => await ConfigService().init());
+  await Get.putAsync(() async => await MediaLibraryService().init());
+  await Get.putAsync(() async => await PlayerService().init());
 }
