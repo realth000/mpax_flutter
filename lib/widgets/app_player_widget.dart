@@ -30,52 +30,48 @@ class MPaxPlayerWidget extends GetView<PlayerService> {
             Expanded(
               child: GestureDetector(
                 behavior: HitTestBehavior.opaque,
-                onHorizontalDragStart: (DragStartDetails details) {
-                  controller.recordDragStart(details);
+                onLongPressStart: (LongPressStartDetails details) {
+                  // For animation.
                 },
-                onHorizontalDragUpdate: (DragUpdateDetails details) {
-                  controller.updateDrag(details);
-                },
-                onHorizontalDragEnd: (DragEndDetails details) {
-                  controller.checkDragEnd(details);
+                onLongPressEnd: (LongPressEndDetails details) async {
+                  await controller.switchToSiblingMedia(
+                      details.globalPosition.dx >= context.width / 2);
                 },
                 child: Padding(
                   padding: const EdgeInsets.all(5),
-                  child: Obx(
-                    () => Align(
-                      alignment: controller.infoAlignment.value,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Expanded(
-                            child: Obx(
-                              () => Text(
-                                "${controller.titleText}",
-                                textAlign: TextAlign.center,
-                                maxLines: 1,
-                              ),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Expanded(
+                          child: Obx(
+                            () => Text(
+                              "${controller.titleText}",
+                              textAlign: TextAlign.center,
+                              maxLines: 1,
                             ),
                           ),
-                          Expanded(
-                            child: Obx(
-                              () => Text(
-                                "${controller.artistText}",
-                                textAlign: TextAlign.center,
-                                maxLines: 1,
-                              ),
+                        ),
+                        Expanded(
+                          child: Obx(
+                            () => Text(
+                              "${controller.artistText}",
+                              textAlign: TextAlign.center,
+                              maxLines: 1,
                             ),
                           ),
-                          Expanded(
-                            child: Obx(
-                              () => Text(
-                                "${controller.albumText}",
-                                textAlign: TextAlign.center,
-                                maxLines: 1,
-                              ),
+                        ),
+                        Expanded(
+                          child: Obx(
+                            () => Text(
+                              "${controller.albumText}",
+                              textAlign: TextAlign.center,
+                              maxLines: 1,
                             ),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                 ),

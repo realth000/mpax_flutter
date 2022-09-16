@@ -29,21 +29,15 @@ class PlayerService extends GetxService {
   Rx<IconData> playButtonIcon = _playIcon.obs;
   Rx<IconData> playModeIcon = _repeatIcon.obs;
 
-  // Player widget properties.
-  Offset startOffset = const Offset(0, 0);
-  Rx<Alignment> infoAlignment = Alignment.centerLeft.obs;
-
   Future<PlayerService> init() async {
     // Load configs.
     final File currentMediaString =
         File(_configService.getString('CurrentMedia') ?? "");
-    print('load currentMediaString:$currentMediaString');
     if (currentMediaString.existsSync()) {
       setCurrentContent(PlayContent.fromEntry(currentMediaString));
     }
     final playModeString =
         _configService.getString('PlayMode') ?? _repeatString;
-    print('load play mode string:$playModeString');
     switch (playModeString) {
       case _repeatString:
         playModeIcon.value = _repeatIcon;
@@ -60,7 +54,6 @@ class PlayerService extends GetxService {
   void setCurrentContent(PlayContent playContent) {
     final File f = File(playContent.contentPath);
     if (!f.existsSync()) {
-      print("!! PlayerService::play: FIle not exists: ${f.path}");
       // Not exists
       return;
     }
@@ -77,7 +70,6 @@ class PlayerService extends GetxService {
   void play() {
     _player.play();
     _configService.saveString('CurrentMedia', content.contentPath);
-    print("SAVE CURRENT MEDIA:${content.contentPath}");
   }
 
   void playOrPause() {
@@ -95,7 +87,6 @@ class PlayerService extends GetxService {
   }
 
   void switchPlayMode([String? mode]) {
-    print("SAVE playmode");
     if (mode != null) {
       if (mode == _repeatString) {
         playModeIcon.value = _repeatIcon;
@@ -126,27 +117,11 @@ class PlayerService extends GetxService {
     }
   }
 
-  void recordDragStart(DragStartDetails details) {
-    startOffset = details.globalPosition;
-  }
-
-  void updateDrag(DragUpdateDetails details) {
-    Alignment s = Alignment(
-        (details.globalPosition.dx - startOffset.dx) / startOffset.dx - 1, 0);
-    if (s.x > 0 && s.x > infoAlignment.value.x) {
-      infoAlignment.value = s;
-    } else if (s.x < 0 && s.x < infoAlignment.value.x) {
-      infoAlignment.value = s;
+  Future<void> switchToSiblingMedia(bool isNext) async {
+    if (isNext) {
+      await _player.seekToNext();
+    } else {
+      await _player.seekToPrevious();
     }
-    print('AAAA << ${infoAlignment.value.x}');
-  }
-
-  void checkDragEnd(DragEndDetails details) {
-    if (infoAlignment.value.x > 0.7) {
-      print('Play next ${infoAlignment.value.x} ${startOffset.dx}');
-    } else if (infoAlignment.value.x < -1.2) {
-      print('play pre ${infoAlignment.value.x} ${startOffset.dx}');
-    }
-    infoAlignment.value = Alignment.centerLeft;
   }
 }
