@@ -29,6 +29,10 @@ class PlayerService extends GetxService {
   Rx<IconData> playButtonIcon = _playIcon.obs;
   Rx<IconData> playModeIcon = _repeatIcon.obs;
 
+  // Player widget properties.
+  Offset startOffset = const Offset(0, 0);
+  Rx<Alignment> infoAlignment = Alignment.centerLeft.obs;
+
   Future<PlayerService> init() async {
     // Load configs.
     final File currentMediaString =
@@ -120,5 +124,29 @@ class PlayerService extends GetxService {
       _player.setShuffleModeEnabled(false);
       _configService.saveString("PlayMode", _repeatString);
     }
+  }
+
+  void recordDragStart(DragStartDetails details) {
+    startOffset = details.globalPosition;
+  }
+
+  void updateDrag(DragUpdateDetails details) {
+    Alignment s = Alignment(
+        (details.globalPosition.dx - startOffset.dx) / startOffset.dx - 1, 0);
+    if (s.x > 0 && s.x > infoAlignment.value.x) {
+      infoAlignment.value = s;
+    } else if (s.x < 0 && s.x < infoAlignment.value.x) {
+      infoAlignment.value = s;
+    }
+    print('AAAA << ${infoAlignment.value.x}');
+  }
+
+  void checkDragEnd(DragEndDetails details) {
+    if (infoAlignment.value.x > 0.7) {
+      print('Play next ${infoAlignment.value.x} ${startOffset.dx}');
+    } else if (infoAlignment.value.x < -1.2) {
+      print('play pre ${infoAlignment.value.x} ${startOffset.dx}');
+    }
+    infoAlignment.value = Alignment.centerLeft;
   }
 }
