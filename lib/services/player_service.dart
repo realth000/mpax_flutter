@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:mpax_flutter/models/play_content.model.dart';
 import 'package:mpax_flutter/services/config_service.dart';
-import 'package:path/path.dart' as path;
 
 class PlayerService extends GetxService {
   // State
@@ -20,12 +19,9 @@ class PlayerService extends GetxService {
 
   final _configService = Get.find<ConfigService>();
   final _player = AudioPlayer();
-  PlayContent content = PlayContent();
+  final content = PlayContent().obs;
 
   // Show on media widget.
-  Rx<String> titleText = "".obs;
-  Rx<String> artistText = "".obs;
-  Rx<String> albumText = "".obs;
   Rx<IconData> playButtonIcon = _playIcon.obs;
   Rx<IconData> playModeIcon = _repeatIcon.obs;
 
@@ -58,18 +54,12 @@ class PlayerService extends GetxService {
       return;
     }
     _player.setFilePath(playContent.contentPath);
-    content = playContent;
-    titleText.value =
-        content.title.isEmpty ? content.contentName : content.title;
-    artistText.value = content.artist.isEmpty ? "Unknown".tr : content.artist;
-    albumText.value = content.albumTitle.isEmpty
-        ? path.dirname(content.contentPath)
-        : content.albumTitle;
+    content.value = playContent;
   }
 
   void play() {
     _player.play();
-    _configService.saveString('CurrentMedia', content.contentPath);
+    _configService.saveString('CurrentMedia', content.value.contentPath);
   }
 
   void playOrPause() {
@@ -77,7 +67,7 @@ class PlayerService extends GetxService {
       _player.pause();
       playButtonIcon.value = _playIcon;
       return;
-    } else if (content.contentPath.isNotEmpty) {
+    } else if (content.value.contentPath.isNotEmpty) {
       _player.play();
       playButtonIcon.value = _pauseIcon;
       return;

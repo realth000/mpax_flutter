@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mpax_flutter/services/player_service.dart';
+import 'package:path/path.dart' as path;
 
 class MPaxPlayerWidget extends GetView<PlayerService> {
   const MPaxPlayerWidget({super.key});
@@ -47,7 +48,9 @@ class MPaxPlayerWidget extends GetView<PlayerService> {
                         Expanded(
                           child: Obx(
                             () => Text(
-                              "${controller.titleText}",
+                              controller.content.value.title.isEmpty
+                                  ? controller.content.value.contentName
+                                  : controller.content.value.title,
                               textAlign: TextAlign.center,
                               maxLines: 1,
                             ),
@@ -56,7 +59,9 @@ class MPaxPlayerWidget extends GetView<PlayerService> {
                         Expanded(
                           child: Obx(
                             () => Text(
-                              "${controller.artistText}",
+                              controller.content.value.artist.isEmpty
+                                  ? "Unknown".tr
+                                  : controller.content.value.artist,
                               textAlign: TextAlign.center,
                               maxLines: 1,
                             ),
@@ -65,7 +70,10 @@ class MPaxPlayerWidget extends GetView<PlayerService> {
                         Expanded(
                           child: Obx(
                             () => Text(
-                              "${controller.albumText}",
+                              controller.content.value.albumTitle.isEmpty
+                                  ? path.dirname(
+                                      controller.content.value.contentPath)
+                                  : controller.content.value.albumTitle,
                               textAlign: TextAlign.center,
                               maxLines: 1,
                             ),
