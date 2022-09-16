@@ -116,8 +116,6 @@ class _ScanController extends GetxController {
     for (_ScanTargetItemWidget element in targetItemList) {
       await element.controller.startScan();
     }
-    // Generate just_audio package playlist.
-    await libraryService.generatePlaylist();
   }
 
   // Build UI Widget.

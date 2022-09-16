@@ -20,7 +20,13 @@ class PlayerService extends GetxService {
 
   final _configService = Get.find<ConfigService>();
   final _player = AudioPlayer();
-  final content = PlayContent().obs;
+
+  // Current playing playlist.
+  PlaylistModel currentPlaylist =
+      PlaylistModel("uninit", "uninit_table", <PlayContent>[]);
+
+  // Current playing content.
+  final currentContent = PlayContent().obs;
 
   // Show on media widget.
   Rx<IconData> playButtonIcon = _playIcon.obs;
@@ -55,13 +61,14 @@ class PlayerService extends GetxService {
       // Not exists
       return;
     }
+    currentPlaylist = playlist;
     _player.setFilePath(playContent.contentPath);
-    content.value = playContent;
+    currentContent.value = playContent;
   }
 
   void play() {
     _player.play();
-    _configService.saveString('CurrentMedia', content.value.contentPath);
+    _configService.saveString('CurrentMedia', currentContent.value.contentPath);
   }
 
   void playOrPause() {
@@ -69,7 +76,7 @@ class PlayerService extends GetxService {
       _player.pause();
       playButtonIcon.value = _playIcon;
       return;
-    } else if (content.value.contentPath.isNotEmpty) {
+    } else if (currentContent.value.contentPath.isNotEmpty) {
       _player.play();
       playButtonIcon.value = _pauseIcon;
       return;
@@ -109,11 +116,25 @@ class PlayerService extends GetxService {
     }
   }
 
-  Future<void> switchToSiblingMedia(bool isNext) async {
+  void switchToSiblingMedia(bool isNext) {
     if (isNext) {
-      await _player.seekToNext();
+      PlayContent content =
+          currentPlaylist.findNextContent(currentContent.value);
+      if (content.contentPath.isEmpty) {
+        return;
+      }
+      _player.setFilePath(content.contentPath);
+      currentContent.value = content;
+      play();
     } else {
-      await _player.seekToPrevious();
+      PlayContent content =
+          currentPlaylist.findPreviousContent(currentContent.value);
+      if (content.contentPath.isEmpty) {
+        return;
+      }
+      _player.setFilePath(content.contentPath);
+      currentContent.value = content;
+      play();
     }
   }
 }

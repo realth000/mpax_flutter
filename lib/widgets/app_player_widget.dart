@@ -34,8 +34,8 @@ class MPaxPlayerWidget extends GetView<PlayerService> {
                 onLongPressStart: (LongPressStartDetails details) {
                   // For animation.
                 },
-                onLongPressEnd: (LongPressEndDetails details) async {
-                  await controller.switchToSiblingMedia(
+                onLongPressEnd: (LongPressEndDetails details) {
+                  controller.switchToSiblingMedia(
                       details.globalPosition.dx >= context.width / 2);
                 },
                 child: Padding(
@@ -48,9 +48,9 @@ class MPaxPlayerWidget extends GetView<PlayerService> {
                         Expanded(
                           child: Obx(
                             () => Text(
-                              controller.content.value.title.isEmpty
-                                  ? controller.content.value.contentName
-                                  : controller.content.value.title,
+                              controller.currentContent.value.title.isEmpty
+                                  ? controller.currentContent.value.contentName
+                                  : controller.currentContent.value.title,
                               textAlign: TextAlign.center,
                               maxLines: 1,
                             ),
@@ -59,9 +59,9 @@ class MPaxPlayerWidget extends GetView<PlayerService> {
                         Expanded(
                           child: Obx(
                             () => Text(
-                              controller.content.value.artist.isEmpty
+                              controller.currentContent.value.artist.isEmpty
                                   ? "Unknown".tr
-                                  : controller.content.value.artist,
+                                  : controller.currentContent.value.artist,
                               textAlign: TextAlign.center,
                               maxLines: 1,
                             ),
@@ -70,10 +70,10 @@ class MPaxPlayerWidget extends GetView<PlayerService> {
                         Expanded(
                           child: Obx(
                             () => Text(
-                              controller.content.value.albumTitle.isEmpty
-                                  ? path.dirname(
-                                      controller.content.value.contentPath)
-                                  : controller.content.value.albumTitle,
+                              controller.currentContent.value.albumTitle.isEmpty
+                                  ? path.dirname(controller
+                                      .currentContent.value.contentPath)
+                                  : controller.currentContent.value.albumTitle,
                               textAlign: TextAlign.center,
                               maxLines: 1,
                             ),

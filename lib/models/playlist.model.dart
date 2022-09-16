@@ -1,4 +1,3 @@
-import 'package:just_audio/just_audio.dart';
 import 'package:mpax_flutter/models/play_content.model.dart';
 
 class PlaylistModel {
@@ -7,24 +6,38 @@ class PlaylistModel {
   String name;
   String tableName;
   List<PlayContent> contentList;
-  ConcatenatingAudioSource sourceList =
-      ConcatenatingAudioSource(children: <AudioSource>[]);
 
   void clearContent() {
     contentList.clear();
   }
 
-  Future<void> generatePlaylist() async {
-    List<AudioSource> l = <AudioSource>[];
-    for (var content in contentList) {
-      AudioSource c = AudioSource.uri(Uri.parse(content.contentPath));
-      l.add(c);
+  PlayContent findPreviousContent(PlayContent playContent) {
+    if (contentList.isEmpty) {
+      return PlayContent();
     }
-    sourceList = ConcatenatingAudioSource(
-      useLazyPreparation: true,
-      shuffleOrder: DefaultShuffleOrder(),
-      children: l,
-    );
-    print('AAAAA ${sourceList.children.length}');
+    if (contentList.first.contentPath == playContent.contentPath) {
+      return contentList.last;
+    }
+    for (int i = contentList.length - 1; i > -1; i--) {
+      if (contentList[i].contentPath == playContent.contentPath) {
+        return contentList[i - 1];
+      }
+    }
+    return contentList.first;
+  }
+
+  PlayContent findNextContent(PlayContent playContent) {
+    if (contentList.isEmpty) {
+      return PlayContent();
+    }
+    if (contentList.last.contentPath == playContent.contentPath) {
+      return contentList.first;
+    }
+    for (int i = 0; i < contentList.length; i++) {
+      if (contentList[i].contentPath == playContent.contentPath) {
+        return contentList[i + 1];
+      }
+    }
+    return contentList.first;
   }
 }

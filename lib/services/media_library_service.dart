@@ -23,10 +23,6 @@ class MediaLibraryService extends GetxService {
     return true;
   }
 
-  Future<void> generatePlaylist() async {
-    await _allContentModel.generatePlaylist();
-  }
-
   void resetLibrary() {
     _allContentModel.contentList.clear();
     _resetPlaylistModel(_allContentModel);
