@@ -11,14 +11,10 @@ import '../widgets/media_list_item.dart';
 class MediaLibraryPage extends GetView<MediaLibraryService> {
   const MediaLibraryPage({super.key});
 
-  Widget _buildMediaItem(PlayContent playContent) {
-    return MediaItemTile(playContent);
-  }
-
   List<Widget> _buildMediaList() {
     List<Widget> list = <Widget>[];
     for (PlayContent playContent in controller.content) {
-      list.add(_buildMediaItem(playContent));
+      list.add(MediaItemTile(playContent, controller.allContentModel));
     }
     return list;
   }

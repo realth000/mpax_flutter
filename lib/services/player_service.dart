@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:mpax_flutter/models/play_content.model.dart';
+import 'package:mpax_flutter/models/playlist.model.dart';
 import 'package:mpax_flutter/services/config_service.dart';
 
 class PlayerService extends GetxService {
@@ -30,7 +31,8 @@ class PlayerService extends GetxService {
     final File currentMediaString =
         File(_configService.getString('CurrentMedia') ?? "");
     if (currentMediaString.existsSync()) {
-      setCurrentContent(PlayContent.fromEntry(currentMediaString));
+      // FIXME: Add current playlist config save and load.
+      // setCurrentContent(PlayContent.fromEntry(currentMediaString));
     }
     final playModeString =
         _configService.getString('PlayMode') ?? _repeatString;
@@ -47,7 +49,7 @@ class PlayerService extends GetxService {
     return this;
   }
 
-  void setCurrentContent(PlayContent playContent) {
+  void setCurrentContent(PlayContent playContent, PlaylistModel playlist) {
     final File f = File(playContent.contentPath);
     if (!f.existsSync()) {
       // Not exists

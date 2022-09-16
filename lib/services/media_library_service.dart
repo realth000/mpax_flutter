@@ -7,6 +7,8 @@ class MediaLibraryService extends GetxService {
   PlaylistModel _allContentModel =
       PlaylistModel("MEDIA_ALL", "uninit_table", <PlayContent>[]);
 
+  PlaylistModel get allContentModel => _allContentModel;
+
   // Used for prevent same name playlist.
   String _lastTimeStamp = "";
   int _lastCount = 0;
