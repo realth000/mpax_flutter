@@ -22,8 +22,7 @@ class PlayerService extends GetxService {
   final _player = AudioPlayer();
 
   // Current playing playlist.
-  PlaylistModel currentPlaylist =
-      PlaylistModel("uninit", "uninit_table", <PlayContent>[]);
+  PlaylistModel currentPlaylist = PlaylistModel();
 
   // Current playing content.
   final currentContent = PlayContent().obs;

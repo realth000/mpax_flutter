@@ -37,6 +37,7 @@ dependencies:
   file_picker: ^5.0.1
   path: ^1.8.2
   just_audio: ^0.9.28
+  sqflite: ^2.0.3+1
 
 
   # The following adds the Cupertino Icons font to your application.

@@ -15,6 +15,24 @@ class PlayContent {
     contentSize = f.lengthSync();
   }
 
+  PlayContent.fromData(
+      this.contentPath,
+      this.contentName,
+      this.contentSize,
+      this.artist,
+      this.title,
+      this.trackNumber,
+      this.bitRate,
+      this.albumArtist,
+      this.albumTitle,
+      this.albumYear,
+      this.albumTrackCount,
+      this.genre,
+      this.comment,
+      this.sampleRate,
+      this.channels,
+      this.length);
+
   String contentPath = '';
   String contentName = '';
   int contentSize = -1;
@@ -34,4 +52,29 @@ class PlayContent {
   int sampleRate = -1;
   int channels = -1;
   int length = -1;
+
+  static int id = -1;
+
+  Map<String, dynamic> toMap() {
+    id++;
+    return {
+      'id': id,
+      'path': contentPath,
+      'name': contentName,
+      'size': contentSize,
+      'title': title,
+      'artist': artist,
+      'album_title': albumTitle,
+      'album_artist': albumArtist,
+      'album_year': albumYear,
+      'album_track_count': albumTrackCount,
+      'track_number': trackNumber,
+      'bit_rate': bitRate,
+      'sample_rate': sampleRate,
+      'genre': genre,
+      'comment': comment,
+      'channels': channels,
+      'length': length,
+    };
+  }
 }
