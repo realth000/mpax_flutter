@@ -19,11 +19,14 @@ class MPaxApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    MediaLibraryService mediaLibraryService = Get.find<MediaLibraryService>();
     return GetMaterialApp(
       translations: MPaxTranslations(),
       locale: const Locale('zh', 'CN'),
       fallbackLocale: const Locale('en', 'US'),
-      initialRoute: MPaxPages.initialPage,
+      initialRoute: mediaLibraryService.content.isNotEmpty
+          ? MPaxRoutes.library
+          : MPaxRoutes.home,
       getPages: MPaxPages.routes,
     );
   }

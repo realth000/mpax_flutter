@@ -6,8 +6,6 @@ import 'package:mpax_flutter/views/scan_page.dart';
 part 'app_routes.dart';
 
 class MPaxPages {
-  static const initialPage = MPaxRoutes.home;
-
   static final List<GetPage> routes = [
     GetPage(
       name: MPaxRoutes.home,
