@@ -60,7 +60,7 @@ class MPaxPlayerWidget extends GetView<PlayerService> {
                           child: Obx(
                             () => Text(
                               controller.currentContent.value.artist.isEmpty
-                                  ? "Unknown".tr
+                                  ? ""
                                   : controller.currentContent.value.artist,
                               textAlign: TextAlign.center,
                               maxLines: 1,

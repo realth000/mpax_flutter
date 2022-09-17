@@ -116,6 +116,7 @@ class _ScanController extends GetxController {
     for (_ScanTargetItemWidget element in targetItemList) {
       await element.controller.startScan();
     }
+    await libraryService.saveAllPlaylist();
   }
 
   // Build UI Widget.
