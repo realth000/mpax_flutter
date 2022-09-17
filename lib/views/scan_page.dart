@@ -182,7 +182,6 @@ class _ScanTargetItemController extends GetxController {
     setStatus(ScanTargetStatus.scanning);
     await Future.delayed(const Duration(milliseconds: 200));
     Directory d = Directory(target);
-    print("DDDD ${d.existsSync()} ${d.statSync()}");
     // FileSystemEntity.isFileSync(entry.toString())
     for (FileSystemEntity entry
         in d.listSync(recursive: true, followLinks: false)) {
