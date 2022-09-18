@@ -35,9 +35,11 @@ class MediaItemTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       leading: const Icon(Icons.music_note),
-      title: Text(playContent.title == ""
-          ? path.basename(playContent.contentPath)
-          : playContent.title),
+      title: Text(
+        playContent.title == ""
+            ? path.basename(playContent.contentPath)
+            : playContent.title,
+      ),
       subtitle: Text(playContent.contentPath),
       onTap: () {
         _controller.play();

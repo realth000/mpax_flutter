@@ -38,11 +38,11 @@ class PlayerService extends GetxService {
   Future<PlayerService> init() async {
     // Load configs.
     final File currentMedia =
-        File(_configService.getString('CurrentMedia') ?? "");
+        File(_configService.getString('CurrentMedia') ?? '');
     if (currentMedia.existsSync()) {
       // FIXME: Add current playlist config save and load.
       final String currentPlaylistString =
-          _configService.getString('CurrentPlaylist') ?? "";
+          _configService.getString('CurrentPlaylist') ?? '';
       final PlaylistModel currentPlaylist =
           _libraryService.findPlaylistByTableName(currentPlaylistString);
       // _libraryService
@@ -56,7 +56,7 @@ class PlayerService extends GetxService {
   }
 
   void setCurrentContent(PlayContent playContent, PlaylistModel playlist) {
-    final File f = File(playContent.contentPath);
+    final f = File(playContent.contentPath);
     if (!f.existsSync()) {
       // Not exists
       return;
@@ -108,19 +108,19 @@ class PlayerService extends GetxService {
       playModeIcon.value = _repeatOneIcon;
       _player.setLoopMode(LoopMode.one);
       _player.setShuffleModeEnabled(false);
-      _configService.saveString("PlayMode", _repeatOneString);
+      _configService.saveString('PlayMode', _repeatOneString);
       playMode = _repeatOneString;
     } else if (playModeIcon.value == _repeatOneIcon) {
       playModeIcon.value = _shuffleIcon;
       _player.setLoopMode(LoopMode.off);
       _player.setShuffleModeEnabled(true);
-      _configService.saveString("PlayMode", _shuffleString);
+      _configService.saveString('PlayMode', _shuffleString);
       playMode = _shuffleString;
     } else {
       playModeIcon.value = _repeatIcon;
       _player.setLoopMode(LoopMode.all);
       _player.setShuffleModeEnabled(false);
-      _configService.saveString("PlayMode", _repeatString);
+      _configService.saveString('PlayMode', _repeatString);
       playMode = _repeatString;
     }
   }
@@ -140,8 +140,7 @@ class PlayerService extends GetxService {
         case _repeatString:
         case _repeatOneString:
         default:
-          PlayContent content =
-              currentPlaylist.findNextContent(currentContent.value);
+          var content = currentPlaylist.findNextContent(currentContent.value);
           if (content.contentPath.isEmpty) {
             return;
           }
@@ -153,7 +152,7 @@ class PlayerService extends GetxService {
       switch (playMode) {
         // TODO: Use history here.
         case _shuffleString:
-          PlayContent c = currentPlaylist.randomPlayContent();
+          var c = currentPlaylist.randomPlayContent();
           if (c.contentPath.isEmpty) {
             play();
             return;
@@ -164,7 +163,7 @@ class PlayerService extends GetxService {
         case _repeatString:
         case _repeatOneString:
         default:
-          PlayContent content =
+          var content =
               currentPlaylist.findPreviousContent(currentContent.value);
           if (content.contentPath.isEmpty) {
             return;

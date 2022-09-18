@@ -2,16 +2,16 @@ import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 const Map<String, Type> configMap = <String, Type>{
-  "ScanTargetList": List<String>,
-  "CurrentMedia": String,
-  "CurrentPlaylist": String,
-  "PlayMode": String,
+  'ScanTargetList': List<String>,
+  'CurrentMedia': String,
+  'CurrentPlaylist': String,
+  'PlayMode': String,
 };
 
 class ConfigService extends GetxService {
   late final SharedPreferences _config;
 
-  static final Map _configMap = Map.from(configMap);
+  static final _configMap = Map.from(configMap);
 
   Map get configs => _configMap;
 

@@ -7,21 +7,22 @@ import 'package:sqflite/sqflite.dart';
 class MediaLibraryService extends GetxService {
   static const infoTableName = 'playlist_info_table';
   static const databaseName = 'playlist.db';
+  static const allMediaTableName = 'all_media';
   static const infoTableColumns =
-      "id INT NOT NULL PRIMARY KEY, sort INT, playlist_name TEXT, table_name TEXT";
+      'id INT NOT NULL PRIMARY KEY, sort INT, playlist_name TEXT, table_name TEXT';
   static const playlistTableColumns =
-      "id INT NOT NULL PRIMARY KEY, path TEXT, name TEXT, size INT, title TEXT,"
-      "artist TEXT, album_title TEXT, album_artist TEXT, album_year INT, "
-      "album_track_count INT, track_number INT, bit_rate INT, sample_rate INT, "
-      "genre TEXT, comment TEXT, channels INT, length INT";
+      'id INT NOT NULL PRIMARY KEY, path TEXT, name TEXT, size INT, title TEXT, '
+      'artist TEXT, album_title TEXT, album_artist TEXT, album_year INT, '
+      'album_track_count INT, track_number INT, bit_rate INT, sample_rate INT, '
+      'genre TEXT, comment TEXT, channels INT, length INT ';
 
-  List<PlaylistModel> _playlistModel = <PlaylistModel>[];
+  final List<PlaylistModel> _playlistModel = <PlaylistModel>[];
   PlaylistModel _allContentModel = PlaylistModel();
 
   PlaylistModel get allContentModel => _allContentModel;
 
   // Used for prevent same name playlist.
-  String _lastTimeStamp = "";
+  String _lastTimeStamp = '';
   int _lastCount = 0;
 
   late final Future<Database> _database;
@@ -62,13 +63,13 @@ class MediaLibraryService extends GetxService {
     // As created info table if not exists, no exception here.
     final List<Map<String, dynamic>> infoTable = await db.query(infoTableName);
     for (var table in infoTable) {
-      PlaylistModel model = PlaylistModel();
-      model.name = table['playlist_name'];
-      model.tableName = table['table_name'];
+      final PlaylistModel model = PlaylistModel()
+        ..name = table['playlist_name']
+        ..tableName = table['table_name'];
       final List<Map<String, dynamic>> playlistTable =
           await db.query(model.tableName);
       for (var playContent in playlistTable) {
-        PlayContent c = PlayContent.fromData(
+        final PlayContent c = PlayContent.fromData(
           playContent['path'],
           playContent['name'],
           playContent['size'],
@@ -87,14 +88,14 @@ class MediaLibraryService extends GetxService {
           playContent['length'],
         );
         model.contentList.add(c);
-        if (model.tableName == "all_media") {
+        if (model.tableName == allMediaTableName) {
           _allContentModel = model;
         } else {
           _allContentModel.contentList.add(c);
         }
       }
 
-      if (model.tableName != "all_media") {
+      if (model.tableName != allMediaTableName) {
         _playlistModel.add(model);
       }
     }
@@ -105,14 +106,16 @@ class MediaLibraryService extends GetxService {
     final db = await _database;
     await db.transaction((txn) async {
       await txn.execute('DROP TABLE IF EXISTS ${playlistModel.tableName}');
-      // Not using truncate because table name may change like what qt version does.
+      // Not using truncate because table name may change like what qt version
+      // does.
       await txn.delete(
         infoTableName,
-        where: "table_name = ?",
+        where: 'table_name = ?',
         whereArgs: <String>[playlistModel.tableName],
       );
       await txn.execute(
-          'CREATE TABLE  ${playlistModel.tableName}($playlistTableColumns)');
+        'CREATE TABLE  ${playlistModel.tableName}($playlistTableColumns)',
+      );
       await txn.insert(
         infoTableName,
         playlistModel.toMap(),
@@ -158,8 +161,9 @@ class MediaLibraryService extends GetxService {
   }
 
   Future<void> saveMediaLibrary() async {
-    _allContentModel.name = 'all_media';
-    _allContentModel.tableName = 'all_media';
+    _allContentModel
+      ..name = allMediaTableName
+      ..tableName = allMediaTableName;
     await savePlaylist(_allContentModel);
   }
 
@@ -179,14 +183,14 @@ class MediaLibraryService extends GetxService {
       _lastTimeStamp = timeStamp;
       _lastCount = 0;
     }
-    return "playlist_${timeStamp}_${_lastCount}_table";
+    return 'playlist_${timeStamp}_${_lastCount}_table';
   }
 
   PlaylistModel findPlaylistByTableName(String tableName) {
     if (_allContentModel.tableName == tableName) {
       return _allContentModel;
     }
-    for (PlaylistModel model in _playlistModel) {
+    for (final model in _playlistModel) {
       if (model.tableName == tableName) {
         return model;
       }

@@ -8,7 +8,7 @@ class _ProgressWidget extends GetView<PlayerService> {
   Widget build(BuildContext context) {
     return StreamBuilder<Duration>(
       stream: controller.positionStream,
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
+      builder: (context, snapshot) {
         if (controller.playerDuration() == null || snapshot.hasError) {
           return const LinearProgressIndicator(
             value: 0.0,
@@ -60,12 +60,13 @@ class MPaxPlayerWidget extends GetView<PlayerService> {
                   Expanded(
                     child: GestureDetector(
                       behavior: HitTestBehavior.opaque,
-                      onLongPressStart: (LongPressStartDetails details) {
+                      onLongPressStart: (details) {
                         // For animation.
                       },
-                      onLongPressEnd: (LongPressEndDetails details) {
+                      onLongPressEnd: (details) {
                         controller.seekToAnother(
-                            details.globalPosition.dx >= context.width / 2);
+                          details.globalPosition.dx >= context.width / 2,
+                        );
                       },
                       child: Padding(
                         padding: const EdgeInsets.all(3),
@@ -92,7 +93,7 @@ class MPaxPlayerWidget extends GetView<PlayerService> {
                                   () => Text(
                                     controller
                                             .currentContent.value.artist.isEmpty
-                                        ? ""
+                                        ? ''
                                         : controller
                                             .currentContent.value.artist,
                                     textAlign: TextAlign.center,
@@ -105,8 +106,10 @@ class MPaxPlayerWidget extends GetView<PlayerService> {
                                   () => Text(
                                     controller.currentContent.value.albumTitle
                                             .isEmpty
-                                        ? path.dirname(controller
-                                            .currentContent.value.contentPath)
+                                        ? path.dirname(
+                                            controller.currentContent.value
+                                                .contentPath,
+                                          )
                                         : controller
                                             .currentContent.value.albumTitle,
                                     textAlign: TextAlign.center,

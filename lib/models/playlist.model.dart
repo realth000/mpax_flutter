@@ -23,7 +23,7 @@ class PlaylistModel {
     if (contentList.first.contentPath == playContent.contentPath) {
       return contentList.last;
     }
-    for (int i = contentList.length - 1; i > -1; i--) {
+    for (var i = contentList.length - 1; i > -1; i--) {
       if (contentList[i].contentPath == playContent.contentPath) {
         return contentList[i - 1];
       }
@@ -38,7 +38,7 @@ class PlaylistModel {
     if (contentList.last.contentPath == playContent.contentPath) {
       return contentList.first;
     }
-    for (int i = 0; i < contentList.length; i++) {
+    for (var i = 0; i < contentList.length; i++) {
       if (contentList[i].contentPath == playContent.contentPath) {
         return contentList[i + 1];
       }
@@ -49,10 +49,10 @@ class PlaylistModel {
   Map<String, dynamic> toMap() {
     id++;
     return {
-      "id": id,
-      "sort": contentList.length,
-      "playlist_name": name,
-      "table_name": tableName,
+      'id': id,
+      'sort': contentList.length,
+      'playlist_name': name,
+      'table_name': tableName,
     };
   }
 

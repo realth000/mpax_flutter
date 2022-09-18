@@ -8,9 +8,8 @@ import 'package:mpax_flutter/services/config_service.dart';
 import 'package:mpax_flutter/services/media_library_service.dart';
 import 'package:mpax_flutter/widgets/app_app_bar.dart';
 import 'package:mpax_flutter/widgets/app_drawer.dart';
+import 'package:mpax_flutter/widgets/app_player_widget.dart';
 import 'package:path/path.dart' as path;
-
-import '../widgets/app_player_widget.dart';
 
 class ScanPage extends StatelessWidget {
   const ScanPage({super.key});
@@ -19,9 +18,9 @@ class ScanPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: MPaxAppBar(
-        title: "Scan music".tr,
+        title: 'Scan music'.tr,
       ),
-      bottomNavigationBar: MPaxPlayerWidget(),
+      bottomNavigationBar: const MPaxPlayerWidget(),
       drawer: const MPaxDrawer(),
       body: _ScanBodyWidget(),
     );
@@ -29,7 +28,7 @@ class ScanPage extends StatelessWidget {
 }
 
 class _ScanBodyWidget extends StatelessWidget {
-  final _ScanTargetListWidget _targetListWidget = _ScanTargetListWidget();
+  final _targetListWidget = _ScanTargetListWidget();
 
   @override
   Widget build(BuildContext context) {
@@ -39,15 +38,14 @@ class _ScanBodyWidget extends StatelessWidget {
           leading: const Icon(Icons.start),
           title: Text('Start scan'.tr),
           onTap: () async {
-            _ScanController c = Get.find<_ScanController>();
-            c.scanTargetList();
+            _ScanController c = Get.find<_ScanController>()..scanTargetList();
           },
         ),
         ListTile(
           leading: const Icon(Icons.add),
           title: Text('Add directory to scan'.tr),
           onTap: () async {
-            String? d = await FilePicker.platform.getDirectoryPath();
+            final d = await FilePicker.platform.getDirectoryPath();
             if (d == null) {
               return;
             }
@@ -66,20 +64,18 @@ class _ScanTargetListWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetBuilder<_ScanController>(
       init: _ScanController(),
-      builder: (_ScanController c) {
-        return c.buildScanTarget();
-      },
+      builder: (controller) => controller.buildScanTarget(),
     );
   }
 }
 
 class _ScanController extends GetxController {
   _ScanController() {
-    scanList.value =
+    _scanList.value =
         Get.find<ConfigService>().getStringList('ScanTargetList') ?? <String>[];
   }
 
-  var scanList = <String>[].obs;
+  var _scanList = <String>[].obs;
   ConfigService configService = Get.find<ConfigService>();
   MediaLibraryService libraryService = Get.find<MediaLibraryService>();
   List<_ScanTargetItemWidget> targetItemList = <_ScanTargetItemWidget>[];
@@ -91,29 +87,29 @@ class _ScanController extends GetxController {
   // }
 
   void add(String path) {
-    if (scanList.contains(path)) {
+    if (_scanList.contains(path)) {
       return;
     }
-    scanList.add(path);
+    _scanList.add(path);
     update();
-    configService.saveStringList('ScanTargetList', scanList);
+    configService.saveStringList('ScanTargetList', _scanList);
   }
 
   void delete(String path) {
-    scanList.remove(path);
-    for (_ScanTargetItemWidget element in targetItemList) {
+    _scanList.remove(path);
+    for (final element in targetItemList) {
       if (element.targetPath == path) {
         targetItemList.remove(element);
         break;
       }
     }
     update();
-    configService.saveStringList('ScanTargetList', scanList);
+    configService.saveStringList('ScanTargetList', _scanList);
   }
 
-  void scanTargetList() async {
+  Future<void> scanTargetList() async {
     libraryService.resetLibrary();
-    for (_ScanTargetItemWidget element in targetItemList) {
+    for (final element in targetItemList) {
       await element.controller.startScan();
     }
     await libraryService.saveAllPlaylist();
@@ -121,10 +117,10 @@ class _ScanController extends GetxController {
 
   // Build UI Widget.
   Widget buildScanTarget() {
-    List<ListTile> s = <ListTile>[];
+    final s = <ListTile>[];
     targetItemList.clear();
-    for (String path in scanList) {
-      targetItemList.add(buildScanTargetItem(path) as _ScanTargetItemWidget);
+    for (String path in _scanList) {
+      targetItemList.add(buildScanTargetItem(path));
       s.add(targetItemList.last);
     }
     return Column(
@@ -132,7 +128,7 @@ class _ScanController extends GetxController {
     );
   }
 
-  ListTile buildScanTargetItem(String dirPath) {
+  _ScanTargetItemWidget buildScanTargetItem(String dirPath) {
     return _ScanTargetItemWidget(dirPath);
   }
 }
@@ -145,12 +141,11 @@ enum ScanTargetStatus {
 }
 
 class _ScanTargetItemController extends GetxController {
-  var deleteIcon = Icon(Icons.delete).obs;
+  final _deleteIcon = Icon(Icons.delete).obs;
 
-  String target = "";
+  String target = '';
   ScanTargetStatus _status = ScanTargetStatus.ready;
-  final MediaLibraryService mediaLibraryService =
-      Get.find<MediaLibraryService>();
+  final mediaLibraryService = Get.find<MediaLibraryService>();
 
   void setStatus(ScanTargetStatus status) {
     _status = status;
@@ -161,16 +156,15 @@ class _ScanTargetItemController extends GetxController {
   void buildTailIcon() {
     switch (_status) {
       case ScanTargetStatus.ready:
-        deleteIcon.value = const Icon(Icons.delete);
+        _deleteIcon.value = const Icon(Icons.delete);
         break;
       case ScanTargetStatus.scanning:
-        deleteIcon.value = const Icon(Icons.refresh);
+        _deleteIcon.value = const Icon(Icons.refresh);
         break;
       case ScanTargetStatus.finished:
-        deleteIcon.value = const Icon(Icons.delete);
+      case ScanTargetStatus.invalid:
+        _deleteIcon.value = const Icon(Icons.delete);
         break;
-      default:
-        deleteIcon.value = const Icon(Icons.question_mark);
     }
   }
 
@@ -182,10 +176,9 @@ class _ScanTargetItemController extends GetxController {
     }
     setStatus(ScanTargetStatus.scanning);
     await Future.delayed(const Duration(milliseconds: 200));
-    Directory d = Directory(target);
+    final d = Directory(target);
     // FileSystemEntity.isFileSync(entry.toString())
-    for (FileSystemEntity entry
-        in d.listSync(recursive: true, followLinks: false)) {
+    for (final entry in d.listSync(recursive: true, followLinks: false)) {
       if (entry.statSync().type == FileSystemEntityType.file) {
         if (!entry.path.endsWith('mp3')) {
           continue;
@@ -193,7 +186,7 @@ class _ScanTargetItemController extends GetxController {
         // Add to list
         mediaLibraryService.addContent(PlayContent.fromEntry(entry));
       } else if (entry.statSync().type == FileSystemEntityType.directory) {
-        scan(entry.path);
+        await scan(entry.path);
       }
     }
     setStatus(ScanTargetStatus.ready);
@@ -204,10 +197,9 @@ class _ScanTargetItemController extends GetxController {
     if (targetPath.isEmpty) {
       return;
     }
-    Directory d = Directory(targetPath);
+    final d = Directory(targetPath);
     // FileSystemEntity.isFileSync(entry.toString())
-    await for (FileSystemEntity entry
-        in d.list(recursive: true, followLinks: false)) {
+    await for (final entry in d.list(recursive: true, followLinks: false)) {
       if (entry.statSync().type == FileSystemEntityType.file) {
         if (!entry.path.endsWith('mp3')) {
           continue;
@@ -239,13 +231,12 @@ class _ScanTargetItemWidget extends ListTile {
       subtitle: Text(targetPath),
       leading: const Icon(Icons.folder),
       trailing: IconButton(
-        icon: Obx(() => controller.deleteIcon.value),
+        icon: Obx(() => controller._deleteIcon.value),
         onPressed: () {
           if (controller._status == ScanTargetStatus.scanning) {
             return;
           }
-          _ScanController c = Get.find<_ScanController>();
-          c.delete(controller.target);
+          Get.find<_ScanController>().delete(controller.target);
         },
       ),
     );

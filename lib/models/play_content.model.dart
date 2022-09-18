@@ -9,29 +9,30 @@ class PlayContent {
     if (file.statSync().type != FileSystemEntityType.file) {
       return;
     }
-    File f = File(file.path);
+    final f = File(file.path);
     contentPath = f.path;
     contentName = path.basename(f.path);
     contentSize = f.lengthSync();
   }
 
   PlayContent.fromData(
-      this.contentPath,
-      this.contentName,
-      this.contentSize,
-      this.artist,
-      this.title,
-      this.trackNumber,
-      this.bitRate,
-      this.albumArtist,
-      this.albumTitle,
-      this.albumYear,
-      this.albumTrackCount,
-      this.genre,
-      this.comment,
-      this.sampleRate,
-      this.channels,
-      this.length);
+    this.contentPath,
+    this.contentName,
+    this.contentSize,
+    this.artist,
+    this.title,
+    this.trackNumber,
+    this.bitRate,
+    this.albumArtist,
+    this.albumTitle,
+    this.albumYear,
+    this.albumTrackCount,
+    this.genre,
+    this.comment,
+    this.sampleRate,
+    this.channels,
+    this.length,
+  );
 
   String contentPath = '';
   String contentName = '';
