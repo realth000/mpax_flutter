@@ -22,6 +22,7 @@ class PlayerService extends GetxService {
   final _configService = Get.find<ConfigService>();
   final _libraryService = Get.find<MediaLibraryService>();
   final _player = AudioPlayer();
+  late Stream<Duration> positionStream = _player.positionStream;
 
   // Current playing playlist.
   PlaylistModel currentPlaylist = PlaylistModel();
@@ -136,5 +137,9 @@ class PlayerService extends GetxService {
       currentContent.value = content;
       play();
     }
+  }
+
+  Duration? playerDuration() {
+    return _player.duration;
   }
 }
