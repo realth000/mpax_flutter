@@ -68,6 +68,7 @@ class PlayerService extends GetxService {
   void play() {
     _player.play();
     _configService.saveString('CurrentMedia', currentContent.value.contentPath);
+    playButtonIcon.value = _pauseIcon;
   }
 
   void playOrPause() {
