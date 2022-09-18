@@ -111,13 +111,42 @@ class MediaLibraryService extends GetxService {
         playlistModel.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
-      for (var content in playlistModel.contentList) {
+      playlistModel.contentList.forEach((content) async {
         await txn.insert(
           playlistModel.tableName,
           content.toMap(),
           conflictAlgorithm: ConflictAlgorithm.replace,
         );
-      }
+      });
+      /*
+        The following for loop will throw exception:
+        E/flutter (17641): [ERROR:flutter/runtime/dart_vm_initializer.cc(41)] Unhandled Exception: Concurrent modification during iteration: Instance(length:255) of '_GrowableList'.
+        E/flutter (17641): #0      ListIterator.moveNext (dart:_internal/iterable.dart:336:7)
+        E/flutter (17641): #1      MediaLibraryService.savePlaylist.<anonymous closure> (package:mpax_flutter/services/media_library_service.dart:121:41)
+        E/flutter (17641): <asynchronous suspension>
+        E/flutter (17641): #2      SqfliteDatabaseMixin._runTransaction (package:sqflite_common/src/database_mixin.dart:488:16)
+        E/flutter (17641): <asynchronous suspension>
+        E/flutter (17641): #3      BasicLock.synchronized (package:synchronized/src/basic_lock.dart:33:16)
+        E/flutter (17641): <asynchronous suspension>
+        E/flutter (17641): #4      SqfliteDatabaseMixin.txnSynchronized (package:sqflite_common/src/database_mixin.dart:344:14)
+        E/flutter (17641): <asynchronous suspension>
+        E/flutter (17641): #5      MediaLibraryService.savePlaylist (package:mpax_flutter/services/media_library_service.dart:99:5)
+        E/flutter (17641): <asynchronous suspension>
+        E/flutter (17641): #6      MediaLibraryService.saveMediaLibrary (package:mpax_flutter/services/media_library_service.dart:132:5)
+        E/flutter (17641): <asynchronous suspension>
+        E/flutter (17641): #7      MediaLibraryService.saveAllPlaylist (package:mpax_flutter/services/media_library_service.dart:136:5)
+        E/flutter (17641): <asynchronous suspension>
+        E/flutter (17641): #8      _ScanController.scanTargetList (package:mpax_flutter/views/scan_page.dart:119:5)
+        E/flutter (17641): <asynchronous suspension>
+        E/flutter (17641):
+       */
+      // for (var content in playlistModel.contentList) {
+      //   await txn.insert(
+      //     playlistModel.tableName,
+      //     content.toMap(),
+      //     conflictAlgorithm: ConflictAlgorithm.replace,
+      //   );
+      // }
     });
   }
 
