@@ -29,6 +29,7 @@ class PlayerService extends GetxService {
 
   // Current playing content.
   final currentContent = PlayContent().obs;
+  String playMode = _repeatString;
 
   // Show on media widget.
   Rx<IconData> playButtonIcon = _playIcon.obs;
@@ -49,7 +50,8 @@ class PlayerService extends GetxService {
         setCurrentContent(PlayContent.fromEntry(currentMedia), currentPlaylist);
       }
     }
-    switchPlayMode(_configService.getString('PlayMode') ?? _repeatString);
+    playMode = _configService.getString('PlayMode') ?? _repeatString;
+    switchPlayMode(playMode);
     return this;
   }
 
@@ -90,12 +92,15 @@ class PlayerService extends GetxService {
     if (mode != null) {
       if (mode == _repeatString) {
         playModeIcon.value = _repeatIcon;
+        playMode = _repeatString;
         return;
       } else if (mode == _repeatOneString) {
         playModeIcon.value == _repeatOneIcon;
+        playMode = _repeatOneString;
         return;
       } else if (mode == _shuffleString) {
         playModeIcon.value == _shuffleIcon;
+        playMode = _shuffleString;
         return;
       }
     }
@@ -104,38 +109,70 @@ class PlayerService extends GetxService {
       _player.setLoopMode(LoopMode.one);
       _player.setShuffleModeEnabled(false);
       _configService.saveString("PlayMode", _repeatOneString);
+      playMode = _repeatOneString;
     } else if (playModeIcon.value == _repeatOneIcon) {
       playModeIcon.value = _shuffleIcon;
       _player.setLoopMode(LoopMode.off);
       _player.setShuffleModeEnabled(true);
       _configService.saveString("PlayMode", _shuffleString);
+      playMode = _shuffleString;
     } else {
       playModeIcon.value = _repeatIcon;
       _player.setLoopMode(LoopMode.all);
       _player.setShuffleModeEnabled(false);
       _configService.saveString("PlayMode", _repeatString);
+      playMode = _repeatString;
     }
   }
 
-  void switchToSiblingMedia(bool isNext) {
+  void seekToAnother(bool isNext) {
     if (isNext) {
-      PlayContent content =
-          currentPlaylist.findNextContent(currentContent.value);
-      if (content.contentPath.isEmpty) {
-        return;
+      switch (playMode) {
+        case _shuffleString:
+          PlayContent c = currentPlaylist.randomPlayContent();
+          if (c.contentPath.isEmpty) {
+            play();
+            return;
+          }
+          setCurrentContent(c, currentPlaylist);
+          play();
+          break;
+        case _repeatString:
+        case _repeatOneString:
+        default:
+          PlayContent content =
+              currentPlaylist.findNextContent(currentContent.value);
+          if (content.contentPath.isEmpty) {
+            return;
+          }
+          _player.setFilePath(content.contentPath);
+          currentContent.value = content;
+          play();
       }
-      _player.setFilePath(content.contentPath);
-      currentContent.value = content;
-      play();
     } else {
-      PlayContent content =
-          currentPlaylist.findPreviousContent(currentContent.value);
-      if (content.contentPath.isEmpty) {
-        return;
+      switch (playMode) {
+        // TODO: Use history here.
+        case _shuffleString:
+          PlayContent c = currentPlaylist.randomPlayContent();
+          if (c.contentPath.isEmpty) {
+            play();
+            return;
+          }
+          setCurrentContent(c, currentPlaylist);
+          play();
+          break;
+        case _repeatString:
+        case _repeatOneString:
+        default:
+          PlayContent content =
+              currentPlaylist.findPreviousContent(currentContent.value);
+          if (content.contentPath.isEmpty) {
+            return;
+          }
+          _player.setFilePath(content.contentPath);
+          currentContent.value = content;
+          play();
       }
-      _player.setFilePath(content.contentPath);
-      currentContent.value = content;
-      play();
     }
   }
 

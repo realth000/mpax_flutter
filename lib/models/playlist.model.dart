@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:mpax_flutter/models/play_content.model.dart';
 
 class PlaylistModel {
@@ -52,5 +54,12 @@ class PlaylistModel {
       "playlist_name": name,
       "table_name": tableName,
     };
+  }
+
+  PlayContent randomPlayContent() {
+    if (contentList.isEmpty) {
+      return PlayContent();
+    }
+    return contentList[Random().nextInt(contentList.length)];
   }
 }

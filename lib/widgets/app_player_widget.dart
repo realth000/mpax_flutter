@@ -16,7 +16,9 @@ class _ProgressWidget extends GetView<PlayerService> {
         }
         final v = (snapshot.data as Duration).inSeconds.toDouble() /
             controller.playerDuration()!.inSeconds.toDouble();
-
+        if (snapshot.connectionState == ConnectionState.done || v.isEqual(1)) {
+          controller.seekToAnother(true);
+        }
         return LinearProgressIndicator(
           minHeight: 2.0,
           value: v,
@@ -62,7 +64,7 @@ class MPaxPlayerWidget extends GetView<PlayerService> {
                         // For animation.
                       },
                       onLongPressEnd: (LongPressEndDetails details) {
-                        controller.switchToSiblingMedia(
+                        controller.seekToAnother(
                             details.globalPosition.dx >= context.width / 2);
                       },
                       child: Padding(
