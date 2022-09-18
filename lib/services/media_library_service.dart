@@ -44,7 +44,6 @@ class MediaLibraryService extends GetxService {
   void _resetPlaylistModel(PlaylistModel model) {
     model.clearContent();
     model.tableName = _regenerateTableName();
-    // print("!! GENERATED TABLE NAME ${model.tableName}");
   }
 
   Future<MediaLibraryService> init() async {
@@ -88,7 +87,15 @@ class MediaLibraryService extends GetxService {
           playContent['length'],
         );
         model.contentList.add(c);
-        _allContentModel.contentList.add(c);
+        if (model.tableName == "all_media") {
+          _allContentModel = model;
+        } else {
+          _allContentModel.contentList.add(c);
+        }
+      }
+
+      if (model.tableName != "all_media") {
+        _playlistModel.add(model);
       }
     }
     return this;
@@ -151,6 +158,8 @@ class MediaLibraryService extends GetxService {
   }
 
   Future<void> saveMediaLibrary() async {
+    _allContentModel.name = 'all_media';
+    _allContentModel.tableName = 'all_media';
     await savePlaylist(_allContentModel);
   }
 
@@ -171,5 +180,17 @@ class MediaLibraryService extends GetxService {
       _lastCount = 0;
     }
     return "playlist_${timeStamp}_${_lastCount}_table";
+  }
+
+  PlaylistModel findPlaylistByTableName(String tableName) {
+    if (_allContentModel.tableName == tableName) {
+      return _allContentModel;
+    }
+    for (PlaylistModel model in _playlistModel) {
+      if (model.tableName == tableName) {
+        return model;
+      }
+    }
+    return PlaylistModel();
   }
 }

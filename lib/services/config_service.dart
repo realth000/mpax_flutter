@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 const Map<String, Type> configMap = <String, Type>{
   "ScanTargetList": List<String>,
   "CurrentMedia": String,
+  "CurrentPlaylist": String,
   "PlayMode": String,
 };
 

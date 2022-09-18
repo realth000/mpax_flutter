@@ -6,6 +6,7 @@ import 'package:just_audio/just_audio.dart';
 import 'package:mpax_flutter/models/play_content.model.dart';
 import 'package:mpax_flutter/models/playlist.model.dart';
 import 'package:mpax_flutter/services/config_service.dart';
+import 'package:mpax_flutter/services/media_library_service.dart';
 
 class PlayerService extends GetxService {
   // State
@@ -19,6 +20,7 @@ class PlayerService extends GetxService {
   static const IconData _shuffleIcon = Icons.shuffle;
 
   final _configService = Get.find<ConfigService>();
+  final _libraryService = Get.find<MediaLibraryService>();
   final _player = AudioPlayer();
 
   // Current playing playlist.
@@ -33,24 +35,20 @@ class PlayerService extends GetxService {
 
   Future<PlayerService> init() async {
     // Load configs.
-    final File currentMediaString =
+    final File currentMedia =
         File(_configService.getString('CurrentMedia') ?? "");
-    if (currentMediaString.existsSync()) {
+    if (currentMedia.existsSync()) {
       // FIXME: Add current playlist config save and load.
-      // setCurrentContent(PlayContent.fromEntry(currentMediaString));
+      final String currentPlaylistString =
+          _configService.getString('CurrentPlaylist') ?? "";
+      final PlaylistModel currentPlaylist =
+          _libraryService.findPlaylistByTableName(currentPlaylistString);
+      // _libraryService
+      if (currentPlaylist.tableName.isNotEmpty) {
+        setCurrentContent(PlayContent.fromEntry(currentMedia), currentPlaylist);
+      }
     }
-    final playModeString =
-        _configService.getString('PlayMode') ?? _repeatString;
-    switch (playModeString) {
-      case _repeatString:
-        playModeIcon.value = _repeatIcon;
-        break;
-      case _repeatOneString:
-        playModeIcon.value = _repeatOneIcon;
-        break;
-      case _shuffleString:
-        playModeIcon.value = _shuffleIcon;
-    }
+    switchPlayMode(_configService.getString('PlayMode') ?? _repeatString);
     return this;
   }
 
@@ -60,14 +58,16 @@ class PlayerService extends GetxService {
       // Not exists
       return;
     }
+    currentContent.value = playContent;
     currentPlaylist = playlist;
     _player.setFilePath(playContent.contentPath);
+    _configService.saveString('CurrentMedia', currentContent.value.contentPath);
+    _configService.saveString('CurrentPlaylist', currentPlaylist.tableName);
     currentContent.value = playContent;
   }
 
   void play() {
     _player.play();
-    _configService.saveString('CurrentMedia', currentContent.value.contentPath);
     playButtonIcon.value = _pauseIcon;
   }
 
