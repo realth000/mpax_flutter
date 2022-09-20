@@ -11,7 +11,9 @@ class _ProgressWidget extends GetView<PlayerService> {
     return StreamBuilder<Duration>(
       stream: controller.positionStream,
       builder: (context, snapshot) {
-        if (controller.playerDuration() == null || snapshot.hasError) {
+        if (controller.playerDuration() == null ||
+            snapshot.hasError ||
+            !snapshot.hasData) {
           return const LinearProgressIndicator(
             minHeight: height,
             value: 0.0,
