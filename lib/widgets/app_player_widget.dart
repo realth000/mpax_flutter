@@ -4,6 +4,8 @@ import 'package:mpax_flutter/services/player_service.dart';
 import 'package:path/path.dart' as path;
 
 class _ProgressWidget extends GetView<PlayerService> {
+  static const double height = 2.0;
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<Duration>(
@@ -11,6 +13,7 @@ class _ProgressWidget extends GetView<PlayerService> {
       builder: (context, snapshot) {
         if (controller.playerDuration() == null || snapshot.hasError) {
           return const LinearProgressIndicator(
+            minHeight: height,
             value: 0.0,
           );
         }
@@ -20,7 +23,7 @@ class _ProgressWidget extends GetView<PlayerService> {
           controller.seekToAnother(true);
         }
         return LinearProgressIndicator(
-          minHeight: 2.0,
+          minHeight: height,
           value: v,
         );
       },
