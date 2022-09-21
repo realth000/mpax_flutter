@@ -21,9 +21,8 @@ class _ProgressWidget extends GetView<PlayerService> {
         }
         final v = (snapshot.data as Duration).inSeconds.toDouble() /
             controller.playerDuration()!.inSeconds.toDouble();
-        if (snapshot.connectionState == ConnectionState.done || v.isEqual(1)) {
-          controller.seekToAnother(true);
-        }
+        // We remove the check and switch to next media here because in builder
+        // there must NOT have something like "set".
         return LinearProgressIndicator(
           minHeight: height,
           value: v,

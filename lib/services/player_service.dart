@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -34,8 +35,20 @@ class PlayerService extends GetxService {
   // Show on media widget.
   Rx<IconData> playButtonIcon = _playIcon.obs;
   Rx<IconData> playModeIcon = _repeatIcon.obs;
+  late final StreamSubscription<Duration?> _playerDurationStream;
+
+  // void dispose() {
+  //   _playerDurationStream.cancel();
+  //   print("DISPOSE!!!!!");
+  // }
 
   Future<PlayerService> init() async {
+    _playerDurationStream = _player.positionStream.listen((position) async {
+      if (position == _player.duration) {
+        print('!!! ${position} ${_player.position}');
+        await seekToAnother(true);
+      }
+    });
     // Load configs.
     final File currentMedia =
         File(_configService.getString('CurrentMedia') ?? '');
@@ -51,7 +64,7 @@ class PlayerService extends GetxService {
       }
     }
     playMode = _configService.getString('PlayMode') ?? _repeatString;
-    switchPlayMode(playMode);
+    await switchPlayMode(playMode);
     return this;
   }
 
@@ -69,18 +82,18 @@ class PlayerService extends GetxService {
     currentContent.value = playContent;
   }
 
-  void play() {
-    _player.play();
+  Future<void> play() async {
+    await _player.play();
     playButtonIcon.value = _pauseIcon;
   }
 
-  void playOrPause() {
+  Future<void> playOrPause() async {
     if (_player.playerState.playing) {
-      _player.pause();
+      await _player.pause();
       playButtonIcon.value = _playIcon;
       return;
     } else if (currentContent.value.contentPath.isNotEmpty) {
-      _player.play();
+      await _player.play();
       playButtonIcon.value = _pauseIcon;
       return;
     } else {
@@ -88,7 +101,7 @@ class PlayerService extends GetxService {
     }
   }
 
-  void switchPlayMode([String? mode]) {
+  Future<void> switchPlayMode([String? mode]) async {
     if (mode != null) {
       if (mode == _repeatString) {
         playModeIcon.value = _repeatIcon;
@@ -106,36 +119,41 @@ class PlayerService extends GetxService {
     }
     if (playModeIcon.value == _repeatIcon) {
       playModeIcon.value = _repeatOneIcon;
-      _player.setLoopMode(LoopMode.one);
-      _player.setShuffleModeEnabled(false);
+      await _player.setLoopMode(LoopMode.one);
+      await _player.setShuffleModeEnabled(false);
       _configService.saveString('PlayMode', _repeatOneString);
       playMode = _repeatOneString;
     } else if (playModeIcon.value == _repeatOneIcon) {
       playModeIcon.value = _shuffleIcon;
-      _player.setLoopMode(LoopMode.off);
-      _player.setShuffleModeEnabled(true);
+      await _player.setLoopMode(LoopMode.off);
+      await _player.setShuffleModeEnabled(true);
       _configService.saveString('PlayMode', _shuffleString);
       playMode = _shuffleString;
     } else {
       playModeIcon.value = _repeatIcon;
-      _player.setLoopMode(LoopMode.all);
-      _player.setShuffleModeEnabled(false);
+      await _player.setLoopMode(LoopMode.all);
+      await _player.setShuffleModeEnabled(false);
       _configService.saveString('PlayMode', _repeatString);
       playMode = _repeatString;
     }
   }
 
-  void seekToAnother(bool isNext) {
+  Future<void> seekToAnother(bool isNext) async {
     if (isNext) {
       switch (playMode) {
         case _shuffleString:
           PlayContent c = currentPlaylist.randomPlayContent();
           if (c.contentPath.isEmpty) {
-            play();
+            await play();
             return;
           }
           setCurrentContent(c, currentPlaylist);
-          play();
+          // For test
+          // final d = await _player.load();
+          // if (d != null) {
+          //   await _player.seek(Duration(seconds: d.inSeconds - 3));
+          // }
+          await play();
           break;
         case _repeatString:
         case _repeatOneString:
@@ -146,7 +164,12 @@ class PlayerService extends GetxService {
           }
           _player.setFilePath(content.contentPath);
           currentContent.value = content;
-          play();
+          // For test
+          // final d = await _player.load();
+          // if (d != null) {
+          //   await _player.seek(Duration(seconds: d.inSeconds - 3));
+          // }
+          await play();
       }
     } else {
       switch (playMode) {
@@ -154,11 +177,11 @@ class PlayerService extends GetxService {
         case _shuffleString:
           var c = currentPlaylist.randomPlayContent();
           if (c.contentPath.isEmpty) {
-            play();
+            await play();
             return;
           }
           setCurrentContent(c, currentPlaylist);
-          play();
+          await play();
           break;
         case _repeatString:
         case _repeatOneString:
@@ -169,8 +192,7 @@ class PlayerService extends GetxService {
             return;
           }
           _player.setFilePath(content.contentPath);
-          currentContent.value = content;
-          play();
+          await play();
       }
     }
   }
