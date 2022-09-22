@@ -16,4 +16,7 @@ const Map<String, String> translationEnUs = <String, String>{
   'Input name': 'Input name',
   'Name can not be empty': 'Name can not be empty',
   'OK': 'Ok',
+  'Add audio': 'Add audio',
+  'Rename': 'Rename',
+  'Delete': 'Delete',
 };

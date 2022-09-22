@@ -78,8 +78,49 @@ class _AddPlaylistWidget extends StatelessWidget {
   }
 }
 
+class _PlaylistMenu extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxWidth: Get.width / 3 * 2,
+          maxHeight: Get.height / 3 * 2,
+        ),
+        child: Scrollbar(
+          child: SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                ListTile(
+                  leading: const Icon(Icons.playlist_add),
+                  title: Text('Add audio'.tr),
+                  onTap: () {},
+                ),
+                ListTile(
+                  leading: const Icon(Icons.drive_file_rename_outline),
+                  title: Text('Rename'.tr),
+                  onTap: () {},
+                ),
+                ListTile(
+                  leading: const Icon(Icons.playlist_remove),
+                  title: Text('Delete'.tr),
+                  onTap: () {},
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class PlaylistPage extends GetView<PlaylistService> {
   const PlaylistPage({super.key});
+
+  Future<void> _openPlaylistMenu() async {
+    final result = await Get.dialog(_PlaylistMenu());
+  }
 
   Future<void> _addPlaylist() async {
     final name = await Get.dialog(_AddPlaylistWidget());
@@ -103,8 +144,8 @@ class PlaylistPage extends GetView<PlaylistService> {
       leading: _getPlaylistCover(model),
       title: Text(model.name),
       trailing: IconButton(
-        onPressed: () {},
-        icon: const Icon(Icons.add_outlined),
+        onPressed: () async => await _openPlaylistMenu(),
+        icon: const Icon(Icons.menu),
       ),
     );
   }

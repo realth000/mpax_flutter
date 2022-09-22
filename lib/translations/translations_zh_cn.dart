@@ -16,4 +16,7 @@ const Map<String, String> translationZhCn = <String, String>{
   'Input name': '输入名称',
   'Name can not be empty': '名称不能为空',
   'OK': '确认',
+  'Add audio': '添加音频',
+  'Rename': '重命名',
+  'Delete': '删除',
 };
