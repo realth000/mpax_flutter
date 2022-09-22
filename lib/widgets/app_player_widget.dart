@@ -35,6 +35,8 @@ class _ProgressWidget extends GetView<PlayerService> {
 class MPaxPlayerWidget extends GetView<PlayerService> {
   const MPaxPlayerWidget({super.key});
 
+  static const double widgetHeight = 70.0;
+
   @override
   Widget build(BuildContext context) {
     return DecoratedBox(
@@ -52,7 +54,7 @@ class MPaxPlayerWidget extends GetView<PlayerService> {
           ),
       child: ConstrainedBox(
         constraints: const BoxConstraints(
-          maxHeight: 70.0,
+          maxHeight: widgetHeight,
         ),
         child: Column(
           children: [
@@ -61,6 +63,22 @@ class MPaxPlayerWidget extends GetView<PlayerService> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
+                  SizedBox(
+                    width: widgetHeight,
+                    // height: widgetHeight - 20.0,
+                    child: Builder(
+                      builder: (BuildContext context) {
+                        if (controller
+                            .currentContent.value.albumCover.isEmpty) {
+                          return const Icon(Icons.music_note);
+                        } else {
+                          // return Image(image: Image.memory(controller
+                          //     .currentContent.value.albumCover.to))
+                          return const Icon(Icons.music_note);
+                        }
+                      },
+                    ),
+                  ),
                   Expanded(
                     child: GestureDetector(
                       behavior: HitTestBehavior.opaque,
