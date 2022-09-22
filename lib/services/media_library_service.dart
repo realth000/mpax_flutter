@@ -17,6 +17,8 @@ class MediaLibraryService extends GetxService {
       'genre TEXT, comment TEXT, channels INT, length INT ';
 
   final List<PlaylistModel> _playlistModel = <PlaylistModel>[];
+
+  List<PlaylistModel> get playlistModel => _playlistModel;
   PlaylistModel _allContentModel = PlaylistModel();
 
   PlaylistModel get allContentModel => _allContentModel;

@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:mpax_flutter/views/home_page.dart';
 import 'package:mpax_flutter/views/media_library_page.dart';
+import 'package:mpax_flutter/views/playlist_page.dart';
 import 'package:mpax_flutter/views/scan_page.dart';
 
 part 'app_routes.dart';
@@ -10,6 +11,10 @@ class MPaxPages {
     GetPage(
       name: MPaxRoutes.home,
       page: () => const HomePage(),
+    ),
+    GetPage(
+      name: MPaxRoutes.playlist,
+      page: () => const PlaylistPage(),
     ),
     GetPage(
       name: MPaxRoutes.scan,

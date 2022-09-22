@@ -11,4 +11,9 @@ const Map<String, String> translationZhCn = <String, String>{
   'Start scan': '开始扫描',
   'Add directory to scan': '添加扫描文件夹',
   'Media Library': '媒体库',
+  'Add Playlist': '添加播放列表',
+  'Name': '名称',
+  'Input name': '输入名称',
+  'Name can not be empty': '名称不能为空',
+  'OK': '确认',
 };

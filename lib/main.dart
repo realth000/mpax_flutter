@@ -4,6 +4,7 @@ import 'package:mpax_flutter/routes/app_pages.dart';
 import 'package:mpax_flutter/services/config_service.dart';
 import 'package:mpax_flutter/services/media_library_service.dart';
 import 'package:mpax_flutter/services/player_service.dart';
+import 'package:mpax_flutter/services/playlist_service.dart';
 import 'package:mpax_flutter/translations/translations.dart';
 
 void main() async {
@@ -36,5 +37,6 @@ Future<void> initServices() async {
   // Use service.init() here to make sure service is init.
   await Get.putAsync(() async => await ConfigService().init());
   await Get.putAsync(() async => await MediaLibraryService().init());
+  await Get.putAsync(() async => await PlaylistService().init());
   await Get.putAsync(() async => await PlayerService().init());
 }

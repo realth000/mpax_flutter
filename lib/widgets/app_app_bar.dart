@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class MPaxAppBar extends StatelessWidget with PreferredSizeWidget {
-  const MPaxAppBar({required this.title, super.key});
+  MPaxAppBar({required this.title, this.actions = const <Widget>[], super.key});
 
   final String title;
+  late final List<Widget> actions;
 
   // String leadingRouteName = "";
 
@@ -18,7 +19,7 @@ class MPaxAppBar extends StatelessWidget with PreferredSizeWidget {
           Scaffold.of(context).openDrawer();
         },
       ),
-      actions: const <Widget>[],
+      actions: actions,
     );
   }
 

@@ -11,4 +11,9 @@ const Map<String, String> translationEnUs = <String, String>{
   'Start scan': 'Start scan',
   'Add directory to scan': 'Add directory',
   'Media Library': 'Media Library',
+  'Add Playlist': 'Add Playlist',
+  'Name': 'Name',
+  'Input name': 'Input name',
+  'Name can not be empty': 'Name can not be empty',
+  'OK': 'Ok',
 };
