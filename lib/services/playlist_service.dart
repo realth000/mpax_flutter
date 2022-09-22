@@ -27,6 +27,13 @@ class PlaylistService extends GetxService {
     await _libraryService.savePlaylist(playlist);
   }
 
+  Future<void> deletePlaylist(PlaylistModel playlistModel) async {
+    _allPlaylist.remove(playlistModel);
+    // TODO: There should be something like .removePlaylist,
+    // instead of rewriting the whole database.
+    await _libraryService.saveAllPlaylist();
+  }
+
   Future<PlaylistService> init() async {
     _allPlaylist.value = _libraryService.playlistModel;
     return this;

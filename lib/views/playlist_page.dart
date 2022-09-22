@@ -78,9 +78,10 @@ class _AddPlaylistWidget extends StatelessWidget {
   }
 }
 
-class _PlaylistMenu extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
+class PlaylistPage extends GetView<PlaylistService> {
+  const PlaylistPage({super.key});
+
+  Dialog _buildPlaylistMenu(PlaylistModel playlistModel) {
     return Dialog(
       child: ConstrainedBox(
         constraints: BoxConstraints(
@@ -104,7 +105,10 @@ class _PlaylistMenu extends StatelessWidget {
                 ListTile(
                   leading: const Icon(Icons.playlist_remove),
                   title: Text('Delete'.tr),
-                  onTap: () {},
+                  onTap: () {
+                    controller.deletePlaylist(playlistModel);
+                    Get.back();
+                  },
                 ),
               ],
             ),
@@ -113,13 +117,9 @@ class _PlaylistMenu extends StatelessWidget {
       ),
     );
   }
-}
 
-class PlaylistPage extends GetView<PlaylistService> {
-  const PlaylistPage({super.key});
-
-  Future<void> _openPlaylistMenu() async {
-    final result = await Get.dialog(_PlaylistMenu());
+  Future<void> _openPlaylistMenu(PlaylistModel playlistModel) async {
+    final result = await Get.dialog(_buildPlaylistMenu(playlistModel));
   }
 
   Future<void> _addPlaylist() async {
@@ -144,7 +144,7 @@ class PlaylistPage extends GetView<PlaylistService> {
       leading: _getPlaylistCover(model),
       title: Text(model.name),
       trailing: IconButton(
-        onPressed: () async => await _openPlaylistMenu(),
+        onPressed: () async => await _openPlaylistMenu(model),
         icon: const Icon(Icons.menu),
       ),
     );
