@@ -21,6 +21,8 @@ class PlaylistService extends GetxService {
     }
     PlaylistModel playlist = PlaylistModel();
     playlist.name = info.name;
+    // FIXME: Maybe should do in MediaLibraryService.
+    // _libraryService.addPlaylist(playlist);
     _allPlaylist.add(playlist);
     await _libraryService.savePlaylist(playlist);
   }

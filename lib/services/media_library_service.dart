@@ -16,12 +16,12 @@ class MediaLibraryService extends GetxService {
       'album_track_count INT, track_number INT, bit_rate INT, sample_rate INT, '
       'genre TEXT, comment TEXT, channels INT, length INT ';
 
-  final List<PlaylistModel> _playlistModel = <PlaylistModel>[];
+  final List<PlaylistModel> _allPlaylist = <PlaylistModel>[];
 
-  List<PlaylistModel> get playlistModel => _playlistModel;
-  PlaylistModel _allContentModel = PlaylistModel();
+  List<PlaylistModel> get playlistModel => _allPlaylist;
+  PlaylistModel _allContent = PlaylistModel();
 
-  PlaylistModel get allContentModel => _allContentModel;
+  PlaylistModel get allContentModel => _allContent;
 
   // Used for prevent same name playlist.
   String _lastTimeStamp = '';
@@ -29,19 +29,23 @@ class MediaLibraryService extends GetxService {
 
   late final Future<Database> _database;
 
-  List<PlayContent> get content => _allContentModel.contentList;
+  List<PlayContent> get content => _allContent.contentList;
 
   bool addContent(PlayContent playContent) {
-    if (_allContentModel.contentList.contains(playContent)) {
+    if (_allContent.contentList.contains(playContent)) {
       return false;
     }
-    _allContentModel.contentList.add(playContent);
+    _allContent.contentList.add(playContent);
     return true;
   }
 
+  void addPlaylist(PlaylistModel playlistModel) {
+    _allPlaylist.add(playlistModel);
+  }
+
   void resetLibrary() {
-    _allContentModel.contentList.clear();
-    _resetPlaylistModel(_allContentModel);
+    _allContent.contentList.clear();
+    _resetPlaylistModel(_allContent);
   }
 
   void _resetPlaylistModel(PlaylistModel model) {
@@ -91,14 +95,14 @@ class MediaLibraryService extends GetxService {
         );
         model.contentList.add(c);
         if (model.tableName == allMediaTableName) {
-          _allContentModel = model;
+          _allContent = model;
         } else {
-          _allContentModel.contentList.add(c);
+          _allContent.contentList.add(c);
         }
       }
 
       if (model.tableName != allMediaTableName) {
-        _playlistModel.add(model);
+        _allPlaylist.add(model);
       }
     }
     return this;
@@ -166,15 +170,15 @@ class MediaLibraryService extends GetxService {
   }
 
   Future<void> saveMediaLibrary() async {
-    _allContentModel
+    _allContent
       ..name = allMediaTableName
       ..tableName = allMediaTableName;
-    await savePlaylist(_allContentModel);
+    await savePlaylist(_allContent);
   }
 
   Future<void> saveAllPlaylist() async {
     await saveMediaLibrary();
-    for (var playlist in _playlistModel) {
+    for (var playlist in _allPlaylist) {
       await savePlaylist(playlist);
     }
   }
@@ -192,10 +196,10 @@ class MediaLibraryService extends GetxService {
   }
 
   PlaylistModel findPlaylistByTableName(String tableName) {
-    if (_allContentModel.tableName == tableName) {
-      return _allContentModel;
+    if (_allContent.tableName == tableName) {
+      return _allContent;
     }
-    for (final model in _playlistModel) {
+    for (final model in _allPlaylist) {
       if (model.tableName == tableName) {
         return model;
       }
