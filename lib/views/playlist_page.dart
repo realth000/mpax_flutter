@@ -14,41 +14,42 @@ class _AddPlaylistWidget extends StatelessWidget {
     return Form(
       key: _formKey,
       autovalidateMode: AutovalidateMode.onUserInteraction,
-      child: Expanded(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            TextFormField(
-              autofocus: true,
-              controller: _nameController,
-              decoration: InputDecoration(
-                labelText: 'Name'.tr,
-                hintText: 'Input name'.tr,
-                prefixIcon: const Icon(
-                  Icons.featured_play_list,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          TextFormField(
+            autofocus: true,
+            controller: _nameController,
+            decoration: InputDecoration(
+              labelText: 'Name'.tr,
+              hintText: 'Input name'.tr,
+              prefixIcon: const Icon(
+                Icons.featured_play_list,
+              ),
+            ),
+            validator: (v) {
+              return v!.trim().isNotEmpty ? null : 'Name can not be empty'.tr;
+            },
+          ),
+          const SizedBox(
+            height: 40,
+          ),
+          Row(
+            children: [
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () {
+                    if (!(_formKey.currentState as FormState).validate()) {
+                      return;
+                    }
+                    Get.back(result: _nameController.text);
+                  },
+                  child: Text('OK'.tr),
                 ),
               ),
-              validator: (v) {
-                return v!.trim().isNotEmpty ? null : 'Name can not be empty'.tr;
-              },
-            ),
-            Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      if (!(_formKey.currentState as FormState).validate()) {
-                        return;
-                      }
-                      Get.back(result: _nameController.text);
-                    },
-                    child: Text('OK'.tr),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -56,12 +57,15 @@ class _AddPlaylistWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      child: SizedBox(
-        width: Get.width / 3 * 2,
-        height: Get.height / 3 * 2,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxWidth: Get.width / 3 * 2,
+          maxHeight: Get.height / 3 * 2,
+        ),
         child: Padding(
-          padding: const EdgeInsets.all(18.0),
-          child: Column(
+          padding: const EdgeInsets.all(20),
+          child: Wrap(
+            runSpacing: 10,
             children: <Widget>[
               Text(
                 'Add Playlist'.tr,
