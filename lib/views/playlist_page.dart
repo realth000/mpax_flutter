@@ -86,7 +86,7 @@ class PlaylistPage extends GetView<PlaylistService> {
     if (name == null) {
       return;
     }
-    controller.addPlaylist(PlaylistInfo(name, false));
+    await controller.addPlaylist(PlaylistInfo(name, false));
   }
 
   Widget _getPlaylistCover(PlaylistModel model) {

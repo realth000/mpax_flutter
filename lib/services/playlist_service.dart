@@ -15,13 +15,14 @@ class PlaylistService extends GetxService {
 
   get allPlaylist => _allPlaylist.value;
 
-  void addPlaylist(PlaylistInfo info) {
+  Future<void> addPlaylist(PlaylistInfo info) async {
     if (info.name.isEmpty) {
       return;
     }
     PlaylistModel playlist = PlaylistModel();
     playlist.name = info.name;
     _allPlaylist.add(playlist);
+    await _libraryService.savePlaylist(playlist);
   }
 
   Future<PlaylistService> init() async {

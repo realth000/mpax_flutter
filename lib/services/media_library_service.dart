@@ -105,6 +105,9 @@ class MediaLibraryService extends GetxService {
   }
 
   Future<void> savePlaylist(PlaylistModel playlistModel) async {
+    if (playlistModel.tableName.isEmpty) {
+      playlistModel.tableName = _regenerateTableName();
+    }
     final db = await _database;
     await db.transaction((txn) async {
       await txn.execute('DROP TABLE IF EXISTS ${playlistModel.tableName}');
