@@ -6,6 +6,8 @@ const Map<String, Type> configMap = <String, Type>{
   'CurrentMedia': String,
   'CurrentPlaylist': String,
   'PlayMode': String,
+  'UseDarkMode': bool,
+  'FollowSystemDarkMode': bool,
 };
 
 class ConfigService extends GetxService {
