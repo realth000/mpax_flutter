@@ -94,8 +94,8 @@ class PlayerService extends GetxService {
       playButtonIcon.value = _playIcon;
       return;
     } else if (currentContent.value.contentPath.isNotEmpty) {
-      await _player.play();
       playButtonIcon.value = _pauseIcon;
+      await _player.play();
       return;
     } else {
       // Not a good state.
