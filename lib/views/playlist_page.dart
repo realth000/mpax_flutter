@@ -169,9 +169,9 @@ class PlaylistPage extends GetView<PlaylistService> {
       appBar: MPaxAppBar(
         title: 'Playlist'.tr,
         actions: <Widget>[
-          ElevatedButton(
+          IconButton(
             onPressed: () async => await _addPlaylist(),
-            child: const Icon(Icons.add),
+            icon: const Icon(Icons.add),
           ),
         ],
       ),

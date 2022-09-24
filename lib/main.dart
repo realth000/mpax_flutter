@@ -5,6 +5,7 @@ import 'package:mpax_flutter/services/config_service.dart';
 import 'package:mpax_flutter/services/media_library_service.dart';
 import 'package:mpax_flutter/services/player_service.dart';
 import 'package:mpax_flutter/services/playlist_service.dart';
+import 'package:mpax_flutter/services/theme_service.dart';
 import 'package:mpax_flutter/translations/translations.dart';
 
 void main() async {
@@ -29,6 +30,7 @@ class MPaxApp extends StatelessWidget {
           ? MPaxRoutes.library
           : MPaxRoutes.home,
       getPages: MPaxPages.routes,
+      theme: Get.find<ThemeService>().getTheme(),
     );
   }
 }
@@ -36,6 +38,7 @@ class MPaxApp extends StatelessWidget {
 Future<void> initServices() async {
   // Use service.init() here to make sure service is init.
   await Get.putAsync(() async => await ConfigService().init());
+  await Get.putAsync(() async => await ThemeService().init());
   await Get.putAsync(() async => await MediaLibraryService().init());
   await Get.putAsync(() async => await PlaylistService().init());
   await Get.putAsync(() async => await PlayerService().init());

@@ -27,20 +27,27 @@ class MediaItemTile extends StatelessWidget {
     _controller = MediaItemController(playContent, model);
   }
 
-  PlayContent playContent = PlayContent();
+  final PlayContent playContent;
   late final MediaItemController _controller;
   final PlaylistModel model;
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: const Icon(Icons.music_note),
+      leading: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: const [
+          Icon(Icons.music_note),
+        ],
+      ),
       title: Text(
         playContent.title == ""
             ? path.basename(playContent.contentPath)
             : playContent.title,
       ),
-      subtitle: Text(playContent.contentPath),
+      subtitle: Text(
+        playContent.contentPath.replaceFirst('/storage/emulated/0/', ''),
+      ),
       onTap: () {
         _controller.play();
       },

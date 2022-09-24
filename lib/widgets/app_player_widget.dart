@@ -37,6 +37,93 @@ class MPaxPlayerWidget extends GetView<PlayerService> {
 
   static const double widgetHeight = 70.0;
 
+  SizedBox _buildAudioAlbumCoverWidget(BuildContext context) {
+    return SizedBox(
+      width: widgetHeight - 10.0,
+      height: widgetHeight - 10.0,
+      child: Builder(
+        builder: (BuildContext context) {
+          if (controller.currentContent.value.albumCover.isEmpty) {
+            return const Icon(Icons.music_note);
+          } else {
+            // return Image(image: Image.memory(controller
+            //     .currentContent.value.albumCover.to))
+            return const Icon(Icons.music_note);
+          }
+        },
+      ),
+    );
+  }
+
+  Expanded _buildAudioInfoWidget(BuildContext context) {
+    final titleWidget = Expanded(
+      child: Obx(
+        () => Text(
+          controller.currentContent.value.title.isEmpty
+              ? controller.currentContent.value.contentName
+              : controller.currentContent.value.title,
+          textAlign: TextAlign.left,
+          maxLines: 1,
+        ),
+      ),
+    );
+
+    final artistWidget = Expanded(
+      child: Obx(
+        () => Text(
+          controller.currentContent.value.artist.isEmpty
+              ? ''
+              : controller.currentContent.value.artist,
+          textAlign: TextAlign.left,
+          maxLines: 1,
+        ),
+      ),
+    );
+
+    final albumWidget = Expanded(
+      child: Obx(
+        () => Text(
+          controller.currentContent.value.albumTitle.isEmpty
+              ? path.dirname(
+                  controller.currentContent.value.contentPath
+                      .replaceFirst('/storage/emulated/0/', ''),
+                )
+              : controller.currentContent.value.albumTitle,
+          textAlign: TextAlign.left,
+          maxLines: 1,
+        ),
+      ),
+    );
+
+    return Expanded(
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onLongPressStart: (details) {
+          // For animation.
+        },
+        onLongPressEnd: (details) {
+          controller.seekToAnother(
+            details.globalPosition.dx >= context.width / 2,
+          );
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(3),
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                titleWidget,
+                artistWidget,
+                albumWidget,
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return DecoratedBox(
@@ -63,94 +150,18 @@ class MPaxPlayerWidget extends GetView<PlayerService> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
-                  SizedBox(
-                    width: widgetHeight,
-                    // height: widgetHeight - 20.0,
-                    child: Builder(
-                      builder: (BuildContext context) {
-                        if (controller
-                            .currentContent.value.albumCover.isEmpty) {
-                          return const Icon(Icons.music_note);
-                        } else {
-                          // return Image(image: Image.memory(controller
-                          //     .currentContent.value.albumCover.to))
-                          return const Icon(Icons.music_note);
-                        }
-                      },
-                    ),
-                  ),
-                  Expanded(
-                    child: GestureDetector(
-                      behavior: HitTestBehavior.opaque,
-                      onLongPressStart: (details) {
-                        // For animation.
-                      },
-                      onLongPressEnd: (details) {
-                        controller.seekToAnother(
-                          details.globalPosition.dx >= context.width / 2,
-                        );
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.all(3),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Expanded(
-                                child: Obx(
-                                  () => Text(
-                                    controller
-                                            .currentContent.value.title.isEmpty
-                                        ? controller
-                                            .currentContent.value.contentName
-                                        : controller.currentContent.value.title,
-                                    textAlign: TextAlign.center,
-                                    maxLines: 1,
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                child: Obx(
-                                  () => Text(
-                                    controller
-                                            .currentContent.value.artist.isEmpty
-                                        ? ''
-                                        : controller
-                                            .currentContent.value.artist,
-                                    textAlign: TextAlign.center,
-                                    maxLines: 1,
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                child: Obx(
-                                  () => Text(
-                                    controller.currentContent.value.albumTitle
-                                            .isEmpty
-                                        ? path.dirname(
-                                            controller.currentContent.value
-                                                .contentPath,
-                                          )
-                                        : controller
-                                            .currentContent.value.albumTitle,
-                                    textAlign: TextAlign.center,
-                                    maxLines: 1,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
+                  // Album cover
+                  _buildAudioAlbumCoverWidget(context),
+                  // Audio info
+                  _buildAudioInfoWidget(context),
+                  // Play-and-pause button.
                   IconButton(
                     onPressed: () {
                       controller.playOrPause();
                     },
                     icon: Obx(() => Icon(controller.playButtonIcon.value)),
                   ),
+                  // Play mode button.
                   IconButton(
                     onPressed: () {
                       controller.switchPlayMode();
