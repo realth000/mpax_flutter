@@ -19,4 +19,10 @@ const Map<String, String> translationZhCn = <String, String>{
   'Add audio': '添加音频',
   'Rename': '重命名',
   'Delete': '删除',
+  'Appearance': '外观',
+  'Theme': '主题',
+  'Follow system/Light/Dark': '跟随系统/浅色/深色',
+  'Follow system': '跟随系统',
+  'Light mode': '浅色',
+  'Dark mode': '深色',
 };

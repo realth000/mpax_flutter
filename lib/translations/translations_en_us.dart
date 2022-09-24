@@ -19,4 +19,10 @@ const Map<String, String> translationEnUs = <String, String>{
   'Add audio': 'Add audio',
   'Rename': 'Rename',
   'Delete': 'Delete',
+  'Appearance': 'Appearance',
+  'Theme': 'Theme',
+  'Follow system/Light/Dark': 'Follow system/Light/Dark',
+  'Follow system': 'Follow system',
+  'Light mode': 'Light mode',
+  'Dark mode': 'Dark mode',
 };

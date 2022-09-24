@@ -6,6 +6,7 @@ import 'package:mpax_flutter/services/media_library_service.dart';
 import 'package:mpax_flutter/services/player_service.dart';
 import 'package:mpax_flutter/services/playlist_service.dart';
 import 'package:mpax_flutter/services/theme_service.dart';
+import 'package:mpax_flutter/themes/app_themes.dart';
 import 'package:mpax_flutter/translations/translations.dart';
 
 void main() async {
@@ -30,7 +31,8 @@ class MPaxApp extends StatelessWidget {
           ? MPaxRoutes.library
           : MPaxRoutes.home,
       getPages: MPaxPages.routes,
-      theme: Get.find<ThemeService>().getTheme(),
+      theme: MPaxTheme.light,
+      darkTheme: MPaxTheme.dark,
     );
   }
 }

@@ -6,6 +6,8 @@ import 'package:mpax_flutter/widgets/app_app_bar.dart';
 import 'package:mpax_flutter/widgets/app_drawer.dart';
 import 'package:mpax_flutter/widgets/app_player_widget.dart';
 
+import '../widgets/util_widgets.dart';
+
 class _AddPlaylistWidget extends StatelessWidget {
   final TextEditingController _nameController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
@@ -56,26 +58,20 @@ class _AddPlaylistWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
-      child: ConstrainedBox(
-        constraints: BoxConstraints(
-          maxWidth: Get.width / 3 * 2,
-          maxHeight: Get.height / 3 * 2,
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Wrap(
-            runSpacing: 10,
-            children: <Widget>[
-              Text(
-                'Add Playlist'.tr,
-                style: const TextStyle(
-                  fontSize: 20,
-                ),
+    return ModalDialog(
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Wrap(
+          runSpacing: 10,
+          children: <Widget>[
+            Text(
+              'Add Playlist'.tr,
+              style: const TextStyle(
+                fontSize: 20,
               ),
-              _askForm(),
-            ],
-          ),
+            ),
+            _askForm(),
+          ],
         ),
       ),
     );
@@ -85,39 +81,29 @@ class _AddPlaylistWidget extends StatelessWidget {
 class PlaylistPage extends GetView<PlaylistService> {
   const PlaylistPage({super.key});
 
-  Dialog _buildPlaylistMenu(PlaylistModel playlistModel) {
-    return Dialog(
-      child: ConstrainedBox(
-        constraints: BoxConstraints(
-          maxWidth: Get.width / 3 * 2,
-          maxHeight: Get.height / 3 * 2,
-        ),
-        child: Scrollbar(
-          child: SingleChildScrollView(
-            child: Column(
-              children: <Widget>[
-                ListTile(
-                  leading: const Icon(Icons.playlist_add),
-                  title: Text('Add audio'.tr),
-                  onTap: () {},
-                ),
-                ListTile(
-                  leading: const Icon(Icons.drive_file_rename_outline),
-                  title: Text('Rename'.tr),
-                  onTap: () {},
-                ),
-                ListTile(
-                  leading: const Icon(Icons.playlist_remove),
-                  title: Text('Delete'.tr),
-                  onTap: () {
-                    controller.deletePlaylist(playlistModel);
-                    Get.back();
-                  },
-                ),
-              ],
-            ),
+  Widget _buildPlaylistMenu(PlaylistModel playlistModel) {
+    return ModalDialog(
+      child: Column(
+        children: <Widget>[
+          ListTile(
+            leading: const Icon(Icons.playlist_add),
+            title: Text('Add audio'.tr),
+            onTap: () {},
           ),
-        ),
+          ListTile(
+            leading: const Icon(Icons.drive_file_rename_outline),
+            title: Text('Rename'.tr),
+            onTap: () {},
+          ),
+          ListTile(
+            leading: const Icon(Icons.playlist_remove),
+            title: Text('Delete'.tr),
+            onTap: () {
+              controller.deletePlaylist(playlistModel);
+              Get.back();
+            },
+          ),
+        ],
       ),
     );
   }

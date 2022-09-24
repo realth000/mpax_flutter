@@ -4,16 +4,38 @@ import 'package:get/get.dart';
 import 'package:mpax_flutter/services/config_service.dart';
 import 'package:mpax_flutter/themes/app_themes.dart';
 
+enum MPaxThemeMode {
+  auto,
+  dark,
+  light,
+}
+
 class ThemeService extends GetxService {
   final _configService = Get.find<ConfigService>();
 
   // Theme settings.
-  final useDarkTheme = Get.isDarkMode.obs;
+  bool useDarkTheme = Get.isDarkMode;
   bool followSystemDarkMode = true;
 
-  void changeThemeModel() {
-    useDarkTheme.value = !useDarkTheme.value;
-    Get.changeTheme(useDarkTheme.value ? MPaxTheme.dark : MPaxTheme.light);
+  void changeThemeMode(MPaxThemeMode mode) {
+    if (mode == MPaxThemeMode.auto) {
+      final systemTheme = SchedulerBinding.instance.window.platformBrightness;
+      followSystemDarkMode = true;
+      if (systemTheme == Brightness.dark) {
+        Get.changeTheme(MPaxTheme.dark);
+      } else {
+        Get.changeTheme(MPaxTheme.light);
+      }
+    } else if (mode == MPaxThemeMode.dark) {
+      followSystemDarkMode = false;
+      useDarkTheme = true;
+      Get.changeTheme(MPaxTheme.dark);
+    } else if (mode == MPaxThemeMode.light) {
+      followSystemDarkMode = false;
+      useDarkTheme = false;
+      Get.changeTheme(MPaxTheme.light);
+    }
+    saveThemeConfig();
   }
 
   ThemeData getTheme() {
@@ -24,21 +46,23 @@ class ThemeService extends GetxService {
       }
       return MPaxTheme.light;
     }
-    // TODO: If not set to follow system theme, get theme in configure.
-    if (useDarkTheme.value) {
+    if (useDarkTheme) {
       return MPaxTheme.dark;
     } else {
       return MPaxTheme.light;
     }
   }
 
-  void saveThemeConfig() {}
+  void saveThemeConfig() {
+    _configService.saveBool('FollowSystemDarkMode', followSystemDarkMode);
+    _configService.saveBool('UseDarkMode', useDarkTheme);
+  }
 
   Future<ThemeService> init() async {
     // Load from config.
     followSystemDarkMode =
         _configService.getBool('FollowSystemDarkMode') ?? true;
-    useDarkTheme.value = _configService.getBool('UseDarkMode') ?? false;
+    useDarkTheme = _configService.getBool('UseDarkMode') ?? false;
     return this;
   }
 }
