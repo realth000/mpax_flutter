@@ -65,6 +65,17 @@ class MPaxTheme {
     surfaceTint: Color(0xFFC1C1FF),
   );
 
+  static final listTileTheme = ListTileThemeData(
+    shape: RoundedRectangleBorder(
+      // Larger enough to ensure material style.
+      borderRadius: BorderRadius.circular(27.0),
+    ),
+    horizontalTitleGap: 10.0,
+  );
+  static const inputDecorationTheme = InputDecorationTheme(
+    border: OutlineInputBorder(),
+  );
+
   static ThemeData light = ThemeData(
     colorScheme: lightColorScheme,
     materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -77,13 +88,8 @@ class MPaxTheme {
             fontSize: 20,
           ),
     ),
-    listTileTheme: ListTileThemeData(
-      shape: RoundedRectangleBorder(
-        // Larger enough to ensure material style.
-        borderRadius: BorderRadius.circular(27.0),
-      ),
-      horizontalTitleGap: 10.0,
-    ),
+    listTileTheme: listTileTheme,
+    inputDecorationTheme: inputDecorationTheme,
   );
 
   static ThemeData dark = ThemeData(
@@ -97,12 +103,7 @@ class MPaxTheme {
             fontSize: 20,
           ),
     ),
-    listTileTheme: ListTileThemeData(
-      shape: RoundedRectangleBorder(
-        // Larger enough to ensure material style.
-        borderRadius: BorderRadius.circular(27.0),
-      ),
-      horizontalTitleGap: 10.0,
-    ),
+    listTileTheme: listTileTheme,
+    inputDecorationTheme: inputDecorationTheme,
   );
 }
