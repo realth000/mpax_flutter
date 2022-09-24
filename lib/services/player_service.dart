@@ -107,11 +107,11 @@ class PlayerService extends GetxService {
         playMode = _repeatString;
         return;
       } else if (mode == _repeatOneString) {
-        playModeIcon.value == _repeatOneIcon;
+        playModeIcon.value = _repeatOneIcon;
         playMode = _repeatOneString;
         return;
       } else if (mode == _shuffleString) {
-        playModeIcon.value == _shuffleIcon;
+        playModeIcon.value = _shuffleIcon;
         playMode = _shuffleString;
         return;
       }
