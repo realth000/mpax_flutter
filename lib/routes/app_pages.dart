@@ -20,7 +20,7 @@ class MPaxPages {
     ),
     GetPage(
       name: MPaxRoutes.playlist,
-      page: () => const PlaylistPage(),
+      page: () => PlaylistPage(),
     ),
     GetPage(
       name: MPaxRoutes.playlistContent,

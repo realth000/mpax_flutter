@@ -16,9 +16,8 @@ class MediaLibraryService extends GetxService {
       'album_track_count INT, track_number INT, bit_rate INT, sample_rate INT, '
       'genre TEXT, comment TEXT, channels INT, length INT ';
 
-  final List<PlaylistModel> _allPlaylist = <PlaylistModel>[];
+  final List<PlaylistModel> allPlaylist = <PlaylistModel>[].obs;
 
-  List<PlaylistModel> get playlistModel => _allPlaylist;
   PlaylistModel _allContent = PlaylistModel();
 
   PlaylistModel get allContentModel => _allContent;
@@ -50,7 +49,20 @@ class MediaLibraryService extends GetxService {
   }
 
   void addPlaylist(PlaylistModel playlistModel) {
-    _allPlaylist.add(playlistModel);
+    allPlaylist.add(playlistModel);
+    _savePlaylist(playlistModel);
+  }
+
+  Future<void> removePlaylist(PlaylistModel playlistModel) async {
+    allPlaylist
+        .removeWhere((element) => element.tableName == playlistModel.tableName);
+    final db = await _database;
+    await db.delete(
+      infoTableName,
+      where: 'table_name = ?',
+      whereArgs: <String>[playlistModel.tableName],
+    );
+    await db.execute('DROP TABLE ${playlistModel.tableName}');
   }
 
   void resetLibrary() {
@@ -112,7 +124,7 @@ class MediaLibraryService extends GetxService {
       }
 
       if (model.tableName != allMediaTableName) {
-        _allPlaylist.add(model);
+        allPlaylist.add(model);
       }
     }
     return this;
@@ -193,7 +205,7 @@ class MediaLibraryService extends GetxService {
 
   Future<void> saveAllPlaylist() async {
     await saveMediaLibrary();
-    for (var playlist in _allPlaylist) {
+    for (var playlist in allPlaylist) {
       await _savePlaylist(playlist);
     }
   }
@@ -214,7 +226,7 @@ class MediaLibraryService extends GetxService {
     if (_allContent.tableName == tableName) {
       return _allContent;
     }
-    for (final model in _allPlaylist) {
+    for (final model in allPlaylist) {
       if (model.tableName == tableName) {
         return model;
       }

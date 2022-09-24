@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mpax_flutter/models/playlist.model.dart';
 import 'package:mpax_flutter/routes/app_pages.dart';
-import 'package:mpax_flutter/services/playlist_service.dart';
+import 'package:mpax_flutter/services/media_library_service.dart';
 import 'package:mpax_flutter/utils/scan_target_controller.dart';
 import 'package:mpax_flutter/widgets/app_app_bar.dart';
 import 'package:mpax_flutter/widgets/app_drawer.dart';
@@ -80,7 +80,7 @@ class _AddPlaylistWidget extends StatelessWidget {
   }
 }
 
-class PlaylistPage extends GetView<PlaylistService> {
+class PlaylistPage extends GetView<MediaLibraryService> {
   const PlaylistPage({super.key});
 
   Future<void> _addAudioByScanning(PlaylistModel playlistModel) async {
@@ -119,7 +119,7 @@ class PlaylistPage extends GetView<PlaylistService> {
             leading: const Icon(Icons.playlist_remove),
             title: Text('Delete'.tr),
             onTap: () {
-              controller.deletePlaylist(playlistModel);
+              controller.removePlaylist(playlistModel);
               Get.back();
             },
           ),
@@ -137,7 +137,9 @@ class PlaylistPage extends GetView<PlaylistService> {
     if (name == null) {
       return;
     }
-    await controller.addPlaylist(PlaylistInfo(name, false));
+    final p = PlaylistModel();
+    p.name = name;
+    controller.addPlaylist(p);
   }
 
   Widget _getPlaylistCover(PlaylistModel model) {
@@ -164,10 +166,9 @@ class PlaylistPage extends GetView<PlaylistService> {
     );
   }
 
-  List<ListTile> _buildPlaylistList() {
-    List<ListTile> list = <ListTile>[];
-    List<PlaylistModel> allPlaylist = controller.allPlaylist;
-    for (final playlist in allPlaylist) {
+  List<Widget> _buildPlaylistList() {
+    List<Widget> list = <Widget>[];
+    for (final playlist in controller.allPlaylist) {
       list.add(_buildPlaylistItem(playlist));
     }
     return list;

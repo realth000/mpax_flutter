@@ -4,7 +4,6 @@ import 'package:mpax_flutter/routes/app_pages.dart';
 import 'package:mpax_flutter/services/config_service.dart';
 import 'package:mpax_flutter/services/media_library_service.dart';
 import 'package:mpax_flutter/services/player_service.dart';
-import 'package:mpax_flutter/services/playlist_service.dart';
 import 'package:mpax_flutter/services/theme_service.dart';
 import 'package:mpax_flutter/themes/app_themes.dart';
 import 'package:mpax_flutter/translations/translations.dart';
@@ -42,6 +41,5 @@ Future<void> initServices() async {
   await Get.putAsync(() async => await ConfigService().init());
   await Get.putAsync(() async => await ThemeService().init());
   await Get.putAsync(() async => await MediaLibraryService().init());
-  await Get.putAsync(() async => await PlaylistService().init());
   await Get.putAsync(() async => await PlayerService().init());
 }
