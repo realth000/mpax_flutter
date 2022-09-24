@@ -82,8 +82,10 @@ class PlayerService extends GetxService {
   }
 
   Future<void> play() async {
-    await _player.play();
+    // FIXME: The first time from MediaListTileItem to here not finishes .play(),
+    // To turn the icon, assign before .play().
     playButtonIcon.value = _pauseIcon;
+    await _player.play();
   }
 
   Future<void> playOrPause() async {

@@ -12,13 +12,13 @@ class MediaItemController extends GetxController {
   PlayContent playContent;
   PlaylistModel model;
 
-  void play() {
+  Future<void> play() async {
     if (playContent.contentPath.isEmpty) {
       // Not play empty path.
       return;
     }
     playerService.setCurrentContent(playContent, model);
-    playerService.play();
+    await playerService.play();
   }
 }
 
@@ -48,8 +48,8 @@ class MediaItemTile extends StatelessWidget {
       subtitle: Text(
         playContent.contentPath.replaceFirst('/storage/emulated/0/', ''),
       ),
-      onTap: () {
-        _controller.play();
+      onTap: () async {
+        await _controller.play();
       },
     );
   }
