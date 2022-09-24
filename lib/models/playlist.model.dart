@@ -12,9 +12,18 @@ class PlaylistModel {
   List<PlayContent> contentList = <PlayContent>[];
   static int id = -1;
 
+  bool contains(PlayContent playContent) {
+    for (final content in contentList) {
+      if (content.contentPath == playContent.contentPath) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   void addContentList(List<PlayContent> playContentList) {
     for (final content in playContentList) {
-      if (contentList.contains(content)) {
+      if (contains(content)) {
         continue;
       }
       contentList.add(content);

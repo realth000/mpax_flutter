@@ -119,6 +119,11 @@ class MediaLibraryService extends GetxService {
   }
 
   Future<void> savePlaylist(PlaylistModel playlistModel) async {
+    await saveMediaLibrary();
+    await _savePlaylist(playlistModel);
+  }
+
+  Future<void> _savePlaylist(PlaylistModel playlistModel) async {
     if (playlistModel.tableName.isEmpty) {
       playlistModel.tableName = _regenerateTableName();
     }
@@ -183,13 +188,13 @@ class MediaLibraryService extends GetxService {
     _allContent
       ..name = allMediaTableName
       ..tableName = allMediaTableName;
-    await savePlaylist(_allContent);
+    await _savePlaylist(_allContent);
   }
 
   Future<void> saveAllPlaylist() async {
     await saveMediaLibrary();
     for (var playlist in _allPlaylist) {
-      await savePlaylist(playlist);
+      await _savePlaylist(playlist);
     }
   }
 

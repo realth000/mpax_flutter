@@ -6,14 +6,14 @@ import 'package:mpax_flutter/models/playlist.model.dart';
 import 'package:mpax_flutter/services/media_library_service.dart';
 
 class AudioScanner {
-  AudioScanner({required this.targetPath});
+  AudioScanner({required this.targetPath, this.targetModel});
 
   final mediaLibraryService = Get.find<MediaLibraryService>();
 
   final String targetPath;
   PlaylistModel? targetModel;
 
-  Future<void> scan() async {
+  Future<int> scan() async {
     List<PlayContent> scannedAudioList = <PlayContent>[];
     late final Directory d;
     if (targetPath.isNotEmpty) {
@@ -25,6 +25,7 @@ class AudioScanner {
     if (targetModel != null) {
       targetModel!.addContentList(scannedAudioList);
     }
+    return scannedAudioList.length;
   }
 
   Future<void> _scan(FileSystemEntity entry, List<PlayContent> list) async {
@@ -35,8 +36,8 @@ class AudioScanner {
         }
         break;
       case FileSystemEntityType.directory:
-        await for (final entry in (FileSystemEntity as Directory)
-            .list(recursive: true, followLinks: false)) {
+        await for (final entry
+            in (entry as Directory).list(recursive: true, followLinks: false)) {
           if (entry.statSync().type == FileSystemEntityType.file) {
             if (!entry.path.endsWith('mp3')) {
               continue;

@@ -1,7 +1,9 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mpax_flutter/models/playlist.model.dart';
 import 'package:mpax_flutter/services/playlist_service.dart';
+import 'package:mpax_flutter/utils/scan_target_controller.dart';
 import 'package:mpax_flutter/widgets/app_app_bar.dart';
 import 'package:mpax_flutter/widgets/app_drawer.dart';
 import 'package:mpax_flutter/widgets/app_player_widget.dart';
@@ -81,6 +83,21 @@ class _AddPlaylistWidget extends StatelessWidget {
 class PlaylistPage extends GetView<PlaylistService> {
   const PlaylistPage({super.key});
 
+  Future<void> _addAudioByScanning(PlaylistModel playlistModel) async {
+    final targetPath = await FilePicker.platform.getDirectoryPath();
+    if (targetPath == null) {
+      return;
+    }
+    final scanner = AudioScanner(
+      targetPath: targetPath,
+      targetModel: playlistModel,
+    );
+    int addedCount = await scanner.scan();
+    if (addedCount > 0) {
+      await controller.savePlaylist(playlistModel);
+    }
+  }
+
   Widget _buildPlaylistMenu(PlaylistModel playlistModel) {
     return ModalDialog(
       child: Column(
@@ -88,7 +105,10 @@ class PlaylistPage extends GetView<PlaylistService> {
           ListTile(
             leading: const Icon(Icons.playlist_add),
             title: Text('Add audio'.tr),
-            onTap: () {},
+            onTap: () async {
+              await _addAudioByScanning(playlistModel);
+              Get.back();
+            },
           ),
           ListTile(
             leading: const Icon(Icons.drive_file_rename_outline),

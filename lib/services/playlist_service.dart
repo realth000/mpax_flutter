@@ -38,4 +38,8 @@ class PlaylistService extends GetxService {
     _allPlaylist.value = _libraryService.playlistModel;
     return this;
   }
+
+  Future<void> savePlaylist(PlaylistModel playlistModel) async {
+    await _libraryService.savePlaylist(playlistModel);
+  }
 }
