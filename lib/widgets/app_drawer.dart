@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mpax_flutter/routes/app_pages.dart';
+import 'package:mpax_flutter/services/player_service.dart';
 
 class MPaxDrawer extends StatelessWidget {
   const MPaxDrawer({super.key});
@@ -28,6 +29,21 @@ class MPaxDrawer extends StatelessWidget {
             leading: const Icon(Icons.queue_music),
             title: Text('Playlist'.tr),
             onTap: () => Get.offAllNamed(MPaxRoutes.playlist),
+          ),
+          ListTile(
+            leading: const Icon(Icons.featured_play_list),
+            title: Text('Current Playlist'.tr),
+            onTap: () {
+              final currentPlaylistTableName =
+                  Get.find<PlayerService>().currentPlaylist.tableName;
+              if (currentPlaylistTableName.isEmpty) {
+                Get.snackbar(
+                    'No audio playing'.tr, 'Choose one to play ^_^'.tr);
+                return;
+              }
+              Get.offAllNamed(MPaxRoutes.playlistContent.replaceFirst(
+                  ':playlist_table_name', currentPlaylistTableName));
+            },
           ),
           ListTile(
             leading: const Icon(Icons.audiotrack),

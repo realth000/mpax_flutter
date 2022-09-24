@@ -5,6 +5,7 @@ const Map<String, String> translationZhCn = <String, String>{
   'Library': '媒体库',
   'Music': '音乐',
   'Playlist': '播放列表',
+  'Current Playlist': '当前列表',
   'Scan': '扫描音乐',
   'Settings': '设置',
   'About': '关于',
@@ -25,4 +26,6 @@ const Map<String, String> translationZhCn = <String, String>{
   'Follow system': '跟随系统',
   'Light mode': '浅色',
   'Dark mode': '深色',
+  'No audio playing': '还没播放',
+  'Choose one to play ^_^': '选首歌听吧^_^',
 };

@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:mpax_flutter/views/current_playlist_page.dart';
 import 'package:mpax_flutter/views/home_page.dart';
 import 'package:mpax_flutter/views/media_library_page.dart';
 import 'package:mpax_flutter/views/playlist_page.dart';
@@ -20,6 +21,16 @@ class MPaxPages {
     GetPage(
       name: MPaxRoutes.playlist,
       page: () => const PlaylistPage(),
+    ),
+    GetPage(
+      name: MPaxRoutes.playlistContent,
+      page: () {
+        final String? playlistTableName = Get.parameters['playlist_table_name'];
+        if (playlistTableName == null || playlistTableName.isEmpty) {
+          return const MediaLibraryPage();
+        }
+        return PlaylistContentPage();
+      },
     ),
     GetPage(
       name: MPaxRoutes.scan,

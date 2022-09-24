@@ -2,13 +2,13 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mpax_flutter/models/playlist.model.dart';
+import 'package:mpax_flutter/routes/app_pages.dart';
 import 'package:mpax_flutter/services/playlist_service.dart';
 import 'package:mpax_flutter/utils/scan_target_controller.dart';
 import 'package:mpax_flutter/widgets/app_app_bar.dart';
 import 'package:mpax_flutter/widgets/app_drawer.dart';
 import 'package:mpax_flutter/widgets/app_player_widget.dart';
-
-import '../widgets/util_widgets.dart';
+import 'package:mpax_flutter/widgets/util_widgets.dart';
 
 class _AddPlaylistWidget extends StatelessWidget {
   final TextEditingController _nameController = TextEditingController();
@@ -157,6 +157,10 @@ class PlaylistPage extends GetView<PlaylistService> {
         onPressed: () async => await _openPlaylistMenu(model),
         icon: const Icon(Icons.menu),
       ),
+      onTap: () {
+        Get.toNamed(MPaxRoutes.playlistContent
+            .replaceFirst(':playlist_table_name', model.tableName));
+      },
     );
   }
 

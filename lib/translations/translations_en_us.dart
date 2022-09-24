@@ -5,6 +5,7 @@ const Map<String, String> translationEnUs = <String, String>{
   'Library': 'Media Library',
   'Music': 'Music',
   'Playlist': 'Playlist',
+  'Current Playlist': 'Current Playlist',
   'Scan': 'Scan Music',
   'Settings': 'Settings',
   'About': 'About',
@@ -25,4 +26,6 @@ const Map<String, String> translationEnUs = <String, String>{
   'Follow system': 'Follow system',
   'Light mode': 'Light mode',
   'Dark mode': 'Dark mode',
+  'No audio playing': 'No audio playing',
+  'Choose one to play ^_^': 'Choose one to play ^_^',
 };
