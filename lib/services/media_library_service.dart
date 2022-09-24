@@ -39,6 +39,16 @@ class MediaLibraryService extends GetxService {
     return true;
   }
 
+  int addContentList(List<PlayContent> playContentList) {
+    int added = 0;
+    for (final content in playContentList) {
+      if (addContent(content)) {
+        added++;
+      }
+    }
+    return added;
+  }
+
   void addPlaylist(PlaylistModel playlistModel) {
     _allPlaylist.add(playlistModel);
   }

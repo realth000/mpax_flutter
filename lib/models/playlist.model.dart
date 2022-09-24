@@ -12,6 +12,15 @@ class PlaylistModel {
   List<PlayContent> contentList = <PlayContent>[];
   static int id = -1;
 
+  void addContentList(List<PlayContent> playContentList) {
+    for (final content in playContentList) {
+      if (contentList.contains(content)) {
+        continue;
+      }
+      contentList.add(content);
+    }
+  }
+
   void clearContent() {
     contentList.clear();
   }

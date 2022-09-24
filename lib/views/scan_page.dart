@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:mpax_flutter/models/play_content.model.dart';
 import 'package:mpax_flutter/services/config_service.dart';
 import 'package:mpax_flutter/services/media_library_service.dart';
+import 'package:mpax_flutter/utils/scan_target_controller.dart';
 import 'package:mpax_flutter/widgets/app_app_bar.dart';
 import 'package:mpax_flutter/widgets/app_drawer.dart';
 import 'package:mpax_flutter/widgets/app_player_widget.dart';
@@ -179,15 +180,8 @@ class _ScanTargetItemController extends GetxController {
     final d = Directory(target);
     // FileSystemEntity.isFileSync(entry.toString())
     for (final entry in d.listSync(recursive: true, followLinks: false)) {
-      if (entry.statSync().type == FileSystemEntityType.file) {
-        if (!entry.path.endsWith('mp3')) {
-          continue;
-        }
-        // Add to list
-        mediaLibraryService.addContent(PlayContent.fromEntry(entry));
-      } else if (entry.statSync().type == FileSystemEntityType.directory) {
-        await scan(entry.path);
-      }
+      final scanner = AudioScanner(targetPath: entry.path);
+      await scanner.scan();
     }
     setStatus(ScanTargetStatus.ready);
     update();
