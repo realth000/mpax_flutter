@@ -25,12 +25,9 @@ class MediaLibraryPage extends GetView<MediaLibraryService> {
       ),
       bottomNavigationBar: const MPaxPlayerWidget(),
       drawer: const MPaxDrawer(),
-      body: Scrollbar(
-        child: SingleChildScrollView(
-          child: Column(
-            children: _buildMediaList(),
-          ),
-        ),
+      body: ListView(
+        shrinkWrap: true,
+        children: _buildMediaList(),
       ),
     );
   }

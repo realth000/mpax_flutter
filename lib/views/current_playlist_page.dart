@@ -48,12 +48,8 @@ class _PlaylistBodyWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scrollbar(
-      child: SingleChildScrollView(
-        child: Column(
-          children: _buildMediaList(),
-        ),
-      ),
+    return ListView(
+      children: _buildMediaList(),
     );
   }
 }

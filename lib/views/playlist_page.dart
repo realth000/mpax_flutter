@@ -188,13 +188,9 @@ class PlaylistPage extends GetView<MediaLibraryService> {
       ),
       bottomNavigationBar: const MPaxPlayerWidget(),
       drawer: const MPaxDrawer(),
-      body: Scrollbar(
-        child: SingleChildScrollView(
-          child: Obx(
-            () => Column(
-              children: _buildPlaylistList(),
-            ),
-          ),
+      body: Obx(
+        () => ListView(
+          children: _buildPlaylistList(),
         ),
       ),
     );
