@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mpax_flutter/services/config_service.dart';
+import 'package:mpax_flutter/services/locale_service.dart';
 import 'package:mpax_flutter/services/theme_service.dart';
 import 'package:mpax_flutter/widgets/app_app_bar.dart';
 import 'package:mpax_flutter/widgets/app_drawer.dart';
@@ -32,6 +33,7 @@ class SettingsPage extends StatelessWidget {
 
 class _SettingsBodyWidget extends GetView<ConfigService> {
   final _themeService = Get.find<ThemeService>();
+  final _localeService = Get.find<LocaleService>();
 
   final themeName = autoModeString.obs;
   final themeIcon = autoModeIcon.obs;
@@ -54,6 +56,11 @@ class _SettingsBodyWidget extends GetView<ConfigService> {
         themeName.value = autoModeString;
         _themeService.changeThemeMode(MPaxThemeMode.auto);
     }
+  }
+
+  Future<void> _openLocaleMenu() async {
+    final locale = await Get.dialog(_LocaleMenu());
+    await _localeService.changeLocale(locale);
   }
 
   @override
@@ -86,8 +93,17 @@ class _SettingsBodyWidget extends GetView<ConfigService> {
                 ),
                 title: Text('Theme'.tr),
                 subtitle: Text('Follow system/Light/Dark'.tr),
-                trailing: Obx(() => Text(themeName.value)),
+                trailing: Obx(() => Text(themeName.value.tr)),
                 onTap: () async => await _openThemeMenu(),
+              ),
+              ListTile(
+                leading: const ListTileLeading(
+                  child: Icon(Icons.language),
+                ),
+                title: Text('Language'.tr),
+                subtitle: Text('Set application language'.tr),
+                trailing: Obx(() => Text(_localeService.locale.value.tr)),
+                onTap: () async => await _openLocaleMenu(),
               ),
             ],
           ),
@@ -125,6 +141,43 @@ class _ThemeMenu extends StatelessWidget {
             },
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _LocaleMenu extends StatelessWidget {
+  final List<Widget> _localeList = <Widget>[];
+
+  List<Widget> _buildLocaleList() {
+    _localeList.clear();
+    const localMap = LocaleService.localeMap;
+
+    // _localeList.add(ListTile(
+    //   title: Text(LocaleService.autoLocale.tr),
+    //   onTap: () {
+    //     Get.back(result: LocaleService.autoLocale);
+    //   },
+    // ));
+
+    for (final locale in localMap.keys) {
+      _localeList.add(
+        ListTile(
+          title: Text(
+            locale.tr,
+          ),
+          onTap: () => Get.back(result: locale),
+        ),
+      );
+    }
+    return _localeList;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ModalDialog(
+      child: Column(
+        children: _buildLocaleList(),
       ),
     );
   }

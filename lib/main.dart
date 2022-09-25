@@ -25,8 +25,8 @@ class MPaxApp extends StatelessWidget {
     MediaLibraryService mediaLibraryService = Get.find<MediaLibraryService>();
     return GetMaterialApp(
       translations: MPaxTranslations(),
-      locale: Get.find<LocalService>().getLocale(),
-      fallbackLocale: LocalService.fallbackLocale,
+      locale: Get.find<LocaleService>().getLocale(),
+      fallbackLocale: LocaleService.fallbackLocale,
       initialRoute: mediaLibraryService.content.isNotEmpty
           ? MPaxRoutes.library
           : MPaxRoutes.home,
@@ -41,7 +41,7 @@ Future<void> initServices() async {
   // Use service.init() here to make sure service is init.
   await Get.putAsync(() async => await ConfigService().init());
   await Get.putAsync(() async => await ThemeService().init());
-  await Get.putAsync(() async => await LocalService().init());
+  await Get.putAsync(() async => await LocaleService().init());
   await Get.putAsync(() async => await MediaLibraryService().init());
   await Get.putAsync(() async => await PlayerService().init());
 }

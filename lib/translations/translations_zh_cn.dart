@@ -28,4 +28,8 @@ const Map<String, String> translationZhCn = <String, String>{
   'Dark mode': '深色',
   'No audio playing': '还没播放',
   'Choose one to play ^_^': '选首歌听吧^_^',
+  'Language': '语言',
+  'Set application language': '设置应用语言',
+  'en_US': '英语(en_US)',
+  'zh_CN': '简体中文(zh_CN)',
 };

@@ -28,4 +28,8 @@ const Map<String, String> translationEnUs = <String, String>{
   'Dark mode': 'Dark mode',
   'No audio playing': 'No audio playing',
   'Choose one to play ^_^': 'Choose one to play ^_^',
+  'Language': 'Language',
+  'Set application language': 'Set application language',
+  'en_US': 'English(en_US)',
+  'zh_CN': 'Simplified Chinese(zh_CN)',
 };

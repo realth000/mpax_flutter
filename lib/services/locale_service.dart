@@ -3,53 +3,59 @@ import 'dart:ui';
 import 'package:get/get.dart';
 import 'package:mpax_flutter/services/config_service.dart';
 
-class LocalService extends GetxService {
+class LocaleService extends GetxService {
   final _configService = Get.find<ConfigService>();
-  String locale = '';
+  var locale = ''.obs;
   bool followSystemLocale = true;
 
-  static const autoLocale = 'auto';
+  static const autoLocale = 'Follow system';
   static const fallbackLocale = Locale('en', 'US');
-  static const localMap = <String, Locale>{
+  static const localeMap = <String, Locale>{
     'en_US': Locale('en', 'US'),
     'zh_CN': Locale('zh', 'CN'),
   };
 
   Locale getLocale() {
-    if (followSystemLocale) {
-      return window.locale;
-    }
-    if (localMap.containsKey(locale)) {
-      return localMap[locale]!;
+    // if (followSystemLocale) {
+    //   return window.locale;
+    // }
+    if (localeMap.containsKey(locale.value)) {
+      return localeMap[locale.value]!;
     }
     return fallbackLocale;
   }
 
-  void changeLocale(String? localeName) {
+  Future<bool> changeLocale(String? localeName) async {
     if (localeName == null) {
-      return;
+      return false;
     }
-    if (localeName == autoLocale) {
-      if (localMap.containsKey(window.locale)) {
+    if (localeName == autoLocale || false) {
+      if (localeMap.containsKey(
+          '${window.locale.languageCode}_${window.locale.countryCode}')) {
         followSystemLocale = true;
-        _configService.saveBool('FollowSystemLocale', followSystemLocale);
-        Get.updateLocale(window.locale);
+        await _configService.saveBool('FollowSystemLocale', followSystemLocale);
+        locale.value = autoLocale;
+        await _configService.saveString('Locale', locale.value);
+        await Get.updateLocale(window.locale);
+        return true;
+      } else {
+        return false;
       }
-      return;
     }
-    if (localMap.containsKey(localeName)) {
+    if (localeMap.containsKey(localeName)) {
       followSystemLocale = false;
-      _configService.saveBool('FollowSystemLocale', followSystemLocale);
-      locale = localeName;
-      _configService.saveString('Locale', locale);
-      Get.updateLocale(localMap[localeName]!);
-      return;
+      await _configService.saveBool('FollowSystemLocale', followSystemLocale);
+      locale.value = localeName;
+      await _configService.saveString('Locale', locale.value);
+      await Get.updateLocale(localeMap[localeName]!);
+      return true;
     }
+    return false;
   }
 
-  Future<LocalService> init() async {
-    locale = _configService.getString('Locale') ?? 'en_US';
-    followSystemLocale = _configService.getBool('FollowSystemLocale') ?? true;
+  Future<LocaleService> init() async {
+    locale.value = _configService.getString('Locale') ?? 'en_US';
+    followSystemLocale = _configService.getBool('FollowSystemLocale') ?? false;
     return this;
   }
 }
