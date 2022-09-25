@@ -31,8 +31,10 @@ class MediaLibraryService extends GetxService {
   List<PlayContent> get content => _allContent.contentList;
 
   bool addContent(PlayContent playContent) {
-    if (_allContent.contentList.contains(playContent)) {
-      return false;
+    for (final content in _allContent.contentList) {
+      if (content.contentPath == playContent.contentPath) {
+        return false;
+      }
     }
     _allContent.contentList.add(playContent);
     return true;
