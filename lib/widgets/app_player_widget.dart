@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mpax_flutter/services/player_service.dart';
-import 'package:path/path.dart' as path;
 
 class _ProgressWidget extends GetView<PlayerService> {
   static const double height = 2.0;
@@ -36,6 +35,17 @@ class MPaxPlayerWidget extends GetView<PlayerService> {
   const MPaxPlayerWidget({super.key});
 
   static const double widgetHeight = 70.0;
+
+  String _getAlbumString() {
+    if (controller.currentContent.value.artist.isNotEmpty) {
+      return controller.currentContent.value.albumTitle;
+    } else if (controller.currentContent.value.contentPath.isNotEmpty) {
+      return controller.currentContent.value.contentPath
+          .replaceFirst('/storage/emulated/0/', '');
+    } else {
+      return "";
+    }
+  }
 
   SizedBox _buildAudioAlbumCoverWidget(BuildContext context) {
     return SizedBox(
@@ -83,12 +93,7 @@ class MPaxPlayerWidget extends GetView<PlayerService> {
     final albumWidget = Expanded(
       child: Obx(
         () => Text(
-          controller.currentContent.value.albumTitle.isEmpty
-              ? path.dirname(
-                  controller.currentContent.value.contentPath
-                      .replaceFirst('/storage/emulated/0/', ''),
-                )
-              : controller.currentContent.value.albumTitle,
+          _getAlbumString(),
           textAlign: TextAlign.left,
           maxLines: 1,
         ),
