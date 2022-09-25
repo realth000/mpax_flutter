@@ -45,7 +45,11 @@ class PlayerService extends GetxService {
   Future<PlayerService> init() async {
     _playerDurationStream = _player.positionStream.listen((position) async {
       if (position == _player.duration) {
-        await seekToAnother(true);
+        if (playMode == _repeatOneString) {
+          _player.play();
+        } else {
+          await seekToAnother(true);
+        }
       }
     });
     // Load configs.
