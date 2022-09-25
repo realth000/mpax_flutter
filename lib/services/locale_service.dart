@@ -54,7 +54,8 @@ class LocaleService extends GetxService {
   }
 
   Future<LocaleService> init() async {
-    locale.value = _configService.getString('Locale') ?? 'en_US';
+    locale.value = _configService.getString('Locale') ??
+        '${window.locale.languageCode}_${window.locale.countryCode}';
     followSystemLocale = _configService.getBool('FollowSystemLocale') ?? false;
     return this;
   }

@@ -11,9 +11,9 @@ import 'package:mpax_flutter/widgets/util_widgets.dart';
 const autoModeIcon = Icon(Icons.auto_mode);
 const lightModeIcon = Icon(Icons.light_mode);
 const darkModeIcon = Icon(Icons.dark_mode);
-final autoModeString = 'Follow system'.tr;
-final lightModeString = 'Light mode'.tr;
-final darkModeString = 'Dark mode'.tr;
+const autoModeString = 'Follow system';
+const lightModeString = 'Light mode';
+const darkModeString = 'Dark mode';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -153,23 +153,23 @@ class _LocaleMenu extends StatelessWidget {
     _localeList.clear();
     const localMap = LocaleService.localeMap;
 
-    // _localeList.add(ListTile(
-    //   title: Text(LocaleService.autoLocale.tr),
-    //   onTap: () {
-    //     Get.back(result: LocaleService.autoLocale);
-    //   },
-    // ));
+    _localeList.add(ListTile(
+      title: Text(LocaleService.autoLocale.tr),
+      onTap: () {
+        Get.back(result: LocaleService.autoLocale);
+      },
+    ));
 
-    for (final locale in localMap.keys) {
-      _localeList.add(
-        ListTile(
-          title: Text(
-            locale.tr,
-          ),
-          onTap: () => Get.back(result: locale),
-        ),
-      );
-    }
+    // for (final locale in localMap.keys) {
+    //   _localeList.add(
+    //     ListTile(
+    //       title: Text(
+    //         locale.tr,
+    //       ),
+    //       onTap: () => Get.back(result: locale),
+    //     ),
+    //   );
+    // }
     return _localeList;
   }
 
