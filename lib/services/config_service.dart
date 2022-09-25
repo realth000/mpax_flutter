@@ -8,6 +8,8 @@ const Map<String, Type> configMap = <String, Type>{
   'PlayMode': String,
   'UseDarkMode': bool,
   'FollowSystemDarkMode': bool,
+  'Locale': String,
+  'FollowSystemLocale': bool,
 };
 
 class ConfigService extends GetxService {
