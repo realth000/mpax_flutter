@@ -17,7 +17,7 @@ class MediaItemController extends GetxController {
       // Not play empty path.
       return;
     }
-    playerService.setCurrentContent(playContent, model);
+    await playerService.setCurrentContent(playContent, model);
     await playerService.play();
   }
 }

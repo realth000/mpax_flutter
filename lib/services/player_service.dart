@@ -35,7 +35,8 @@ class PlayerService extends GetxService {
   // Show on media widget.
   Rx<IconData> playButtonIcon = _playIcon.obs;
   Rx<IconData> playModeIcon = _repeatIcon.obs;
-  late final StreamSubscription<Duration?> _playerDurationStream;
+
+  // late final StreamSubscription<ProcessingState> _playerDurationStream;
 
   // void dispose() {
   //   _playerDurationStream.cancel();
@@ -43,9 +44,14 @@ class PlayerService extends GetxService {
   // }
 
   Future<PlayerService> init() async {
-    _playerDurationStream = _player.positionStream.listen((position) async {
-      if (position == _player.duration) {
+    await _player.setShuffleModeEnabled(false);
+    await _player.setLoopMode(LoopMode.off);
+    _player.processingStateStream.listen((state) async {
+      if (state == ProcessingState.completed) {
         if (playMode == _repeatOneString) {
+          if (_player.playing) {
+            await _player.seek(Duration.zero);
+          }
           _player.play();
         } else {
           await seekToAnother(true);
@@ -63,7 +69,8 @@ class PlayerService extends GetxService {
           _libraryService.findPlaylistByTableName(currentPlaylistString);
       // _libraryService
       if (currentPlaylist.tableName.isNotEmpty) {
-        setCurrentContent(PlayContent.fromEntry(currentMedia), currentPlaylist);
+        await setCurrentContent(
+            PlayContent.fromEntry(currentMedia), currentPlaylist);
       }
     }
     playMode = _configService.getString('PlayMode') ?? _repeatString;
@@ -71,7 +78,8 @@ class PlayerService extends GetxService {
     return this;
   }
 
-  void setCurrentContent(PlayContent playContent, PlaylistModel playlist) {
+  Future<void> setCurrentContent(
+      PlayContent playContent, PlaylistModel playlist) async {
     final f = File(playContent.contentPath);
     if (!f.existsSync()) {
       // Not exists
@@ -79,7 +87,8 @@ class PlayerService extends GetxService {
     }
     currentContent.value = playContent;
     currentPlaylist = playlist;
-    _player.setFilePath(playContent.contentPath);
+    await _player
+        .setAudioSource(AudioSource.uri(Uri.parse(playContent.contentPath)));
     _configService.saveString('CurrentMedia', currentContent.value.contentPath);
     _configService.saveString('CurrentPlaylist', currentPlaylist.tableName);
     currentContent.value = playContent;
@@ -89,6 +98,9 @@ class PlayerService extends GetxService {
     // FIXME: The first time from MediaListTileItem to here not finishes .play(),
     // To turn the icon, assign before .play().
     playButtonIcon.value = _pauseIcon;
+    await _player.load();
+    // Use for debugging.
+    // await _player.seek(Duration(seconds: (_player.duration!.inSeconds * 0.98).toInt()));
     await _player.play();
   }
 
@@ -124,20 +136,14 @@ class PlayerService extends GetxService {
     }
     if (playModeIcon.value == _repeatIcon) {
       playModeIcon.value = _repeatOneIcon;
-      await _player.setLoopMode(LoopMode.one);
-      await _player.setShuffleModeEnabled(false);
       _configService.saveString('PlayMode', _repeatOneString);
       playMode = _repeatOneString;
     } else if (playModeIcon.value == _repeatOneIcon) {
       playModeIcon.value = _shuffleIcon;
-      await _player.setLoopMode(LoopMode.off);
-      await _player.setShuffleModeEnabled(true);
       _configService.saveString('PlayMode', _shuffleString);
       playMode = _shuffleString;
     } else {
       playModeIcon.value = _repeatIcon;
-      await _player.setLoopMode(LoopMode.all);
-      await _player.setShuffleModeEnabled(false);
       _configService.saveString('PlayMode', _repeatString);
       playMode = _repeatString;
     }
@@ -152,7 +158,7 @@ class PlayerService extends GetxService {
             await play();
             return;
           }
-          setCurrentContent(c, currentPlaylist);
+          await setCurrentContent(c, currentPlaylist);
           // For test
           // final d = await _player.load();
           // if (d != null) {
@@ -167,8 +173,7 @@ class PlayerService extends GetxService {
           if (content.contentPath.isEmpty) {
             return;
           }
-          _player.setFilePath(content.contentPath);
-          currentContent.value = content;
+          await setCurrentContent(content, currentPlaylist);
           // For test
           // final d = await _player.load();
           // if (d != null) {
@@ -185,7 +190,7 @@ class PlayerService extends GetxService {
             await play();
             return;
           }
-          setCurrentContent(c, currentPlaylist);
+          await setCurrentContent(c, currentPlaylist);
           await play();
           break;
         case _repeatString:
@@ -196,7 +201,7 @@ class PlayerService extends GetxService {
           if (content.contentPath.isEmpty) {
             return;
           }
-          _player.setFilePath(content.contentPath);
+          await setCurrentContent(content, currentPlaylist);
           await play();
       }
     }

@@ -168,8 +168,8 @@ class MPaxPlayerWidget extends GetView<PlayerService> {
                   ),
                   // Play mode button.
                   IconButton(
-                    onPressed: () {
-                      controller.switchPlayMode();
+                    onPressed: () async {
+                      await controller.switchPlayMode();
                     },
                     icon: Obx(() => Icon(controller.playModeIcon.value)),
                   ),
