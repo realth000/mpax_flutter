@@ -44,9 +44,11 @@ class MediaItemTile extends StatelessWidget {
         playContent.title == ""
             ? path.basename(playContent.contentPath)
             : playContent.title,
+        maxLines: 1,
       ),
       subtitle: Text(
         playContent.contentPath.replaceFirst('/storage/emulated/0/', ''),
+        maxLines: 1,
       ),
       onTap: () async {
         await _controller.play();

@@ -16,6 +16,7 @@ class _ProgressWidget extends GetView<PlayerService> {
           return const LinearProgressIndicator(
             minHeight: height,
             value: 0.0,
+            backgroundColor: Colors.transparent,
           );
         }
         final v = (snapshot.data as Duration).inSeconds.toDouble() /
@@ -25,6 +26,7 @@ class _ProgressWidget extends GetView<PlayerService> {
         return LinearProgressIndicator(
           minHeight: height,
           value: v,
+          backgroundColor: Colors.transparent,
         );
       },
     );
