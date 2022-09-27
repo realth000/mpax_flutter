@@ -16,9 +16,9 @@ class LocaleService extends GetxService {
   };
 
   Locale getLocale() {
-    // if (followSystemLocale) {
-    //   return window.locale;
-    // }
+    if (followSystemLocale) {
+      return window.locale;
+    }
     if (localeMap.containsKey(locale.value)) {
       return localeMap[locale.value]!;
     }
