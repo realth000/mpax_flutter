@@ -110,8 +110,13 @@ class MPaxPlayerWidget extends GetView<PlayerService> {
         onLongPressStart: (details) {
           // For animation.
         },
-        onLongPressEnd: (details) {
-          controller.seekToAnother(
+        onLongPressEnd: (details) async {
+          // print(
+          //     'AAAA ${details.localPosition} ${details.globalPosition}; ${Get.width},${Get.height}');
+          if (details.localPosition.dy < 0) {
+            return;
+          }
+          await controller.seekToAnother(
             details.globalPosition.dx >= context.width / 2,
           );
         },
