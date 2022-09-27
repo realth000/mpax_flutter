@@ -14,7 +14,7 @@ class MediaLibraryService extends GetxService {
       'id INT NOT NULL PRIMARY KEY, path TEXT, name TEXT, size INT, title TEXT, '
       'artist TEXT, album_title TEXT, album_artist TEXT, album_year INT, '
       'album_track_count INT, track_number INT, bit_rate INT, sample_rate INT, '
-      'genre TEXT, comment TEXT, channels INT, length INT ';
+      'genre TEXT, comment TEXT, channels INT, length INT, album_cover TEXT ';
 
   final List<PlaylistModel> allPlaylist = <PlaylistModel>[].obs;
 
@@ -116,6 +116,7 @@ class MediaLibraryService extends GetxService {
           playContent['sample_rate'],
           playContent['channels'],
           playContent['length'],
+          playContent['album_cover'],
         );
         model.contentList.add(c);
         if (model.tableName == allMediaTableName) {

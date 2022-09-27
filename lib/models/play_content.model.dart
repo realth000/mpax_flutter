@@ -15,7 +15,7 @@ class PlayContent {
     contentPath = f.path;
     contentName = path.basename(f.path);
     contentSize = f.lengthSync();
-    Get.find<MetadataService>().readMetadata(this, loadImage: true);
+    _loadMetadata();
   }
 
   PlayContent.fromData(
@@ -35,6 +35,7 @@ class PlayContent {
     this.sampleRate,
     this.channels,
     this.length,
+    this.albumCover,
   );
 
   String contentPath = '';
@@ -79,6 +80,11 @@ class PlayContent {
       'comment': comment,
       'channels': channels,
       'length': length,
+      'album_cover': albumCover,
     };
+  }
+
+  void _loadMetadata() async {
+    await Get.find<MetadataService>().readMetadata(this, loadImage: true);
   }
 }
