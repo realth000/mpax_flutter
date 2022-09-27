@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:get/get.dart';
+import 'package:mpax_flutter/services/metadata_service.dart';
 import 'package:path/path.dart' as path;
 
 class PlayContent {
@@ -13,6 +15,7 @@ class PlayContent {
     contentPath = f.path;
     contentName = path.basename(f.path);
     contentSize = f.lengthSync();
+    Get.find<MetadataService>().readMetadata(this, loadImage: true);
   }
 
   PlayContent.fromData(

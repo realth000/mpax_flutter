@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mpax_flutter/models/play_content.model.dart';
 import 'package:mpax_flutter/models/playlist.model.dart';
 import 'package:mpax_flutter/services/player_service.dart';
+import 'package:mpax_flutter/widgets/util_widgets.dart';
 import 'package:path/path.dart' as path;
 
 class MediaItemController extends GetxController {
@@ -31,15 +34,24 @@ class MediaItemTile extends StatelessWidget {
   late final MediaItemController _controller;
   final PlaylistModel model;
 
+  Widget _leadingIcon() {
+    if (playContent.albumCover.isEmpty) {
+      return const Icon(Icons.music_note);
+    }
+    return SizedBox(
+      height: 56,
+      width: 56,
+      child: Image.memory(
+        base64Decode(playContent.albumCover),
+        isAntiAlias: true,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: const [
-          Icon(Icons.music_note),
-        ],
-      ),
+      leading: ListTileLeading(child: _leadingIcon()),
       title: Text(
         playContent.title == ""
             ? path.basename(playContent.contentPath)

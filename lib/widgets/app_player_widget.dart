@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mpax_flutter/services/player_service.dart';
@@ -58,9 +60,8 @@ class MPaxPlayerWidget extends GetView<PlayerService> {
           if (controller.currentContent.value.albumCover.isEmpty) {
             return const Icon(Icons.music_note);
           } else {
-            // return Image(image: Image.memory(controller
-            //     .currentContent.value.albumCover.to))
-            return const Icon(Icons.music_note);
+            return Image.memory(
+                base64Decode(controller.currentContent.value.albumCover));
           }
         },
       ),
