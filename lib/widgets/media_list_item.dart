@@ -59,13 +59,15 @@ class MediaItemTile extends StatelessWidget {
     return ListTile(
       leading: ListTileLeading(child: _leadingIcon()),
       title: Text(
-        playContent.title == ""
+        playContent.title.isEmpty
             ? path.basename(playContent.contentPath)
             : playContent.title,
         maxLines: 1,
       ),
       subtitle: Text(
-        playContent.contentPath.replaceFirst('/storage/emulated/0/', ''),
+        playContent.albumTitle.isEmpty
+            ? playContent.contentPath.replaceFirst('/storage/emulated/0/', '')
+            : playContent.albumTitle,
         maxLines: 1,
       ),
       trailing: IconButton(
