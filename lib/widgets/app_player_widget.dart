@@ -39,6 +39,7 @@ class MPaxPlayerWidget extends GetView<PlayerService> {
   const MPaxPlayerWidget({super.key});
 
   static const double widgetHeight = 70.0;
+  static const double albumCoverHeight = 56.0;
 
   String _getAlbumString() {
     if (controller.currentContent.value.artist.isNotEmpty) {
@@ -54,14 +55,14 @@ class MPaxPlayerWidget extends GetView<PlayerService> {
   SizedBox _buildAudioAlbumCoverWidget(BuildContext context) {
     if (controller.currentContent.value.albumCover.isEmpty) {
       return const SizedBox(
-        width: 56,
-        height: 56,
+        width: albumCoverHeight,
+        height: albumCoverHeight,
         child: Icon(Icons.music_note),
       );
     } else {
       return SizedBox(
-        width: 56,
-        height: 56,
+        width: albumCoverHeight,
+        height: albumCoverHeight,
         child: Image.memory(
           base64Decode(controller.currentContent.value.albumCover),
         ),
@@ -164,8 +165,14 @@ class MPaxPlayerWidget extends GetView<PlayerService> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
+                  const SizedBox(
+                    width: widgetHeight / 2 - albumCoverHeight / 2,
+                  ),
                   // Album cover
                   Obx(() => _buildAudioAlbumCoverWidget(context)),
+                  const SizedBox(
+                    width: widgetHeight / 2 - albumCoverHeight / 2,
+                  ),
                   // Audio info
                   _buildAudioInfoWidget(context),
                   // Play-and-pause button.
