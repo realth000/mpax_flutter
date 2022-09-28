@@ -1,3 +1,4 @@
+import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 
 class MPaxTheme {
@@ -105,5 +106,23 @@ class MPaxTheme {
     ),
     listTileTheme: listTileTheme,
     inputDecorationTheme: inputDecorationTheme,
+  );
+
+  static const flexScheme = FlexScheme.deepPurple;
+  static ThemeData flexLight = FlexThemeData.light(
+    scheme: flexScheme,
+    useMaterial3: true,
+    useMaterial3ErrorColors: true,
+    subThemesData: FlexSubThemesData(
+        // defaultRadius: 27.0,
+        ),
+  );
+  static ThemeData flexDark = FlexThemeData.dark(
+    scheme: flexScheme,
+    useMaterial3: true,
+    useMaterial3ErrorColors: true,
+    subThemesData: FlexSubThemesData(
+        // defaultRadius: 27.0,
+        ),
   );
 }

@@ -176,18 +176,22 @@ class MPaxPlayerWidget extends GetView<PlayerService> {
                   // Audio info
                   _buildAudioInfoWidget(context),
                   // Play-and-pause button.
-                  IconButton(
+                  ElevatedButton(
                     onPressed: () {
                       controller.playOrPause();
                     },
-                    icon: Obx(() => Icon(controller.playButtonIcon.value)),
+                    child: Obx(() => Icon(controller.playButtonIcon.value)),
+                  ),
+                  const SizedBox(
+                    width: 5,
+                    height: 5,
                   ),
                   // Play mode button.
-                  IconButton(
+                  ElevatedButton(
                     onPressed: () async {
                       await controller.switchPlayMode();
                     },
-                    icon: Obx(() => Icon(controller.playModeIcon.value)),
+                    child: Obx(() => Icon(controller.playModeIcon.value)),
                   ),
                 ],
               ),

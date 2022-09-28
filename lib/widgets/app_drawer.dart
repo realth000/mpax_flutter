@@ -23,16 +23,19 @@ class MPaxDrawer extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.library_music),
             title: Text('Library'.tr),
-            onTap: () => Get.offAllNamed(MPaxRoutes.library),
+            selected: Get.currentRoute == MPaxRoutes.library,
+            onTap: () => Get.offAndToNamed(MPaxRoutes.library),
           ),
           ListTile(
             leading: const Icon(Icons.queue_music),
             title: Text('Playlist'.tr),
-            onTap: () => Get.offAllNamed(MPaxRoutes.playlist),
+            selected: Get.currentRoute == MPaxRoutes.playlist,
+            onTap: () => Get.offAndToNamed(MPaxRoutes.playlist),
           ),
           ListTile(
-            leading: const Icon(Icons.featured_play_list),
+            leading: const Icon(Icons.playlist_play),
             title: Text('Current Playlist'.tr),
+            selected: Get.currentRoute == MPaxRoutes.playlistContent,
             onTap: () {
               final currentPlaylistTableName =
                   Get.find<PlayerService>().currentPlaylist.tableName;
@@ -41,29 +44,34 @@ class MPaxDrawer extends StatelessWidget {
                     'No audio playing'.tr, 'Choose one to play ^_^'.tr);
                 return;
               }
-              Get.offAllNamed(MPaxRoutes.playlistContent.replaceFirst(
+              Get.offAndToNamed(MPaxRoutes.playlistContent.replaceFirst(
                   ':playlist_table_name', currentPlaylistTableName));
             },
           ),
           ListTile(
             leading: const Icon(Icons.audiotrack),
             title: Text('Music'.tr),
-            onTap: () => Get.offAllNamed(MPaxRoutes.library),
+            selected: false,
+            onTap: () => Get.offAndToNamed(MPaxRoutes.library),
+            style: ListTileStyle.drawer,
           ),
           ListTile(
             leading: const Icon(Icons.find_in_page),
             title: Text('Scan'.tr),
-            onTap: () => Get.offAllNamed(MPaxRoutes.scan),
+            selected: Get.currentRoute == MPaxRoutes.scan,
+            onTap: () => Get.offAndToNamed(MPaxRoutes.scan),
           ),
           ListTile(
             leading: const Icon(Icons.settings),
             title: Text('Settings'.tr),
-            onTap: () => Get.offAllNamed(MPaxRoutes.settings),
+            selected: Get.currentRoute == MPaxRoutes.settings,
+            onTap: () => Get.offAndToNamed(MPaxRoutes.settings),
           ),
           ListTile(
             leading: const Icon(Icons.info),
             title: Text('About'.tr),
-            onTap: () => Get.offAllNamed(MPaxRoutes.about),
+            selected: Get.currentRoute == MPaxRoutes.about,
+            onTap: () => Get.offAndToNamed(MPaxRoutes.about),
           ),
         ],
       ),

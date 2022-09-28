@@ -27,9 +27,6 @@ class _AddPlaylistWidget extends StatelessWidget {
             decoration: InputDecoration(
               labelText: 'Name'.tr,
               hintText: 'Input name'.tr,
-              prefixIcon: const Icon(
-                Icons.featured_play_list,
-              ),
             ),
             validator: (v) {
               return v!.trim().isNotEmpty ? null : 'Name can not be empty'.tr;
@@ -145,7 +142,7 @@ class PlaylistPage extends GetView<MediaLibraryService> {
   Widget _getPlaylistCover(PlaylistModel model) {
     // TODO: Get first media audio cover here.
     if (model.contentList.isEmpty) {
-      return const Icon(Icons.featured_play_list);
+      return const Icon(Icons.queue_music);
     } else {
       return const Icon(Icons.featured_play_list);
     }

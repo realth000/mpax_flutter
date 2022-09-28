@@ -68,6 +68,10 @@ class MediaItemTile extends StatelessWidget {
         playContent.contentPath.replaceFirst('/storage/emulated/0/', ''),
         maxLines: 1,
       ),
+      trailing: IconButton(
+        onPressed: () {},
+        icon: const Icon(Icons.more_vert),
+      ),
       onTap: () async {
         await _controller.play();
       },

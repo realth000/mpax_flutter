@@ -32,8 +32,8 @@ class MPaxApp extends StatelessWidget {
           ? MPaxRoutes.library
           : MPaxRoutes.home,
       getPages: MPaxPages.routes,
-      theme: MPaxTheme.light,
-      darkTheme: MPaxTheme.dark,
+      theme: MPaxTheme.flexLight,
+      darkTheme: MPaxTheme.flexDark,
     );
   }
 }
