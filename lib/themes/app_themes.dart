@@ -113,16 +113,16 @@ class MPaxTheme {
     scheme: flexScheme,
     useMaterial3: true,
     useMaterial3ErrorColors: true,
-    subThemesData: FlexSubThemesData(
-        // defaultRadius: 27.0,
-        ),
+  ).copyWith(
+    listTileTheme: listTileTheme,
+    inputDecorationTheme: inputDecorationTheme,
   );
   static ThemeData flexDark = FlexThemeData.dark(
     scheme: flexScheme,
     useMaterial3: true,
     useMaterial3ErrorColors: true,
-    subThemesData: FlexSubThemesData(
-        // defaultRadius: 27.0,
-        ),
+  ).copyWith(
+    listTileTheme: listTileTheme,
+    inputDecorationTheme: inputDecorationTheme,
   );
 }
