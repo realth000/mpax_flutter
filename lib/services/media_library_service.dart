@@ -99,25 +99,7 @@ class MediaLibraryService extends GetxService {
       final List<Map<String, dynamic>> playlistTable =
           await db.query(model.tableName);
       for (var playContent in playlistTable) {
-        final PlayContent c = PlayContent.fromData(
-          playContent['path'],
-          playContent['name'],
-          playContent['size'],
-          playContent['artist'],
-          playContent['title'],
-          playContent['track_number'],
-          playContent['bit_rate'],
-          playContent['album_artist'],
-          playContent['album_title'],
-          playContent['album_year'],
-          playContent['album_track_count'],
-          playContent['genre'],
-          playContent['comment'],
-          playContent['sample_rate'],
-          playContent['channels'],
-          playContent['length'],
-          playContent['album_cover'],
-        );
+        final PlayContent c = _fromDataMap(playContent);
         model.contentList.add(c);
         if (model.tableName == allMediaTableName) {
           _allContent = model;
@@ -235,5 +217,45 @@ class MediaLibraryService extends GetxService {
       }
     }
     return PlaylistModel();
+  }
+
+  PlayContent _fromDataMap(Map<String, dynamic> dataMap) {
+    return PlayContent.fromData(
+      dataMap['path'],
+      dataMap['name'],
+      dataMap['size'],
+      dataMap['artist'],
+      dataMap['title'],
+      dataMap['track_number'],
+      dataMap['bit_rate'],
+      dataMap['album_artist'],
+      dataMap['album_title'],
+      dataMap['album_year'],
+      dataMap['album_track_count'],
+      dataMap['genre'],
+      dataMap['comment'],
+      dataMap['sample_rate'],
+      dataMap['channels'],
+      dataMap['length'],
+      dataMap['album_cover'],
+    );
+  }
+
+  PlayContent? findPlayContent(String contentPath) {
+    return _allContent.find(contentPath);
+  }
+
+  Future<PlayContent?> findPlayContentFromDatabase(
+      String contentPath, String playlistTableName) async {
+    final db = await _database;
+    final List<Map<String, dynamic>> currentContent = await db.query(
+      playlistTableName,
+      where: 'path = ?',
+      whereArgs: [contentPath],
+    );
+    if (currentContent.length != 1) {
+      return null;
+    }
+    return _fromDataMap(currentContent[0]);
   }
 }

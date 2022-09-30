@@ -21,6 +21,15 @@ class PlaylistModel {
     return false;
   }
 
+  PlayContent? find(String contentPath) {
+    for (final content in contentList) {
+      if (content.contentPath == contentPath) {
+        return content;
+      }
+    }
+    return null;
+  }
+
   void addContentList(List<PlayContent> playContentList) {
     for (final content in playContentList) {
       if (contains(content)) {

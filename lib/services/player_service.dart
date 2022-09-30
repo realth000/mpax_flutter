@@ -69,8 +69,10 @@ class PlayerService extends GetxService {
           _libraryService.findPlaylistByTableName(currentPlaylistString);
       // _libraryService
       if (currentPlaylist.tableName.isNotEmpty) {
-        await setCurrentContent(
-            PlayContent.fromEntry(currentMedia), currentPlaylist);
+        final content = _libraryService.findPlayContent(currentMedia.path);
+        if (content != null) {
+          await setCurrentContent(content, currentPlaylist);
+        }
       }
     }
     playMode = _configService.getString('PlayMode') ?? _repeatString;
