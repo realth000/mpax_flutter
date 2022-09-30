@@ -36,7 +36,9 @@ class PlayContent {
     this.channels,
     this.length,
     this.albumCover,
-  );
+  ) {
+    _loadMetadata();
+  }
 
   String contentPath = '';
   String contentName = '';
