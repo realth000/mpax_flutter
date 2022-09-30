@@ -3,9 +3,9 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mpax_flutter/models/play_content.model.dart';
 import 'package:mpax_flutter/services/config_service.dart';
 import 'package:mpax_flutter/services/media_library_service.dart';
+import 'package:mpax_flutter/services/metadata_service.dart';
 import 'package:mpax_flutter/utils/scan_target_controller.dart';
 import 'package:mpax_flutter/widgets/app_app_bar.dart';
 import 'package:mpax_flutter/widgets/app_drawer.dart';
@@ -142,6 +142,7 @@ enum ScanTargetStatus {
 }
 
 class _ScanTargetItemController extends GetxController {
+  final _metadataService = Get.find<MetadataService>();
   final _deleteIcon = Icon(Icons.delete).obs;
 
   String target = '';
@@ -199,7 +200,8 @@ class _ScanTargetItemController extends GetxController {
           continue;
         }
         // Add to list
-        mediaLibraryService.addContent(PlayContent.fromEntry(entry));
+        mediaLibraryService
+            .addContent(await _metadataService.readMetadata(entry.path));
       } else if (entry.statSync().type == FileSystemEntityType.directory) {
         scan(entry.path);
       }

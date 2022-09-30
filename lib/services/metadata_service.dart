@@ -7,22 +7,22 @@ import 'package:metadata_god/metadata_god.dart';
 import 'package:mpax_flutter/models/play_content.model.dart';
 
 class MetadataService extends GetxService {
-  Future<void> readMetadata(PlayContent playContent,
+  Future<PlayContent> readMetadata(String contentPath,
       {bool loadImage = false, bool scaleImage = true}) async {
-    final s = await File(playContent.contentPath).stat();
+    final s = await File(contentPath).stat();
     if (s.type != FileSystemEntityType.file) {
-      return;
+      return PlayContent();
     }
-    final metadata = await MetadataGod.getMetadata(playContent.contentPath);
+    final metadata = await MetadataGod.getMetadata(contentPath);
     if (metadata == null) {
-      return;
+      return PlayContent.fromPath(contentPath);
     }
-    _applyMetadata(playContent, metadata, loadImage, scaleImage);
-    return;
+    return await _applyMetadata(contentPath, metadata, loadImage, scaleImage);
   }
 
-  Future<void> _applyMetadata(PlayContent playContent, Metadata metadata,
+  Future<PlayContent> _applyMetadata(String contentPath, Metadata metadata,
       bool loadImage, bool scaleImage) async {
+    PlayContent playContent = PlayContent.fromPath(contentPath);
     if (metadata.artist != null) {
       playContent.artist = metadata.artist!;
     }
@@ -48,7 +48,7 @@ class MetadataService extends GetxService {
       playContent.genre = metadata.genre!;
     }
     if (metadata.picture == null || !loadImage) {
-      return;
+      return playContent;
     }
     if (scaleImage) {
       final tmpList = await FlutterImageCompress.compressWithList(
@@ -62,6 +62,7 @@ class MetadataService extends GetxService {
       // playContent.albumCover = String.fromCharCodes(metadata.picture!.data);
       playContent.albumCover = base64Encode(metadata.picture!.data);
     }
+    return playContent;
   }
 
   Future<MetadataService> init() async {

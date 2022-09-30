@@ -8,7 +8,6 @@ import 'package:mpax_flutter/models/play_content.model.dart';
 import 'package:mpax_flutter/models/playlist.model.dart';
 import 'package:mpax_flutter/services/config_service.dart';
 import 'package:mpax_flutter/services/media_library_service.dart';
-import 'package:mpax_flutter/services/metadata_service.dart';
 
 class PlayerService extends GetxService {
   // State
@@ -90,7 +89,7 @@ class PlayerService extends GetxService {
     currentPlaylist = playlist;
     await _player
         .setAudioSource(AudioSource.uri(Uri.parse(playContent.contentPath)));
-    await Get.find<MetadataService>().readMetadata(currentContent.value);
+    // playContent = await Get.find<MetadataService>().readMetadata(currentContent.value.contentPath);
     _configService.saveString('CurrentMedia', currentContent.value.contentPath);
     _configService.saveString('CurrentPlaylist', currentPlaylist.tableName);
     currentContent.value = playContent;

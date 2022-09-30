@@ -1,11 +1,14 @@
 import 'dart:io';
 
-import 'package:get/get.dart';
-import 'package:mpax_flutter/services/metadata_service.dart';
 import 'package:path/path.dart' as path;
 
 class PlayContent {
   PlayContent();
+
+  PlayContent.fromPath(this.contentPath) {
+    contentName = path.basename(contentPath);
+    contentSize = File(contentPath).lengthSync();
+  }
 
   PlayContent.fromEntry(FileSystemEntity file) {
     if (file.statSync().type != FileSystemEntityType.file) {
@@ -15,7 +18,6 @@ class PlayContent {
     contentPath = f.path;
     contentName = path.basename(f.path);
     contentSize = f.lengthSync();
-    _loadMetadata();
   }
 
   PlayContent.fromData(
@@ -36,9 +38,7 @@ class PlayContent {
     this.channels,
     this.length,
     this.albumCover,
-  ) {
-    _loadMetadata();
-  }
+  );
 
   String contentPath = '';
   String contentName = '';
@@ -84,9 +84,5 @@ class PlayContent {
       'length': length,
       'album_cover': albumCover,
     };
-  }
-
-  void _loadMetadata() async {
-    await Get.find<MetadataService>().readMetadata(this, loadImage: true);
   }
 }
