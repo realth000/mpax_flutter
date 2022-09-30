@@ -42,9 +42,11 @@ class ListTileLeading extends StatelessWidget {
 }
 
 class ModalDialog extends StatelessWidget {
-  const ModalDialog({required this.child, super.key});
+  const ModalDialog(
+      {required this.child, this.showScrollbar = true, super.key});
 
   final Widget child;
+  final bool showScrollbar;
 
   @override
   Widget build(BuildContext context) {
@@ -54,11 +56,15 @@ class ModalDialog extends StatelessWidget {
           maxWidth: Get.width / 3 * 2,
           maxHeight: Get.height / 3 * 2,
         ),
-        child: Scrollbar(
-          child: SingleChildScrollView(
-            child: child,
-          ),
-        ),
+        child: showScrollbar
+            ? Scrollbar(
+                child: SingleChildScrollView(
+                  child: child,
+                ),
+              )
+            : SingleChildScrollView(
+                child: child,
+              ),
       ),
     );
   }

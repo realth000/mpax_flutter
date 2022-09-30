@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:mpax_flutter/models/play_content.model.dart';
 import 'package:mpax_flutter/models/playlist.model.dart';
 import 'package:mpax_flutter/services/player_service.dart';
+import 'package:mpax_flutter/widgets/media_menu.dart';
 import 'package:mpax_flutter/widgets/util_widgets.dart';
 import 'package:path/path.dart' as path;
 
@@ -71,12 +72,125 @@ class MediaItemTile extends StatelessWidget {
         maxLines: 1,
       ),
       trailing: IconButton(
-        onPressed: () {},
+        onPressed: () async {
+          final result = await Get.dialog(
+              MediaItemMenu(_controller.playContent, _controller.model));
+          switch (result) {
+            case MediaItemMenuActions.play:
+              _controller.play();
+              break;
+            case MediaItemMenuActions.viewMetadata:
+              Get.dialog(MediaMetadataDialog(playContent));
+          }
+        },
         icon: const Icon(Icons.more_vert),
       ),
       onTap: () async {
         await _controller.play();
       },
+    );
+  }
+}
+
+class MediaMetadataDialog extends StatelessWidget {
+  MediaMetadataDialog(this.playContent, {super.key});
+
+  final PlayContent playContent;
+  final _formKey = GlobalKey<FormState>();
+  final _textEditingController = TextEditingController();
+  final List<Widget> widgetList = <Widget>[];
+  static const spaceHeight = 10.0;
+
+  void _addReadonlyProperty(String property, String propertyName) {
+    widgetList.add(TextFormField(
+      controller: TextEditingController(
+        text: property,
+        // playContent.contentPath.replaceFirst('/storage/emulated/0/', ''),
+      ),
+      readOnly: true,
+      decoration: InputDecoration(
+        labelText: propertyName,
+        // labelText: 'File path'.tr,
+      ),
+    ));
+  }
+
+  void _addSpace() {
+    widgetList.add(const SizedBox(
+      width: spaceHeight,
+      height: spaceHeight,
+    ));
+  }
+
+  List<Widget> _buildMetadataList() {
+    _addReadonlyProperty(
+        playContent.contentPath.replaceFirst('/storage/emulated/0/', ''),
+        'File path'.tr);
+    if (playContent.contentName.isNotEmpty) {
+      _addSpace();
+      _addReadonlyProperty(playContent.contentName, 'File name'.tr);
+    }
+    if (playContent.contentSize > 0) {
+      _addSpace();
+      _addReadonlyProperty('${playContent.contentSize}', 'File size'.tr);
+    }
+    if (playContent.title.isNotEmpty) {
+      _addSpace();
+      _addReadonlyProperty(playContent.title, 'Title'.tr);
+    }
+    if (playContent.artist.isNotEmpty) {
+      _addSpace();
+      _addReadonlyProperty(playContent.artist, 'Artist'.tr);
+    }
+    if (playContent.trackNumber >= 0) {
+      _addSpace();
+      _addReadonlyProperty('${playContent.trackNumber}', 'Track number'.tr);
+    }
+    if (playContent.albumTitle.isNotEmpty) {
+      _addSpace();
+      _addReadonlyProperty(playContent.albumTitle, 'Album name'.tr);
+    }
+    if (playContent.albumArtist.isNotEmpty) {
+      _addSpace();
+      _addReadonlyProperty(playContent.albumArtist, 'Album artist'.tr);
+    }
+    if (playContent.albumYear >= 0) {
+      _addSpace();
+      _addReadonlyProperty('${playContent.albumYear}', 'Album year'.tr);
+    }
+    if (playContent.albumTrackCount >= 0) {
+      _addSpace();
+      _addReadonlyProperty(
+          '${playContent.albumTrackCount}', 'Album track count'.tr);
+    }
+    if (playContent.genre.isNotEmpty) {
+      _addSpace();
+      _addReadonlyProperty(playContent.genre, 'Genre'.tr);
+    }
+    if (playContent.length > 0) {
+      _addSpace();
+      _addReadonlyProperty('${playContent.length}', 'Length');
+    }
+    return widgetList;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ModalDialog(
+      showScrollbar: false,
+      child: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          children: [
+            Form(
+              key: _formKey,
+              child: Column(
+                children: _buildMetadataList(),
+              ),
+            )
+          ],
+        ),
+      ),
     );
   }
 }
