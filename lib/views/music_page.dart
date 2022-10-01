@@ -6,7 +6,7 @@ import 'package:mpax_flutter/services/player_service.dart';
 import 'package:mpax_flutter/widgets/media_list_item.dart';
 
 class MusicPage extends GetView<PlayerService> {
-  MusicPage({super.key});
+  const MusicPage({super.key});
 
   static const spaceSmallWidth = 10.0;
   static const spaceMiddleWidth = 30.0;
@@ -24,7 +24,7 @@ class MusicPage extends GetView<PlayerService> {
   SizedBox _buildSmallSpace() {
     return const SizedBox(
       width: spaceSmallWidth,
-      height: spaceHeight,
+      height: spaceHeight / 2,
     );
   }
 
@@ -47,42 +47,32 @@ class MusicPage extends GetView<PlayerService> {
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: <Widget>[
         _buildMiddleSpace(),
-        StreamBuilder<Duration>(
-          stream: controller.positionStream,
-          builder: (context, snapshot) {
-            if (snapshot.data == null ||
-                snapshot.hasError ||
-                !snapshot.hasData) {
-              return const Text('00:00');
-            }
-            return Text(_durationToString(snapshot.data!));
-          },
-        ),
-        _buildSmallSpace(),
+        Obx(() => Text(
+              _durationToString(controller.currentPosition.value),
+              maxLines: 1,
+            )),
         Expanded(
           child: Obx(() => Slider(
                 value: controller.currentPosition.value.inSeconds.toDouble(),
-                // value: controller.positionStream.listen((event) {}),
-                max: (controller.currentDuration.value ??
-                        controller.currentPosition.value)
-                    .inSeconds
-                    .toDouble(),
-                onChanged: (value) {
-                  print('AAAA');
+                max: (controller.currentDuration.value).inSeconds.toDouble(),
+                onChangeStart: (value) {
+                  controller.durationSub.pause();
+                  controller.positionSub.pause();
+                },
+                onChanged: (value) async {
+                  await controller.seekToDuration(
+                      Duration(milliseconds: (value * 1000).toInt()));
+                },
+                onChangeEnd: (value) {
+                  controller.durationSub.resume();
+                  controller.positionSub.resume();
                 },
               )),
         ),
-        _buildSmallSpace(),
-        StreamBuilder<Duration?>(
-            stream: controller.durationStream,
-            builder: (context, snapshot) {
-              if (snapshot.hasError ||
-                  !snapshot.hasData ||
-                  snapshot.data == null) {
-                return const Text('??:??');
-              }
-              return Text(_durationToString(snapshot.data!));
-            }),
+        Obx(() => Text(
+              _durationToString(controller.currentDuration.value),
+              maxLines: 1,
+            )),
         _buildMiddleSpace(),
       ],
     );
@@ -152,19 +142,24 @@ class MusicPage extends GetView<PlayerService> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             _buildLargeSpace(),
-            SizedBox(
-              width: Get.width / 3 * 2,
-              height: Get.width / 3 * 2,
-              child: Obx(() =>
-                  controller.currentContent.value.albumCover.isEmpty
-                      ? const Icon(Icons.music_note)
-                      : Image.memory(base64Decode(
-                          controller.currentContent.value.albumCover))),
+            Expanded(
+              child: SizedBox(
+                width: Get.width / 4 * 3,
+                height: Get.width / 4 * 3,
+                child:
+                    Obx(() => controller.currentContent.value.albumCover.isEmpty
+                        ? const Icon(Icons.music_note)
+                        : Image.memory(
+                            base64Decode(
+                                controller.currentContent.value.albumCover),
+                          )),
+              ),
             ),
             _buildLargeSpace(),
             _buildProgressRow(context),
-            _buildLargeSpace(),
+            _buildSmallSpace(),
             _buildControlRow(),
+            _buildLargeSpace(),
           ],
         ),
       ),

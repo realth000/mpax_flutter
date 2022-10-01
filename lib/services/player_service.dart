@@ -26,8 +26,10 @@ class PlayerService extends GetxService {
   final _player = AudioPlayer();
   late Stream<Duration> positionStream = _player.positionStream;
   late Stream<Duration?> durationStream = _player.durationStream;
-  late Rx<Duration> currentPosition = _player.position.obs;
-  late Rx<Duration?> currentDuration = _player.duration.obs;
+  final currentPosition = Duration.zero.obs;
+  final currentDuration = Duration.zero.obs;
+  late final StreamSubscription<Duration> positionSub;
+  late final StreamSubscription<Duration?> durationSub;
 
   // Current playing playlist.
   PlaylistModel currentPlaylist = PlaylistModel();
@@ -61,6 +63,15 @@ class PlayerService extends GetxService {
           await seekToAnother(true);
         }
       }
+    });
+    positionSub = _player.positionStream.listen((position) {
+      currentPosition.value = position;
+    });
+    durationSub = _player.durationStream.listen((duration) {
+      if (duration == null) {
+        return;
+      }
+      currentDuration.value = duration;
     });
     // Load configs.
     final File currentMedia =
@@ -210,6 +221,10 @@ class PlayerService extends GetxService {
           await play();
       }
     }
+  }
+
+  Future<void> seekToDuration(Duration duration) async {
+    await _player.seek(duration);
   }
 
   Duration? playerDuration() {
