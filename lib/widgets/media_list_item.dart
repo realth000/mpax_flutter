@@ -122,6 +122,29 @@ class MediaMetadataDialog extends StatelessWidget {
     ));
   }
 
+  String _toReadableSize(int size) {
+    int d = 0;
+    while (size >= 1024 && d < 3) {
+      size ~/= 1024;
+      d++;
+    }
+
+    switch (d) {
+      case 0:
+        return '$size B';
+      case 1:
+        return '$size KB';
+      case 2:
+        return '$size MB';
+      case 3:
+        return '$size GB';
+      case 4:
+        return '$size TB';
+      default:
+        return '$size ??';
+    }
+  }
+
   List<Widget> _buildMetadataList() {
     _addReadonlyProperty(
         playContent.contentPath.replaceFirst('/storage/emulated/0/', ''),
@@ -132,7 +155,9 @@ class MediaMetadataDialog extends StatelessWidget {
     }
     if (playContent.contentSize > 0) {
       _addSpace();
-      _addReadonlyProperty('${playContent.contentSize}', 'File size'.tr);
+      _addReadonlyProperty(
+          '${_toReadableSize(playContent.contentSize)}(${playContent.contentSize} Bytes)',
+          'File size'.tr);
     }
     if (playContent.title.isNotEmpty) {
       _addSpace();

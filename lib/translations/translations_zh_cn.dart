@@ -44,4 +44,5 @@ const Map<String, String> translationZhCn = <String, String>{
   'Album year': '专辑年份',
   'Album track count': '专辑总音轨数',
   'Genre': '流派',
+  'Album artist': '专辑艺术家',
 };

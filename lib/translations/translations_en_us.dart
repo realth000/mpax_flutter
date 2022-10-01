@@ -44,4 +44,5 @@ const Map<String, String> translationEnUs = <String, String>{
   'Album year': 'Album year',
   'Album track count': 'Album track count',
   'Genre': 'Genre',
+  'Album artist': 'Album artist',
 };

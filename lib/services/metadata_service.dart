@@ -44,7 +44,11 @@ class MetadataService extends GetxService {
     if (metadata.trackTotal != null) {
       playContent.albumTrackCount = metadata.trackTotal!;
     }
-    if (metadata.genre != null) {
+    // FIXME: Seems some files have a genre value ' ',
+    // is blank but contains a space.
+    // Do not know is id3 tag standard or file corruption or mis-edit,
+    // just filter this situation now.
+    if (metadata.genre != null && metadata.genre != ' ') {
       playContent.genre = metadata.genre!;
     }
     if (metadata.picture == null || !loadImage) {
