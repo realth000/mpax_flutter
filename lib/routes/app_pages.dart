@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:mpax_flutter/views/about_page.dart';
 import 'package:mpax_flutter/views/current_playlist_page.dart';
 import 'package:mpax_flutter/views/home_page.dart';
 import 'package:mpax_flutter/views/media_library_page.dart';
@@ -44,6 +45,10 @@ class MPaxPages {
     GetPage(
       name: MPaxRoutes.settings,
       page: () => const SettingsPage(),
+    ),
+    GetPage(
+      name: MPaxRoutes.about,
+      page: () => const AboutPage(),
     ),
   ];
 }

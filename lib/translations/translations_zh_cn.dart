@@ -45,4 +45,15 @@ const Map<String, String> translationZhCn = <String, String>{
   'Album track count': '专辑总音轨数',
   'Genre': '流派',
   'Album artist': '专辑艺术家',
+  'About MPax': '关于MPax',
+  'MPax is a simple and easy-to-use music player powered by Flutter':
+      'MPax是使用Flutter开发的简约易用的音乐播放器',
+  'Build platform': '构建平台',
+  'Build info': '构建信息',
+  'Build version': '构建版本',
+  'Flutter version': 'Flutter版本',
+  'Unknown': '未知',
+  'Github homepage': 'Github 主页',
+  'Welcome to help MPax be better!': '欢迎来帮助MPax做得更好！',
+  'MPax is licensed under MIT license': 'MPax采用MIT协议',
 };

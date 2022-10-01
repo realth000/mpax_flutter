@@ -45,4 +45,16 @@ const Map<String, String> translationEnUs = <String, String>{
   'Album track count': 'Album track count',
   'Genre': 'Genre',
   'Album artist': 'Album artist',
+  'About MPax': 'About MPax',
+  'MPax is a simple and easy-to-use music player powered by Flutter':
+      'MPax is a simple and easy-to-use music player powered by Flutter',
+  'Build platform': 'Build platform',
+  'Build info': 'Build info',
+  'Build version': 'Build version',
+  'Flutter version': 'Flutter version',
+  'Unknown': 'Unknown',
+  'License': 'License',
+  'Github homepage': 'Github homepage',
+  'Welcome to help MPax be better!': 'Welcome to help MPax be better!',
+  'MPax is licensed under MIT license': 'MPax is licensed under MIT license',
 };
