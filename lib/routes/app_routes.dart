@@ -7,6 +7,7 @@ abstract class MPaxRoutes {
 
   // Seems playlist_id argument not used.
   static const String playlistContent = '/playlist/:playlist_table_name';
+  static const String music = '/music';
   static const String scan = '/scan';
   static const String settings = '/settings';
   static const String about = '/about';

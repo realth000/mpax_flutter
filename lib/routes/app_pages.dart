@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:mpax_flutter/views/current_playlist_page.dart';
 import 'package:mpax_flutter/views/home_page.dart';
 import 'package:mpax_flutter/views/media_library_page.dart';
+import 'package:mpax_flutter/views/music_page.dart';
 import 'package:mpax_flutter/views/playlist_page.dart';
 import 'package:mpax_flutter/views/scan_page.dart';
 import 'package:mpax_flutter/views/settings_page.dart';
@@ -31,6 +32,10 @@ class MPaxPages {
         }
         return PlaylistContentPage();
       },
+    ),
+    GetPage(
+      name: MPaxRoutes.music,
+      page: () => MusicPage(),
     ),
     GetPage(
       name: MPaxRoutes.scan,

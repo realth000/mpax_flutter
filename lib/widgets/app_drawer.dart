@@ -52,7 +52,7 @@ class MPaxDrawer extends StatelessWidget {
             leading: const Icon(Icons.audiotrack),
             title: Text('Music'.tr),
             selected: false,
-            onTap: () => Get.offAndToNamed(MPaxRoutes.library),
+            onTap: () => Get.offAndToNamed(MPaxRoutes.music),
             style: ListTileStyle.drawer,
           ),
           ListTile(

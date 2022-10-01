@@ -8,6 +8,7 @@ import 'package:mpax_flutter/models/play_content.model.dart';
 import 'package:mpax_flutter/models/playlist.model.dart';
 import 'package:mpax_flutter/services/config_service.dart';
 import 'package:mpax_flutter/services/media_library_service.dart';
+import 'package:mpax_flutter/services/metadata_service.dart';
 
 class PlayerService extends GetxService {
   // State
@@ -24,6 +25,9 @@ class PlayerService extends GetxService {
   final _libraryService = Get.find<MediaLibraryService>();
   final _player = AudioPlayer();
   late Stream<Duration> positionStream = _player.positionStream;
+  late Stream<Duration?> durationStream = _player.durationStream;
+  late Rx<Duration> currentPosition = _player.position.obs;
+  late Rx<Duration?> currentDuration = _player.duration.obs;
 
   // Current playing playlist.
   PlaylistModel currentPlaylist = PlaylistModel();
@@ -82,16 +86,14 @@ class PlayerService extends GetxService {
 
   Future<void> setCurrentContent(
       PlayContent playContent, PlaylistModel playlist) async {
-    final f = File(playContent.contentPath);
-    if (!f.existsSync()) {
-      // Not exists
-      return;
-    }
+    playContent = await Get.find<MetadataService>().readMetadata(
+        playContent.contentPath,
+        loadImage: true,
+        scaleImage: false);
     currentContent.value = playContent;
     currentPlaylist = playlist;
     await _player
         .setAudioSource(AudioSource.uri(Uri.parse(playContent.contentPath)));
-    // playContent = await Get.find<MetadataService>().readMetadata(currentContent.value.contentPath);
     _configService.saveString('CurrentMedia', currentContent.value.contentPath);
     _configService.saveString('CurrentPlaylist', currentPlaylist.tableName);
     currentContent.value = playContent;

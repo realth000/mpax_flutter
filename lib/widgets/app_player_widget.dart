@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mpax_flutter/routes/app_pages.dart';
 import 'package:mpax_flutter/services/player_service.dart';
 
 class _ProgressWidget extends GetView<PlayerService> {
@@ -52,7 +53,7 @@ class MPaxPlayerWidget extends GetView<PlayerService> {
     }
   }
 
-  SizedBox _buildAudioAlbumCoverWidget(BuildContext context) {
+  Widget _buildAudioAlbumCoverWidget(BuildContext context) {
     if (controller.currentContent.value.albumCover.isEmpty) {
       return const SizedBox(
         width: albumCoverHeight,
@@ -60,11 +61,16 @@ class MPaxPlayerWidget extends GetView<PlayerService> {
         child: Icon(Icons.music_note),
       );
     } else {
-      return SizedBox(
-        width: albumCoverHeight,
-        height: albumCoverHeight,
-        child: Image.memory(
-          base64Decode(controller.currentContent.value.albumCover),
+      return GestureDetector(
+        onTapUp: (TapUpDetails details) {
+          Get.toNamed(MPaxRoutes.music);
+        },
+        child: SizedBox(
+          width: albumCoverHeight,
+          height: albumCoverHeight,
+          child: Image.memory(
+            base64Decode(controller.currentContent.value.albumCover),
+          ),
         ),
       );
     }
@@ -108,6 +114,9 @@ class MPaxPlayerWidget extends GetView<PlayerService> {
     return Expanded(
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
+        onTapUp: (details) {
+          Get.toNamed(MPaxRoutes.music);
+        },
         onLongPressStart: (details) {
           // For animation.
         },
@@ -141,63 +150,49 @@ class MPaxPlayerWidget extends GetView<PlayerService> {
 
   @override
   Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-          // border: Border.all(
-          // color: Colors.grey,
-          // width: 2.0,
-          // ),
-          // borderRadius: BorderRadius.circular(1.0),
-          // boxShadow: const [
-          //   BoxShadow(
-          //     color: Colors.grey,
-          //   ),
-          // ],
-          ),
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(
-          maxHeight: widgetHeight,
-        ),
-        child: Column(
-          children: [
-            _ProgressWidget(),
-            Expanded(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  const SizedBox(
-                    width: widgetHeight / 2 - albumCoverHeight / 2,
-                  ),
-                  // Album cover
-                  Obx(() => _buildAudioAlbumCoverWidget(context)),
-                  const SizedBox(
-                    width: widgetHeight / 2 - albumCoverHeight / 2,
-                  ),
-                  // Audio info
-                  _buildAudioInfoWidget(context),
-                  // Play-and-pause button.
-                  ElevatedButton(
-                    onPressed: () {
-                      controller.playOrPause();
-                    },
-                    child: Obx(() => Icon(controller.playButtonIcon.value)),
-                  ),
-                  const SizedBox(
-                    width: 5,
-                    height: 5,
-                  ),
-                  // Play mode button.
-                  ElevatedButton(
-                    onPressed: () async {
-                      await controller.switchPlayMode();
-                    },
-                    child: Obx(() => Icon(controller.playModeIcon.value)),
-                  ),
-                ],
-              ),
+    return ConstrainedBox(
+      constraints: const BoxConstraints(
+        maxHeight: widgetHeight,
+      ),
+      child: Column(
+        children: [
+          _ProgressWidget(),
+          Expanded(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                const SizedBox(
+                  width: widgetHeight / 2 - albumCoverHeight / 2,
+                ),
+                // Album cover
+                Obx(() => _buildAudioAlbumCoverWidget(context)),
+                const SizedBox(
+                  width: widgetHeight / 2 - albumCoverHeight / 2,
+                ),
+                // Audio info
+                _buildAudioInfoWidget(context),
+                // Play-and-pause button.
+                ElevatedButton(
+                  onPressed: () {
+                    controller.playOrPause();
+                  },
+                  child: Obx(() => Icon(controller.playButtonIcon.value)),
+                ),
+                const SizedBox(
+                  width: 5,
+                  height: 5,
+                ),
+                // Play mode button.
+                ElevatedButton(
+                  onPressed: () async {
+                    await controller.switchPlayMode();
+                  },
+                  child: Obx(() => Icon(controller.playModeIcon.value)),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
