@@ -68,13 +68,21 @@ class PlayerService extends GetxService {
       }
     });
     positionSub = _player.positionStream.listen((position) {
-      currentPosition.value = position;
+      if (position < Duration.zero) {
+        currentPosition.value = const Duration(seconds: 0);
+      } else {
+        currentPosition.value = position;
+      }
     });
     durationSub = _player.durationStream.listen((duration) {
       if (duration == null) {
         return;
       }
-      currentDuration.value = duration;
+      if (duration < Duration.zero) {
+        currentDuration.value = const Duration(seconds: 1);
+      } else {
+        currentDuration.value = duration;
+      }
     });
     // Load configs.
     final File currentMedia =
