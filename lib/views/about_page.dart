@@ -85,7 +85,7 @@ class _AboutPageBodyWidget extends StatelessWidget {
                         'realth000/mpax_flutter',
                         maxLines: 1,
                       ),
-                      trailing: const Icon(Icons.call_made),
+                      trailing: const Icon(Icons.launch),
                       onTap: () async {
                         await launchUrl(Uri.parse(_githubPageString));
                       },
@@ -113,8 +113,14 @@ class _AboutPageBodyWidget extends StatelessWidget {
                     ListTile(
                       leading: const Icon(Icons.build),
                       title: Text('Build platform'.tr),
-                      subtitle: Text(platformString),
-                      trailing: platformIcon,
+                      trailing: Chip(
+                        avatar: platformIcon,
+                        label: Text(platformString),
+                        padding: const EdgeInsets.all(0),
+                        side: BorderSide.none,
+                        labelPadding: const EdgeInsets.all(0),
+                        backgroundColor: Colors.transparent,
+                      ),
                     ),
                     ListTile(
                       leading: const Icon(Icons.construction),
@@ -167,7 +173,7 @@ class _AboutPageBodyWidget extends StatelessWidget {
                     ListTile(
                       leading: const Icon(Icons.collections_bookmark),
                       title: Text('MPax is licensed under MIT license'.tr),
-                      trailing: const Icon(Icons.call_made),
+                      trailing: const Icon(Icons.launch),
                       onTap: () async {
                         await launchUrl(Uri.parse(_licensePageString));
                       },

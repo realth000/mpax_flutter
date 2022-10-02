@@ -31,32 +31,30 @@ class SettingsPage extends StatelessWidget {
   }
 }
 
+class _ThemeGroup {
+  _ThemeGroup({required this.themeMode, required this.name});
+
+  final MPaxThemeMode themeMode;
+  final String name;
+}
+
 class _SettingsBodyWidget extends GetView<ConfigService> {
   final _themeService = Get.find<ThemeService>();
   final _localeService = Get.find<LocaleService>();
 
   final themeName = autoModeString.obs;
   final themeIcon = autoModeIcon.obs;
-
-  Future<void> _openThemeMenu() async {
-    final theme = await Get.dialog(_ThemeMenu());
-    switch (theme) {
-      case MPaxThemeMode.light:
-        themeIcon.value = lightModeIcon;
-        themeName.value = lightModeString;
-        _themeService.changeThemeMode(MPaxThemeMode.light);
-        break;
-      case MPaxThemeMode.dark:
-        themeIcon.value = darkModeIcon;
-        themeName.value = darkModeString;
-        _themeService.changeThemeMode(MPaxThemeMode.dark);
-        break;
-      case MPaxThemeMode.auto:
-        themeIcon.value = autoModeIcon;
-        themeName.value = autoModeString;
-        _themeService.changeThemeMode(MPaxThemeMode.auto);
-    }
-  }
+  final List<Icon> _themeIcons = <Icon>[
+    lightModeIcon,
+    autoModeIcon,
+    darkModeIcon,
+  ];
+  final _themeList = <_ThemeGroup>[
+    _ThemeGroup(themeMode: MPaxThemeMode.light, name: lightModeString),
+    _ThemeGroup(themeMode: MPaxThemeMode.auto, name: autoModeString),
+    _ThemeGroup(themeMode: MPaxThemeMode.dark, name: darkModeString),
+  ];
+  final _selections = List.generate(3, (_) => false).obs;
 
   Future<void> _openLocaleMenu() async {
     final locale = await Get.dialog(_LocaleMenu());
@@ -66,13 +64,13 @@ class _SettingsBodyWidget extends GetView<ConfigService> {
   @override
   Widget build(BuildContext context) {
     if (_themeService.followSystemDarkMode) {
-      themeIcon.value = autoModeIcon;
+      _selections[1] = true;
       themeName.value = autoModeString;
     } else if (_themeService.useDarkTheme) {
-      themeIcon.value = darkModeIcon;
+      _selections[2] = true;
       themeName.value = darkModeString;
     } else {
-      themeIcon.value = lightModeIcon;
+      _selections[0] = true;
       themeName.value = lightModeString;
     }
 
@@ -88,13 +86,28 @@ class _SettingsBodyWidget extends GetView<ConfigService> {
                 level: 0,
               ),
               ListTile(
-                leading: ListTileLeading(
-                  child: Obx(() => themeIcon.value),
+                leading: const ListTileLeading(
+                  child: Icon(Icons.invert_colors),
+                  // child: Icon(Icons.theme),
                 ),
                 title: Text('Theme'.tr),
-                subtitle: Text('Follow system/Light/Dark'.tr),
-                trailing: Obx(() => Text(themeName.value.tr)),
-                onTap: () async => await _openThemeMenu(),
+                subtitle: Obx(() => Text(themeName.value.tr)),
+                trailing: Obx(() => ToggleButtons(
+                      onPressed: (index) {
+                        if (_selections[index]) {
+                          return;
+                        }
+                        for (var i = 0; i < _selections.length; i++) {
+                          _selections[i] = false;
+                        }
+                        _selections[index] = true;
+                        _themeService
+                            .changeThemeMode(_themeList[index].themeMode);
+                        themeName.value = _themeList[index].name;
+                      },
+                      isSelected: _selections,
+                      children: _themeIcons,
+                    )),
               ),
               ListTile(
                 leading: const ListTileLeading(
@@ -108,39 +121,6 @@ class _SettingsBodyWidget extends GetView<ConfigService> {
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-class _ThemeMenu extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return ModalDialog(
-      child: Column(
-        children: [
-          ListTile(
-            leading: autoModeIcon,
-            title: Text(autoModeString.tr),
-            onTap: () {
-              Get.back(result: MPaxThemeMode.auto);
-            },
-          ),
-          ListTile(
-            leading: lightModeIcon,
-            title: Text(lightModeString.tr),
-            onTap: () {
-              Get.back(result: MPaxThemeMode.light);
-            },
-          ),
-          ListTile(
-            leading: darkModeIcon,
-            title: Text(darkModeString.tr),
-            onTap: () {
-              Get.back(result: MPaxThemeMode.dark);
-            },
-          ),
-        ],
       ),
     );
   }
