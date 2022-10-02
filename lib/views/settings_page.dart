@@ -11,9 +11,6 @@ import 'package:mpax_flutter/widgets/util_widgets.dart';
 const autoModeIcon = Icon(Icons.auto_mode);
 const lightModeIcon = Icon(Icons.light_mode);
 const darkModeIcon = Icon(Icons.dark_mode);
-const autoModeString = 'Follow system';
-const lightModeString = 'Light mode';
-const darkModeString = 'Dark mode';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -42,7 +39,6 @@ class _SettingsBodyWidget extends GetView<ConfigService> {
   final _themeService = Get.find<ThemeService>();
   final _localeService = Get.find<LocaleService>();
 
-  final themeName = autoModeString.obs;
   final themeIcon = autoModeIcon.obs;
   final List<Icon> _themeIcons = <Icon>[
     lightModeIcon,
@@ -65,13 +61,10 @@ class _SettingsBodyWidget extends GetView<ConfigService> {
   Widget build(BuildContext context) {
     if (_themeService.followSystemDarkMode) {
       _selections[1] = true;
-      themeName.value = autoModeString;
     } else if (_themeService.useDarkTheme) {
       _selections[2] = true;
-      themeName.value = darkModeString;
     } else {
       _selections[0] = true;
-      themeName.value = lightModeString;
     }
 
     return Scrollbar(
@@ -85,29 +78,30 @@ class _SettingsBodyWidget extends GetView<ConfigService> {
                 title: 'Appearance'.tr,
                 level: 0,
               ),
-              ListTile(
-                leading: const ListTileLeading(
-                  child: Icon(Icons.invert_colors),
-                  // child: Icon(Icons.theme),
+              Obx(
+                () => ListTile(
+                  leading: const ListTileLeading(
+                    child: Icon(Icons.invert_colors),
+                    // child: Icon(Icons.theme),
+                  ),
+                  title: Text('Theme'.tr),
+                  subtitle: Text(_themeService.themeModeString.value.tr),
+                  trailing: ToggleButtons(
+                    onPressed: (index) {
+                      if (_selections[index]) {
+                        return;
+                      }
+                      for (var i = 0; i < _selections.length; i++) {
+                        _selections[i] = false;
+                      }
+                      _selections[index] = true;
+                      _themeService
+                          .changeThemeMode(_themeList[index].themeMode);
+                    },
+                    isSelected: _selections,
+                    children: _themeIcons,
+                  ),
                 ),
-                title: Text('Theme'.tr),
-                subtitle: Obx(() => Text(themeName.value.tr)),
-                trailing: Obx(() => ToggleButtons(
-                      onPressed: (index) {
-                        if (_selections[index]) {
-                          return;
-                        }
-                        for (var i = 0; i < _selections.length; i++) {
-                          _selections[i] = false;
-                        }
-                        _selections[index] = true;
-                        _themeService
-                            .changeThemeMode(_themeList[index].themeMode);
-                        themeName.value = _themeList[index].name;
-                      },
-                      isSelected: _selections,
-                      children: _themeIcons,
-                    )),
               ),
               ListTile(
                 leading: const ListTileLeading(
