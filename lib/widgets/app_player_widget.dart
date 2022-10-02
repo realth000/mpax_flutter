@@ -162,7 +162,7 @@ class MPaxPlayerWidget extends GetView<PlayerService> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
                 const SizedBox(
-                  width: widgetHeight / 2 - albumCoverHeight / 2,
+                  width: widgetHeight - albumCoverHeight + 2,
                 ),
                 // Album cover
                 Obx(() => _buildAudioAlbumCoverWidget(context)),

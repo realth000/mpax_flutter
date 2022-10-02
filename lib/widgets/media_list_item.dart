@@ -83,7 +83,7 @@ class MediaItemTile extends StatelessWidget {
               Get.dialog(MediaMetadataDialog(playContent));
           }
         },
-        icon: const Icon(Icons.more_vert),
+        icon: const Icon(Icons.more_horiz),
       ),
       onTap: () async {
         await _controller.play();

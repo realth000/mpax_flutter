@@ -2,70 +2,6 @@ import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 
 class MPaxTheme {
-  static const lightColorScheme = ColorScheme(
-    brightness: Brightness.light,
-    primary: Color(0xFF5152B7),
-    onPrimary: Color(0xFFFFFFFF),
-    primaryContainer: Color(0xFFE1DFFF),
-    onPrimaryContainer: Color(0xFF08006C),
-    secondary: Color(0xFF5D5C72),
-    onSecondary: Color(0xFFFFFFFF),
-    secondaryContainer: Color(0xFFE2E0F9),
-    onSecondaryContainer: Color(0xFF1A1A2C),
-    tertiary: Color(0xFF795369),
-    onTertiary: Color(0xFFFFFFFF),
-    tertiaryContainer: Color(0xFFFFD8EC),
-    onTertiaryContainer: Color(0xFF2E1124),
-    error: Color(0xFFBA1A1A),
-    errorContainer: Color(0xFFFFDAD6),
-    onError: Color(0xFFFFFFFF),
-    onErrorContainer: Color(0xFF410002),
-    background: Color(0xFFFFFBFF),
-    onBackground: Color(0xFF1C1B1F),
-    surface: Color(0xFFFFFBFF),
-    onSurface: Color(0xFF1C1B1F),
-    surfaceVariant: Color(0xFFE4E1EC),
-    onSurfaceVariant: Color(0xFF47464F),
-    outline: Color(0xFF777680),
-    onInverseSurface: Color(0xFFF3EFF4),
-    inverseSurface: Color(0xFF313034),
-    inversePrimary: Color(0xFFC1C1FF),
-    shadow: Color(0xFF000000),
-    surfaceTint: Color(0xFF5152B7),
-  );
-
-  static const darkColorScheme = ColorScheme(
-    brightness: Brightness.dark,
-    primary: Color(0xFFC1C1FF),
-    onPrimary: Color(0xFF201E87),
-    primaryContainer: Color(0xFF39399D),
-    onPrimaryContainer: Color(0xFFE1DFFF),
-    secondary: Color(0xFFC6C4DD),
-    onSecondary: Color(0xFF2F2F42),
-    secondaryContainer: Color(0xFF454559),
-    onSecondaryContainer: Color(0xFFE2E0F9),
-    tertiary: Color(0xFFE9B9D3),
-    onTertiary: Color(0xFF46263A),
-    tertiaryContainer: Color(0xFF5F3C51),
-    onTertiaryContainer: Color(0xFFFFD8EC),
-    error: Color(0xFFFFB4AB),
-    errorContainer: Color(0xFF93000A),
-    onError: Color(0xFF690005),
-    onErrorContainer: Color(0xFFFFDAD6),
-    background: Color(0xFF1C1B1F),
-    onBackground: Color(0xFFE5E1E6),
-    surface: Color(0xFF1C1B1F),
-    onSurface: Color(0xFFE5E1E6),
-    surfaceVariant: Color(0xFF47464F),
-    onSurfaceVariant: Color(0xFFC8C5D0),
-    outline: Color(0xFF918F9A),
-    onInverseSurface: Color(0xFF1C1B1F),
-    inverseSurface: Color(0xFFE5E1E6),
-    inversePrimary: Color(0xFF5152B7),
-    shadow: Color(0xFF000000),
-    surfaceTint: Color(0xFFC1C1FF),
-  );
-
   static final listTileTheme = ListTileThemeData(
     shape: RoundedRectangleBorder(
       // Larger enough to ensure material style.
@@ -77,51 +13,111 @@ class MPaxTheme {
     border: OutlineInputBorder(),
   );
 
-  static ThemeData light = ThemeData(
-    colorScheme: lightColorScheme,
-    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-    useMaterial3: true,
-    appBarTheme: AppBarTheme(
-      // backgroundColor: lightColorScheme.primary,
-      titleTextStyle: ThemeData.light().textTheme.titleLarge?.copyWith(
-            // color: Colors.black,
-            // fontWeight: FontWeight.bold,
-            fontSize: 20,
-          ),
-    ),
-    listTileTheme: listTileTheme,
-    inputDecorationTheme: inputDecorationTheme,
-  );
-
-  static ThemeData dark = ThemeData(
-    colorScheme: darkColorScheme,
-    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-    useMaterial3: true,
-    appBarTheme: AppBarTheme(
-      titleTextStyle: ThemeData.dark().textTheme.titleLarge?.copyWith(
-            // color: Colors.black,
-            // fontWeight: FontWeight.bold,
-            fontSize: 20,
-          ),
-    ),
-    listTileTheme: listTileTheme,
-    inputDecorationTheme: inputDecorationTheme,
-  );
-
   static const flexScheme = FlexScheme.deepPurple;
-  static ThemeData flexLight = FlexThemeData.light(
+
+  static final ThemeData _flexLightBase = FlexThemeData.light(
     scheme: flexScheme,
+    colors: const FlexSchemeColor(
+      primary: Color(0xff4527a0),
+      primaryContainer: Color(0xffd1c4e9),
+      secondary: Color(0xff0091ea),
+      secondaryContainer: Color(0xffcfe4ff),
+      tertiary: Color(0xff00b0ff),
+      tertiaryContainer: Color(0xff9fcbf1),
+      appBarColor: Color(0xffcfe4ff),
+      error: Color(0xffb00020),
+    ),
+    surfaceMode: FlexSurfaceMode.highScaffoldLowSurface,
+    blendLevel: 10,
+    appBarOpacity: 0.95,
+    transparentStatusBar: true,
+    tabBarStyle: FlexTabBarStyle.forBackground,
+    tooltipsMatchBackground: true,
+    subThemesData: const FlexSubThemesData(
+      defaultRadius: 26.0,
+      thickBorderWidth: 1.5,
+      elevatedButtonSecondarySchemeColor: SchemeColor.primaryContainer,
+      outlinedButtonOutlineSchemeColor: SchemeColor.primaryContainer,
+      switchSchemeColor: SchemeColor.primary,
+      checkboxSchemeColor: SchemeColor.primary,
+      radioSchemeColor: SchemeColor.primary,
+      unselectedToggleIsColored: true,
+      inputDecoratorRadius: 10.0,
+      inputDecoratorUnfocusedBorderIsColored: false,
+      fabUseShape: true,
+      popupMenuOpacity: 0.98,
+      popupMenuRadius: 8.0,
+      dialogBackgroundSchemeColor: SchemeColor.onInverseSurface,
+      navigationBarHeight: 65.0,
+    ),
+    keyColors: const FlexKeyColors(
+      useSecondary: true,
+      useTertiary: true,
+    ),
+    visualDensity: FlexColorScheme.comfortablePlatformDensity,
     useMaterial3: true,
-    useMaterial3ErrorColors: true,
-  ).copyWith(
+    // To use the playground font, add GoogleFonts package and uncomment
+    // fontFamily: GoogleFonts.notoSans().fontFamily,
+  );
+
+  static ThemeData flexLight = _flexLightBase.copyWith(
+    // appBarTheme: AppBarTheme(),
     listTileTheme: listTileTheme,
     inputDecorationTheme: inputDecorationTheme,
   );
-  static ThemeData flexDark = FlexThemeData.dark(
+
+  static final ThemeData _flexDarkBase = FlexThemeData.dark(
     scheme: flexScheme,
+    colors: const FlexSchemeColor(
+      primary: Color(0xff4527a0),
+      primaryContainer: Color(0xffd1c4e9),
+      secondary: Color(0xff0091ea),
+      secondaryContainer: Color(0xffcfe4ff),
+      tertiary: Color(0xff00b0ff),
+      tertiaryContainer: Color(0xff9fcbf1),
+      appBarColor: Color(0xffcfe4ff),
+      error: Color(0xffb00020),
+    ),
+    surfaceMode: FlexSurfaceMode.highScaffoldLevelSurface,
+    blendLevel: 10,
+    appBarOpacity: 0.95,
+    transparentStatusBar: true,
+    tabBarStyle: FlexTabBarStyle.forBackground,
+    surfaceTint: const Color(0xff311b92),
+    tooltipsMatchBackground: true,
+    subThemesData: const FlexSubThemesData(
+      defaultRadius: 26.0,
+      thickBorderWidth: 1.5,
+      elevatedButtonSecondarySchemeColor: SchemeColor.primaryContainer,
+      outlinedButtonOutlineSchemeColor: SchemeColor.primaryContainer,
+      switchSchemeColor: SchemeColor.primary,
+      checkboxSchemeColor: SchemeColor.primary,
+      radioSchemeColor: SchemeColor.primary,
+      unselectedToggleIsColored: true,
+      inputDecoratorRadius: 10.0,
+      inputDecoratorUnfocusedBorderIsColored: false,
+      fabUseShape: true,
+      popupMenuOpacity: 0.98,
+      popupMenuRadius: 8.0,
+      dialogBackgroundSchemeColor: SchemeColor.onInverseSurface,
+      tabBarIndicatorSchemeColor: SchemeColor.inversePrimary,
+      navigationBarHeight: 65.0,
+    ),
+    keyColors: const FlexKeyColors(
+      useSecondary: true,
+      useTertiary: true,
+    ),
+    visualDensity: FlexColorScheme.comfortablePlatformDensity,
     useMaterial3: true,
-    useMaterial3ErrorColors: true,
-  ).copyWith(
+    // To use the playground font, add GoogleFonts package and uncomment
+    // fontFamily: GoogleFonts.notoSans().fontFamily,
+  );
+
+// If you do not have a themeMode switch, uncomment this line
+// to let the device system mode control the theme mode:
+// themeMode: ThemeMode.system,
+
+  static ThemeData flexDark = _flexDarkBase.copyWith(
     listTileTheme: listTileTheme,
     inputDecorationTheme: inputDecorationTheme,
   );
