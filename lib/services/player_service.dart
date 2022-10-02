@@ -110,12 +110,16 @@ class PlayerService extends GetxService {
       PlayContent playContent, PlaylistModel playlist) async {
     // Save scaled album cover in file for the just_audio_background service to
     // display on android control center.
-    Directory tmpDir = await getTemporaryDirectory();
-    // FIXME: Clear cover cache.
-    final coverFile = File(
-        '${tmpDir.path}/cover.cache.${DateTime.now().microsecondsSinceEpoch.toString()}');
-    await coverFile.writeAsBytes(base64Decode(playContent.albumCover),
-        mode: FileMode.write, flush: true);
+    final hasCoverImage = playContent.albumCover.isNotEmpty;
+    late final File coverFile;
+    if (hasCoverImage) {
+      Directory tmpDir = await getTemporaryDirectory();
+      // FIXME: Clear cover cache.
+      coverFile = File(
+          '${tmpDir.path}/cover.cache.${DateTime.now().microsecondsSinceEpoch.toString()}');
+      await coverFile.writeAsBytes(base64Decode(playContent.albumCover),
+          mode: FileMode.write, flush: true);
+    }
     // Read the full album cover image to display in music page.
     playContent = await Get.find<MetadataService>().readMetadata(
         playContent.contentPath,
@@ -133,7 +137,7 @@ class PlayerService extends GetxService {
               artist: playContent.artist,
               album: playContent.albumTitle,
               duration: Duration(seconds: playContent.length),
-              artUri: coverFile.uri,
+              artUri: hasCoverImage ? coverFile.uri : null,
             )));
     _configService.saveString('CurrentMedia', currentContent.value.contentPath);
     _configService.saveString('CurrentPlaylist', currentPlaylist.tableName);
