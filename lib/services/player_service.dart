@@ -1,14 +1,17 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:just_audio_background/just_audio_background.dart';
 import 'package:mpax_flutter/models/play_content.model.dart';
 import 'package:mpax_flutter/models/playlist.model.dart';
 import 'package:mpax_flutter/services/config_service.dart';
 import 'package:mpax_flutter/services/media_library_service.dart';
 import 'package:mpax_flutter/services/metadata_service.dart';
+import 'package:path_provider/path_provider.dart';
 
 class PlayerService extends GetxService {
   // State
@@ -97,6 +100,15 @@ class PlayerService extends GetxService {
 
   Future<void> setCurrentContent(
       PlayContent playContent, PlaylistModel playlist) async {
+    // Save scaled album cover in file for the just_audio_background service to
+    // display on android control center.
+    Directory tmpDir = await getTemporaryDirectory();
+    // FIXME: Clear cover cache.
+    final coverFile = File(
+        '${tmpDir.path}/cover.cache.${DateTime.now().microsecondsSinceEpoch.toString()}');
+    await coverFile.writeAsBytes(base64Decode(playContent.albumCover),
+        mode: FileMode.write, flush: true);
+    // Read the full album cover image to display in music page.
     playContent = await Get.find<MetadataService>().readMetadata(
         playContent.contentPath,
         loadImage: true,
@@ -104,7 +116,17 @@ class PlayerService extends GetxService {
     currentContent.value = playContent;
     currentPlaylist = playlist;
     await _player
-        .setAudioSource(AudioSource.uri(Uri.parse(playContent.contentPath)));
+        .setAudioSource(AudioSource.uri(Uri.parse(playContent.contentPath),
+            tag: MediaItem(
+              id: playContent.contentPath,
+              title: playContent.title.isEmpty
+                  ? playContent.contentName
+                  : playContent.title,
+              artist: playContent.artist,
+              album: playContent.albumTitle,
+              duration: Duration(seconds: playContent.length),
+              artUri: coverFile.uri,
+            )));
     _configService.saveString('CurrentMedia', currentContent.value.contentPath);
     _configService.saveString('CurrentPlaylist', currentPlaylist.tableName);
     currentContent.value = playContent;
