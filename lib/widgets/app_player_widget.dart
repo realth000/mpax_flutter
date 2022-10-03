@@ -10,29 +10,12 @@ class _ProgressWidget extends GetView<PlayerService> {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<Duration>(
-      stream: controller.positionStream,
-      builder: (context, snapshot) {
-        if (controller.playerDuration() == null ||
-            snapshot.hasError ||
-            !snapshot.hasData) {
-          return const LinearProgressIndicator(
-            minHeight: height,
-            value: 0.0,
-            backgroundColor: Colors.transparent,
-          );
-        }
-        final v = (snapshot.data as Duration).inSeconds.toDouble() /
-            controller.playerDuration()!.inSeconds.toDouble();
-        // We remove the check and switch to next media here because in builder
-        // there must NOT have something like "set".
-        return LinearProgressIndicator(
+    return Obx(() => LinearProgressIndicator(
           minHeight: height,
-          value: v,
+          value: controller.currentPosition.value.inSeconds.toDouble() /
+              controller.currentDuration.value.inSeconds.toDouble(),
           backgroundColor: Colors.transparent,
-        );
-      },
-    );
+        ));
   }
 }
 
