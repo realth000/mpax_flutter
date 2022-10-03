@@ -55,6 +55,13 @@ class PlayerService extends GetxService {
   Future<PlayerService> init() async {
     await _player.setShuffleModeEnabled(false);
     await _player.setLoopMode(LoopMode.off);
+    _player.playerStateStream.listen((state) {
+      if (state.playing) {
+        playButtonIcon.value = _pauseIcon;
+      } else {
+        playButtonIcon.value = _playIcon;
+      }
+    });
     _player.processingStateStream.listen((state) async {
       if (state == ProcessingState.completed) {
         if (playMode == _repeatOneString) {
@@ -145,9 +152,6 @@ class PlayerService extends GetxService {
   }
 
   Future<void> play() async {
-    // FIXME: The first time from MediaListTileItem to here not finishes .play(),
-    // To turn the icon, assign before .play().
-    playButtonIcon.value = _pauseIcon;
     await _player.load();
     // Use for debugging.
     // await _player.seek(Duration(seconds: (_player.duration!.inSeconds * 0.98).toInt()));
@@ -157,10 +161,8 @@ class PlayerService extends GetxService {
   Future<void> playOrPause() async {
     if (_player.playerState.playing) {
       await _player.pause();
-      playButtonIcon.value = _playIcon;
       return;
     } else if (currentContent.value.contentPath.isNotEmpty) {
-      playButtonIcon.value = _pauseIcon;
       await _player.play();
       return;
     } else {
