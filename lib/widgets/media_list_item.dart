@@ -63,13 +63,32 @@ class MediaItemTile extends StatelessWidget {
         playContent.title.isEmpty
             ? path.basename(playContent.contentPath)
             : playContent.title,
-        maxLines: 1,
+        maxLines: 2,
+        style: const TextStyle(
+          fontSize: 15,
+        ),
       ),
-      subtitle: Text(
-        playContent.albumTitle.isEmpty
-            ? playContent.contentPath.replaceFirst('/storage/emulated/0/', '')
-            : playContent.albumTitle,
-        maxLines: 1,
+      subtitle: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            playContent.artist,
+            maxLines: 1,
+            style: const TextStyle(
+              fontSize: 14,
+            ),
+          ),
+          Text(
+            playContent.albumTitle.isEmpty
+                ? playContent.contentPath
+                    .replaceFirst('/storage/emulated/0/', '')
+                : playContent.albumTitle,
+            maxLines: 1,
+            style: const TextStyle(
+              fontSize: 14,
+            ),
+          ),
+        ],
       ),
       trailing: IconButton(
         onPressed: () async {
@@ -88,6 +107,8 @@ class MediaItemTile extends StatelessWidget {
       onTap: () async {
         await _controller.play();
       },
+      // This important.
+      isThreeLine: true,
     );
   }
 }
