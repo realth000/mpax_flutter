@@ -30,7 +30,7 @@ class PlayerService extends GetxService {
   late Stream<Duration> positionStream = _player.positionStream;
   late Stream<Duration?> durationStream = _player.durationStream;
   final currentPosition = Duration.zero.obs;
-  final currentDuration = Duration.zero.obs;
+  final currentDuration = const Duration(seconds: 1).obs;
   late final StreamSubscription<Duration> positionSub;
   late final StreamSubscription<Duration?> durationSub;
 
