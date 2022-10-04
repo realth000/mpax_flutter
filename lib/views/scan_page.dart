@@ -35,6 +35,22 @@ class _ScanBodyWidget extends StatelessWidget {
     return Card(
       child: Column(
         children: <Widget>[
+          Row(
+            children: <Widget>[
+              Obx(() => Checkbox(
+                    value: controller.searchSkipRecorded.value,
+                    onChanged: (value) async {
+                      if (value == null) {
+                        return;
+                      }
+                      controller.searchSkipRecorded.value = value;
+                      await Get.find<ConfigService>()
+                          .saveBool('ScanSkipRecordedFile', value);
+                    },
+                  )),
+              Text('Skip recorded music files'.tr),
+            ],
+          ),
           ListTile(
             leading: const Icon(Icons.start),
             title: Text('Start scan'.tr),
@@ -95,7 +111,11 @@ class _ScanController extends GetxController {
     for (var target in targets) {
       _scanList[target] = _ScanTargetItemWidget(target);
     }
+    searchSkipRecorded.value =
+        Get.find<ConfigService>().getBool('ScanSkipRecordedFile') ?? false;
   }
+
+  final searchSkipRecorded = false.obs;
 
   ConfigService configService = Get.find<ConfigService>();
   final _scanList = <String, _ScanTargetItemWidget>{}.obs;
@@ -129,9 +149,11 @@ class _ScanController extends GetxController {
   }
 
   Future<void> scanTargetList() async {
-    libraryService.resetLibrary();
+    if (Get.find<ConfigService>().getBool('ScanSkipRecordedFile') == false) {
+      libraryService.resetLibrary();
+    }
     await Future.forEach(_scanList.entries, (entry) async {
-      await entry.value.controller.startScan();
+      await entry.value.controller.startScan(AudioScanOptions.fromConfig());
     });
     await libraryService.saveAllPlaylist();
   }
@@ -173,7 +195,7 @@ class _ScanTargetItemController extends GetxController {
     }
   }
 
-  Future<void> startScan() async {
+  Future<void> startScan(AudioScanOptions options) async {
     if (target.isEmpty) {
       setStatus(ScanTargetStatus.ready);
       update();
@@ -184,7 +206,7 @@ class _ScanTargetItemController extends GetxController {
     final d = Directory(target);
     // FileSystemEntity.isFileSync(entry.toString())
     for (final entry in d.listSync(recursive: true, followLinks: false)) {
-      final scanner = AudioScanner(targetPath: entry.path);
+      final scanner = AudioScanner(targetPath: entry.path, options: options);
       await scanner.scan();
     }
     setStatus(ScanTargetStatus.ready);

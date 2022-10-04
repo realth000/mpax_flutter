@@ -10,6 +10,7 @@ const Map<String, Type> configMap = <String, Type>{
   'FollowSystemDarkMode': bool,
   'Locale': String,
   'FollowSystemLocale': bool,
+  'ScanSkipRecordedFile': bool,
 };
 
 class ConfigService extends GetxService {

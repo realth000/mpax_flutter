@@ -56,4 +56,5 @@ const Map<String, String> translationZhCn = <String, String>{
   'Github homepage': 'Github 主页',
   'Welcome to help MPax be better!': '欢迎来帮助MPax做得更好！',
   'MPax is licensed under MIT license': 'MPax采用MIT协议',
+  'Skip recorded music files': '跳过已在库的音乐',
 };

@@ -3,17 +3,36 @@ import 'dart:io';
 import 'package:get/get.dart';
 import 'package:mpax_flutter/models/play_content.model.dart';
 import 'package:mpax_flutter/models/playlist.model.dart';
+import 'package:mpax_flutter/services/config_service.dart';
 import 'package:mpax_flutter/services/media_library_service.dart';
 import 'package:mpax_flutter/services/metadata_service.dart';
 
+class AudioScanOptions {
+  AudioScanOptions.raw({required this.searchAll});
+
+  AudioScanOptions.fromConfig() {
+    final configService = Get.find<ConfigService>();
+    searchAll = configService.getBool('ScanSkipRecordedFile') ?? false;
+  }
+
+  AudioScanOptions copyWith({bool? searchAll}) {
+    return AudioScanOptions.raw(
+      searchAll: searchAll ?? this.searchAll,
+    );
+  }
+
+  bool searchAll = false;
+}
+
 class AudioScanner {
-  AudioScanner({required this.targetPath, this.targetModel});
+  AudioScanner({required this.targetPath, this.targetModel, this.options});
 
   final mediaLibraryService = Get.find<MediaLibraryService>();
   final _metadataService = Get.find<MetadataService>();
 
   final String targetPath;
   PlaylistModel? targetModel;
+  AudioScanOptions? options;
 
   Future<int> scan() async {
     List<PlayContent> scannedAudioList = <PlayContent>[];

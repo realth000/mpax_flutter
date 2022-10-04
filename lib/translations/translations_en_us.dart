@@ -57,4 +57,5 @@ const Map<String, String> translationEnUs = <String, String>{
   'Github homepage': 'Github homepage',
   'Welcome to help MPax be better!': 'Welcome to help MPax be better!',
   'MPax is licensed under MIT license': 'MPax is licensed under MIT license',
+  'Skip recorded music files': 'Skip recorded music files',
 };
