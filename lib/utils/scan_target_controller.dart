@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:get/get.dart';
@@ -30,6 +31,10 @@ class AudioScanner {
   final mediaLibraryService = Get.find<MediaLibraryService>();
   final _metadataService = Get.find<MetadataService>();
 
+  final _scanStreamController = StreamController<String>(sync: true);
+  late final Stream<String> scanStream = _scanStreamController.stream;
+  late final _scanStreamSink = _scanStreamController.sink;
+
   final String targetPath;
   PlaylistModel? targetModel;
   AudioScanOptions? options;
@@ -46,6 +51,7 @@ class AudioScanner {
     if (targetModel != null) {
       targetModel!.addContentList(scannedAudioList);
     }
+    _scanStreamSink.close();
     return scannedAudioList.length;
   }
 
@@ -53,6 +59,7 @@ class AudioScanner {
     switch (entry.statSync().type) {
       case FileSystemEntityType.file:
         if (entry.path.endsWith('mp3')) {
+          _scanStreamSink.add(entry.path);
           list.add(
               await _metadataService.readMetadata(entry.path, loadImage: true));
         }
@@ -65,6 +72,7 @@ class AudioScanner {
               continue;
             }
             // Add to list.
+            _scanStreamSink.add(entry.path);
             list.add(await _metadataService.readMetadata(entry.path,
                 loadImage: true));
           } else if (entry.statSync().type == FileSystemEntityType.directory) {

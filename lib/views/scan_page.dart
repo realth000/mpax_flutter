@@ -52,13 +52,6 @@ class _ScanBodyWidget extends StatelessWidget {
             ],
           ),
           ListTile(
-            leading: const Icon(Icons.start),
-            title: Text('Start scan'.tr),
-            onTap: () async {
-              await controller.scanTargetList();
-            },
-          ),
-          ListTile(
             leading: const Icon(Icons.add),
             title: Text('Add directory to scan'.tr),
             onTap: () async {
@@ -67,6 +60,13 @@ class _ScanBodyWidget extends StatelessWidget {
                 return;
               }
               controller.add(d);
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.start),
+            title: Text('Start scan'.tr),
+            onTap: () async {
+              await controller.scanTargetList();
             },
           ),
         ],
@@ -173,6 +173,7 @@ class _ScanTargetItemController extends GetxController {
   String target = '';
   ScanTargetStatus _status = ScanTargetStatus.ready;
   final mediaLibraryService = Get.find<MediaLibraryService>();
+  final currentTarget = ''.obs;
 
   void setStatus(ScanTargetStatus status) {
     _status = status;
@@ -203,13 +204,13 @@ class _ScanTargetItemController extends GetxController {
     }
     setStatus(ScanTargetStatus.scanning);
     await Future.delayed(const Duration(milliseconds: 200));
-    final d = Directory(target);
-    // FileSystemEntity.isFileSync(entry.toString())
-    for (final entry in d.listSync(recursive: true, followLinks: false)) {
-      final scanner = AudioScanner(targetPath: entry.path, options: options);
-      await scanner.scan();
-    }
+    final scanner = AudioScanner(targetPath: target, options: options);
+    scanner.scanStream.listen((event) {
+      currentTarget.value = event;
+    });
+    final scannedCount = await scanner.scan();
     setStatus(ScanTargetStatus.ready);
+    currentTarget.value = '${'Scanned'.tr} $scannedCount';
     update();
   }
 
@@ -247,7 +248,8 @@ class _ScanTargetItemWidget extends StatelessWidget {
     return ListTile(
       horizontalTitleGap: 2.0,
       title: Text(path.split(targetPath).last),
-      subtitle: Text(targetPath),
+      subtitle: Obx(() => Text(controller.currentTarget.value
+          .replaceFirst('/storage/emulated/0/', ''))),
       leading: const Icon(Icons.folder),
       trailing: IconButton(
         icon: Obx(() => controller._deleteIcon.value),
