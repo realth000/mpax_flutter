@@ -29,108 +29,111 @@ class ScanPage extends StatelessWidget {
 }
 
 class _ScanBodyWidget extends StatelessWidget {
-  final _targetListWidget = _ScanTargetListWidget();
+  final controller = Get.put(_ScanController());
 
-  @override
-  Widget build(BuildContext context) {
-    return ListView(
-      children: <Widget>[
-        ListTile(
-          leading: const Icon(Icons.start),
-          title: Text('Start scan'.tr),
-          onTap: () async {
-            await Get.find<_ScanController>().scanTargetList();
-          },
-        ),
-        ListTile(
-          leading: const Icon(Icons.add),
-          title: Text('Add directory to scan'.tr),
-          onTap: () async {
-            final d = await FilePicker.platform.getDirectoryPath();
-            if (d == null) {
-              return;
-            }
-            // TODO: Show in list, save in config and write to config file.
-            Get.find<_ScanController>().add(d);
-          },
-        ),
-        _targetListWidget,
-      ],
+  Widget _buildControlCard() {
+    return Card(
+      child: Column(
+        children: <Widget>[
+          ListTile(
+            leading: const Icon(Icons.start),
+            title: Text('Start scan'.tr),
+            onTap: () async {
+              await controller.scanTargetList();
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.add),
+            title: Text('Add directory to scan'.tr),
+            onTap: () async {
+              final d = await FilePicker.platform.getDirectoryPath();
+              if (d == null) {
+                return;
+              }
+              controller.add(d);
+            },
+          ),
+        ],
+      ),
     );
   }
-}
 
-class _ScanTargetListWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<_ScanController>(
-      init: _ScanController(),
-      builder: (controller) => controller.buildScanTarget(),
+    return Padding(
+      padding: const EdgeInsets.all(5.0),
+      child: Column(
+        children: <Widget>[
+          _buildControlCard(),
+          Expanded(
+            child: Scrollbar(
+              child: Obx(
+                () => ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: controller.length(),
+                  itemExtent: 70,
+                  itemBuilder: (context, index) {
+                    return controller.widgetAt(index);
+                    // return Text('$index');
+                  },
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
 
 class _ScanController extends GetxController {
   _ScanController() {
-    _scanList.value =
-        Get.find<ConfigService>().getStringList('ScanTargetList') ?? <String>[];
-  }
-
-  var _scanList = <String>[].obs;
-  ConfigService configService = Get.find<ConfigService>();
-  MediaLibraryService libraryService = Get.find<MediaLibraryService>();
-  List<_ScanTargetItemWidget> targetItemList = <_ScanTargetItemWidget>[];
-
-  // Future<void> setScanningState() async {
-  //   for (var element in targetItemList) {
-  //     element.controller.setStatus(ScanTargetStatus.scanning);
-  //   }
-  // }
-
-  void add(String path) {
-    if (_scanList.contains(path)) {
+    final targets = Get.find<ConfigService>().getStringList('ScanTargetList');
+    if (targets == null) {
       return;
     }
-    _scanList.add(path);
+    for (var target in targets) {
+      _scanList[target] = _ScanTargetItemWidget(target);
+    }
+  }
+
+  ConfigService configService = Get.find<ConfigService>();
+  final _scanList = <String, _ScanTargetItemWidget>{}.obs;
+  MediaLibraryService libraryService = Get.find<MediaLibraryService>();
+
+  int length() {
+    return _scanList.values.length;
+  }
+
+  String nameAt(int index) {
+    return _scanList.value.keys.elementAt(index);
+  }
+
+  Widget widgetAt(int index) {
+    return _scanList.value.values.elementAt(index);
+  }
+
+  void add(String path) {
+    if (_scanList.containsKey(path)) {
+      return;
+    }
+    _scanList[path] = _ScanTargetItemWidget(path);
     update();
-    configService.saveStringList('ScanTargetList', _scanList);
+    configService.saveStringList('ScanTargetList', _scanList.keys.toList());
   }
 
   void delete(String path) {
     _scanList.remove(path);
-    for (final element in targetItemList) {
-      if (element.targetPath == path) {
-        targetItemList.remove(element);
-        break;
-      }
-    }
     update();
-    configService.saveStringList('ScanTargetList', _scanList);
+    configService.saveStringList('ScanTargetList', _scanList.keys.toList());
   }
 
   Future<void> scanTargetList() async {
     libraryService.resetLibrary();
-    for (final element in targetItemList) {
-      await element.controller.startScan();
-    }
+    await Future.forEach(_scanList.entries, (entry) async {
+      await entry.value.controller.startScan();
+    });
     await libraryService.saveAllPlaylist();
-  }
-
-  // Build UI Widget.
-  Widget buildScanTarget() {
-    final s = <ListTile>[];
-    targetItemList.clear();
-    for (String path in _scanList) {
-      targetItemList.add(buildScanTargetItem(path));
-      s.add(targetItemList.last);
-    }
-    return Column(
-      children: s,
-    );
-  }
-
-  _ScanTargetItemWidget buildScanTargetItem(String dirPath) {
-    return _ScanTargetItemWidget(dirPath);
   }
 }
 
@@ -143,7 +146,7 @@ enum ScanTargetStatus {
 
 class _ScanTargetItemController extends GetxController {
   final _metadataService = Get.find<MetadataService>();
-  final _deleteIcon = Icon(Icons.delete).obs;
+  final _deleteIcon = const Icon(Icons.delete).obs;
 
   String target = '';
   ScanTargetStatus _status = ScanTargetStatus.ready;
@@ -209,14 +212,12 @@ class _ScanTargetItemController extends GetxController {
   }
 }
 
-class _ScanTargetItemWidget extends ListTile {
-  _ScanTargetItemWidget(this.targetPath) {
-    controller = _ScanTargetItemController();
-  }
-
-  late final _ScanTargetItemController controller;
+class _ScanTargetItemWidget extends StatelessWidget {
+  _ScanTargetItemWidget(this.targetPath);
 
   final String targetPath;
+
+  final controller = _ScanTargetItemController();
 
   @override
   ListTile build(BuildContext context) {
