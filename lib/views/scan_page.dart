@@ -39,7 +39,7 @@ class _ScanBodyWidget extends StatelessWidget {
           leading: const Icon(Icons.start),
           title: Text('Start scan'.tr),
           onTap: () async {
-            _ScanController c = Get.find<_ScanController>()..scanTargetList();
+            await Get.find<_ScanController>().scanTargetList();
           },
         ),
         ListTile(
