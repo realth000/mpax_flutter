@@ -18,7 +18,7 @@ class MPaxTheme {
   static final ThemeData _flexLightBase = FlexThemeData.light(
     scheme: flexScheme,
     colors: const FlexSchemeColor(
-      primary: Color(0xff4527a0),
+      primary: Color(0xff313196),
       primaryContainer: Color(0xffd1c4e9),
       secondary: Color(0xff0091ea),
       secondaryContainer: Color(0xffcfe4ff),
@@ -69,14 +69,14 @@ class MPaxTheme {
   static final ThemeData _flexDarkBase = FlexThemeData.dark(
     scheme: flexScheme,
     colors: const FlexSchemeColor(
-      primary: Color(0xff4527a0),
-      primaryContainer: Color(0xffd1c4e9),
-      secondary: Color(0xff0091ea),
-      secondaryContainer: Color(0xffcfe4ff),
-      tertiary: Color(0xff00b0ff),
-      tertiaryContainer: Color(0xff9fcbf1),
-      appBarColor: Color(0xffcfe4ff),
-      error: Color(0xffb00020),
+      primary: Color(0xff313196),
+      primaryContainer: Color(0xff7e57c2),
+      secondary: Color(0xff80d8ff),
+      secondaryContainer: Color(0xff00497b),
+      tertiary: Color(0xff40c4ff),
+      tertiaryContainer: Color(0xff0179b6),
+      appBarColor: Color(0xff00497b),
+      error: Color(0xffcf6679),
     ),
     surfaceMode: FlexSurfaceMode.highScaffoldLevelSurface,
     blendLevel: 10,
