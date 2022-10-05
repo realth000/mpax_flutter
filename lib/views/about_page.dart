@@ -87,7 +87,10 @@ class _AboutPageBodyWidget extends StatelessWidget {
                       ),
                       trailing: const Icon(Icons.launch),
                       onTap: () async {
-                        await launchUrl(Uri.parse(_githubPageString));
+                        await launchUrl(
+                          Uri.parse(_githubPageString),
+                          mode: LaunchMode.externalApplication,
+                        );
                       },
                     ),
                     ListTile(
@@ -175,7 +178,10 @@ class _AboutPageBodyWidget extends StatelessWidget {
                       title: Text('MPax is licensed under MIT license'.tr),
                       trailing: const Icon(Icons.launch),
                       onTap: () async {
-                        await launchUrl(Uri.parse(_licensePageString));
+                        await launchUrl(
+                          Uri.parse(_licensePageString),
+                          mode: LaunchMode.externalApplication,
+                        );
                       },
                     ),
                   ],
