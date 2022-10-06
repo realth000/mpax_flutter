@@ -13,7 +13,16 @@ class MetadataService extends GetxService {
     if (s.type != FileSystemEntityType.file) {
       return PlayContent();
     }
-    final metadata = await MetadataGod.getMetadata(contentPath);
+    late final Metadata? metadata;
+    try {
+      metadata = await MetadataGod.getMetadata(contentPath);
+    } catch (e) {
+      // Can not read metadata, maybe from m4a files.
+      // Only write basic info.
+      // TODO: Should print something here.
+      return PlayContent.fromPath(contentPath);
+    }
+
     if (metadata == null) {
       return PlayContent.fromPath(contentPath);
     }
