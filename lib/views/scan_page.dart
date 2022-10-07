@@ -3,103 +3,100 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mpax_flutter/services/config_service.dart';
-import 'package:mpax_flutter/services/media_library_service.dart';
-import 'package:mpax_flutter/services/metadata_service.dart';
-import 'package:mpax_flutter/utils/scan_target_controller.dart';
-import 'package:mpax_flutter/widgets/app_app_bar.dart';
-import 'package:mpax_flutter/widgets/app_drawer.dart';
-import 'package:mpax_flutter/widgets/app_player_widget.dart';
 import 'package:path/path.dart' as path;
 
+import '../services/config_service.dart';
+import '../services/media_library_service.dart';
+import '../services/metadata_service.dart';
+import '../utils/scan_target_controller.dart';
+import '../widgets/app_app_bar.dart';
+import '../widgets/app_drawer.dart';
+import '../widgets/app_player_widget.dart';
+
+/// Scan audio content page in drawer.
 class ScanPage extends StatelessWidget {
+  /// Constructor.
   const ScanPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: MPaxAppBar(
-        title: 'Scan music'.tr,
-      ),
-      bottomNavigationBar: const MPaxPlayerWidget(),
-      drawer: const MPaxDrawer(),
-      body: _ScanBodyWidget(),
-    );
-  }
+  Widget build(BuildContext context) => Scaffold(
+        appBar: MPaxAppBar(
+          title: 'Scan music'.tr,
+        ),
+        bottomNavigationBar: const MPaxPlayerWidget(),
+        drawer: const MPaxDrawer(),
+        body: _ScanBodyWidget(),
+      );
 }
 
 class _ScanBodyWidget extends StatelessWidget {
-  final controller = Get.put(_ScanController());
+  final _controller = Get.put(_ScanController());
 
-  Widget _buildControlCard() {
-    return Card(
-      child: Column(
-        children: <Widget>[
-          Row(
-            children: <Widget>[
-              Obx(() => Checkbox(
-                    value: controller.searchSkipRecorded.value,
+  Widget _buildControlCard() => Card(
+        child: Column(
+          children: <Widget>[
+            Row(
+              children: <Widget>[
+                Obx(
+                  () => Checkbox(
+                    value: _controller.searchSkipRecorded.value,
                     onChanged: (value) async {
                       if (value == null) {
                         return;
                       }
-                      controller.searchSkipRecorded.value = value;
+                      _controller.searchSkipRecorded.value = value;
                       await Get.find<ConfigService>()
                           .saveBool('ScanSkipRecordedFile', value);
                     },
-                  )),
-              Text('Skip recorded music files'.tr),
-            ],
-          ),
-          ListTile(
-            leading: const Icon(Icons.add),
-            title: Text('Add directory to scan'.tr),
-            onTap: () async {
-              final d = await FilePicker.platform.getDirectoryPath();
-              if (d == null) {
-                return;
-              }
-              controller.add(d);
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.start),
-            title: Text('Start scan'.tr),
-            onTap: () async {
-              await controller.scanTargetList();
-            },
-          ),
-        ],
-      ),
-    );
-  }
+                  ),
+                ),
+                Text('Skip recorded music files'.tr),
+              ],
+            ),
+            ListTile(
+              leading: const Icon(Icons.add),
+              title: Text('Add directory to scan'.tr),
+              onTap: () async {
+                final d = await FilePicker.platform.getDirectoryPath();
+                if (d == null) {
+                  return;
+                }
+                await _controller.add(d);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.start),
+              title: Text('Start scan'.tr),
+              onTap: () async {
+                await _controller.scanTargetList();
+              },
+            ),
+          ],
+        ),
+      );
 
   @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(5.0),
-      child: Column(
-        children: <Widget>[
-          _buildControlCard(),
-          Expanded(
-            child: Scrollbar(
-              child: Obx(
-                () => ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: controller.length(),
-                  itemExtent: 70,
-                  itemBuilder: (context, index) {
-                    return controller.widgetAt(index);
-                    // return Text('$index');
-                  },
+  Widget build(BuildContext context) => Padding(
+        padding: const EdgeInsets.all(5),
+        child: Column(
+          children: <Widget>[
+            _buildControlCard(),
+            Expanded(
+              child: Scrollbar(
+                child: Obx(
+                  () => ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: _controller.length(),
+                    itemExtent: 70,
+                    itemBuilder: (context, index) =>
+                        _controller.widgetAt(index),
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
-      ),
-    );
-  }
+          ],
+        ),
+      );
 }
 
 class _ScanController extends GetxController {
@@ -108,7 +105,7 @@ class _ScanController extends GetxController {
     if (targets == null) {
       return;
     }
-    for (var target in targets) {
+    for (final target in targets) {
       _scanList[target] = _ScanTargetItemWidget(target);
     }
     searchSkipRecorded.value =
@@ -121,31 +118,31 @@ class _ScanController extends GetxController {
   final _scanList = <String, _ScanTargetItemWidget>{}.obs;
   MediaLibraryService libraryService = Get.find<MediaLibraryService>();
 
-  int length() {
-    return _scanList.values.length;
-  }
+  int length() => _scanList.values.length;
 
-  String nameAt(int index) {
-    return _scanList.value.keys.elementAt(index);
-  }
+  String nameAt(int index) => _scanList.keys.elementAt(index);
 
-  Widget widgetAt(int index) {
-    return _scanList.value.values.elementAt(index);
-  }
+  Widget widgetAt(int index) => _scanList.values.elementAt(index);
 
-  void add(String path) {
+  Future<void> add(String path) async {
     if (_scanList.containsKey(path)) {
       return;
     }
     _scanList[path] = _ScanTargetItemWidget(path);
     update();
-    configService.saveStringList('ScanTargetList', _scanList.keys.toList());
+    await configService.saveStringList(
+      'ScanTargetList',
+      _scanList.keys.toList(),
+    );
   }
 
-  void delete(String path) {
+  Future<void> delete(String path) async {
     _scanList.remove(path);
     update();
-    configService.saveStringList('ScanTargetList', _scanList.keys.toList());
+    await configService.saveStringList(
+      'ScanTargetList',
+      _scanList.keys.toList(),
+    );
   }
 
   Future<void> scanTargetList() async {
@@ -153,16 +150,24 @@ class _ScanController extends GetxController {
       libraryService.resetLibrary();
     }
     await Future.forEach(_scanList.entries, (entry) async {
-      await entry.value.controller.startScan(AudioScanOptions.fromConfig());
+      await entry.value._controller.startScan(AudioScanOptions.fromConfig());
     });
     await libraryService.saveAllPlaylist();
   }
 }
 
+/// Scanning status for scan item.
 enum ScanTargetStatus {
+  /// Not used.
   invalid,
+
+  /// Ready to scan.
   ready,
+
+  /// Scanning this item.
   scanning,
+
+  /// Scan finished.
   finished,
 }
 
@@ -229,35 +234,39 @@ class _ScanTargetItemController extends GetxController {
         mediaLibraryService
             .addContent(await _metadataService.readMetadata(entry.path));
       } else if (entry.statSync().type == FileSystemEntityType.directory) {
-        scan(entry.path);
+        await scan(entry.path);
       }
     }
   }
 }
 
 class _ScanTargetItemWidget extends StatelessWidget {
-  _ScanTargetItemWidget(this.targetPath);
+  _ScanTargetItemWidget(this._targetPath);
 
-  final String targetPath;
+  final String _targetPath;
 
-  final controller = _ScanTargetItemController();
+  final _controller = _ScanTargetItemController();
 
   @override
   ListTile build(BuildContext context) {
-    controller.target = targetPath;
+    _controller.target = _targetPath;
     return ListTile(
-      horizontalTitleGap: 2.0,
-      title: Text(path.split(targetPath).last),
-      subtitle: Obx(() => Text(controller.currentTarget.value
-          .replaceFirst('/storage/emulated/0/', ''))),
+      horizontalTitleGap: 2,
+      title: Text(path.split(_targetPath).last),
+      subtitle: Obx(
+        () => Text(
+          _controller.currentTarget.value
+              .replaceFirst('/storage/emulated/0/', ''),
+        ),
+      ),
       leading: const Icon(Icons.folder),
       trailing: IconButton(
-        icon: Obx(() => controller._deleteIcon.value),
-        onPressed: () {
-          if (controller._status == ScanTargetStatus.scanning) {
+        icon: Obx(() => _controller._deleteIcon.value),
+        onPressed: () async {
+          if (_controller._status == ScanTargetStatus.scanning) {
             return;
           }
-          Get.find<_ScanController>().delete(controller.target);
+          await Get.find<_ScanController>().delete(_controller.target);
         },
       ),
     );

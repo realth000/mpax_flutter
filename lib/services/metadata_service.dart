@@ -5,12 +5,18 @@ import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:flutter_media_metadata/flutter_media_metadata.dart' as fmm;
 import 'package:get/get.dart';
 import 'package:metadata_god/metadata_god.dart' as mg;
-import 'package:mpax_flutter/models/play_content.model.dart';
 
+import '../models/play_content.model.dart';
+
+/// Manage audio metadata, globally.
 class MetadataService extends GetxService {
-  Future<PlayContent> readMetadata(String contentPath,
-      {bool loadImage = false, bool scaleImage = true}) async {
-    final s = await File(contentPath).stat();
+  /// Get a [PlayContent] filled with metadata read from given [contentPath].
+  Future<PlayContent> readMetadata(
+    String contentPath, {
+    bool loadImage = false,
+    bool scaleImage = true,
+  }) async {
+    final s = File(contentPath).statSync();
     if (s.type != FileSystemEntityType.file) {
       return PlayContent();
     }
@@ -23,13 +29,13 @@ class MetadataService extends GetxService {
         return PlayContent.fromPath(contentPath);
       }
     } catch (e) {
+      // May have ffi exception.
       // Can not read metadata, maybe from m4a files.
       //   Only write basic info.
       //   TODO: Should print something here.
       return PlayContent.fromPath(contentPath);
     }
-    return await _applyMetadataFromMG(
-        contentPath, metadata, loadImage, scaleImage);
+    return _applyMetadataFromMG(contentPath, metadata, loadImage, scaleImage);
 
     // NOT USED.
     if (GetPlatform.isMobile) {
@@ -64,9 +70,10 @@ class MetadataService extends GetxService {
     }
   }
 
+  /// Fetch metadata with package flutter_media_metadata.
   Future<PlayContent> _applyMetadataFromFMM(String contentPath,
       fmm.Metadata metadata, bool loadImage, bool scaleImage) async {
-    PlayContent playContent = PlayContent.fromPath(contentPath);
+    var playContent = PlayContent.fromPath(contentPath);
     try {
       if (metadata.authorName != null) {
         playContent.artist = metadata.authorName!;
@@ -121,9 +128,10 @@ class MetadataService extends GetxService {
     return playContent;
   }
 
+  /// Fetch metadata with package metadata_god.
   Future<PlayContent> _applyMetadataFromMG(String contentPath,
       mg.Metadata metadata, bool loadImage, bool scaleImage) async {
-    PlayContent playContent = PlayContent.fromPath(contentPath);
+    var playContent = PlayContent.fromPath(contentPath);
     try {
       if (metadata.artist != null) {
         playContent.artist = metadata.artist!;
@@ -179,6 +187,7 @@ class MetadataService extends GetxService {
     return playContent;
   }
 
+  /// Init function, run before app start.
   Future<MetadataService> init() async {
     return this;
   }

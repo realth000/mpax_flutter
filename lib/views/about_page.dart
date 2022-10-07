@@ -1,26 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mpax_flutter/widgets/app_app_bar.dart';
-import 'package:mpax_flutter/widgets/app_drawer.dart';
-import 'package:mpax_flutter/widgets/app_player_widget.dart';
-import 'package:mpax_flutter/widgets/util_widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../widgets/app_app_bar.dart';
+import '../widgets/app_drawer.dart';
+import '../widgets/app_player_widget.dart';
+import '../widgets/util_widgets.dart';
+
+/// About page in drawer.
 class AboutPage extends StatelessWidget {
+  /// Constructor.
   const AboutPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    // final version = DefaultAssetBundle.of(context).loadString('assets/data/version');
-    return Scaffold(
-      appBar: MPaxAppBar(
-        title: 'About'.tr,
-      ),
-      drawer: const MPaxDrawer(),
-      body: _AboutPageBodyWidget(),
-      bottomNavigationBar: const MPaxPlayerWidget(),
-    );
-  }
+  Widget build(BuildContext context) => Scaffold(
+        appBar: MPaxAppBar(
+          title: 'About'.tr,
+        ),
+        drawer: const MPaxDrawer(),
+        body: _AboutPageBodyWidget(),
+        bottomNavigationBar: const MPaxPlayerWidget(),
+      );
 }
 
 class _AboutPageBodyWidget extends StatelessWidget {
@@ -48,7 +48,7 @@ class _AboutPageBodyWidget extends StatelessWidget {
     return Scrollbar(
       child: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(15.0),
+          padding: const EdgeInsets.all(15),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
@@ -57,7 +57,7 @@ class _AboutPageBodyWidget extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Padding(
-                      padding: const EdgeInsets.only(left: 15.0, top: 10.0),
+                      padding: const EdgeInsets.only(left: 15, top: 10),
                       child: TitleText(
                         title: 'About MPax'.tr,
                         level: 0,
@@ -72,9 +72,11 @@ class _AboutPageBodyWidget extends StatelessWidget {
                               Image.asset('assets/images/mpax_flutter_192.png'),
                         ),
                       ),
-                      title: Text('MPax is a simple and easy-to-use music '
-                              'player powered by Flutter'
-                          .tr),
+                      title: Text(
+                        'MPax is a simple and easy-to-use music '
+                                'player powered by Flutter'
+                            .tr,
+                      ),
                     ),
                     ListTile(
                       leading: const ListTileLeading(
@@ -107,7 +109,7 @@ class _AboutPageBodyWidget extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Padding(
-                      padding: const EdgeInsets.only(left: 15.0, top: 10.0),
+                      padding: const EdgeInsets.only(left: 15, top: 10),
                       child: TitleText(
                         title: 'Build info'.tr,
                         level: 0,
@@ -119,9 +121,9 @@ class _AboutPageBodyWidget extends StatelessWidget {
                       trailing: Chip(
                         avatar: platformIcon,
                         label: Text(platformString),
-                        padding: const EdgeInsets.all(0),
+                        padding: EdgeInsets.zero,
                         side: BorderSide.none,
-                        labelPadding: const EdgeInsets.all(0),
+                        labelPadding: EdgeInsets.zero,
                         backgroundColor: Colors.transparent,
                       ),
                     ),
@@ -142,9 +144,7 @@ class _AboutPageBodyWidget extends StatelessWidget {
                       ),
                     ),
                     ListTile(
-                      leading: const FlutterLogo(
-                        style: FlutterLogoStyle.markOnly,
-                      ),
+                      leading: const FlutterLogo(),
                       title: Text('Flutter version'.tr),
                       trailing: FutureBuilder(
                         future: DefaultAssetBundle.of(context)
@@ -167,7 +167,7 @@ class _AboutPageBodyWidget extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Padding(
-                      padding: const EdgeInsets.only(left: 15.0, top: 10.0),
+                      padding: const EdgeInsets.only(left: 15, top: 10),
                       child: TitleText(
                         title: 'License'.tr,
                         level: 0,

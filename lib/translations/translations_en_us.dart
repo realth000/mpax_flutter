@@ -1,3 +1,4 @@
+/// Translation for locale en_US, use as all English locales.
 const Map<String, String> translationEnUs = <String, String>{
   'Welcome to MPax': 'Welcome to MPax',
   'Scan music': 'Scan music',

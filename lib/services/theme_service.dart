@@ -1,26 +1,44 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mpax_flutter/services/config_service.dart';
 
+import 'config_service.dart';
+
+/// All theme mode in app.
 enum MPaxThemeMode {
+  /// Follow system.
   auto,
+
+  /// Use dark theme.
   dark,
+
+  /// Use light theme.
   light,
 }
 
+/// String for [MPaxThemeMode.auto].
 const autoModeString = 'Follow system';
+
+/// String for [MPaxThemeMode.light].
 const lightModeString = 'Light mode';
+
+/// String for [MPaxThemeMode.dark].
 const darkModeString = 'Dark mode';
 
+/// Controlling theme, globally.
 class ThemeService extends GetxService {
   final _configService = Get.find<ConfigService>();
 
-  // Theme settings.
+  /// If use dark theme.
   bool useDarkTheme = Get.isDarkMode;
+
+  /// If follow system theme.
   bool followSystemDarkMode = true;
+
+  /// Theme mode string to show on UI.
   final themeModeString = autoModeString.obs;
 
-  void changeThemeMode(MPaxThemeMode mode) {
+  /// Change to given [MPaxThemeMode].
+  Future<void> changeThemeMode(MPaxThemeMode mode) async {
     if (mode == MPaxThemeMode.auto) {
       followSystemDarkMode = true;
       themeModeString.value = autoModeString;
@@ -36,14 +54,16 @@ class ThemeService extends GetxService {
       themeModeString.value = lightModeString;
       Get.changeThemeMode(ThemeMode.light);
     }
-    saveThemeConfig();
+    await saveThemeConfig();
   }
 
-  void saveThemeConfig() {
-    _configService.saveBool('FollowSystemDarkMode', followSystemDarkMode);
-    _configService.saveBool('UseDarkMode', useDarkTheme);
+  /// Save theme config to disk.
+  Future<void> saveThemeConfig() async {
+    await _configService.saveBool('FollowSystemDarkMode', followSystemDarkMode);
+    await _configService.saveBool('UseDarkMode', useDarkTheme);
   }
 
+  /// Init function, run before app start.
   Future<ThemeService> init() async {
     // Load from config.
     followSystemDarkMode =

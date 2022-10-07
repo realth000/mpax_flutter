@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:just_audio_background/just_audio_background.dart';
-import 'package:mpax_flutter/routes/app_pages.dart';
-import 'package:mpax_flutter/services/config_service.dart';
-import 'package:mpax_flutter/services/locale_service.dart';
-import 'package:mpax_flutter/services/media_library_service.dart';
-import 'package:mpax_flutter/services/metadata_service.dart';
-import 'package:mpax_flutter/services/player_service.dart';
-import 'package:mpax_flutter/services/theme_service.dart';
-import 'package:mpax_flutter/themes/app_themes.dart';
-import 'package:mpax_flutter/translations/translations.dart';
+
+import '../routes/app_pages.dart';
+import '../services/config_service.dart';
+import '../services/locale_service.dart';
+import '../services/media_library_service.dart';
+import '../services/metadata_service.dart';
+import '../services/player_service.dart';
+import '../services/theme_service.dart';
+import '../themes/app_themes.dart';
+import '../translations/translations.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,14 +23,14 @@ void main() async {
   runApp(const MPaxApp());
 }
 
-class Controller extends GetxController {}
-
+/// App class.
 class MPaxApp extends StatelessWidget {
+  /// Constructor.
   const MPaxApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    MediaLibraryService mediaLibraryService = Get.find<MediaLibraryService>();
+    final mediaLibraryService = Get.find<MediaLibraryService>();
     return GetMaterialApp(
       translations: MPaxTranslations(),
       locale: Get.find<LocaleService>().getLocale(),
@@ -44,12 +45,13 @@ class MPaxApp extends StatelessWidget {
   }
 }
 
+/// Init all global services, call this before [runApp].
 Future<void> initServices() async {
   // Use service.init() here to make sure service is init.
-  await Get.putAsync(() async => await ConfigService().init());
-  await Get.putAsync(() async => await ThemeService().init());
-  await Get.putAsync(() async => await LocaleService().init());
-  await Get.putAsync(() async => await MetadataService().init());
-  await Get.putAsync(() async => await MediaLibraryService().init());
-  await Get.putAsync(() async => await PlayerService().init());
+  await Get.putAsync(() async => ConfigService().init());
+  await Get.putAsync(() async => ThemeService().init());
+  await Get.putAsync(() async => LocaleService().init());
+  await Get.putAsync(() async => MetadataService().init());
+  await Get.putAsync(() async => MediaLibraryService().init());
+  await Get.putAsync(() async => PlayerService().init());
 }

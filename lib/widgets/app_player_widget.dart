@@ -2,28 +2,34 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mpax_flutter/routes/app_pages.dart';
-import 'package:mpax_flutter/services/player_service.dart';
+
+import '../routes/app_pages.dart';
+import '../services/player_service.dart';
 
 class _ProgressWidget extends GetView<PlayerService> {
-  static const double height = 2.0;
+  static const double height = 2;
 
   @override
-  Widget build(BuildContext context) {
-    return Obx(() => LinearProgressIndicator(
+  Widget build(BuildContext context) => Obx(
+        () => LinearProgressIndicator(
           minHeight: height,
           value: controller.currentPosition.value.inSeconds.toDouble() /
               controller.currentDuration.value.inSeconds.toDouble(),
           backgroundColor: Colors.transparent,
-        ));
-  }
+        ),
+      );
 }
 
+/// Player widget, at bottom of most pages.
 class MPaxPlayerWidget extends GetView<PlayerService> {
+  /// Constructor.
   const MPaxPlayerWidget({super.key});
 
-  static const double widgetHeight = 70.0;
-  static const double albumCoverHeight = 56.0;
+  /// Player wight height.
+  static const double widgetHeight = 70;
+
+  /// Album image height.
+  static const double albumCoverHeight = 56;
 
   String _getAlbumString() {
     if (controller.currentContent.value.artist.isNotEmpty) {
@@ -32,7 +38,7 @@ class MPaxPlayerWidget extends GetView<PlayerService> {
       return controller.currentContent.value.contentPath
           .replaceFirst('/storage/emulated/0/', '');
     } else {
-      return "";
+      return '';
     }
   }
 
@@ -45,8 +51,8 @@ class MPaxPlayerWidget extends GetView<PlayerService> {
       );
     } else {
       return GestureDetector(
-        onTapUp: (TapUpDetails details) {
-          Get.toNamed(MPaxRoutes.music);
+        onTapUp: (details) async {
+          await Get.toNamed(MPaxRoutes.music);
         },
         child: SizedBox(
           width: albumCoverHeight,
@@ -97,15 +103,13 @@ class MPaxPlayerWidget extends GetView<PlayerService> {
     return Expanded(
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
-        onTapUp: (details) {
-          Get.toNamed(MPaxRoutes.music);
+        onTapUp: (details) async {
+          await Get.toNamed(MPaxRoutes.music);
         },
         onLongPressStart: (details) {
           // For animation.
         },
         onLongPressEnd: (details) async {
-          // print(
-          //     'AAAA ${details.localPosition} ${details.globalPosition}; ${Get.width},${Get.height}');
           if (details.localPosition.dy < 0) {
             return;
           }
@@ -132,51 +136,48 @@ class MPaxPlayerWidget extends GetView<PlayerService> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return ConstrainedBox(
-      constraints: const BoxConstraints(
-        maxHeight: widgetHeight,
-      ),
-      child: Column(
-        children: [
-          _ProgressWidget(),
-          Expanded(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                const SizedBox(
-                  width: widgetHeight - albumCoverHeight + 2,
-                ),
-                // Album cover
-                Obx(() => _buildAudioAlbumCoverWidget(context)),
-                const SizedBox(
-                  width: widgetHeight / 2 - albumCoverHeight / 2,
-                ),
-                // Audio info
-                _buildAudioInfoWidget(context),
-                // Play-and-pause button.
-                ElevatedButton(
-                  onPressed: () {
-                    controller.playOrPause();
-                  },
-                  child: Obx(() => Icon(controller.playButtonIcon.value)),
-                ),
-                const SizedBox(
-                  width: 5,
-                  height: 5,
-                ),
-                // Play mode button.
-                ElevatedButton(
-                  onPressed: () async {
-                    await controller.switchPlayMode();
-                  },
-                  child: Obx(() => Icon(controller.playModeIcon.value)),
-                ),
-              ],
+  Widget build(BuildContext context) => ConstrainedBox(
+        constraints: const BoxConstraints(
+          maxHeight: widgetHeight,
+        ),
+        child: Column(
+          children: [
+            _ProgressWidget(),
+            Expanded(
+              child: Row(
+                children: <Widget>[
+                  const SizedBox(
+                    width: widgetHeight - albumCoverHeight + 2,
+                  ),
+                  // Album cover
+                  Obx(() => _buildAudioAlbumCoverWidget(context)),
+                  const SizedBox(
+                    width: widgetHeight / 2 - albumCoverHeight / 2,
+                  ),
+                  // Audio info
+                  _buildAudioInfoWidget(context),
+                  // Play-and-pause button.
+                  ElevatedButton(
+                    onPressed: () async {
+                      await controller.playOrPause();
+                    },
+                    child: Obx(() => Icon(controller.playButtonIcon.value)),
+                  ),
+                  const SizedBox(
+                    width: 5,
+                    height: 5,
+                  ),
+                  // Play mode button.
+                  ElevatedButton(
+                    onPressed: () async {
+                      await controller.switchPlayMode();
+                    },
+                    child: Obx(() => Icon(controller.playModeIcon.value)),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
-      ),
-    );
-  }
+          ],
+        ),
+      );
 }

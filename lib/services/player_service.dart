@@ -6,13 +6,15 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
-import 'package:mpax_flutter/models/play_content.model.dart';
-import 'package:mpax_flutter/models/playlist.model.dart';
-import 'package:mpax_flutter/services/config_service.dart';
-import 'package:mpax_flutter/services/media_library_service.dart';
-import 'package:mpax_flutter/services/metadata_service.dart';
 import 'package:path_provider/path_provider.dart';
 
+import '../models/play_content.model.dart';
+import '../models/playlist.model.dart';
+import '../services/config_service.dart';
+import '../services/media_library_service.dart';
+import '../services/metadata_service.dart';
+
+/// In charge of playing audio file, globally.
 class PlayerService extends GetxService {
   // State
   static const IconData _playIcon = Icons.play_arrow;
@@ -27,22 +29,34 @@ class PlayerService extends GetxService {
   final _configService = Get.find<ConfigService>();
   final _libraryService = Get.find<MediaLibraryService>();
   final _player = AudioPlayer();
+
+  /// Current playing audio position stream.
   late Stream<Duration> positionStream = _player.positionStream;
+
+  /// Current playing audio duration stream.
   late Stream<Duration?> durationStream = _player.durationStream;
+
+  /// Current playing position.
   final currentPosition = Duration.zero.obs;
+
+  /// Current duration position.
   final currentDuration = const Duration(seconds: 1).obs;
   late final StreamSubscription<Duration> positionSub;
   late final StreamSubscription<Duration?> durationSub;
 
-  // Current playing playlist.
+  /// Current playing playlist.
   PlaylistModel currentPlaylist = PlaylistModel();
 
-  // Current playing content.
+  /// Current playing content.
   final currentContent = PlayContent().obs;
+
+  /// Current play mode.
   String playMode = _repeatString;
 
-  // Show on media widget.
+  /// Show on play or pause.
   Rx<IconData> playButtonIcon = _playIcon.obs;
+
+  /// Show play mode.
   Rx<IconData> playModeIcon = _repeatIcon.obs;
 
   // late final StreamSubscription<ProcessingState> _playerDurationStream;
@@ -52,6 +66,7 @@ class PlayerService extends GetxService {
   //   print("DISPOSE!!!!!");
   // }
 
+  /// Init function, run before app start.
   Future<PlayerService> init() async {
     await _player.setShuffleModeEnabled(false);
     await _player.setLoopMode(LoopMode.off);
@@ -68,7 +83,7 @@ class PlayerService extends GetxService {
           if (_player.playing) {
             await _player.seek(Duration.zero);
           }
-          _player.play();
+          await _player.play();
         } else {
           await seekToAnother(true);
         }
@@ -76,7 +91,7 @@ class PlayerService extends GetxService {
     });
     positionSub = _player.positionStream.listen((position) {
       if (position < Duration.zero) {
-        currentPosition.value = const Duration(seconds: 0);
+        currentPosition.value = Duration.zero;
       } else {
         currentPosition.value = position;
       }
@@ -92,13 +107,12 @@ class PlayerService extends GetxService {
       }
     });
     // Load configs.
-    final File currentMedia =
-        File(_configService.getString('CurrentMedia') ?? '');
+    final currentMedia = File(_configService.getString('CurrentMedia') ?? '');
     if (currentMedia.existsSync()) {
       // FIXME: Add current playlist config save and load.
-      final String currentPlaylistString =
+      final currentPlaylistString =
           _configService.getString('CurrentPlaylist') ?? '';
-      final PlaylistModel currentPlaylist =
+      final currentPlaylist =
           _libraryService.findPlaylistByTableName(currentPlaylistString);
       // _libraryService
       if (currentPlaylist.tableName.isNotEmpty) {
@@ -113,51 +127,69 @@ class PlayerService extends GetxService {
     return this;
   }
 
+  /// Change current playing audio to given [playContent], and current playing
+  /// list to [playlist].
   Future<void> setCurrentContent(
-      PlayContent playContent, PlaylistModel playlist) async {
+    PlayContent playContent,
+    PlaylistModel playlist,
+  ) async {
     // Save scaled album cover in file for the just_audio_background service to
     // display on android control center.
     final hasCoverImage = playContent.albumCover.isNotEmpty;
     late final File coverFile;
     if (hasCoverImage) {
-      Directory tmpDir = await getTemporaryDirectory();
+      final tmpDir = await getTemporaryDirectory();
       // FIXME: Clear cover cache.
       coverFile = File(
-          '${tmpDir.path}/cover.cache.${DateTime.now().microsecondsSinceEpoch.toString()}');
-      await coverFile.writeAsBytes(base64Decode(playContent.albumCover),
-          mode: FileMode.write, flush: true);
+        '${tmpDir.path}/cover.cache.${DateTime.now().microsecondsSinceEpoch.toString()}',
+      );
+      await coverFile.writeAsBytes(
+        base64Decode(playContent.albumCover),
+        flush: true,
+      );
     }
     // Read the full album cover image to display in music page.
-    playContent = await Get.find<MetadataService>().readMetadata(
-        playContent.contentPath,
-        loadImage: true,
-        scaleImage: false);
-    currentContent.value = playContent;
+    final p = await Get.find<MetadataService>().readMetadata(
+      playContent.contentPath,
+      loadImage: true,
+      scaleImage: false,
+    );
+    currentContent.value = p;
     currentPlaylist = playlist;
-    await _player
-        .setAudioSource(AudioSource.uri(Uri.parse(playContent.contentPath),
-            tag: MediaItem(
-              id: playContent.contentPath,
-              title: playContent.title.isEmpty
-                  ? playContent.contentName
-                  : playContent.title,
-              artist: playContent.artist,
-              album: playContent.albumTitle,
-              duration: Duration(seconds: playContent.length),
-              artUri: hasCoverImage ? coverFile.uri : null,
-            )));
-    _configService.saveString('CurrentMedia', currentContent.value.contentPath);
-    _configService.saveString('CurrentPlaylist', currentPlaylist.tableName);
-    currentContent.value = playContent;
+    await _player.setAudioSource(
+      AudioSource.uri(
+        Uri.parse(p.contentPath),
+        tag: MediaItem(
+          id: p.contentPath,
+          title: p.title.isEmpty ? p.contentName : p.title,
+          artist: p.artist,
+          album: p.albumTitle,
+          duration: Duration(seconds: p.length),
+          artUri: hasCoverImage ? coverFile.uri : null,
+        ),
+      ),
+    );
+    await _configService.saveString(
+      'CurrentMedia',
+      currentContent.value.contentPath,
+    );
+    await _configService.saveString(
+      'CurrentPlaylist',
+      currentPlaylist.tableName,
+    );
+    currentContent.value = p;
   }
 
+  /// Start play.
   Future<void> play() async {
     await _player.load();
     // Use for debugging.
-    // await _player.seek(Duration(seconds: (_player.duration!.inSeconds * 0.98).toInt()));
+    // await _player.seek(Duration(seconds: (_player.duration!.inSeconds * 0.98)
+    // .toInt()));
     await _player.play();
   }
 
+  /// Play when paused, pause when playing.
   Future<void> playOrPause() async {
     if (_player.playerState.playing) {
       await _player.pause();
@@ -170,6 +202,7 @@ class PlayerService extends GetxService {
     }
   }
 
+  /// Change play mode.
   Future<void> switchPlayMode([String? mode]) async {
     if (mode != null) {
       if (mode == _repeatString) {
@@ -188,24 +221,25 @@ class PlayerService extends GetxService {
     }
     if (playModeIcon.value == _repeatIcon) {
       playModeIcon.value = _repeatOneIcon;
-      _configService.saveString('PlayMode', _repeatOneString);
+      await _configService.saveString('PlayMode', _repeatOneString);
       playMode = _repeatOneString;
     } else if (playModeIcon.value == _repeatOneIcon) {
       playModeIcon.value = _shuffleIcon;
-      _configService.saveString('PlayMode', _shuffleString);
+      await _configService.saveString('PlayMode', _shuffleString);
       playMode = _shuffleString;
     } else {
       playModeIcon.value = _repeatIcon;
-      _configService.saveString('PlayMode', _repeatString);
+      await _configService.saveString('PlayMode', _repeatString);
       playMode = _repeatString;
     }
   }
 
+  /// Seek to another audio content.
   Future<void> seekToAnother(bool isNext) async {
     if (isNext) {
       switch (playMode) {
         case _shuffleString:
-          PlayContent c = currentPlaylist.randomPlayContent();
+          final c = currentPlaylist.randomPlayContent();
           if (c.contentPath.isEmpty) {
             await play();
             return;
@@ -221,7 +255,7 @@ class PlayerService extends GetxService {
         case _repeatString:
         case _repeatOneString:
         default:
-          var content = currentPlaylist.findNextContent(currentContent.value);
+          final content = currentPlaylist.findNextContent(currentContent.value);
           if (content.contentPath.isEmpty) {
             return;
           }
@@ -237,7 +271,7 @@ class PlayerService extends GetxService {
       switch (playMode) {
         // TODO: Use history here.
         case _shuffleString:
-          var c = currentPlaylist.randomPlayContent();
+          final c = currentPlaylist.randomPlayContent();
           if (c.contentPath.isEmpty) {
             await play();
             return;
@@ -248,7 +282,7 @@ class PlayerService extends GetxService {
         case _repeatString:
         case _repeatOneString:
         default:
-          var content =
+          final content =
               currentPlaylist.findPreviousContent(currentContent.value);
           if (content.contentPath.isEmpty) {
             return;
@@ -259,11 +293,11 @@ class PlayerService extends GetxService {
     }
   }
 
+  /// Jump to given [duration].
   Future<void> seekToDuration(Duration duration) async {
     await _player.seek(duration);
   }
 
-  Duration? playerDuration() {
-    return _player.duration;
-  }
+  /// Return current curation.
+  Duration? playerDuration() => _player.duration;
 }

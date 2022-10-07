@@ -1,18 +1,26 @@
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 
+/// All app themes.
 class MPaxTheme {
+  /// Disable some style lints.
+  final themeCount = 2;
+
+  /// Global theme for [ListTile].
   static final listTileTheme = ListTileThemeData(
     shape: RoundedRectangleBorder(
       // Larger enough to ensure material style.
-      borderRadius: BorderRadius.circular(27.0),
+      borderRadius: BorderRadius.circular(27),
     ),
-    horizontalTitleGap: 10.0,
+    horizontalTitleGap: 10,
   );
+
+  /// Global theme for [TextField].
   static const inputDecorationTheme = InputDecorationTheme(
     border: OutlineInputBorder(),
   );
 
+  /// Main and original flex theme.
   static const flexScheme = FlexScheme.deepPurple;
 
   static final ThemeData _flexLightBase = FlexThemeData.light(
@@ -34,7 +42,7 @@ class MPaxTheme {
     tabBarStyle: FlexTabBarStyle.forBackground,
     tooltipsMatchBackground: true,
     subThemesData: const FlexSubThemesData(
-      defaultRadius: 26.0,
+      defaultRadius: 26,
       thickBorderWidth: 1.5,
       elevatedButtonSecondarySchemeColor: SchemeColor.primaryContainer,
       outlinedButtonOutlineSchemeColor: SchemeColor.primaryContainer,
@@ -42,13 +50,13 @@ class MPaxTheme {
       checkboxSchemeColor: SchemeColor.primary,
       radioSchemeColor: SchemeColor.primary,
       unselectedToggleIsColored: true,
-      inputDecoratorRadius: 10.0,
+      inputDecoratorRadius: 10,
       inputDecoratorUnfocusedBorderIsColored: false,
       fabUseShape: true,
       popupMenuOpacity: 0.98,
-      popupMenuRadius: 8.0,
+      popupMenuRadius: 8,
       dialogBackgroundSchemeColor: SchemeColor.onInverseSurface,
-      navigationBarHeight: 65.0,
+      navigationBarHeight: 65,
     ),
     keyColors: const FlexKeyColors(
       useSecondary: true,
@@ -60,6 +68,7 @@ class MPaxTheme {
     // fontFamily: GoogleFonts.notoSans().fontFamily,
   );
 
+  /// App light theme based on flex.
   static ThemeData flexLight = _flexLightBase.copyWith(
     // appBarTheme: AppBarTheme(),
     listTileTheme: listTileTheme,
@@ -86,7 +95,7 @@ class MPaxTheme {
     surfaceTint: const Color(0xff311b92),
     tooltipsMatchBackground: true,
     subThemesData: const FlexSubThemesData(
-      defaultRadius: 26.0,
+      defaultRadius: 26,
       thickBorderWidth: 1.5,
       elevatedButtonSecondarySchemeColor: SchemeColor.primaryContainer,
       outlinedButtonOutlineSchemeColor: SchemeColor.primaryContainer,
@@ -94,14 +103,14 @@ class MPaxTheme {
       checkboxSchemeColor: SchemeColor.primary,
       radioSchemeColor: SchemeColor.primary,
       unselectedToggleIsColored: true,
-      inputDecoratorRadius: 10.0,
+      inputDecoratorRadius: 10,
       inputDecoratorUnfocusedBorderIsColored: false,
       fabUseShape: true,
       popupMenuOpacity: 0.98,
-      popupMenuRadius: 8.0,
+      popupMenuRadius: 8,
       dialogBackgroundSchemeColor: SchemeColor.onInverseSurface,
       tabBarIndicatorSchemeColor: SchemeColor.inversePrimary,
-      navigationBarHeight: 65.0,
+      navigationBarHeight: 65,
     ),
     keyColors: const FlexKeyColors(
       useSecondary: true,
@@ -117,6 +126,7 @@ class MPaxTheme {
 // to let the device system mode control the theme mode:
 // themeMode: ThemeMode.system,
 
+  /// App dark theme based on flex.
   static ThemeData flexDark = _flexDarkBase.copyWith(
     listTileTheme: listTileTheme,
     inputDecorationTheme: inputDecorationTheme,

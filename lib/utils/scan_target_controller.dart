@@ -2,56 +2,74 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:get/get.dart';
-import 'package:mpax_flutter/models/play_content.model.dart';
-import 'package:mpax_flutter/models/playlist.model.dart';
-import 'package:mpax_flutter/services/config_service.dart';
-import 'package:mpax_flutter/services/media_library_service.dart';
-import 'package:mpax_flutter/services/metadata_service.dart';
 
+import '../models/play_content.model.dart';
+import '../models/playlist.model.dart';
+import '../services/config_service.dart';
+import '../services/media_library_service.dart';
+import '../services/metadata_service.dart';
+
+/// Option used in scanning audio files.
 class AudioScanOptions {
+  /// Construct form raw options.
   AudioScanOptions.raw({required this.searchAll});
 
+  /// Construct from app config.
   AudioScanOptions.fromConfig() {
     final configService = Get.find<ConfigService>();
     searchAll = configService.getBool('ScanSkipRecordedFile') ?? false;
   }
 
-  AudioScanOptions copyWith({bool? searchAll}) {
-    return AudioScanOptions.raw(
-      searchAll: searchAll ?? this.searchAll,
-    );
-  }
+  /// Update some part.
+  AudioScanOptions copyWith({bool? searchAll}) => AudioScanOptions.raw(
+        searchAll: searchAll ?? this.searchAll,
+      );
 
+  /// If false, skip already included audio files (those were scanned before).
   bool searchAll = false;
 }
 
+/// Scanner for audio.
+///
+/// Scan on disk, filter file types and fetch metadata.
 class AudioScanner {
+  /// Constructor.
   AudioScanner({required this.targetPath, this.targetModel, this.options});
 
-  final mediaLibraryService = Get.find<MediaLibraryService>();
+  final _mediaLibraryService = Get.find<MediaLibraryService>();
   final _metadataService = Get.find<MetadataService>();
 
   final _scanStreamController = StreamController<String>(sync: true);
+
+  /// Scanning stream, provide current scanning file path.
   late final Stream<String> scanStream = _scanStreamController.stream;
   late final _scanStreamSink = _scanStreamController.sink;
 
+  /// Scan start path, go into that directory.
   final String targetPath;
+
+  /// Save all scanned audio content in this [PlaylistModel] and
+  /// [_mediaLibraryService].
+  /// Can be null which means only save in library.
   PlaylistModel? targetModel;
+
+  /// Options use in scanning.
   AudioScanOptions? options;
 
+  /// Start scan.
   Future<int> scan() async {
-    List<PlayContent> scannedAudioList = <PlayContent>[];
+    final scannedAudioList = <PlayContent>[];
     late final Directory d;
     if (targetPath.isNotEmpty) {
       d = Directory(targetPath);
     }
 
     await _scan(d, scannedAudioList);
-    mediaLibraryService.addContentList(scannedAudioList);
+    _mediaLibraryService.addContentList(scannedAudioList);
     if (targetModel != null) {
       targetModel!.addContentList(scannedAudioList);
     }
-    _scanStreamSink.close();
+    await _scanStreamSink.close();
     return scannedAudioList.length;
   }
 
@@ -61,7 +79,8 @@ class AudioScanner {
         if (entry.path.endsWith('mp3')) {
           _scanStreamSink.add(entry.path);
           list.add(
-              await _metadataService.readMetadata(entry.path, loadImage: true));
+            await _metadataService.readMetadata(entry.path, loadImage: true),
+          );
         }
         break;
       case FileSystemEntityType.directory:
@@ -73,14 +92,13 @@ class AudioScanner {
             }
             // Add to list.
             _scanStreamSink.add(entry.path);
-            list.add(await _metadataService.readMetadata(entry.path,
-                loadImage: true));
+            list.add(
+              await _metadataService.readMetadata(entry.path, loadImage: true),
+            );
           } else if (entry.statSync().type == FileSystemEntityType.directory) {
-            _scan(entry, list);
+            await _scan(entry, list);
           }
         }
-        break;
-      default:
         break;
     }
   }

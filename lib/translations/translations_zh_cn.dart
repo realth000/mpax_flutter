@@ -1,3 +1,4 @@
+/// Translation for locale zh_CN.
 const Map<String, String> translationZhCn = <String, String>{
   'Welcome to MPax': '欢迎使用MPax',
   'Scan music': '扫描音乐',
