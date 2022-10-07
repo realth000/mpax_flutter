@@ -30,6 +30,23 @@ class PlayerService extends GetxService {
   final _libraryService = Get.find<MediaLibraryService>();
   final _player = AudioPlayer();
 
+  /// Play history, only uses in shuffle mode([playMode] == [_shuffleString]).
+  /// Usage and behavior act like foobar2000's play history.
+  ///
+  /// In the following situations, this history list will append items:
+  /// * In shuffle mode, and caller is a "seek to next" action, not "play xxx"
+  /// audio".
+  ///
+  /// In the following situations, use this history list:
+  /// * In shuffle mode, and caller is a "seek to previous" action, not "play
+  /// xxx audio" and current playing position is not head or tail of history
+  /// list.
+  ///
+  /// In the following situations, the history will clear all items:
+  /// * Caller is "play xxx audio", no matter in shuffle mode or not.
+  /// * Switch to another playlist.
+  final playHistoryList = <PlayContent>[];
+
   /// Current playing audio position stream.
   late Stream<Duration> positionStream = _player.positionStream;
 
@@ -130,6 +147,22 @@ class PlayerService extends GetxService {
   /// Change current playing audio to given [playContent], and current playing
   /// list to [playlist].
   Future<void> setCurrentContent(
+    PlayContent playContent,
+    PlaylistModel playlist,
+  ) async {
+    await _setCurrentPathWithSave(playContent, playlist);
+    // Clear play history no matter in shuffle play mode or not,
+    // because the caller is a "play xxx audio" action.
+    playHistoryList.clear();
+    // If in shuffle mode, record [playContent] as the history head.
+    if (playMode == _shuffleString) {
+      playHistoryList.add(playContent);
+    }
+  }
+
+  /// Set current playing audio to given [PlayContent]
+  /// and do not clean play history.
+  Future<void> _setCurrentPathWithSave(
     PlayContent playContent,
     PlaylistModel playlist,
   ) async {
@@ -239,12 +272,26 @@ class PlayerService extends GetxService {
     if (isNext) {
       switch (playMode) {
         case _shuffleString:
+          if (playHistoryList.isNotEmpty) {
+            for (var i = 0; i < playHistoryList.length; i++) {
+              if (playHistoryList[i].contentPath ==
+                      currentContent.value.contentPath &&
+                  i < playHistoryList.length - 1) {
+                await _setCurrentPathWithSave(
+                  playHistoryList[i + 1],
+                  currentPlaylist,
+                );
+                return;
+              }
+            }
+          }
           final c = currentPlaylist.randomPlayContent();
           if (c.contentPath.isEmpty) {
             await play();
             return;
           }
-          await setCurrentContent(c, currentPlaylist);
+          await _setCurrentPathWithSave(c, currentPlaylist);
+          playHistoryList.add(c);
           // For test
           // final d = await _player.load();
           // if (d != null) {
@@ -269,14 +316,27 @@ class PlayerService extends GetxService {
       }
     } else {
       switch (playMode) {
-        // TODO: Use history here.
         case _shuffleString:
+          if (playHistoryList.isNotEmpty) {
+            for (var i = 0; i < playHistoryList.length; i++) {
+              if (playHistoryList[i].contentPath ==
+                      currentContent.value.contentPath &&
+                  i > 0) {
+                await _setCurrentPathWithSave(
+                  playHistoryList[i - 1],
+                  currentPlaylist,
+                );
+                return;
+              }
+            }
+          }
           final c = currentPlaylist.randomPlayContent();
           if (c.contentPath.isEmpty) {
             await play();
             return;
           }
-          await setCurrentContent(c, currentPlaylist);
+          await _setCurrentPathWithSave(c, currentPlaylist);
+          playHistoryList.insert(0, c);
           await play();
           break;
         case _repeatString:
