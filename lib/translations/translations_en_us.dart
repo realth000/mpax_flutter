@@ -60,4 +60,10 @@ const Map<String, String> translationEnUs = <String, String>{
   'MPax is licensed under MIT license': 'MPax is licensed under MIT license',
   'Skip recorded music files': 'Skip recorded music files',
   'Scanned': 'Scanned',
+  'Search': 'Search',
+  'Search content': 'Search content',
+  'Search pattern': 'Search pattern',
+  'Include': 'Include',
+  'Exclude': 'Exclude',
+  'Include can not be empty': 'Include can not be empty',
 };

@@ -59,4 +59,10 @@ const Map<String, String> translationZhCn = <String, String>{
   'MPax is licensed under MIT license': 'MPax采用MIT协议',
   'Skip recorded music files': '跳过已在库的音乐',
   'Scanned': '已扫描',
+  'Search': '搜索',
+  'Search content': '搜索内容',
+  'Search pattern': '搜索匹配',
+  'Include': '包含',
+  'Exclude': '排除',
+  'Include can not be empty': '包含的字段不能为空',
 };

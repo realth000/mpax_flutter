@@ -7,6 +7,7 @@ import '../views/media_library_page.dart';
 import '../views/music_page.dart';
 import '../views/playlist_page.dart';
 import '../views/scan_page.dart';
+import '../views/search_page.dart';
 import '../views/settings_page.dart';
 
 part 'app_routes.dart';
@@ -57,6 +58,12 @@ class MPaxPages {
     GetPage(
       name: MPaxRoutes.about,
       page: () => const AboutPage(),
+    ),
+    GetPage(
+      name: MPaxRoutes.search,
+      page: () => SearchPage(
+        playlistTableName: Get.parameters['playlist_table_name']!,
+      ),
     ),
   ];
 }

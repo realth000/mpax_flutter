@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../routes/app_pages.dart';
 import '../services/media_library_service.dart';
 import '../widgets/app_app_bar.dart';
 import '../widgets/app_drawer.dart';
@@ -29,6 +30,17 @@ class PlaylistContentPage extends StatelessWidget {
   Widget build(BuildContext context) => Scaffold(
         appBar: MPaxAppBar(
           title: _wrapPlaylistName(),
+          actions: <Widget>[
+            IconButton(
+              onPressed: () async => Get.toNamed(
+                MPaxRoutes.search.replaceFirst(
+                  ':playlist_table_name',
+                  playlist.tableName,
+                ),
+              ),
+              icon: const Icon(Icons.search),
+            ),
+          ],
         ),
         bottomNavigationBar: const MPaxPlayerWidget(),
         drawer: const MPaxDrawer(),

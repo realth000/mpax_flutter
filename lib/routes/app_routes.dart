@@ -29,4 +29,7 @@ abstract class MPaxRoutes {
 
   /// About page route name.
   static const String about = '/about';
+
+  /// Search page.
+  static const String search = '/search/:playlist_table_name';
 }

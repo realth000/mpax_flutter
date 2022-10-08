@@ -11,6 +11,7 @@ import '../services/player_service.dart';
 import '../services/theme_service.dart';
 import '../themes/app_themes.dart';
 import '../translations/translations.dart';
+import 'services/search_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -54,4 +55,5 @@ Future<void> initServices() async {
   await Get.putAsync(() async => MetadataService().init());
   await Get.putAsync(() async => MediaLibraryService().init());
   await Get.putAsync(() async => PlayerService().init());
+  await Get.putAsync(() async => SearchService().init());
 }
