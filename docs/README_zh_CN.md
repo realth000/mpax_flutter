@@ -1,7 +1,7 @@
 <div align="center">
     <p>
     <h1>
-        <img src="./assets/images/mpax_flutter.svg" width="120px"/>
+        <img src="../assets/images/mpax_flutter.svg" width="120px"/>
         <br/>
         MPax
     </h1>
@@ -26,34 +26,34 @@
     </p>
 </div>
 
-## Introduction
+## 简介
 
-MPax is a simple and easy-to-use music player powered by flutter.
+MPax是使用Flutter开发的简约易用的音乐播放器。
 
-## Screenshots
+## 软件截图
 
-![screenshot_light](./docs/images/screenshot_light.jpg)
-![screenshot_dark](./docs/images/screenshot_dark.jpg)
+![screenshot_light](./images/screenshot_light.jpg)
+![screenshot_dark](./images/screenshot_dark.jpg)
 
-## Features
+## 特性
 
-### Audio:
+### 音频:
 
-* [x] Music playing.
-* [x] Read metadata (now is part of).
-* [ ] Modify metadata.
-* [x] Playlist (partly).
-* [x] Search.
-* [ ] Lyric.
+* [x] 播放音乐。
+* [x] 读取音频元数据标签（部分支持）。
+* [ ] 修改音频元数据标签。
+* [x] 播放列表（初步支持）。
+* [x] 搜索。
 
-### UI:
+### 界面:
 
-* [x] Dark mode.
-* [ ] Duration to auto stop.
-* [ ] Multiple views (In album, artist, folder...).
+* [ ] 显示歌词。
+* [x] 深色模式。
+* [ ] 定时停止。
+* [ ] 多视图（专辑，艺术家，文件夹...）。
 
-### Platforms:
+### 平台：
 
-* [x] Android.
-* [ ] Windows.
-* [ ] Linux.
+* [x] 安卓。
+* [ ] Windows。
+* [ ] Linux。
