@@ -110,7 +110,7 @@ class MetadataService extends GetxService {
       if (metadata.albumArt == null || !loadImage) {
         return playContent;
       }
-      if (scaleImage) {
+      if (scaleImage && GetPlatform.isMobile) {
         final tmpList = await FlutterImageCompress.compressWithList(
           metadata.albumArt!,
           minWidth: 240,
