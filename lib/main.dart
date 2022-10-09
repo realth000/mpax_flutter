@@ -1,6 +1,6 @@
+import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:just_audio_background/just_audio_background.dart';
 
 import '../routes/app_pages.dart';
 import '../services/config_service.dart';
@@ -15,11 +15,6 @@ import 'services/search_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await JustAudioBackground.init(
-    androidNotificationChannelId: 'com.ryanheise.bg_demo.channel.audio',
-    androidNotificationChannelName: 'Audio playback',
-    androidNotificationOngoing: true,
-  );
   await initServices();
   runApp(const MPaxApp());
 }
@@ -48,12 +43,27 @@ class MPaxApp extends StatelessWidget {
 
 /// Init all global services, call this before [runApp].
 Future<void> initServices() async {
+  late final PlayerWrapper wrapper;
+  if (GetPlatform.isMobile) {
+    wrapper = await AudioService.init(
+      config: const AudioServiceConfig(
+        androidNotificationChannelId: 'com.ryanheise.bg_demo.channel.audio',
+        androidNotificationChannelName: 'Audio playback',
+        androidNotificationOngoing: true,
+      ),
+      builder: PlayerWrapper.new,
+    );
+  }
   // Use service.init() here to make sure service is init.
   await Get.putAsync(() async => ConfigService().init());
   await Get.putAsync(() async => ThemeService().init());
   await Get.putAsync(() async => LocaleService().init());
   await Get.putAsync(() async => MetadataService().init());
   await Get.putAsync(() async => MediaLibraryService().init());
-  await Get.putAsync(() async => PlayerService().init());
+  if (GetPlatform.isMobile) {
+    await Get.putAsync(() async => PlayerService(wrapper: wrapper).init());
+  } else {
+    await Get.putAsync(() async => PlayerService().init());
+  }
   await Get.putAsync(() async => SearchService().init());
 }

@@ -1,6 +1,8 @@
 import 'package:get/get.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:sqflite_common/sqlite_api.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 import '../models/play_content.model.dart';
 import '../models/playlist.model.dart';
@@ -109,13 +111,26 @@ class MediaLibraryService extends GetxService {
   /// Init function, run before app start.
   Future<MediaLibraryService> init() async {
     /// Load audio from database.
-    _database = openDatabase(
-      join(await getDatabasesPath(), databaseName),
-      onCreate: (db, version) => db.execute(
-        'CREATE TABLE IF NOT EXISTS $infoTableName($infoTableColumns);',
-      ),
-      version: 1,
-    );
+    if (GetPlatform.isMobile) {
+      _database = openDatabase(
+        join(await getDatabasesPath(), databaseName),
+        onCreate: (db, version) => db.execute(
+          'CREATE TABLE IF NOT EXISTS $infoTableName($infoTableColumns);',
+        ),
+        version: 1,
+      );
+    } else {
+      sqfliteFfiInit();
+      _database = databaseFactoryFfi.openDatabase(
+        join('./', databaseName),
+        options: OpenDatabaseOptions(
+          onCreate: (db, version) => db.execute(
+            'CREATE TABLE IF NOT EXISTS $infoTableName($infoTableColumns);',
+          ),
+          version: 1,
+        ),
+      );
+    }
     final db = await _database;
     // Fetch playlist data from database.
     // As created info table if not exists, no exception here.
