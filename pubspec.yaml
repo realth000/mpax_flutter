@@ -29,6 +29,7 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  bitsdojo_window: ^0.1.5
   just_audio: ^0.9.29
   audio_service: ^0.18.7
   audioplayers: ^1.1.1
@@ -50,6 +51,7 @@ dependencies:
   url_launcher: ^6.1.6
 
 dev_dependencies:
+  flutter_launcher_icons: ^0.10.0
   flutter_lints: ^2.0.1
   flutter_test:
     sdk: flutter
@@ -61,6 +63,13 @@ dev_dependencies:
   # rules and activating additional ones.
   lint: ^1.10.0
   sqflite_common_ffi: ^2.1.1+1
+
+flutter_icons:
+  image: assets/images/mpax_flutter_192.png
+  windows:
+    generate: true
+    image_path: "assets/images/mpax_flutter_192.png"
+    icon_size: 96
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

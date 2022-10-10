@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 
+import '../desktop/desktop_scaffold.dart';
 import '../views/about_page.dart';
 import '../views/current_playlist_page.dart';
 import '../views/home_page.dart';
@@ -17,10 +18,10 @@ part 'app_routes.dart';
 /// Used from Getx.
 class MPaxPages {
   /// Pages count, to disable some stile lints.
-  final pagesCount = routes.length;
+  final pagesCount = mobileRoutes.length;
 
   /// List contains routing.
-  static final List<GetPage> routes = [
+  static final List<GetPage> mobileRoutes = [
     GetPage(
       name: MPaxRoutes.home,
       page: () => const HomePage(),
@@ -64,6 +65,14 @@ class MPaxPages {
       page: () => SearchPage(
         playlistTableName: Get.parameters['playlist_table_name']!,
       ),
+    ),
+  ];
+
+  /// Routes use in desktop platforms.
+  static final desktopRoutes = [
+    GetPage(
+      name: '/',
+      page: MPaxScaffold.new,
     ),
   ];
 }

@@ -33,3 +33,9 @@ abstract class MPaxRoutes {
   /// Search page.
   static const String search = '/search/:playlist_table_name';
 }
+
+/// Routes use on desktop platforms.
+class MPaxDesktopRoutes {
+  /// Main scaffold route.
+  static const String root = '/';
+}

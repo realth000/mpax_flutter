@@ -96,6 +96,11 @@ class PlayerService extends GetxService {
   late final StreamSubscription<Duration> positionSub;
   late final StreamSubscription<Duration?> durationSub;
 
+  /// Player volume
+  ///
+  /// [0, 1], 0 == mute, 1 == max volume.
+  final volume = 0.3.obs;
+
   /// Current playing playlist.
   PlaylistModel currentPlaylist = PlaylistModel();
 
@@ -112,6 +117,16 @@ class PlayerService extends GetxService {
   Rx<IconData> playModeIcon = _repeatIcon.obs;
 
   // late final StreamSubscription<ProcessingState> _playerDurationStream;
+
+  /// Set and save player volume.
+  Future<void> saveVolume(double volume) async {
+    if (volume > 1) {
+      return;
+    }
+    await _player.setVolume(volume);
+    this.volume.value = volume;
+    await Get.find<ConfigService>().saveDouble('PlayerVolume', volume);
+  }
 
   Future<PlaybackState> _transformEvent(PlayerState event) async =>
       PlaybackState(
@@ -143,6 +158,11 @@ class PlayerService extends GetxService {
 
   /// Init function, run before app start.
   Future<PlayerService> init() async {
+    final v = Get.find<ConfigService>().getDouble('PlayerVolume');
+    if (v != null) {
+      volume.value = v;
+      await _player.setVolume(volume.value);
+    }
     if (GetPlatform.isMobile) {
       _player.onPlayerStateChanged.listen((state) async {
         wrapper!.playbackState.add(await _transformEvent(state));

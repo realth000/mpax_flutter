@@ -23,6 +23,9 @@ class SettingsPage extends StatelessWidget {
   /// Constructor.
   const SettingsPage({super.key});
 
+  /// TODO: Migrate to desktop.
+  get body => _SettingsBodyWidget();
+
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: MPaxAppBar(

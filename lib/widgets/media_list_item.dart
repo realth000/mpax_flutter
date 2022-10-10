@@ -53,15 +53,19 @@ class MediaItemTile extends StatelessWidget {
 
   Widget _leadingIcon() {
     if (playContent.albumCover.isEmpty) {
-      return const SizedBox(
-        height: 56,
-        width: 56,
-        child: Icon(Icons.music_note),
+      return ConstrainedBox(
+        constraints: const BoxConstraints(
+          maxWidth: 56,
+          maxHeight: 56,
+        ),
+        child: const Icon(Icons.music_note),
       );
     }
-    return SizedBox(
-      height: 56,
-      width: 56,
+    return ConstrainedBox(
+      constraints: const BoxConstraints(
+        maxWidth: 56,
+        maxHeight: 56,
+      ),
       child: Image.memory(
         base64Decode(playContent.albumCover),
         width: 60,

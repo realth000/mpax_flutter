@@ -12,6 +12,7 @@ const Map<String, Type> configMap = <String, Type>{
   'Locale': String,
   'FollowSystemLocale': bool,
   'ScanSkipRecordedFile': bool,
+  'PlayerVolume': double,
 };
 
 /// Config service for app, globally.

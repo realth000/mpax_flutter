@@ -12,6 +12,9 @@ class AboutPage extends StatelessWidget {
   /// Constructor.
   const AboutPage({super.key});
 
+  /// TODO: Migrate to desktop.
+  get body => _AboutPageBodyWidget();
+
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: MPaxAppBar(

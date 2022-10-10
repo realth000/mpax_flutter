@@ -1,4 +1,5 @@
 import 'package:audio_service/audio_service.dart';
+import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -11,12 +12,23 @@ import '../services/player_service.dart';
 import '../services/theme_service.dart';
 import '../themes/app_themes.dart';
 import '../translations/translations.dart';
+import 'desktop/services/scaffold.service.dart';
 import 'services/search_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initServices();
   runApp(const MPaxApp());
+
+  if (GetPlatform.isDesktop) {
+    doWhenWindowReady(() {
+      doWhenWindowReady(() {
+        appWindow.size = const Size(1024, 768);
+        appWindow.minSize = const Size(1024, 768);
+        appWindow.show();
+      });
+    });
+  }
 }
 
 /// App class.
@@ -24,25 +36,43 @@ class MPaxApp extends StatelessWidget {
   /// Constructor.
   const MPaxApp({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    final mediaLibraryService = Get.find<MediaLibraryService>();
-    return GetMaterialApp(
-      translations: MPaxTranslations(),
-      locale: Get.find<LocaleService>().getLocale(),
-      fallbackLocale: LocaleService.fallbackLocale,
-      initialRoute: mediaLibraryService.content.isNotEmpty
+  String _initialRoute() {
+    if (GetPlatform.isMobile) {
+      final mediaLibraryService = Get.find<MediaLibraryService>();
+      return mediaLibraryService.content.isNotEmpty
           ? MPaxRoutes.library
-          : MPaxRoutes.home,
-      getPages: MPaxPages.routes,
-      theme: MPaxTheme.flexLight,
-      darkTheme: MPaxTheme.flexDark,
-    );
+          : MPaxRoutes.home;
+    } else {
+      return MPaxDesktopRoutes.root;
+    }
   }
+
+  List<GetPage> _pages() {
+    if (GetPlatform.isMobile) {
+      return MPaxPages.mobileRoutes;
+    } else {
+      return MPaxPages.desktopRoutes;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) => GetMaterialApp(
+        translations: MPaxTranslations(),
+        locale: Get.find<LocaleService>().getLocale(),
+        fallbackLocale: LocaleService.fallbackLocale,
+        initialRoute: _initialRoute(),
+        getPages: _pages(),
+        theme: MPaxTheme.flexLight,
+        darkTheme: MPaxTheme.flexDark,
+      );
 }
 
 /// Init all global services, call this before [runApp].
 Future<void> initServices() async {
+  if (GetPlatform.isDesktop) {
+    await Get.putAsync(() async => ScaffoldService().init());
+  }
+
   late final PlayerWrapper wrapper;
   if (GetPlatform.isMobile) {
     wrapper = await AudioService.init(

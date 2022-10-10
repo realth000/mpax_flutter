@@ -18,6 +18,9 @@ class ScanPage extends StatelessWidget {
   /// Constructor.
   const ScanPage({super.key});
 
+  /// TODO: Migrate to desktop.
+  get body => _ScanBodyWidget();
+
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: MPaxAppBar(
