@@ -63,13 +63,14 @@ class MediaItemTile extends StatelessWidget {
     }
     return ConstrainedBox(
       constraints: const BoxConstraints(
-        maxWidth: 56,
-        maxHeight: 56,
+        // FIXME: Max should be able to 56.
+        maxWidth: 52,
+        maxHeight: 52,
       ),
       child: Image.memory(
         base64Decode(playContent.albumCover),
-        width: 60,
-        height: 60,
+        width: 56,
+        height: 56,
         isAntiAlias: true,
       ),
     );

@@ -191,8 +191,8 @@ class PlayerService extends GetxService {
       }
     });
     durationSub = _player.onDurationChanged.listen((duration) {
-      if (duration < Duration.zero) {
-        currentDuration.value = const Duration(seconds: 1);
+      if (duration <= Duration.zero) {
+        currentDuration.value = currentPosition.value;
       } else {
         currentDuration.value = duration;
       }
