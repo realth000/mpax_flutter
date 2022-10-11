@@ -90,13 +90,15 @@ class _AboutPageBodyWidget extends StatelessWidget {
                         'realth000/mpax_flutter',
                         maxLines: 1,
                       ),
-                      trailing: const Icon(Icons.launch),
-                      onTap: () async {
-                        await launchUrl(
-                          Uri.parse(_githubPageString),
-                          mode: LaunchMode.externalApplication,
-                        );
-                      },
+                      trailing: IconButton(
+                        icon: const Icon(Icons.launch),
+                        onPressed: () async {
+                          await launchUrl(
+                            Uri.parse(_githubPageString),
+                            mode: LaunchMode.externalApplication,
+                          );
+                        },
+                      ),
                     ),
                     ListTile(
                       leading: const ListTileLeading(
@@ -179,13 +181,15 @@ class _AboutPageBodyWidget extends StatelessWidget {
                     ListTile(
                       leading: const Icon(Icons.collections_bookmark),
                       title: Text('MPax is licensed under MIT license'.tr),
-                      trailing: const Icon(Icons.launch),
-                      onTap: () async {
-                        await launchUrl(
-                          Uri.parse(_licensePageString),
-                          mode: LaunchMode.externalApplication,
-                        );
-                      },
+                      trailing: IconButton(
+                        icon: const Icon(Icons.launch),
+                        onPressed: () async {
+                          await launchUrl(
+                            Uri.parse(_licensePageString),
+                            mode: LaunchMode.externalApplication,
+                          );
+                        },
+                      ),
                     ),
                   ],
                 ),
