@@ -84,10 +84,8 @@ class MetadataService extends GetxService {
         minHeight: 240,
       );
       playContent.albumCover = base64Encode(tmpList);
-      // playContent.albumCover = base64Encode(metadata.picture!.data);
     } else {
-      // playContent.albumCover = String.fromCharCodes(metadata.picture!.data);
-      playContent.albumCover = base64Encode(metadata.picture!.data);
+      // playContent.albumCover = base64Encode(metadata.picture!.data);
     }
     return playContent;
   }
