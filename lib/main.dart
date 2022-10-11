@@ -25,6 +25,7 @@ void main() async {
       doWhenWindowReady(() {
         appWindow.size = const Size(1024, 768);
         appWindow.minSize = const Size(1024, 768);
+        appWindow.alignment = Alignment.center;
         appWindow.show();
       });
     });
