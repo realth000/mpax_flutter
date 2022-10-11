@@ -177,7 +177,7 @@ class PlayerService extends GetxService {
     });
     _player.onPlayerComplete.listen((state) async {
       if (playMode == _repeatOneString) {
-        await _player.seek(Duration.zero);
+        await _player.setSourceDeviceFile(currentContent.value.contentPath);
         await _player.resume();
       } else {
         await seekToAnother(true);
