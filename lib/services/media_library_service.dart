@@ -317,4 +317,32 @@ class MediaLibraryService extends GetxService {
     }
     return _fromDataMap(currentContent[0]);
   }
+
+  /// Get a sorted playlist
+  ///
+  /// From database.
+  Future<PlaylistModel> sortPlaylist(
+    PlaylistModel playlist,
+    String column,
+    String sort,
+  ) async {
+    final db = await _database;
+    final model = PlaylistModel()
+      ..name = playlist.name
+      ..tableName = playlist.tableName;
+    final List<Map<String, dynamic>> playlistTable = await db.query(
+      model.tableName,
+      orderBy: '$column $sort',
+    );
+    for (final playContent in playlistTable) {
+      final c = _fromDataMap(playContent);
+      model.contentList.add(c);
+      if (model.tableName == allMediaTableName) {
+        _allContent = model;
+      } else {
+        _allContent.contentList.add(c);
+      }
+    }
+    return model;
+  }
 }

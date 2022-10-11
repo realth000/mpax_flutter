@@ -66,4 +66,5 @@ const Map<String, String> translationEnUs = <String, String>{
   'Include': 'Include',
   'Exclude': 'Exclude',
   'Include can not be empty': 'Include can not be empty',
+  'Duration': 'Duration',
 };
