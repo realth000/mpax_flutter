@@ -56,8 +56,11 @@ class AudioScanner {
   /// Options use in scanning.
   AudioScanOptions? options;
 
+  var _scannedCount = 0;
+
   /// Start scan.
   Future<int> scan() async {
+    _scannedCount = 0;
     final scannedAudioList = <PlayContent>[];
     late final Directory d;
     if (targetPath.isNotEmpty) {
@@ -69,8 +72,10 @@ class AudioScanner {
     if (targetModel != null) {
       targetModel!.addContentList(scannedAudioList);
     }
+    _scannedCount += scannedAudioList.length;
+    scannedAudioList.clear();
     await _scanStreamSink.close();
-    return scannedAudioList.length;
+    return _scannedCount;
   }
 
   Future<void> _scan(FileSystemEntity entry, List<PlayContent> list) async {
@@ -81,6 +86,16 @@ class AudioScanner {
           list.add(
             await _metadataService.readMetadata(entry.path, loadImage: true),
           );
+        }
+
+        /// Short return list to reduce memory use.
+        if (list.length >= 10) {
+          _mediaLibraryService.addContentList(list);
+          if (targetModel != null) {
+            targetModel!.addContentList(list);
+          }
+          _scannedCount += list.length;
+          list.clear();
         }
         break;
       case FileSystemEntityType.directory:
@@ -95,6 +110,16 @@ class AudioScanner {
             list.add(
               await _metadataService.readMetadata(entry.path, loadImage: true),
             );
+
+            /// Short return list to reduce memory use.
+            if (list.length >= 10) {
+              _mediaLibraryService.addContentList(list);
+              if (targetModel != null) {
+                targetModel!.addContentList(list);
+              }
+              _scannedCount += list.length;
+              list.clear();
+            }
           } else if (entry.statSync().type == FileSystemEntityType.directory) {
             await _scan(entry, list);
           }
