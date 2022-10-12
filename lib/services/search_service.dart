@@ -8,9 +8,11 @@ import 'media_library_service.dart';
 class SearchService extends GetxService {
   /// Search include text.
   String includeText = '';
+  String _includeTextLowerCase = '';
 
   /// Search exclude text.
   String excludeText = '';
+  String _excludeTextLowerCase = '';
 
   /// Search audio title
   final title = true.obs;
@@ -47,55 +49,61 @@ class SearchService extends GetxService {
 
   bool _filterWithExclude(PlayContent content) {
     if (title.value &&
-        content.title.contains(includeText) &&
-        !content.title.contains(excludeText)) {
+        content.title.toLowerCase().contains(_includeTextLowerCase) &&
+        !content.title.toLowerCase().contains(_excludeTextLowerCase)) {
       return true;
     }
     if (artist.value &&
-        content.artist.contains(includeText) &&
-        !content.artist.contains(excludeText)) {
+        content.artist.toLowerCase().contains(_includeTextLowerCase) &&
+        !content.artist.toLowerCase().contains(_excludeTextLowerCase)) {
       return true;
     }
     if (albumTitle.value &&
-        content.albumTitle.contains(includeText) &&
-        !content.albumTitle.contains(excludeText)) {
+        content.albumTitle.toLowerCase().contains(_includeTextLowerCase) &&
+        !content.albumTitle.toLowerCase().contains(_excludeTextLowerCase)) {
       return true;
     }
     if (albumArtist.value &&
-        content.albumArtist.contains(includeText) &&
-        !content.albumArtist.contains(excludeText)) {
+        content.albumArtist.toLowerCase().contains(_includeTextLowerCase) &&
+        !content.albumArtist.toLowerCase().contains(_excludeTextLowerCase)) {
       return true;
     }
     if (contentPath.value &&
-        content.contentPath.contains(includeText) &&
-        !content.contentPath.contains(excludeText)) {
+        content.contentPath.toLowerCase().contains(_includeTextLowerCase) &&
+        !content.contentPath.toLowerCase().contains(_excludeTextLowerCase)) {
       return true;
     }
     if (contentName.value &&
-        content.contentName.contains(includeText) &&
-        !content.contentName.contains(excludeText)) {
+        content.contentName.toLowerCase().contains(_includeTextLowerCase) &&
+        !content.contentName.toLowerCase().contains(_excludeTextLowerCase)) {
       return true;
     }
     return false;
   }
 
   bool _filter(PlayContent content) {
-    if (title.value && content.title.contains(includeText)) {
+    if (title.value &&
+        content.title.toLowerCase().contains(_includeTextLowerCase)) {
       return true;
     }
-    if (artist.value && content.artist.contains(includeText)) {
+    if (artist.value &&
+        content.artist.toLowerCase().contains(_includeTextLowerCase)) {
       return true;
     }
-    if (albumTitle.value && content.albumTitle.contains(includeText)) {
+    if (albumTitle.value &&
+        content.albumTitle.toLowerCase().contains(_includeTextLowerCase)) {
       return true;
     }
-    if (albumArtist.value && content.albumArtist.contains(includeText)) {
+    if (albumArtist.value &&
+        content.albumArtist.toLowerCase().contains(_includeTextLowerCase)) {
       return true;
     }
-    if (contentPath.value && content.contentPath.contains(includeText)) {
+    if (contentPath.value &&
+        content.contentPath.toLowerCase().contains(_includeTextLowerCase)) {
       return true;
     }
-    if (contentName.value && content.contentName.contains(includeText)) {
+    if (contentName.value &&
+        content.contentName.toLowerCase().contains(_includeTextLowerCase)) {
       return true;
     }
     return false;
@@ -109,6 +117,8 @@ class SearchService extends GetxService {
   ) async {
     this.includeText = includeText;
     this.excludeText = excludeText;
+    _includeTextLowerCase = includeText.toLowerCase();
+    _excludeTextLowerCase = excludeText.toLowerCase();
     playlist.value = Get.find<MediaLibraryService>()
         .findPlaylistByTableName(playlistTableName);
     final resultList = <PlayContent>[];
