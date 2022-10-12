@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../desktop/services/scaffold.service.dart';
 import '../routes/app_pages.dart';
 import '../services/player_service.dart';
 
@@ -65,17 +66,30 @@ class MPaxPlayerWidget extends GetView<PlayerService> {
     }
   }
 
+  Future<void> _toMusicPage() async {
+    if (GetPlatform.isMobile) {
+      await Get.toNamed(MPaxRoutes.music);
+    } else {
+      Get.find<ScaffoldService>().currentIndex.value = 2;
+    }
+  }
+
   Widget _buildAudioAlbumCoverWidget(BuildContext context) {
     if (controller.currentContent.value.albumCover.isEmpty) {
-      return const SizedBox(
-        width: albumCoverHeight,
-        height: albumCoverHeight,
-        child: Icon(Icons.music_note),
+      return GestureDetector(
+        onTapUp: (details) async {
+          await _toMusicPage();
+        },
+        child: const SizedBox(
+          width: albumCoverHeight,
+          height: albumCoverHeight,
+          child: Icon(Icons.music_note),
+        ),
       );
     } else {
       return GestureDetector(
         onTapUp: (details) async {
-          await Get.toNamed(MPaxRoutes.music);
+          await _toMusicPage();
         },
         child: SizedBox(
           width: albumCoverHeight,
@@ -127,7 +141,7 @@ class MPaxPlayerWidget extends GetView<PlayerService> {
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTapUp: (details) async {
-          await Get.toNamed(MPaxRoutes.music);
+          await _toMusicPage();
         },
         onLongPressStart: (details) {
           // For animation.
