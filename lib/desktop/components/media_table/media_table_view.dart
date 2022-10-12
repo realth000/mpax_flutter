@@ -14,6 +14,12 @@ class MediaTable extends StatelessWidget {
   /// Playlist in this table.
   PlaylistModel playlistModel;
 
+  /// State manager reserved to change table state.
+  ///
+  /// We use this because we do not have method to access
+  /// [PlutoGridStateManager] without any event callback.
+  late final PlutoGridStateManager _stateManager;
+
   /// Convert [PlutoColumnSort] to sqlite order by sort [String].
   static const _sortMap = <PlutoColumnSort, String>{
     PlutoColumnSort.none: '',
@@ -96,34 +102,65 @@ class MediaTable extends StatelessWidget {
     return r;
   }
 
+  PlutoGridConfiguration _themeConfig(BuildContext context) =>
+      Theme.of(context).colorScheme.brightness == Brightness.dark
+          ? MediaTableTheme.darkTheme
+          : MediaTableTheme.lightTheme;
+
   @override
-  Widget build(BuildContext context) => PlutoGrid(
-        columns: columns,
-        rows: rows,
-        onRowDoubleTap: (tappedRow) async {
-          final row = tappedRow.row;
-          if (row == null) {
-            return;
-          }
-          await _controller.playAudio(
-            playlistModel.find(row.cells['path']!.value),
-            playlistModel,
-          );
-        },
-        onSorted: (sortEvent) async {
-          playlistModel = await _controller.sort(
-            playlistModel,
-            sortEvent.column.field,
-            _sortMap[sortEvent.column.sort]!,
-          );
-        },
-        configuration:
-            Theme.of(context).colorScheme.brightness == Brightness.dark
-                ? MediaTableTheme.darkTheme
-                : MediaTableTheme.lightTheme,
-        createFooter: (stateManager) {
-          stateManager.setPageSize(100, notify: false);
-          return PlutoPagination(stateManager);
-        },
+  Widget build(BuildContext context) => Stack(
+        children: [
+          PlutoGrid(
+            columns: columns,
+            rows: rows,
+            onRowDoubleTap: (tappedRow) async {
+              final row = tappedRow.row;
+              if (row == null) {
+                return;
+              }
+              await _controller.playAudio(
+                playlistModel.find(row.cells['path']!.value),
+                playlistModel,
+              );
+            },
+            onLoaded: (event) {
+              // Reserve the state manager.
+              _stateManager = event.stateManager;
+            },
+            onSorted: (sortEvent) async {
+              playlistModel = await _controller.sort(
+                playlistModel,
+                sortEvent.column.field,
+                _sortMap[sortEvent.column.sort]!,
+              );
+            },
+            configuration: _themeConfig(context).copyWith(
+              columnFilter: PlutoGridColumnFilterConfig(
+                filters: const [
+                  ...FilterHelper.defaultFilters,
+                ],
+                resolveDefaultColumnFilter: (column, resolver) =>
+                    resolver<PlutoFilterTypeContains>(),
+              ),
+            ),
+            createFooter: (stateManager) {
+              stateManager.setPageSize(100, notify: false);
+              return PlutoPagination(stateManager);
+            },
+          ),
+          Positioned(
+            right: 4,
+            bottom: 4,
+            child: ElevatedButton(
+              onPressed: () {
+                _controller.showFiltersRow.value =
+                    !_controller.showFiltersRow.value;
+                _stateManager
+                    .setShowColumnFilter(_controller.showFiltersRow.value);
+              },
+              child: const Icon(Icons.search),
+            ),
+          ),
+        ],
       );
 }

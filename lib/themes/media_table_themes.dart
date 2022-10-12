@@ -23,6 +23,7 @@ class MediaTableTheme {
       borderColor: Colors.transparent,
       gridBorderRadius: BorderRadius.circular(5),
       iconColor: Colors.black.withOpacity(0.6),
+      cellColorInEditState: MPaxTheme.flexLight.colorScheme.onInverseSurface,
     ),
   );
 
@@ -42,6 +43,7 @@ class MediaTableTheme {
       gridBorderRadius: BorderRadius.circular(5),
       iconColor: Colors.white.withOpacity(0.8),
       disabledIconColor: Colors.white.withOpacity(0.4),
+      cellColorInEditState: MPaxTheme.flexDark.colorScheme.onInverseSurface,
       // Fix text style.
       columnTextStyle: TextStyle(
         color: Colors.white.withOpacity(0.8),

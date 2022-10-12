@@ -15,6 +15,9 @@ class MediaTableController extends GetxController {
   /// Constructor.
   MediaTableController();
 
+  /// Whether to show filters.
+  final showFiltersRow = false.obs;
+
   final _playerService = Get.find<PlayerService>();
   final _libraryService = Get.find<MediaLibraryService>();
 
