@@ -80,8 +80,8 @@ class MetadataService extends GetxService {
     if (scaleImage && GetPlatform.isMobile) {
       final tmpList = await FlutterImageCompress.compressWithList(
         metadata.picture!.data,
-        minWidth: 240,
-        minHeight: 240,
+        minWidth: 120,
+        minHeight: 120,
       );
       playContent.albumCover = base64Encode(tmpList);
     } else if (!scaleImage) {
