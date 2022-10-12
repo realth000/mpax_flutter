@@ -1,5 +1,6 @@
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 /// All app themes.
 class MPaxTheme {
@@ -24,6 +25,7 @@ class MPaxTheme {
   static const flexScheme = FlexScheme.deepPurple;
 
   static final ThemeData _flexLightBase = FlexThemeData.light(
+    fontFamily: GetPlatform.isWindows ? 'Microsoft YaHei' : null,
     scheme: flexScheme,
     colors: const FlexSchemeColor(
       primary: Color(0xff313196),
@@ -76,6 +78,7 @@ class MPaxTheme {
   );
 
   static final ThemeData _flexDarkBase = FlexThemeData.dark(
+    fontFamily: GetPlatform.isWindows ? 'Microsoft YaHei' : null,
     scheme: flexScheme,
     colors: const FlexSchemeColor(
       primary: Color(0xff313196),

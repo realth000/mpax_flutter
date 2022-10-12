@@ -250,38 +250,41 @@ class MPaxPlayerWidget extends GetView<PlayerService> {
         ],
       );
 
-  Widget _buildDesktop(BuildContext context) => Row(
-        children: <Widget>[
-          const SizedBox(
-            width: widgetHeight - albumCoverHeight + 2,
-          ),
-          // Album cover
-          Obx(() => _buildAudioAlbumCoverWidget(context)),
-          const SizedBox(
-            width: widgetHeight / 2 - albumCoverHeight / 2,
-          ),
-          // Audio info
-          SizedBox(
-            width: 100,
-            height: 100,
-            child: Row(
-              children: [
-                _buildAudioInfoWidget(context),
-              ],
+  Widget _buildDesktop(BuildContext context) => ColoredBox(
+        color: Theme.of(context).colorScheme.surface,
+        child: Row(
+          children: <Widget>[
+            const SizedBox(
+              width: widgetHeight - albumCoverHeight + 2,
             ),
-          ),
-          Expanded(child: _DesktopProgressWidget()),
-          const SizedBox(
-            width: 5,
-            height: 5,
-          ),
-          _buildVolumeController(),
-          const SizedBox(
-            width: 5,
-            height: 5,
-          ),
-          _buildControlButtons(),
-        ],
+            // Album cover
+            Obx(() => _buildAudioAlbumCoverWidget(context)),
+            const SizedBox(
+              width: widgetHeight / 2 - albumCoverHeight / 2,
+            ),
+            // Audio info
+            SizedBox(
+              width: 100,
+              height: 100,
+              child: Row(
+                children: [
+                  _buildAudioInfoWidget(context),
+                ],
+              ),
+            ),
+            Expanded(child: _DesktopProgressWidget()),
+            const SizedBox(
+              width: 5,
+              height: 5,
+            ),
+            _buildVolumeController(),
+            const SizedBox(
+              width: 5,
+              height: 5,
+            ),
+            _buildControlButtons(),
+          ],
+        ),
       );
 
   @override

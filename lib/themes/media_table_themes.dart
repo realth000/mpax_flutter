@@ -14,13 +14,15 @@ class MediaTableTheme {
       autoSizeMode: PlutoAutoSizeMode.scale,
     ),
     style: PlutoGridStyleConfig(
-      gridBackgroundColor: Colors.transparent,
-      rowColor: Colors.transparent,
+      gridBackgroundColor: MPaxTheme.flexLight.colorScheme.surface,
+      rowColor: MPaxTheme.flexLight.colorScheme.surface,
       activatedColor: MPaxTheme.flexLight.colorScheme.primary.withOpacity(0.6),
-      activatedBorderColor: Colors.transparent,
-      gridBorderColor: Colors.grey,
+      activatedBorderColor:
+          MPaxTheme.flexLight.colorScheme.primary.withOpacity(0.6),
+      gridBorderColor: Colors.transparent,
       borderColor: Colors.transparent,
       gridBorderRadius: BorderRadius.circular(5),
+      iconColor: Colors.black.withOpacity(0.6),
     ),
   );
 
@@ -30,13 +32,16 @@ class MediaTableTheme {
       autoSizeMode: PlutoAutoSizeMode.scale,
     ),
     style: PlutoGridStyleConfig(
-      gridBackgroundColor: Colors.transparent,
-      rowColor: Colors.transparent,
+      gridBackgroundColor: MPaxTheme.flexDark.colorScheme.surface,
+      rowColor: MPaxTheme.flexDark.colorScheme.surface,
       activatedColor: MPaxTheme.flexLight.colorScheme.primary.withOpacity(0.6),
-      activatedBorderColor: Colors.transparent,
-      gridBorderColor: Colors.grey,
+      activatedBorderColor:
+          MPaxTheme.flexLight.colorScheme.primary.withOpacity(0.6),
+      gridBorderColor: Colors.transparent,
       borderColor: Colors.transparent,
       gridBorderRadius: BorderRadius.circular(5),
+      iconColor: Colors.white.withOpacity(0.8),
+      disabledIconColor: Colors.white.withOpacity(0.4),
       // Fix text style.
       columnTextStyle: TextStyle(
         color: Colors.white.withOpacity(0.8),
