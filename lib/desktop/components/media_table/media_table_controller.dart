@@ -35,6 +35,7 @@ class MediaTableController extends GetxController {
     if (_playerService.currentPlaylist.tableName == p.tableName) {
       _playerService.currentPlaylist = p;
     }
+    await _libraryService.savePlaylist(p);
     return p;
   }
 
