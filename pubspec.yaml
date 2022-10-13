@@ -42,6 +42,8 @@ dependencies:
   get: ^4.6.5
   #  id3: ^1.0.0+1
   #  image: ^3.2.0
+  # sudo apt-get install keybinder-3.0
+  hotkey_manager: ^0.1.7
   metadata_god: ^0.3.1
   path: ^1.8.2
   path_provider: ^2.0.11
@@ -62,6 +64,7 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   lint: ^1.10.0
+  # sudo apt install libsqlite3-0 libsqlite3-dev
   sqflite_common_ffi: ^2.1.1+1
 
 flutter_icons:

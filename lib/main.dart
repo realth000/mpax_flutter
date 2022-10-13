@@ -2,6 +2,7 @@ import 'package:audio_service/audio_service.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hotkey_manager/hotkey_manager.dart';
 
 import '../routes/app_pages.dart';
 import '../services/config_service.dart';
@@ -13,10 +14,15 @@ import '../services/theme_service.dart';
 import '../themes/app_themes.dart';
 import '../translations/translations.dart';
 import 'desktop/services/scaffold.service.dart';
+import 'desktop/services/shortcut_service.dart';
 import 'services/search_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  if (GetPlatform.isDesktop) {
+    // For hot restart.
+    await hotKeyManager.unregisterAll();
+  }
   await initServices();
   runApp(const MPaxApp());
 
@@ -97,4 +103,7 @@ Future<void> initServices() async {
     await Get.putAsync(() async => PlayerService().init());
   }
   await Get.putAsync(() async => SearchService().init());
+  if (GetPlatform.isDesktop) {
+    await Get.putAsync(() async => ShortcutService().init());
+  }
 }
