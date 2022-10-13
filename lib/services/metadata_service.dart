@@ -47,6 +47,9 @@ class MetadataService extends GetxService {
     if (metadata.title != null) {
       playContent.title = metadata.title!;
     }
+    if (playContent.title.isEmpty) {
+      playContent.title = playContent.contentName;
+    }
     if (metadata.trackNumber != null) {
       playContent.trackNumber = metadata.trackNumber!;
     }
