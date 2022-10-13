@@ -217,12 +217,37 @@ class MPaxPlayerWidget extends GetView<PlayerService> {
         ],
       );
 
+  Widget _buildVolumeIcon() {
+    if (controller.volume.value.isEqual(0)) {
+      return const Icon(Icons.volume_mute);
+    }
+    if (controller.volume.value < 0.3) {
+      return const Icon(Icons.volume_down);
+    }
+    return const Icon(Icons.volume_up);
+  }
+
   Widget _buildVolumeController() => Obx(
-        () => Slider(
-          value: controller.volume.value,
-          onChanged: (value) async {
-            await controller.saveVolume(value);
-          },
+        () => Row(
+          children: <Widget>[
+            IconButton(
+              onPressed: () async {
+                if (!controller.volume.value.isEqual(0)) {
+                  controller.volumeBeforeMute = controller.volume.value;
+                  await controller.saveVolume(0);
+                } else {
+                  await controller.saveVolume(controller.volumeBeforeMute);
+                }
+              },
+              icon: _buildVolumeIcon(),
+            ),
+            Slider(
+              value: controller.volume.value,
+              onChanged: (value) async {
+                await controller.saveVolume(value);
+              },
+            ),
+          ],
         ),
       );
 

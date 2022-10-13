@@ -101,6 +101,12 @@ class PlayerService extends GetxService {
   /// [0, 1], 0 == mute, 1 == max volume.
   final volume = 0.3.obs;
 
+  /// Record last not mute volume.
+  ///
+  /// Before mute, record the [volume] value.
+  /// After unmute, set [volume] to this value.
+  double volumeBeforeMute = 0.3;
+
   /// Current playing playlist.
   PlaylistModel currentPlaylist = PlaylistModel();
 
@@ -161,6 +167,7 @@ class PlayerService extends GetxService {
     final v = Get.find<ConfigService>().getDouble('PlayerVolume');
     if (v != null) {
       volume.value = v;
+      volumeBeforeMute = v;
       await _player.setVolume(volume.value);
     }
     if (GetPlatform.isMobile) {
