@@ -50,10 +50,10 @@ class MPaxPlayerWidget extends GetView<PlayerService> {
   const MPaxPlayerWidget({super.key});
 
   /// Player wight height.
-  static const double widgetHeight = 70;
+  static final double widgetHeight = GetPlatform.isMobile ? 70 : 140;
 
   /// Album image height.
-  static const double albumCoverHeight = 56;
+  static final double albumCoverHeight = GetPlatform.isMobile ? 56 : 120;
 
   String _getAlbumString() {
     if (controller.currentContent.value.artist.isNotEmpty) {
@@ -74,16 +74,27 @@ class MPaxPlayerWidget extends GetView<PlayerService> {
     }
   }
 
+  /// Transform duration to readable time [String].
+  /// TODO: Duplicate with the same util function in mobile music page.
+  String _durationToString(Duration duration) {
+    final secs = duration.inSeconds;
+    if (secs == 0) {
+      return '00:00';
+    }
+    return '${'${secs ~/ 60}'.padLeft(2, '0')}:'
+        '${'${secs % 60}'.padLeft(2, '0')}';
+  }
+
   Widget _buildAudioAlbumCoverWidget(BuildContext context) {
     if (controller.currentContent.value.albumCover.isEmpty) {
       return GestureDetector(
         onTapUp: (details) async {
           await _toMusicPage();
         },
-        child: const SizedBox(
+        child: SizedBox(
           width: albumCoverHeight,
           height: albumCoverHeight,
-          child: Icon(Icons.music_note),
+          child: const Icon(Icons.music_note),
         ),
       );
     } else {
@@ -102,16 +113,14 @@ class MPaxPlayerWidget extends GetView<PlayerService> {
     }
   }
 
-  Expanded _buildAudioInfoWidget(BuildContext context) {
-    final titleWidget = Expanded(
-      child: Obx(
-        () => Text(
-          controller.currentContent.value.title.isEmpty
-              ? controller.currentContent.value.contentName
-              : controller.currentContent.value.title,
-          textAlign: TextAlign.left,
-          maxLines: 1,
-        ),
+  Widget _buildAudioInfoWidget(BuildContext context) {
+    final titleWidget = Obx(
+      () => Text(
+        controller.currentContent.value.title.isEmpty
+            ? controller.currentContent.value.contentName
+            : controller.currentContent.value.title,
+        textAlign: TextAlign.left,
+        maxLines: 1,
       ),
     );
 
@@ -137,35 +146,35 @@ class MPaxPlayerWidget extends GetView<PlayerService> {
       ),
     );
 
-    return Expanded(
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTapUp: (details) async {
-          await _toMusicPage();
-        },
-        onLongPressStart: (details) {
-          // For animation.
-        },
-        onLongPressEnd: (details) async {
-          if (details.localPosition.dy < 0) {
-            return;
-          }
-          await controller.seekToAnother(
-            details.globalPosition.dx >= context.width / 2,
-          );
-        },
-        child: Padding(
-          padding: const EdgeInsets.all(3),
-          child: Align(
-            alignment: Alignment.centerLeft,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                titleWidget,
-                artistWidget,
-                albumWidget,
-              ],
-            ),
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTapUp: (details) async {
+        await _toMusicPage();
+      },
+      onLongPressStart: (details) {
+        // For animation.
+      },
+      onLongPressEnd: (details) async {
+        if (details.localPosition.dy < 0) {
+          return;
+        }
+        await controller.seekToAnother(
+          details.globalPosition.dx >= context.width / 2,
+        );
+      },
+      child: Padding(
+        padding: const EdgeInsets.all(3),
+        child: Align(
+          alignment: Alignment.centerLeft,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Expanded(
+                child: titleWidget,
+              ),
+              artistWidget,
+              albumWidget,
+            ],
           ),
         ),
       ),
@@ -178,16 +187,12 @@ class MPaxPlayerWidget extends GetView<PlayerService> {
           Expanded(
             child: Row(
               children: <Widget>[
-                const SizedBox(
-                  width: widgetHeight - albumCoverHeight + 2,
-                ),
                 // Album cover
                 Obx(() => _buildAudioAlbumCoverWidget(context)),
-                const SizedBox(
-                  width: widgetHeight / 2 - albumCoverHeight / 2,
-                ),
                 // Audio info
-                _buildAudioInfoWidget(context),
+                Expanded(
+                  child: _buildAudioInfoWidget(context),
+                ),
                 // Play-and-pause button.
                 ElevatedButton(
                   onPressed: () async {
@@ -218,6 +223,53 @@ class MPaxPlayerWidget extends GetView<PlayerService> {
           onChanged: (value) async {
             await controller.saveVolume(value);
           },
+        ),
+      );
+
+  Widget _buildControlRow() => ConstrainedBox(
+        constraints: BoxConstraints(maxHeight: widgetHeight / 2),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: <Widget>[
+            _buildControlButtons(),
+            const SizedBox(
+              width: 5,
+              height: 5,
+            ),
+            Expanded(
+              child: Row(
+                children: <Widget>[
+                  Obx(
+                    () => Text(
+                      _durationToString(controller.currentPosition.value),
+                      maxLines: 1,
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 10,
+                    height: 10,
+                  ),
+                  Expanded(
+                    child: _DesktopProgressWidget(),
+                  ),
+                  const SizedBox(
+                    width: 10,
+                    height: 10,
+                  ),
+                  Obx(
+                    () => Text(
+                      _durationToString(controller.currentDuration.value),
+                      maxLines: 1,
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 15,
+                    height: 15,
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       );
 
@@ -268,42 +320,42 @@ class MPaxPlayerWidget extends GetView<PlayerService> {
         color: Theme.of(context).colorScheme.surface,
         child: Row(
           children: <Widget>[
-            const SizedBox(
-              width: widgetHeight - albumCoverHeight + 2,
-            ),
             // Album cover
-            Obx(() => _buildAudioAlbumCoverWidget(context)),
-            const SizedBox(
-              width: widgetHeight / 2 - albumCoverHeight / 2,
+            Padding(
+              padding: const EdgeInsets.all(10),
+              child: Obx(() => _buildAudioAlbumCoverWidget(context)),
             ),
-            // Audio info
-            SizedBox(
-              width: 100,
-              height: 100,
-              child: Row(
-                children: [
-                  _buildAudioInfoWidget(context),
+            Expanded(
+              child: Column(
+                children: <Widget>[
+                  ConstrainedBox(
+                    constraints: BoxConstraints(maxHeight: widgetHeight / 2),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        // Audio info
+                        _buildAudioInfoWidget(context),
+                        const SizedBox(
+                          width: 10,
+                          height: 10,
+                        ),
+                        _buildVolumeController(),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: _buildControlRow(),
+                  ),
                 ],
               ),
             ),
-            Expanded(child: _DesktopProgressWidget()),
-            const SizedBox(
-              width: 5,
-              height: 5,
-            ),
-            _buildVolumeController(),
-            const SizedBox(
-              width: 5,
-              height: 5,
-            ),
-            _buildControlButtons(),
           ],
         ),
       );
 
   @override
   Widget build(BuildContext context) => ConstrainedBox(
-        constraints: const BoxConstraints(
+        constraints: BoxConstraints(
           maxHeight: widgetHeight,
         ),
         child: GetPlatform.isMobile
