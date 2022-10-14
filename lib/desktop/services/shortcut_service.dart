@@ -12,9 +12,7 @@ class ShortcutService extends GetxService {
     // Register global shortcut: play or pause.
     final playerPlayOrPause = HotKey(
       KeyCode.keyB,
-      modifiers: GetPlatform.isWindows
-          ? [KeyModifier.control, KeyModifier.alt]
-          : [KeyModifier.control, KeyModifier.meta],
+      modifiers: [KeyModifier.control, KeyModifier.alt],
       scope: HotKeyScope.system,
     );
     await hotKeyManager.register(
@@ -27,9 +25,7 @@ class ShortcutService extends GetxService {
     // Register global shortcut: play previous.
     final playerPlayPrevious = HotKey(
       KeyCode.arrowLeft,
-      modifiers: GetPlatform.isWindows
-          ? [KeyModifier.control, KeyModifier.alt]
-          : [KeyModifier.control, KeyModifier.meta],
+      modifiers: [KeyModifier.control, KeyModifier.alt],
       scope: HotKeyScope.system,
     );
     await hotKeyManager.register(
@@ -42,9 +38,7 @@ class ShortcutService extends GetxService {
     // Register global shortcut: play next.
     final playerPlayNext = HotKey(
       KeyCode.arrowRight,
-      modifiers: GetPlatform.isWindows
-          ? [KeyModifier.control, KeyModifier.alt]
-          : [KeyModifier.control, KeyModifier.meta],
+      modifiers: [KeyModifier.control, KeyModifier.alt],
       scope: HotKeyScope.system,
     );
     await hotKeyManager.register(
