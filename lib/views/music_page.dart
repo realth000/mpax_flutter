@@ -88,6 +88,34 @@ class MusicPage extends GetView<PlayerService> {
         ],
       );
 
+  Widget _buildSeekDurationRow() => Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: <Widget>[
+          ElevatedButton(
+            onPressed: () async {
+              await controller.seekToDuration(
+                Duration(
+                  milliseconds:
+                      controller.currentPosition.value.inMilliseconds - 5000,
+                ),
+              );
+            },
+            child: const Icon(Icons.replay_5),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              await controller.seekToDuration(
+                Duration(
+                  milliseconds:
+                      controller.currentPosition.value.inMilliseconds + 5000,
+                ),
+              );
+            },
+            child: const Icon(Icons.forward_5),
+          ),
+        ],
+      );
+
   Widget _buildControlRow() => Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
@@ -170,6 +198,8 @@ class MusicPage extends GetView<PlayerService> {
               ),
               _buildLargeSpace(),
               _buildProgressRow(context),
+              _buildSmallSpace(),
+              _buildSeekDurationRow(),
               _buildSmallSpace(),
               _buildControlRow(),
               _buildLargeSpace(),

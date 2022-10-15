@@ -341,6 +341,36 @@ class MPaxPlayerWidget extends GetView<PlayerService> {
             child: Obx(() => Icon(controller.playModeIcon.value)),
           ),
           const SizedBox(
+            width: 5,
+            height: 5,
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              await controller.seekToDuration(
+                Duration(
+                  milliseconds:
+                      controller.currentPosition.value.inMilliseconds - 5000,
+                ),
+              );
+            },
+            child: const Icon(Icons.replay_5),
+          ),
+          const SizedBox(
+            width: 5,
+            height: 5,
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              await controller.seekToDuration(
+                Duration(
+                  milliseconds:
+                      controller.currentPosition.value.inMilliseconds + 5000,
+                ),
+              );
+            },
+            child: const Icon(Icons.forward_5),
+          ),
+          const SizedBox(
             width: 15,
             height: 15,
           ),
