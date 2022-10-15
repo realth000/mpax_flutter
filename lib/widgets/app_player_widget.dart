@@ -155,7 +155,7 @@ class MPaxPlayerWidget extends GetView<PlayerService> {
     );
 
     return Padding(
-      padding: const EdgeInsets.only(top: 5),
+      padding: const EdgeInsets.only(top: 2),
       child: Align(
         alignment: Alignment.centerLeft,
         child: Column(
