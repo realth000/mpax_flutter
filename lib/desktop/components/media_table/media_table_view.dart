@@ -4,6 +4,8 @@ import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../../models/play_content.model.dart';
 import '../../../models/playlist.model.dart';
+import '../../../services/locale_service.dart';
+import '../../../services/media_library_service.dart';
 import '../../../themes/media_table_themes.dart';
 import 'media_table_controller.dart';
 import 'toolbar/media_table_toolbar.dart';
@@ -102,6 +104,15 @@ class MediaTable extends StatelessWidget {
   Widget build(BuildContext context) => PlutoGrid(
         columns: columns,
         rows: _buildRows(playlist.contentList),
+        onLoaded: (_) {
+          if (playlist.tableName == MediaLibraryService.allMediaTableName) {
+            Get.find<MediaTableToolbarController>().playlistName.value =
+                'Library'.tr;
+            return;
+          }
+          Get.find<MediaTableToolbarController>().playlistName.value =
+              playlist.name;
+        },
         onRowDoubleTap: (tappedRow) async {
           final row = tappedRow.row;
           if (row == null) {
@@ -121,6 +132,9 @@ class MediaTable extends StatelessWidget {
               .contentList;
         },
         configuration: _themeConfig(context).copyWith(
+          localeText: Get.find<LocaleService>().locale.value == 'zh_CN'
+              ? const PlutoGridLocaleText.china()
+              : const PlutoGridLocaleText(),
           columnFilter: PlutoGridColumnFilterConfig(
             filters: const [
               ...FilterHelper.defaultFilters,
@@ -134,13 +148,8 @@ class MediaTable extends StatelessWidget {
           // then find [MediaTableToolbarController].
           final w = Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: <Widget>[
-                MediaTableToolbar(
-                  stateManater: stateManager,
-                ),
-              ],
+            child: MediaTableToolbar(
+              stateManater: stateManager,
             ),
           );
           if (Get.find<MediaTableToolbarController>().searchEnabled.value) {

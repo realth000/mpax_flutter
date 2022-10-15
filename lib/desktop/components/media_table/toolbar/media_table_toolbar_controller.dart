@@ -4,4 +4,7 @@ import 'package:get/get.dart';
 class MediaTableToolbarController extends GetxController {
   /// Whether the column filters in audio table is visible.
   final searchEnabled = false.obs;
+
+  /// Playlist name to display, readable name, not database table name.
+  final playlistName = ''.obs;
 }
