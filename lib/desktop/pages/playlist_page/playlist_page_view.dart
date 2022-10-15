@@ -93,41 +93,45 @@ class DesktopPlaylistPage extends StatelessWidget {
             constraints: const BoxConstraints(
               maxWidth: 200,
             ),
-            child: Card(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.only(left: 15, top: 10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        TitleText(
-                          title: 'Playlist'.tr,
-                          level: 1,
-                        ),
-                        IconButton(
-                          onPressed: () async {
-                            final name = await Get.dialog(_AddPlaylistWidget());
-                            if (name == null) {
-                              return;
-                            }
-                            final p = PlaylistModel()..name = name;
-                            await _libraryService.addPlaylist(p);
-                          },
-                          icon: const Icon(Icons.add),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Expanded(
-                    child: Scrollbar(
-                      child: Obx(
-                        () => _buildPlaylistView(),
+            child: Padding(
+              padding: EdgeInsets.only(left: 10, top: 5, bottom: 5),
+              child: Card(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.only(left: 15, top: 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          TitleText(
+                            title: 'Playlist'.tr,
+                            level: 1,
+                          ),
+                          IconButton(
+                            onPressed: () async {
+                              final name =
+                                  await Get.dialog(_AddPlaylistWidget());
+                              if (name == null) {
+                                return;
+                              }
+                              final p = PlaylistModel()..name = name;
+                              await _libraryService.addPlaylist(p);
+                            },
+                            icon: const Icon(Icons.add),
+                          ),
+                        ],
                       ),
                     ),
-                  ),
-                ],
+                    Expanded(
+                      child: Scrollbar(
+                        child: Obx(
+                          () => _buildPlaylistView(),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
