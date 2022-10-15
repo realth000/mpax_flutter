@@ -10,13 +10,13 @@
         <a href="https://github.com/realth000/mpax_flutter/releases">
             <img src="https://img.shields.io/github/release/realth000/mpax_flutter"/></a>
         <a href="https://github.com/realth000/mpax_flutter/releases">
-            <img src="https://img.shields.io/badge/Android-available-brightgreen?logo=android"/></a>
+            <img src="https://img.shields.io/badge/-Android-313196?logo=android&logoColor=f0f0f0"/></a>
         <a href="https://github.com/realth000/mpax_flutter/releases">
-            <img src="https://img.shields.io/badge/Windows-comming%20soon-lightgrey?logo=windows"/></a>
+            <img src="https://img.shields.io/badge/-Windows-313196?&logo=Windows&logoColor=f0f0f0"/></a>
         <a href="https://github.com/realth000/mpax_flutter/releases">
-            <img src="https://img.shields.io/badge/Linux-comming%20soon-lightgrey?logo=linux"/></a>
+            <img src="https://img.shields.io/badge/-Linux-313196?&logo=Linux&logoColor=f0f0f0"/></a>
         <a href="https://flutter.dev/">
-            <img src="https://img.shields.io/badge/Flutter-3.3.2-blue?logo=flutter"/></a>
+            <img src="https://img.shields.io/badge/Flutter-3.3.4-blue?logo=flutter"/></a>
         <a href="https://www.dart.org/">
             <img src="https://img.shields.io/badge/Dart-2.18-blue?logo=dart"/></a>
         <a href="https://github.com/realth000/mpax_flutter/blob/master/LICENSE">
@@ -55,5 +55,35 @@ MPax is a simple and easy-to-use music player powered by flutter.
 ### Platforms:
 
 * [x] Android.
-* [ ] Windows.
-* [ ] Linux.
+* [x] Windows.
+* [x] Linux.
+
+## Keymap
+
+* Play Previous: ``Ctrl + Alt + ←``
+* Play Next: ``Ctrl + Alt + →``
+* Play/Pause: ``Ctrl + Alt + B``
+
+## Install
+
+[Download here.](https://github.com/realth000/mpax_flutter/releases)
+
+* Android: mpax_flutter-version-Universal.apk.
+* Windows: mpax_flutter-version.zip
+* Linux: mpax_flutter-version.tar.gz
+
+## Build From Source
+
+### Android
+
+Run ``flutter build android --verbose``
+
+### Windows
+
+1. Run ``flutter build windows --verbose``
+2. Download [sqlite3.dll](https://github.com/tekartik/sqflite/raw/master/sqflite_common_ffi/lib/src/windows/sqlite3.dll) and put in the same folder as the executable.
+
+### Linux
+
+1. Run ``sudo apt install libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libkeybinder-3.0-0 libkeybinder-3.0-dev libsqlite3-0 libsqlite3-dev``
+2. Run `` flutter build linux --verbose``
