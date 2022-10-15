@@ -130,10 +130,9 @@ class MediaTable extends StatelessWidget {
           ),
         ),
         createHeader: (stateManager) {
-          if (Get.find<MediaTableToolbarController>().searchEnabled.value) {
-            stateManager.setShowColumnFilter(true);
-          }
-          return Padding(
+          // First construct [MediaTableToolbar],
+          // then find [MediaTableToolbarController].
+          final w = Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -144,6 +143,10 @@ class MediaTable extends StatelessWidget {
               ],
             ),
           );
+          if (Get.find<MediaTableToolbarController>().searchEnabled.value) {
+            stateManager.setShowColumnFilter(true);
+          }
+          return w;
         },
         createFooter: (stateManager) {
           if (playlist.contentList.isNotEmpty) {

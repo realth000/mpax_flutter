@@ -24,6 +24,7 @@ class MediaTableTheme {
       gridBorderRadius: BorderRadius.circular(26),
       iconColor: Colors.black.withOpacity(0.6),
       cellColorInEditState: MPaxTheme.flexLight.colorScheme.onInverseSurface,
+      rowHeight: 35,
     ),
   );
 
@@ -44,6 +45,7 @@ class MediaTableTheme {
       iconColor: Colors.white.withOpacity(0.8),
       disabledIconColor: Colors.white.withOpacity(0.4),
       cellColorInEditState: MPaxTheme.flexDark.colorScheme.onInverseSurface,
+      rowHeight: 35,
       // Fix text style.
       columnTextStyle: TextStyle(
         color: Colors.white.withOpacity(0.8),
