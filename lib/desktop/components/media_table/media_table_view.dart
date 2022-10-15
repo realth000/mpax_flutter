@@ -7,6 +7,7 @@ import '../../../models/playlist.model.dart';
 import '../../../themes/media_table_themes.dart';
 import 'media_table_controller.dart';
 import 'toolbar/media_table_toolbar.dart';
+import 'toolbar/media_table_toolbar_controller.dart';
 
 /// Audio content table widget used on desktop platforms.
 class MediaTable extends StatelessWidget {
@@ -128,17 +129,22 @@ class MediaTable extends StatelessWidget {
                 resolver<PlutoFilterTypeContains>(),
           ),
         ),
-        createHeader: (stateManager) => Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: <Widget>[
-              MediaTableToolbar(
-                stateManater: stateManager,
-              ),
-            ],
-          ),
-        ),
+        createHeader: (stateManager) {
+          if (Get.find<MediaTableToolbarController>().searchEnabled.value) {
+            stateManager.setShowColumnFilter(true);
+          }
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: <Widget>[
+                MediaTableToolbar(
+                  stateManater: stateManager,
+                ),
+              ],
+            ),
+          );
+        },
         createFooter: (stateManager) {
           if (playlist.contentList.isNotEmpty) {
             stateManager.setPageSize(100, notify: false);
