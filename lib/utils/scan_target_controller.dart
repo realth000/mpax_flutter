@@ -74,7 +74,7 @@ class AudioScanner {
     }
     _scannedCount += scannedAudioList.length;
     scannedAudioList.clear();
-    await _scanStreamSink.close();
+    // await _scanStreamSink.close();
     return _scannedCount;
   }
 

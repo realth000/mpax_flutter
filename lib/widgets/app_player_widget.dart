@@ -121,61 +121,41 @@ class MPaxPlayerWidget extends GetView<PlayerService> {
             : controller.currentContent.value.title,
         textAlign: TextAlign.left,
         maxLines: 1,
+        overflow: TextOverflow.clip,
       ),
     );
 
-    final artistWidget = Expanded(
-      child: Obx(
-        () => Text(
-          controller.currentContent.value.artist.isEmpty
-              ? ''
-              : controller.currentContent.value.artist,
-          textAlign: TextAlign.left,
-          maxLines: 1,
-        ),
+    final artistWidget = Obx(
+      () => Text(
+        controller.currentContent.value.artist.isEmpty
+            ? ''
+            : controller.currentContent.value.artist,
+        textAlign: TextAlign.left,
+        maxLines: 1,
+        overflow: TextOverflow.clip,
       ),
     );
 
-    final albumWidget = Expanded(
-      child: Obx(
-        () => Text(
-          _getAlbumString(),
-          textAlign: TextAlign.left,
-          maxLines: 1,
-        ),
+    final albumWidget = Obx(
+      () => Text(
+        _getAlbumString(),
+        textAlign: TextAlign.left,
+        maxLines: 1,
+        overflow: TextOverflow.clip,
       ),
     );
 
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTapUp: (details) async {
-        await _toMusicPage();
-      },
-      onLongPressStart: (details) {
-        // For animation.
-      },
-      onLongPressEnd: (details) async {
-        if (details.localPosition.dy < 0) {
-          return;
-        }
-        await controller.seekToAnother(
-          details.globalPosition.dx >= context.width / 2,
-        );
-      },
-      child: Padding(
-        padding: const EdgeInsets.all(3),
-        child: Align(
-          alignment: Alignment.centerLeft,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Expanded(
-                child: titleWidget,
-              ),
-              artistWidget,
-              albumWidget,
-            ],
-          ),
+    return Padding(
+      padding: const EdgeInsets.only(top: 5),
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            titleWidget,
+            artistWidget,
+            albumWidget,
+          ],
         ),
       ),
     );
@@ -359,7 +339,9 @@ class MPaxPlayerWidget extends GetView<PlayerService> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
                         // Audio info
-                        _buildAudioInfoWidget(context),
+                        Expanded(
+                          child: _buildAudioInfoWidget(context),
+                        ),
                         const SizedBox(
                           width: 10,
                           height: 10,

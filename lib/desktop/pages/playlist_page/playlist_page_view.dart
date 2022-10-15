@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import '../../../models/playlist.model.dart';
 import '../../../services/media_library_service.dart';
 import '../../../utils/scan_target_controller.dart';
+import '../../../widgets/util_widgets.dart';
 import '../../components/media_table/media_table_view.dart';
 import 'playlist_page_controller.dart';
 
@@ -73,11 +74,8 @@ class DesktopPlaylistPage extends StatelessWidget {
             },
           ),
           onTap: () {
-            _controller.currentPlaylistTableName.value = model.tableName;
             _controller.currentPlaylist.value =
-                _libraryService.findPlaylistByTableName(
-              _controller.currentPlaylistTableName.value,
-            );
+                _libraryService.findPlaylistByTableName(model.tableName);
           },
         ),
       );
@@ -95,26 +93,114 @@ class DesktopPlaylistPage extends StatelessWidget {
             constraints: const BoxConstraints(
               maxWidth: 200,
             ),
-            child: Column(
-              children: <Widget>[
-                Expanded(
-                  child: Scrollbar(
-                    child: _buildPlaylistView(),
+            child: Card(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(left: 15, top: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        TitleText(
+                          title: 'Playlist'.tr,
+                          level: 1,
+                        ),
+                        IconButton(
+                          onPressed: () async {
+                            final name = await Get.dialog(_AddPlaylistWidget());
+                            if (name == null) {
+                              return;
+                            }
+                            final p = PlaylistModel()..name = name;
+                            await _libraryService.addPlaylist(p);
+                          },
+                          icon: const Icon(Icons.add),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                  Expanded(
+                    child: Scrollbar(
+                      child: Obx(
+                        () => _buildPlaylistView(),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(10),
-              child: Obx(
-                () => MediaTable(
-                  _controller.currentPlaylist.value,
-                ),
-              ),
+              child: Obx(() => MediaTable(_controller.currentPlaylist.value)),
             ),
           ),
         ],
+      );
+}
+
+// TODO: Duplicate with _AddPlaylistWidget in playlist_page.dart.
+class _AddPlaylistWidget extends StatelessWidget {
+  final TextEditingController _nameController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+
+  Form _askForm() => Form(
+        key: _formKey,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            TextFormField(
+              autofocus: true,
+              controller: _nameController,
+              decoration: InputDecoration(
+                labelText: 'Name'.tr,
+                hintText: 'Input name'.tr,
+              ),
+              validator: (v) =>
+                  v!.trim().isNotEmpty ? null : 'Name can not be empty'.tr,
+            ),
+            const SizedBox(
+              height: 40,
+            ),
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      if (_formKey.currentState == null ||
+                          !(_formKey.currentState!).validate()) {
+                        return;
+                      }
+                      Get.back(result: _nameController.text);
+                    },
+                    child: Text('OK'.tr),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      );
+
+  @override
+  Widget build(BuildContext context) => ModalDialog(
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Wrap(
+            runSpacing: 10,
+            children: <Widget>[
+              Text(
+                'Add Playlist'.tr,
+                style: const TextStyle(
+                  fontSize: 20,
+                ),
+              ),
+              _askForm(),
+            ],
+          ),
+        ),
       );
 }
