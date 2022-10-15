@@ -119,6 +119,9 @@ class MPaxPlayerWidget extends GetView<PlayerService> {
         controller.currentContent.value.title.isEmpty
             ? controller.currentContent.value.contentName
             : controller.currentContent.value.title,
+        style: const TextStyle(
+          fontSize: 15,
+        ),
         textAlign: TextAlign.left,
         maxLines: 1,
         overflow: TextOverflow.clip,
@@ -130,6 +133,9 @@ class MPaxPlayerWidget extends GetView<PlayerService> {
         controller.currentContent.value.artist.isEmpty
             ? ''
             : controller.currentContent.value.artist,
+        style: TextStyle(
+          color: Colors.grey[600],
+        ),
         textAlign: TextAlign.left,
         maxLines: 1,
         overflow: TextOverflow.clip,
@@ -139,6 +145,9 @@ class MPaxPlayerWidget extends GetView<PlayerService> {
     final albumWidget = Obx(
       () => Text(
         _getAlbumString(),
+        style: TextStyle(
+          color: Colors.grey[600],
+        ),
         textAlign: TextAlign.left,
         maxLines: 1,
         overflow: TextOverflow.clip,
@@ -167,11 +176,28 @@ class MPaxPlayerWidget extends GetView<PlayerService> {
           Expanded(
             child: Row(
               children: <Widget>[
-                // Album cover
-                Obx(() => _buildAudioAlbumCoverWidget(context)),
+                Padding(
+                  padding: const EdgeInsets.only(left: 16, right: 10),
+                  child: // Album cover
+                      Obx(() => _buildAudioAlbumCoverWidget(context)),
+                ),
                 // Audio info
                 Expanded(
-                  child: _buildAudioInfoWidget(context),
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTapUp: (details) async {
+                      await _toMusicPage();
+                    },
+                    onLongPressEnd: (details) async {
+                      if (details.localPosition.dy < 0) {
+                        return;
+                      }
+                      await controller.seekToAnother(
+                        details.globalPosition.dx >= context.width / 2,
+                      );
+                    },
+                    child: _buildAudioInfoWidget(context),
+                  ),
                 ),
                 // Play-and-pause button.
                 ElevatedButton(
