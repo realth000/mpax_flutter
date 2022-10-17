@@ -14,7 +14,37 @@ import 'toolbar/media_table_toolbar_controller.dart';
 /// Audio content table widget used on desktop platforms.
 class MediaTable extends StatelessWidget {
   /// Constructor.
-  MediaTable(this.playlist, {super.key});
+  MediaTable(this.playlist, {super.key}) {
+    // When current playing audio changes, update the state icon in table.
+    // This means:
+    // The current playing audio (specified by audio file path, as named,
+    // contentPath) should have a "playing" state sign in "state" column.
+    // Other audios should not have "playing" state sign.
+    //
+    // It's better to in controller but I don't want to save a _stateManger in
+    // controller, and this function registry should only run once, so it's in
+    // UI widget's constructor.
+    //
+    // Use "debounce" to set a delay, prevent high frequency of resetting.
+    debounce(
+      _controller.currentPlayingContent,
+      (contentPath) => {
+        if (_stateManager != null)
+          {
+            for (final row in _stateManager!.rows)
+              {
+                row.cells['state']!.value =
+                    row.cells['path']!.value == contentPath ? _playingIcon : '',
+              },
+            _stateManager!.notifyListeners(),
+          }
+      },
+      time: const Duration(milliseconds: 300),
+    );
+  }
+
+  /// Icons.play_arrow
+  static final _playingIcon = String.fromCharCode(Icons.play_arrow.codePoint);
 
   /// Playlist in this table.
   final PlaylistModel playlist;
@@ -28,7 +58,27 @@ class MediaTable extends StatelessWidget {
 
   final _controller = Get.put(MediaTableController());
 
+  late final PlutoGridStateManager? _stateManager;
+
   final columns = <PlutoColumn>[
+    // State row, accept: String.fromCharCode(Icons.play_arrow.codePoint)
+    PlutoColumn(
+      title: 'State'.tr,
+      field: 'state',
+      type: PlutoColumnType.text(),
+      renderer: (rendererContext) => Text(
+        rendererContext.cell.value.toString(),
+        style: const TextStyle(
+          fontSize: 18,
+          fontFamily: 'MaterialIcons',
+        ),
+      ),
+      width: 80,
+      enableEditingMode: false,
+      enableSorting: false,
+      enableRowChecked: true,
+      enableContextMenu: false,
+    ),
     PlutoColumn(
       title: 'Album name'.tr,
       field: 'album_title',
@@ -73,6 +123,7 @@ class MediaTable extends StatelessWidget {
       field: 'path',
       type: PlutoColumnType.text(),
       readOnly: true,
+      hide: true,
     ),
   ];
 
@@ -80,6 +131,12 @@ class MediaTable extends StatelessWidget {
         list.length,
         (index) => PlutoRow(
           cells: {
+            'state': PlutoCell(
+              value: list[index].contentPath ==
+                      _controller.currentPlayingContent.value
+                  ? _playingIcon
+                  : '',
+            ),
             'album_title': PlutoCell(value: list[index].albumTitle),
             'title': PlutoCell(
               value: list[index].title.isEmpty
@@ -100,11 +157,25 @@ class MediaTable extends StatelessWidget {
           ? MediaTableTheme.darkTheme
           : MediaTableTheme.lightTheme;
 
+  void _onRowChecked(PlutoGridOnRowCheckedEvent event) {
+    if (event.isRow) {
+      // or event.isAll
+      print('Toggled A Row.');
+      print(event.row?.cells['path']?.value);
+    } else {
+      print('Toggled All Rows.');
+      print(_stateManager?.checkedRows.length);
+    }
+  }
+
   @override
   Widget build(BuildContext context) => PlutoGrid(
         columns: columns,
         rows: _buildRows(playlist.contentList),
-        onLoaded: (_) {
+        onLoaded: (event) {
+          _stateManager = event.stateManager;
+          // Set select row mode.
+          event.stateManager.setSelectingMode(PlutoGridSelectingMode.cell);
           if (playlist.tableName == MediaLibraryService.allMediaTableName) {
             Get.find<MediaTableToolbarController>().playlistName.value =
                 'Library'.tr;
@@ -157,12 +228,16 @@ class MediaTable extends StatelessWidget {
           }
           return w;
         },
-        createFooter: (stateManager) {
-          if (playlist.contentList.isNotEmpty) {
-            stateManager.setPageSize(100, notify: false);
-          }
-          return PlutoPagination(stateManager);
-        },
-        key: UniqueKey(), // Use unique key to tell flutter to refresh!
+        // Pagination will cause _stateManager.rows only get current page rows,
+        // make state signing not work, so disable it.
+        // createFooter: (stateManager) {
+        // if (playlist.contentList.isNotEmpty) {
+        //   stateManager.setPageSize(100, notify: false);
+        // }
+        // return PlutoPagination(stateManager);
+        // },
+        key: UniqueKey(),
+        // Use unique key to tell flutter to refresh!
+        onRowChecked: _onRowChecked,
       );
 }

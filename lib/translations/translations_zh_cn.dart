@@ -66,4 +66,5 @@ const Map<String, String> translationZhCn = <String, String>{
   'Exclude': '排除',
   'Include can not be empty': '包含的字段不能为空',
   'Duration': '时长',
+  'State': '状态',
 };

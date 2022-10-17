@@ -18,6 +18,13 @@ class MediaTableController extends GetxController {
   /// Whether to show filters.
   final showFiltersRow = false.obs;
 
+  /// Current playing audio's filePath.
+  ///
+  /// If changed, set the same content row in [MediaTable] state to "playing".
+  /// If required "scroll table to current playing content", also find that
+  /// content by this file path.
+  final currentPlayingContent = ''.obs;
+
   final _playerService = Get.find<PlayerService>();
   final _libraryService = Get.find<MediaLibraryService>();
 
@@ -49,5 +56,15 @@ class MediaTableController extends GetxController {
     }
     await _playerService.setCurrentContent(content, playlist);
     await _playerService.play();
+  }
+
+  @override
+  void onInit() {
+    // When current playing audio changes, update currentPlayingContent to
+    // notify UI to change state icon.
+    _playerService.currentContent.listen((content) {
+      currentPlayingContent.value = content.contentPath;
+    });
+    super.onInit();
   }
 }
