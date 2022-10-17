@@ -7,4 +7,7 @@ class MediaTableToolbarController extends GetxController {
 
   /// Playlist name to display, readable name, not database table name.
   final playlistName = ''.obs;
+
+  /// Record all checked row's file path in table.
+  final checkedRowPathList = <String>[].obs;
 }

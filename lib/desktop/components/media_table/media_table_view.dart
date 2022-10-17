@@ -77,7 +77,7 @@ class MediaTable extends StatelessWidget {
       enableEditingMode: false,
       enableSorting: false,
       enableRowChecked: true,
-      enableContextMenu: false,
+      enableContextMenu: true,
     ),
     PlutoColumn(
       title: 'Album name'.tr,
@@ -236,8 +236,28 @@ class MediaTable extends StatelessWidget {
         // }
         // return PlutoPagination(stateManager);
         // },
-        key: UniqueKey(),
         // Use unique key to tell flutter to refresh!
-        onRowChecked: _onRowChecked,
+        key: UniqueKey(),
+        onRowChecked: (event) {
+          final c = Get.find<MediaTableToolbarController>();
+          if (event.isRow) {
+            if (event.isChecked == null) {
+              return;
+            }
+            if (event.isChecked!) {
+              c.checkedRowPathList.add(event.row!.cells['path']!.value);
+            } else {
+              c.checkedRowPathList.remove(event.row!.cells['path']!.value);
+            }
+          } else {
+            if (_stateManager == null) {
+              return;
+            }
+            c.checkedRowPathList.clear();
+            for (final row in _stateManager!.checkedRows) {
+              c.checkedRowPathList.add(row.cells['path']!.value);
+            }
+          }
+        },
       );
 }
