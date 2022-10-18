@@ -8,8 +8,7 @@ import '../../../services/locale_service.dart';
 import '../../../services/media_library_service.dart';
 import '../../../themes/media_table_themes.dart';
 import 'media_table_controller.dart';
-import 'toolbar/media_table_toolbar.dart';
-import 'toolbar/media_table_toolbar_controller.dart';
+import 'media_table_toolbar.dart';
 
 /// Audio content table widget used on desktop platforms.
 class MediaTable extends StatelessWidget {
@@ -36,7 +35,7 @@ class MediaTable extends StatelessWidget {
                 row.cells['state']!.value =
                     row.cells['path']!.value == contentPath ? _playingIcon : '',
               },
-            _stateManager!.notifyListeners(),
+            refreshTable(),
           }
       },
       time: const Duration(milliseconds: 300),
@@ -59,6 +58,14 @@ class MediaTable extends StatelessWidget {
   final _controller = Get.put(MediaTableController());
 
   late final PlutoGridStateManager? _stateManager;
+
+  /// Call table's [PlutoGridStateManager] to refresh table data.
+  void refreshTable() {
+    if (_stateManager == null) {
+      return;
+    }
+    _stateManager!.notifyListeners();
+  }
 
   final columns = <PlutoColumn>[
     // State row, accept: String.fromCharCode(Icons.play_arrow.codePoint)
@@ -163,15 +170,15 @@ class MediaTable extends StatelessWidget {
         rows: _buildRows(playlist.contentList),
         onLoaded: (event) {
           _stateManager = event.stateManager;
+          _controller.tableStateManager = event.stateManager;
           // Set select row mode.
           event.stateManager.setSelectingMode(PlutoGridSelectingMode.cell);
+          _controller.playlistTableName.value = playlist.tableName;
           if (playlist.tableName == MediaLibraryService.allMediaTableName) {
-            Get.find<MediaTableToolbarController>().playlistName.value =
-                'Library'.tr;
+            _controller.playlistName.value = 'Library'.tr;
             return;
           }
-          Get.find<MediaTableToolbarController>().playlistName.value =
-              playlist.name;
+          _controller.playlistName.value = playlist.name;
         },
         onRowDoubleTap: (tappedRow) async {
           final row = tappedRow.row;
@@ -212,7 +219,7 @@ class MediaTable extends StatelessWidget {
               stateManater: stateManager,
             ),
           );
-          if (Get.find<MediaTableToolbarController>().searchEnabled.value) {
+          if (_controller.searchEnabled.value) {
             stateManager.setShowColumnFilter(true);
           }
           return w;
@@ -228,23 +235,24 @@ class MediaTable extends StatelessWidget {
         // Use unique key to tell flutter to refresh!
         key: UniqueKey(),
         onRowChecked: (event) {
-          final c = Get.find<MediaTableToolbarController>();
           if (event.isRow) {
             if (event.isChecked == null) {
               return;
             }
             if (event.isChecked!) {
-              c.checkedRowPathList.add(event.row!.cells['path']!.value);
+              _controller.checkedRowPathList
+                  .add(event.row!.cells['path']!.value);
             } else {
-              c.checkedRowPathList.remove(event.row!.cells['path']!.value);
+              _controller.checkedRowPathList
+                  .remove(event.row!.cells['path']!.value);
             }
           } else {
             if (_stateManager == null) {
               return;
             }
-            c.checkedRowPathList.clear();
+            _controller.checkedRowPathList.clear();
             for (final row in _stateManager!.checkedRows) {
-              c.checkedRowPathList.add(row.cells['path']!.value);
+              _controller.checkedRowPathList.add(row.cells['path']!.value);
             }
           }
         },

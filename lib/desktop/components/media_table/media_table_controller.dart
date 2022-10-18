@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../../models/play_content.model.dart';
 import '../../../models/playlist.model.dart';
@@ -27,6 +28,11 @@ class MediaTableController extends GetxController {
 
   final _playerService = Get.find<PlayerService>();
   final _libraryService = Get.find<MediaLibraryService>();
+
+  /// Save table's [PlutoGridStateManager].
+  ///
+  /// Didn't want to do this but no other solutions.
+  late PlutoGridStateManager? tableStateManager;
 
   /// Return a sorted [PlaylistModel] with [sort] order in [column].
   Future<PlaylistModel> sort(
@@ -60,11 +66,24 @@ class MediaTableController extends GetxController {
 
   @override
   void onInit() {
+    super.onInit();
     // When current playing audio changes, update currentPlayingContent to
     // notify UI to change state icon.
     _playerService.currentContent.listen((content) {
       currentPlayingContent.value = content.contentPath;
     });
-    super.onInit();
+    ever(playlistName, (_) => checkedRowPathList.clear());
   }
+
+  /// Whether the column filters in audio table is visible.
+  final searchEnabled = false.obs;
+
+  /// Playlist name to display, readable name, not database table name.
+  final playlistName = ''.obs;
+
+  /// Playlist table name to find current page playlist in database.
+  final playlistTableName = ''.obs;
+
+  /// Record all checked row's file path in table.
+  final checkedRowPathList = <String>[].obs;
 }

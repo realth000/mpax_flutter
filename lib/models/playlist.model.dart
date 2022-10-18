@@ -118,4 +118,10 @@ class PlaylistModel {
     }
     return contentList[Random().nextInt(contentList.length)];
   }
+
+  /// Remove same [PlayContent] with same [filePathList].
+  Future<void> removeByPathList(List<String> filePathList) async {
+    contentList
+        .removeWhere((content) => filePathList.contains(content.contentPath));
+  }
 }
