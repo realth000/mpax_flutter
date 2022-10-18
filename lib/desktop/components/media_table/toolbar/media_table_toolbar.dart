@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
+import '../../../../models/play_content.model.dart';
+import '../../../../models/playlist.model.dart';
+import '../../../../services/media_library_service.dart';
+import '../../../../services/metadata_service.dart';
+import '../../../../widgets/add_playlist_widget.dart';
 import '../../../../widgets/util_widgets.dart';
 import 'media_table_toolbar_controller.dart';
 
@@ -30,15 +35,35 @@ class MediaTableToolbar extends StatelessWidget {
                 itemBuilder: (context) => <PopupMenuItem<int>>[
                   PopupMenuItem<int>(
                     value: 0,
-                    child: Text('Add to other playlist'.tr),
+                    child: Text('Add to new playlist'.tr),
                   ),
                   PopupMenuItem<int>(
                     value: 1,
                     child: Text('Delete from list'.tr),
                   ),
                 ],
-                onSelected: (index) {
+                onSelected: (index) async {
                   // TO IMPLEMENT.
+                  if (index == 0) {
+                    final name = await Get.dialog(AddPlaylistWidget());
+                    if (name == null) {
+                      return;
+                    }
+                    final list = <PlayContent>[];
+                    for (final c in controller.checkedRowPathList) {
+                      // list.add(PlayContent.fromPath(c));
+                      list.add(
+                        await Get.find<MetadataService>().readMetadata(
+                          c,
+                          loadImage: true,
+                        ),
+                      );
+                    }
+                    final p = PlaylistModel()
+                      ..name = name
+                      ..contentList = list;
+                    await Get.find<MediaLibraryService>().addPlaylist(p);
+                  }
                 },
               ),
               const SizedBox(width: 10, height: 10),

@@ -68,4 +68,6 @@ const Map<String, String> translationEnUs = <String, String>{
   'Include can not be empty': 'Include can not be empty',
   'Duration': 'Duration',
   'State': 'State',
+  'Add to new playlist': 'Add to new playlist',
+  'Delete from list': 'Delete from list',
 };

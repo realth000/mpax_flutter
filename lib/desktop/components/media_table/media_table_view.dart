@@ -157,17 +157,6 @@ class MediaTable extends StatelessWidget {
           ? MediaTableTheme.darkTheme
           : MediaTableTheme.lightTheme;
 
-  void _onRowChecked(PlutoGridOnRowCheckedEvent event) {
-    if (event.isRow) {
-      // or event.isAll
-      print('Toggled A Row.');
-      print(event.row?.cells['path']?.value);
-    } else {
-      print('Toggled All Rows.');
-      print(_stateManager?.checkedRows.length);
-    }
-  }
-
   @override
   Widget build(BuildContext context) => PlutoGrid(
         columns: columns,

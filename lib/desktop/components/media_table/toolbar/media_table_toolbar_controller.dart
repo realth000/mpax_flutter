@@ -10,4 +10,12 @@ class MediaTableToolbarController extends GetxController {
 
   /// Record all checked row's file path in table.
   final checkedRowPathList = <String>[].obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+    // Every time when playlist changes, playlistName changes, and checked items
+    // in table is cleared, so update list with this.
+    ever(playlistName, (_) => checkedRowPathList.clear());
+  }
 }

@@ -6,73 +6,11 @@ import '../models/playlist.model.dart';
 import '../routes/app_pages.dart';
 import '../services/media_library_service.dart';
 import '../utils/scan_target_controller.dart';
+import '../widgets/add_playlist_widget.dart';
 import '../widgets/app_app_bar.dart';
 import '../widgets/app_drawer.dart';
 import '../widgets/app_player_widget.dart';
 import '../widgets/util_widgets.dart';
-
-class _AddPlaylistWidget extends StatelessWidget {
-  final TextEditingController _nameController = TextEditingController();
-  final _formKey = GlobalKey<FormState>();
-
-  Form _askForm() => Form(
-        key: _formKey,
-        autovalidateMode: AutovalidateMode.onUserInteraction,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            TextFormField(
-              autofocus: true,
-              controller: _nameController,
-              decoration: InputDecoration(
-                labelText: 'Name'.tr,
-                hintText: 'Input name'.tr,
-              ),
-              validator: (v) =>
-                  v!.trim().isNotEmpty ? null : 'Name can not be empty'.tr,
-            ),
-            const SizedBox(
-              height: 40,
-            ),
-            Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      if (_formKey.currentState == null ||
-                          !(_formKey.currentState!).validate()) {
-                        return;
-                      }
-                      Get.back(result: _nameController.text);
-                    },
-                    child: Text('OK'.tr),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      );
-
-  @override
-  Widget build(BuildContext context) => ModalDialog(
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Wrap(
-            runSpacing: 10,
-            children: <Widget>[
-              Text(
-                'Add Playlist'.tr,
-                style: const TextStyle(
-                  fontSize: 20,
-                ),
-              ),
-              _askForm(),
-            ],
-          ),
-        ),
-      );
-}
 
 /// Playlist page, show all playlists.
 class PlaylistPage extends GetView<MediaLibraryService> {
@@ -126,7 +64,7 @@ class PlaylistPage extends GetView<MediaLibraryService> {
   }
 
   Future<void> _addPlaylist() async {
-    final name = await Get.dialog(_AddPlaylistWidget());
+    final name = await Get.dialog(AddPlaylistWidget());
     if (name == null) {
       return;
     }

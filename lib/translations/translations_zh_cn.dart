@@ -67,4 +67,6 @@ const Map<String, String> translationZhCn = <String, String>{
   'Include can not be empty': '包含的字段不能为空',
   'Duration': '时长',
   'State': '状态',
+  'Add to new playlist': '添加到新的播放列表',
+  'Delete from list': '从列表中删除',
 };
