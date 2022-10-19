@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 import '../../views/about_page.dart';
-import '../../views/music_page.dart';
 import '../../views/scan_page.dart';
 import '../../views/settings_page.dart';
 import 'media_library_page.dart';
+import 'music_page/music_page_view.dart';
 import 'playlist_page/playlist_page_view.dart';
 
 /// Pages used in desktop main page (scaffold).
@@ -16,7 +16,7 @@ class ScaffoldPages {
   static final pages = <Widget>[
     DesktopMediaLibraryPage(),
     DesktopPlaylistPage(),
-    MusicPage(),
+    const DesktopMusicPage(),
     ScanPage().body,
     SettingsPage().body,
     AboutPage().body,
