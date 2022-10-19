@@ -216,6 +216,8 @@ class PlayerService extends GetxService {
       }
     });
     // Load configs.
+    playMode = _configService.getString('PlayMode') ?? _repeatString;
+    await switchPlayMode(playMode);
     final currentMedia = File(_configService.getString('CurrentMedia') ?? '');
     if (currentMedia.existsSync()) {
       // FIXME: Add current playlist config save and load.
@@ -231,8 +233,6 @@ class PlayerService extends GetxService {
         }
       }
     }
-    playMode = _configService.getString('PlayMode') ?? _repeatString;
-    await switchPlayMode(playMode);
     return this;
   }
 
