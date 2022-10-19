@@ -23,7 +23,12 @@ class MediaTableToolbar extends GetView<MediaTableController> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Obx(
-            () => TitleText(title: controller.playlistName.value, level: 0),
+            () => TitleText(
+              title: controller.playlist.value.name == 'all_media'
+                  ? 'Library'.tr
+                  : controller.playlist.value.name,
+              level: 0,
+            ),
           ),
           Row(
             children: [
@@ -62,7 +67,7 @@ class MediaTableToolbar extends GetView<MediaTableController> {
                   } else if (index == 1) {
                     final currentPagePlaylist =
                         Get.find<MediaLibraryService>().findPlaylistByTableName(
-                      controller.playlistTableName.value,
+                      controller.playlist.value.tableName,
                     );
                     await currentPagePlaylist
                         .removeByPathList(controller.checkedRowPathList);

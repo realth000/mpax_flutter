@@ -5,7 +5,6 @@ import 'package:pluto_grid/pluto_grid.dart';
 import '../../../models/play_content.model.dart';
 import '../../../models/playlist.model.dart';
 import '../../../services/locale_service.dart';
-import '../../../services/media_library_service.dart';
 import '../../../themes/media_table_themes.dart';
 import 'media_table_controller.dart';
 import 'media_table_toolbar.dart';
@@ -13,40 +12,9 @@ import 'media_table_toolbar.dart';
 /// Audio content table widget used on desktop platforms.
 class MediaTable extends StatelessWidget {
   /// Constructor.
-  MediaTable(this.playlist, {super.key}) {
-    // When current playing audio changes, update the state icon in table.
-    // This means:
-    // The current playing audio (specified by audio file path, as named,
-    // contentPath) should have a "playing" state sign in "state" column.
-    // Other audios should not have "playing" state sign.
-    //
-    // It's better to in controller but I don't want to save a _stateManger in
-    // controller, and this function registry should only run once, so it's in
-    // UI widget's constructor.
-    //
-    // Use "debounce" to set a delay, prevent high frequency of resetting.
-    debounce(
-      _controller.currentPlayingContent,
-      (contentPath) => {
-        if (_stateManager != null)
-          {
-            for (final row in _stateManager!.rows)
-              {
-                row.cells['state']!.value =
-                    row.cells['path']!.value == contentPath ? _playingIcon : '',
-              },
-            refreshTable(),
-          }
-      },
-      time: const Duration(milliseconds: 300),
-    );
+  MediaTable(PlaylistModel playlist, {super.key}) {
+    _controller.playlist.value = playlist;
   }
-
-  /// Icons.play_arrow
-  static final _playingIcon = String.fromCharCode(Icons.play_arrow.codePoint);
-
-  /// Playlist in this table.
-  final PlaylistModel playlist;
 
   /// Convert [PlutoColumnSort] to sqlite order by sort [String].
   static const _sortMap = <PlutoColumnSort, String>{
@@ -55,17 +23,9 @@ class MediaTable extends StatelessWidget {
     PlutoColumnSort.descending: 'DESC',
   };
 
-  final _controller = Get.put(MediaTableController());
+  final _controller = Get.put(MediaTableController(PlaylistModel()));
 
   late final PlutoGridStateManager? _stateManager;
-
-  /// Call table's [PlutoGridStateManager] to refresh table data.
-  void refreshTable() {
-    if (_stateManager == null) {
-      return;
-    }
-    _stateManager!.notifyListeners();
-  }
 
   final columns = <PlutoColumn>[
     // State row, accept: String.fromCharCode(Icons.play_arrow.codePoint)
@@ -141,7 +101,7 @@ class MediaTable extends StatelessWidget {
             'state': PlutoCell(
               value: list[index].contentPath ==
                       _controller.currentPlayingContent.value
-                  ? _playingIcon
+                  ? playingIcon
                   : '',
             ),
             'album_title': PlutoCell(value: list[index].albumTitle),
@@ -167,18 +127,20 @@ class MediaTable extends StatelessWidget {
   @override
   Widget build(BuildContext context) => PlutoGrid(
         columns: columns,
-        rows: _buildRows(playlist.contentList),
+        rows: _buildRows(_controller.playlist.value.contentList),
         onLoaded: (event) {
-          _stateManager = event.stateManager;
+          // _stateManager = event.stateManager;
           _controller.tableStateManager = event.stateManager;
           // Set select row mode.
           event.stateManager.setSelectingMode(PlutoGridSelectingMode.cell);
-          _controller.playlistTableName.value = playlist.tableName;
-          if (playlist.tableName == MediaLibraryService.allMediaTableName) {
-            _controller.playlistName.value = 'Library'.tr;
-            return;
-          }
-          _controller.playlistName.value = playlist.name;
+          // _controller.playlistTableName.value =
+          //     _controller.playlist.value.tableName;
+          // if (_controller.playlist.value.tableName ==
+          //     MediaLibraryService.allMediaTableName) {
+          //   _controller.playlistName.value = 'Library'.tr;
+          //   return;
+          // }
+          // _controller.playlistName.value = _controller.playlist.value.name;
         },
         onRowDoubleTap: (tappedRow) async {
           final row = tappedRow.row;
@@ -186,13 +148,13 @@ class MediaTable extends StatelessWidget {
             return;
           }
           await _controller.playAudio(
-            playlist.find(row.cells['path']!.value),
-            playlist,
+            _controller.playlist.value.find(row.cells['path']!.value),
+            _controller.playlist.value,
           );
         },
         onSorted: (sortEvent) async {
-          playlist.contentList = (await _controller.sort(
-            playlist,
+          _controller.playlist.value.contentList = (await _controller.sort(
+            _controller.playlist.value,
             sortEvent.column.field,
             _sortMap[sortEvent.column.sort]!,
           ))
@@ -240,19 +202,20 @@ class MediaTable extends StatelessWidget {
               return;
             }
             if (event.isChecked!) {
-              _controller.checkedRowPathList
+              _controller.checkedRowPathList.value
                   .add(event.row!.cells['path']!.value);
             } else {
-              _controller.checkedRowPathList
+              _controller.checkedRowPathList.value
                   .remove(event.row!.cells['path']!.value);
             }
           } else {
-            if (_stateManager == null) {
+            if (_controller.tableStateManager == null) {
               return;
             }
-            _controller.checkedRowPathList.clear();
-            for (final row in _stateManager!.checkedRows) {
-              _controller.checkedRowPathList.add(row.cells['path']!.value);
+            _controller.checkedRowPathList.value.clear();
+            for (final row in _controller.tableStateManager!.checkedRows) {
+              _controller.checkedRowPathList.value
+                  .add(row.cells['path']!.value);
             }
           }
         },

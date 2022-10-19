@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
@@ -5,6 +6,9 @@ import '../../../models/play_content.model.dart';
 import '../../../models/playlist.model.dart';
 import '../../../services/media_library_service.dart';
 import '../../../services/player_service.dart';
+
+/// Icons.play_arrow
+final playingIcon = String.fromCharCode(Icons.play_arrow.codePoint);
 
 /// Controller of MediaTable.
 ///
@@ -14,7 +18,9 @@ import '../../../services/player_service.dart';
 /// one, being a service and refresh different tables is not efficient.
 class MediaTableController extends GetxController {
   /// Constructor.
-  MediaTableController();
+  MediaTableController(PlaylistModel playlist) {
+    this.playlist.value = playlist;
+  }
 
   /// Whether to show filters.
   final showFiltersRow = false.obs;
@@ -25,6 +31,9 @@ class MediaTableController extends GetxController {
   /// If required "scroll table to current playing content", also find that
   /// content by this file path.
   final currentPlayingContent = ''.obs;
+
+  /// Playlist in this table.
+  final playlist = PlaylistModel().obs;
 
   final _playerService = Get.find<PlayerService>();
   final _libraryService = Get.find<MediaLibraryService>();
@@ -72,18 +81,46 @@ class MediaTableController extends GetxController {
     _playerService.currentContent.listen((content) {
       currentPlayingContent.value = content.contentPath;
     });
-    ever(playlistName, (_) => checkedRowPathList.clear());
+    ever(playlist, (_) => checkedRowPathList.value.clear());
+    // When current playing audio changes, update the state icon in table.
+    // This means:
+    // The current playing audio (specified by audio file path, as named,
+    // contentPath) should have a "playing" state sign in "state" column.
+    // Other audios should not have "playing" state sign.
+    //
+    // Use "debounce" to set a delay, prevent high frequency of resetting.
+    debounce(
+      currentPlayingContent,
+      (contentPath) => {
+        if (tableStateManager != null)
+          {
+            for (final row in tableStateManager!.rows)
+              {
+                row.cells['state']!.value =
+                    row.cells['path']!.value == contentPath ? playingIcon : '',
+              },
+            refreshTable(),
+          }
+      },
+      time: const Duration(milliseconds: 300),
+    );
   }
 
   /// Whether the column filters in audio table is visible.
   final searchEnabled = false.obs;
 
-  /// Playlist name to display, readable name, not database table name.
-  final playlistName = ''.obs;
-
-  /// Playlist table name to find current page playlist in database.
-  final playlistTableName = ''.obs;
-
   /// Record all checked row's file path in table.
+  ///
+  /// When using [checkedRowPathList], use with '.value', otherwise the UI table
+  /// can not update.
+  /// e.g. _controller.checkedRowPathList.value
   final checkedRowPathList = <String>[].obs;
+
+  /// Call table's [PlutoGridStateManager] to refresh table data.
+  void refreshTable() {
+    if (tableStateManager == null) {
+      return;
+    }
+    tableStateManager!.notifyListeners();
+  }
 }
