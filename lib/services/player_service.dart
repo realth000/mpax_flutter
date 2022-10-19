@@ -80,7 +80,18 @@ class PlayerService extends GetxService {
   /// In the following situations, the history will clear all items:
   /// * Caller is "play xxx audio", no matter in shuffle mode or not.
   /// * Switch to another playlist.
+  ///
+  /// Every time when [playHistoryList] changes, update [playHistoryPos]
+  /// because current playing position is updated.
   final playHistoryList = <PlayContent>[];
+
+  /// Current position in [playHistoryList].
+  ///
+  /// Decide previous one audio and next one audio according to this position.
+  /// When finding previous or next audio in [playHistoryList], move this pos.
+  /// If [playHistoryList] grows (at tail), set to tail after growth.
+  /// If [playHistoryList] clears, reset playHistoryPos to initial value (-1).
+  var playHistoryPos = -1;
 
   /// Current playing audio position stream.
   late Stream<Duration> positionStream = _player.onPositionChanged;
@@ -227,23 +238,35 @@ class PlayerService extends GetxService {
 
   /// Change current playing audio to given [playContent], and current playing
   /// list to [playlist].
+  ///
+  /// This set to be a public function for UI widgets to control current playing
+  /// audio, control command looks like "play file:///a/b/c.mp3", not looks like
+  /// "play the previous/next music in current playlist". The latter one should
+  /// call [seekToAnother].
+  ///
+  /// Also clear [playHistoryList]. If do not want to clear [playHistoryList],
+  /// use [_setCurrentPathToPlayer].
   Future<void> setCurrentContent(
     PlayContent playContent,
     PlaylistModel playlist,
   ) async {
-    await _setCurrentPathWithSave(playContent, playlist);
+    await _setCurrentPathToPlayer(playContent, playlist);
     // Clear play history no matter in shuffle play mode or not,
     // because the caller is a "play xxx audio" action.
     playHistoryList.clear();
+    playHistoryPos = -1;
     // If in shuffle mode, record [playContent] as the history head.
     if (playMode == _shuffleString) {
       playHistoryList.add(playContent);
+      playHistoryPos = playHistoryList.length - 1;
     }
   }
 
   /// Set current playing audio to given [PlayContent]
-  /// and do not clean play history.
-  Future<void> _setCurrentPathWithSave(
+  /// and do not clear [playHistoryList].
+  /// If want to both set audio and clean [playHistoryList],
+  /// use [setCurrentContent].
+  Future<void> _setCurrentPathToPlayer(
     PlayContent playContent,
     PlaylistModel playlist,
   ) async {
@@ -347,31 +370,42 @@ class PlayerService extends GetxService {
     }
   }
 
-  /// Seek to another audio content.
+  /// Seek to another audio content in [currentPlaylist].
+  ///
+  /// This set to be a public function for UI widgets to control current playing
+  /// audio, control command looks like "play the previous/next music in current
+  /// playlist", not looks like "play file:///a/b/c.mp3". The latter one should
+  /// call [setCurrentContent].
+  ///
+  /// If [isNext] is true, play the next (forward) one in [currentPlaylist].
+  /// If [isNext] is false, play previous (backward) one in [currentPlaylist].
   Future<void> seekToAnother(bool isNext) async {
     if (isNext) {
       switch (playMode) {
         case _shuffleString:
           if (playHistoryList.isNotEmpty) {
-            for (var i = 0; i < playHistoryList.length; i++) {
-              if (playHistoryList[i].contentPath ==
-                      currentContent.value.contentPath &&
-                  i < playHistoryList.length - 1) {
-                await _setCurrentPathWithSave(
-                  playHistoryList[i + 1],
-                  currentPlaylist,
-                );
-                return;
-              }
+            if (playHistoryPos < playHistoryList.length - 1) {
+              // If play history is not empty and play history position not the
+              // end of history list, just move to the forward one.
+              playHistoryPos++;
+              await _setCurrentPathToPlayer(
+                playHistoryList[playHistoryPos],
+                currentPlaylist,
+              );
+              return;
             }
           }
+          // Reach here only when play history is empty or position is already
+          // the tail of list.
+          // Need to grow history list.
           final c = currentPlaylist.randomPlayContent();
           if (c.contentPath.isEmpty) {
             await play();
             return;
           }
-          await _setCurrentPathWithSave(c, currentPlaylist);
+          await _setCurrentPathToPlayer(c, currentPlaylist);
           playHistoryList.add(c);
+          playHistoryPos = playHistoryList.length - 1;
           // For test
           // final d = await _player.load();
           // if (d != null) {
@@ -398,16 +432,15 @@ class PlayerService extends GetxService {
       switch (playMode) {
         case _shuffleString:
           if (playHistoryList.isNotEmpty) {
-            for (var i = 0; i < playHistoryList.length; i++) {
-              if (playHistoryList[i].contentPath ==
-                      currentContent.value.contentPath &&
-                  i > 0) {
-                await _setCurrentPathWithSave(
-                  playHistoryList[i - 1],
-                  currentPlaylist,
-                );
-                return;
-              }
+            if (playHistoryPos > 0) {
+              // If play history is not empty and play history position not the
+              // head of history list, just move to the backward one.
+              playHistoryPos--;
+              await _setCurrentPathToPlayer(
+                playHistoryList[playHistoryPos],
+                currentPlaylist,
+              );
+              return;
             }
           }
           final c = currentPlaylist.randomPlayContent();
@@ -415,8 +448,9 @@ class PlayerService extends GetxService {
             await play();
             return;
           }
-          await _setCurrentPathWithSave(c, currentPlaylist);
+          await _setCurrentPathToPlayer(c, currentPlaylist);
           playHistoryList.insert(0, c);
+          playHistoryPos = 0;
           await play();
           break;
         case _repeatString:
