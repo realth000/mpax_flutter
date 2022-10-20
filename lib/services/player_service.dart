@@ -392,6 +392,7 @@ class PlayerService extends GetxService {
                 playHistoryList[playHistoryPos],
                 currentPlaylist,
               );
+              await play();
               return;
             }
           }
@@ -440,6 +441,7 @@ class PlayerService extends GetxService {
                 playHistoryList[playHistoryPos],
                 currentPlaylist,
               );
+              await play();
               return;
             }
           }
