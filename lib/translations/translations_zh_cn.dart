@@ -69,4 +69,8 @@ const Map<String, String> translationZhCn = <String, String>{
   'State': '状态',
   'Add to new playlist': '添加到新的播放列表',
   'Delete from list': '从列表中删除',
+  'Keymap': '快捷键',
+  'Play and Pause': '播放和暂停',
+  'Play Previous': '播放上一首',
+  'Play Next': '播放下一首',
 };

@@ -13,6 +13,9 @@ const Map<String, Type> configMap = <String, Type>{
   'FollowSystemLocale': bool,
   'ScanSkipRecordedFile': bool,
   'PlayerVolume': double,
+  'KeymapPlayPause': String,
+  'KeymapPlayPrevious': String,
+  'KeymapPlayNext': String,
 };
 
 /// Config service for app, globally.

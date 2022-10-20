@@ -13,7 +13,7 @@ import '../services/player_service.dart';
 import '../services/theme_service.dart';
 import '../themes/app_themes.dart';
 import '../translations/translations.dart';
-import 'desktop/services/scaffold.service.dart';
+import 'desktop/services/scaffold_service.dart';
 import 'desktop/services/shortcut_service.dart';
 import 'services/search_service.dart';
 

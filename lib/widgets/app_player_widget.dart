@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../desktop/services/scaffold.service.dart';
+import '../desktop/services/scaffold_service.dart';
 import '../routes/app_pages.dart';
 import '../services/player_service.dart';
 

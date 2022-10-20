@@ -70,4 +70,8 @@ const Map<String, String> translationEnUs = <String, String>{
   'State': 'State',
   'Add to new playlist': 'Add to new playlist',
   'Delete from list': 'Delete from list',
+  'Keymap': 'Keymap',
+  'Play and Pause': 'Play and Pause',
+  'Play Previous': 'Play Previous',
+  'Play Next': 'Play Next',
 };

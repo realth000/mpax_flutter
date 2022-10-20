@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../desktop/services/shortcut_service.dart';
 import '../services/config_service.dart';
 import '../services/locale_service.dart';
 import '../services/theme_service.dart';
@@ -48,6 +49,15 @@ class _SettingsBodyWidget extends GetView<ConfigService> {
   final _themeService = Get.find<ThemeService>();
   final _localeService = Get.find<LocaleService>();
 
+  final _keymapPlayPause =
+      (Get.find<ShortcutService>().getHotKeyStringByName('KeymapPlayPause'))
+          .obs;
+  final _keymapPlayPrevious =
+      (Get.find<ShortcutService>().getHotKeyStringByName('KeymapPlayPrevious'))
+          .obs;
+  final _keymapPlayNext =
+      (Get.find<ShortcutService>().getHotKeyStringByName('KeymapPlayNext')).obs;
+
   // /// Current using theme icon.
   // final _themeIcon = autoModeIcon.obs;
 
@@ -68,6 +78,147 @@ class _SettingsBodyWidget extends GetView<ConfigService> {
     await _localeService.changeLocale(locale);
   }
 
+  Widget _buildAppearanceCard() => Card(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.only(
+                left: 15,
+                top: 10,
+              ),
+              child: TitleText(
+                title: 'Appearance'.tr,
+                level: 0,
+              ),
+            ),
+            Obx(
+              () => ListTile(
+                leading: const ListTileLeading(
+                  child: Icon(Icons.invert_colors),
+                  // child: Icon(Icons.theme),
+                ),
+                title: Text('Theme'.tr),
+                subtitle: Text(_themeService.themeModeString.value.tr),
+                trailing: ToggleButtons(
+                  onPressed: (index) async {
+                    if (_selections[index]) {
+                      return;
+                    }
+                    for (var i = 0; i < _selections.length; i++) {
+                      _selections[i] = false;
+                    }
+                    _selections[index] = true;
+                    await _themeService
+                        .changeThemeMode(_themeList[index].themeMode);
+                  },
+                  isSelected: _selections,
+                  children: _themeIcons,
+                ),
+              ),
+            ),
+            ListTile(
+              leading: const ListTileLeading(
+                child: Icon(Icons.language),
+              ),
+              title: Text('Language'.tr),
+              subtitle: Text('Set application language'.tr),
+              trailing: Obx(() => Text(_localeService.locale.value.tr)),
+              onTap: () async => _openLocaleMenu(),
+            ),
+          ],
+        ),
+      );
+
+  Widget _buildDesktopKeymapCard(BuildContext context) => Card(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.only(
+                left: 15,
+                top: 10,
+              ),
+              child: TitleText(
+                title: 'Keymap'.tr,
+                level: 0,
+              ),
+            ),
+            ListTile(
+              leading: const Icon(
+                Icons.play_arrow,
+              ),
+              title: Text('Play and Pause'.tr),
+              trailing: PopupMenuButton<String>(
+                child: Obx(() => Text(_keymapPlayPause.value)),
+                itemBuilder: (context) => const <PopupMenuItem<String>>[
+                  PopupMenuItem(
+                    value: 'Ctrl+Alt+B',
+                    child: Text('Ctrl+Alt+B'),
+                  ),
+                  PopupMenuItem(
+                    value: 'Ctrl+Shift+B',
+                    child: Text('Ctrl+Shift+B'),
+                  ),
+                ],
+                onSelected: (value) async {
+                  if (await Get.find<ShortcutService>()
+                      .setHotKeyFromString('KeymapPlayPause', value)) {
+                    _keymapPlayPause.value = value;
+                  }
+                },
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.skip_previous),
+              title: Text('Play Previous'.tr),
+              trailing: PopupMenuButton<String>(
+                child: Obx(() => Text(_keymapPlayPrevious.value)),
+                itemBuilder: (context) => const <PopupMenuItem<String>>[
+                  PopupMenuItem(
+                    value: 'Ctrl+Alt+←',
+                    child: Text('Ctrl+Alt+←'),
+                  ),
+                  PopupMenuItem(
+                    value: 'Ctrl+Shift+←',
+                    child: Text('Ctrl+Shift+←'),
+                  ),
+                ],
+                onSelected: (value) async {
+                  if (await Get.find<ShortcutService>()
+                      .setHotKeyFromString('KeymapPlayPrevious', value)) {
+                    _keymapPlayPrevious.value = value;
+                  }
+                },
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.skip_previous),
+              title: Text('Play Next'.tr),
+              trailing: PopupMenuButton<String>(
+                child: Obx(() => Text(_keymapPlayNext.value)),
+                itemBuilder: (context) => const <PopupMenuItem<String>>[
+                  PopupMenuItem(
+                    value: 'Ctrl+Alt+→',
+                    child: Text('Ctrl+Alt+→'),
+                  ),
+                  PopupMenuItem(
+                    value: 'Ctrl+Shift+→',
+                    child: Text('Ctrl+Shift+→'),
+                  ),
+                ],
+                onSelected: (value) async {
+                  if (await Get.find<ShortcutService>()
+                      .setHotKeyFromString('KeymapPlayNext', value)) {
+                    _keymapPlayNext.value = value;
+                  }
+                },
+              ),
+            ),
+          ],
+        ),
+      );
+
   @override
   Widget build(BuildContext context) {
     if (_themeService.followSystemDarkMode) {
@@ -78,52 +229,19 @@ class _SettingsBodyWidget extends GetView<ConfigService> {
       _selections[0] = true;
     }
 
+    final widgetList = <Widget>[_buildAppearanceCard()];
+
+    if (GetPlatform.isDesktop) {
+      widgetList.add(_buildDesktopKeymapCard(context));
+    }
+
     return Scrollbar(
       child: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(15),
+          padding: const EdgeInsets.all(5),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              TitleText(
-                title: 'Appearance'.tr,
-                level: 0,
-              ),
-              Obx(
-                () => ListTile(
-                  leading: const ListTileLeading(
-                    child: Icon(Icons.invert_colors),
-                    // child: Icon(Icons.theme),
-                  ),
-                  title: Text('Theme'.tr),
-                  subtitle: Text(_themeService.themeModeString.value.tr),
-                  trailing: ToggleButtons(
-                    onPressed: (index) async {
-                      if (_selections[index]) {
-                        return;
-                      }
-                      for (var i = 0; i < _selections.length; i++) {
-                        _selections[i] = false;
-                      }
-                      _selections[index] = true;
-                      await _themeService
-                          .changeThemeMode(_themeList[index].themeMode);
-                    },
-                    isSelected: _selections,
-                    children: _themeIcons,
-                  ),
-                ),
-              ),
-              ListTile(
-                leading: const ListTileLeading(
-                  child: Icon(Icons.language),
-                ),
-                title: Text('Language'.tr),
-                subtitle: Text('Set application language'.tr),
-                trailing: Obx(() => Text(_localeService.locale.value.tr)),
-                onTap: () async => _openLocaleMenu(),
-              ),
-            ],
+            children: widgetList,
           ),
         ),
       ),

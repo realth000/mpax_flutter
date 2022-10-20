@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../services/scaffold.service.dart';
+import '../../services/scaffold_service.dart';
 import 'navigation_bar_controller.dart';
 
 /// Navigation bar use for desktop.

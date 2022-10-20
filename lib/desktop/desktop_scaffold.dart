@@ -7,7 +7,7 @@ import '../themes/app_themes.dart';
 import '../widgets/app_player_widget.dart';
 import 'components/navigation_bar/navigation_bar_view.dart';
 import 'components/window_bar_buttons/window_bar_buttons.dart';
-import 'services/scaffold.service.dart';
+import 'services/scaffold_service.dart';
 
 /// Main scaffold use in desktop.
 class MPaxScaffold extends GetView<ScaffoldService> {
