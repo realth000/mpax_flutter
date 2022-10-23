@@ -46,17 +46,24 @@ class _ThemeGroup {
 }
 
 class _SettingsBodyWidget extends GetView<ConfigService> {
+  _SettingsBodyWidget() {
+    if (GetPlatform.isDesktop) {
+      _keymapPlayPause.value =
+          Get.find<ShortcutService>().getHotKeyStringByName('KeymapPlayPause');
+      _keymapPlayPrevious.value = Get.find<ShortcutService>()
+          .getHotKeyStringByName('KeymapPlayPrevious');
+      _keymapPlayNext.value =
+          Get.find<ShortcutService>().getHotKeyStringByName('KeymapPlayNext');
+    }
+  }
+
   final _themeService = Get.find<ThemeService>();
   final _localeService = Get.find<LocaleService>();
 
-  final _keymapPlayPause =
-      (Get.find<ShortcutService>().getHotKeyStringByName('KeymapPlayPause'))
-          .obs;
-  final _keymapPlayPrevious =
-      (Get.find<ShortcutService>().getHotKeyStringByName('KeymapPlayPrevious'))
-          .obs;
-  final _keymapPlayNext =
-      (Get.find<ShortcutService>().getHotKeyStringByName('KeymapPlayNext')).obs;
+  // Keymap configs only use on desktop platforms.
+  final _keymapPlayPause = ''.obs;
+  final _keymapPlayPrevious = ''.obs;
+  final _keymapPlayNext = ''.obs;
 
   // /// Current using theme icon.
   // final _themeIcon = autoModeIcon.obs;
