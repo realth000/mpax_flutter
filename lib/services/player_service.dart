@@ -17,30 +17,41 @@ import '../services/metadata_service.dart';
 /// Wrapper for mobile
 class PlayerWrapper extends BaseAudioHandler with QueueHandler, SeekHandler {
   // The most common callbacks:
+  @override
   Future<void> play() async {
     // All 'play' requests from all origins route to here. Implement this
     // callback to start playing audio appropriate to your app. e.g. music.
     await Get.find<PlayerService>().playOrPause();
   }
 
+  @override
   Future<void> pause() async {
     await Get.find<PlayerService>().playOrPause();
   }
 
+  @override
   Future<void> stop() async {
     await Get.find<PlayerService>().playOrPause();
   }
 
+  @override
   Future<void> seek(Duration position) async {
     await Get.find<PlayerService>().seekToDuration(position);
   }
 
-  Future<void> skipToQueueItem(int i) async {
-    if (i > 0) {
-      await Get.find<PlayerService>().seekToAnother(true);
-    } else {
-      await Get.find<PlayerService>().seekToAnother(false);
-    }
+  @override
+  Future<void> skipToPrevious() async {
+    await Get.find<PlayerService>().seekToAnother(false);
+  }
+
+  @override
+  Future<void> skipToNext() async {
+    await Get.find<PlayerService>().seekToAnother(true);
+  }
+
+  @override
+  Future<void> playMediaItem(MediaItem mediaItem) async {
+    this.mediaItem.value = mediaItem;
   }
 }
 
@@ -148,20 +159,19 @@ class PlayerService extends GetxService {
   Future<PlaybackState> _transformEvent(PlayerState event) async =>
       PlaybackState(
         controls: [
-          MediaControl.rewind,
+          MediaControl.skipToPrevious,
           if (event == PlayerState.playing)
             MediaControl.pause
           else
             MediaControl.play,
-          MediaControl.stop,
-          MediaControl.fastForward,
+          MediaControl.skipToNext,
         ],
         systemActions: const {
           MediaAction.seek,
-          MediaAction.seekForward,
-          MediaAction.seekBackward,
+          MediaAction.skipToNext,
+          MediaAction.skipToPrevious,
         },
-        androidCompactActionIndices: const [0, 1, 3],
+        androidCompactActionIndices: const [0, 1, 2],
         processingState: const {
           PlayerState.stopped: AudioProcessingState.idle,
           PlayerState.playing: AudioProcessingState.ready,
@@ -170,6 +180,7 @@ class PlayerService extends GetxService {
         }[_player.state]!,
         playing: _player.state == PlayerState.playing,
         updatePosition: await _player.getCurrentPosition() ?? Duration.zero,
+        bufferedPosition: await _player.getDuration() ?? Duration.zero,
         queueIndex: 0,
       );
 
@@ -295,7 +306,7 @@ class PlayerService extends GetxService {
     currentPlaylist = playlist;
     await _player.setSourceDeviceFile(p.contentPath);
     if (GetPlatform.isMobile) {
-      await wrapper!.updateQueue([
+      await wrapper?.playMediaItem(
         MediaItem(
           id: p.contentPath,
           title: p.title.isEmpty ? p.contentName : p.title,
@@ -304,7 +315,7 @@ class PlayerService extends GetxService {
           duration: Duration(seconds: p.length),
           artUri: hasCoverImage ? coverFile.uri : null,
         ),
-      ]);
+      );
     }
     await _configService.saveString(
       'CurrentMedia',
