@@ -31,7 +31,7 @@ class PlayerWrapper extends BaseAudioHandler with QueueHandler, SeekHandler {
 
   @override
   Future<void> stop() async {
-    await Get.find<PlayerService>().playOrPause();
+    await Get.find<PlayerService>().stop();
   }
 
   @override
@@ -52,6 +52,11 @@ class PlayerWrapper extends BaseAudioHandler with QueueHandler, SeekHandler {
   @override
   Future<void> playMediaItem(MediaItem mediaItem) async {
     this.mediaItem.value = mediaItem;
+  }
+
+  @override
+  Future<void> onTaskRemoved() async {
+    await stop();
   }
 }
 
@@ -347,6 +352,11 @@ class PlayerService extends GetxService {
     } else {
       // Not a good state.
     }
+  }
+
+  /// Stop playing.
+  Future<void> stop() async {
+    await _player.stop();
   }
 
   /// Change play mode.
