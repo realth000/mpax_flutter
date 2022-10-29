@@ -5,6 +5,7 @@ import 'package:pluto_grid/pluto_grid.dart';
 import '../../../models/play_content.model.dart';
 import '../../../models/playlist.model.dart';
 import '../../../services/locale_service.dart';
+import '../../../services/media_library_service.dart';
 import '../../../themes/media_table_themes.dart';
 import 'media_table_controller.dart';
 import 'media_table_toolbar.dart';
@@ -45,6 +46,7 @@ class MediaTable extends StatelessWidget {
       enableSorting: false,
       enableRowChecked: true,
       enableContextMenu: true,
+      enableRowDrag: true,
     ),
     PlutoColumn(
       title: 'Album name'.tr,
@@ -159,6 +161,20 @@ class MediaTable extends StatelessWidget {
             _sortMap[sortEvent.column.sort]!,
           ))
               .contentList;
+        },
+        onRowsMoved: (movedEvent) async {
+          final r = _controller.playlist.value.contentList.firstWhere(
+              (element) =>
+                  element.contentPath ==
+                  movedEvent.rows?[0]!.cells['path']!.value);
+          if (r.contentPath.isEmpty) {
+            return;
+          }
+          _controller.playlist.value.contentList
+              .removeWhere((element) => element.contentPath == r.contentPath);
+          _controller.playlist.value.contentList.insert(movedEvent.idx!, r);
+          await Get.find<MediaLibraryService>()
+              .savePlaylist(_controller.playlist.value);
         },
         configuration: _themeConfig(context).copyWith(
           localeText: Get.find<LocaleService>().locale.value == 'zh_CN'

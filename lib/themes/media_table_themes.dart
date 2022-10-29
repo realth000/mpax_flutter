@@ -57,6 +57,7 @@ class MediaTableTheme {
         color: Colors.white.withOpacity(0.8),
         fontSize: 14,
       ),
+      cellColorInReadOnlyState: Colors.white.withOpacity(0.2),
       // Fix menu style.
       menuBackgroundColor: MPaxTheme.flexDark.colorScheme.surface,
     ),
