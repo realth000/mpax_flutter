@@ -52,8 +52,6 @@ class PlayerWrapper extends BaseAudioHandler with QueueHandler, SeekHandler {
   @override
   Future<void> playMediaItem(MediaItem mediaItem) async {
     this.mediaItem.add(mediaItem);
-    print(
-        'AAAA MEDIA ITEM= ${this.mediaItem.value?.title}, ${this.mediaItem.value?.artUri},');
   }
 
   @override
@@ -201,7 +199,6 @@ class PlayerService extends GetxService {
     }
     if (GetPlatform.isMobile) {
       _player.onPlayerStateChanged.listen((state) async {
-        print('AAAA call _transformEvent');
         wrapper!.playbackState.add(await _transformEvent(state));
       });
     }
@@ -298,7 +295,6 @@ class PlayerService extends GetxService {
     currentContent.value = p;
     currentPlaylist = playlist;
     await _player.setSourceDeviceFile(p.contentPath);
-    print('AAAA ABOUT TO CHECK MOBILE');
     if (GetPlatform.isMobile) {
       // Save scaled album cover in file for the just_audio_background service to
       // display on android control center.
@@ -306,16 +302,22 @@ class PlayerService extends GetxService {
       final coverFile = File(
         '${(await getTemporaryDirectory()).path}/cover.cache.${DateTime.now().microsecondsSinceEpoch.toString()}',
       );
-      print('AAAA ABOUT TO CHECK MOBILE 1 $hasCoverImage');
       if (hasCoverImage) {
-        print('AAAA ABOUT TO CHECK MOBILE 2');
         await coverFile.writeAsBytes(
           base64Decode(currentContent.value.albumCover),
           flush: true,
         );
-        print('AAAA ABOUT TO CHECK MOBILE 5');
       }
-      print('AAAA UPDATE COVER IMAGE TO ${coverFile.uri}');
+
+      // FIXME: The stop and play action here is to fix notification art image
+      // not update on some Android versions (e.g. MIUI).
+      // I can not find the root cause but this action can fix the problem.
+      // Need further solution in future.
+      // 雷军？金凡！
+      if (_player.state == PlayerState.playing) {
+        await stop();
+        await play();
+      }
 
       await wrapper?.playMediaItem(
         MediaItem(
@@ -344,7 +346,7 @@ class PlayerService extends GetxService {
     // Use for debugging.
     // await _player.seek(Duration(seconds: (_player.duration!.inSeconds * 0.98)
     // .toInt()));
-    await _player.resume();
+    await _player.play(DeviceFileSource(currentContent.value.contentPath));
   }
 
   /// Play when paused, pause when playing.
