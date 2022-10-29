@@ -51,7 +51,9 @@ class PlayerWrapper extends BaseAudioHandler with QueueHandler, SeekHandler {
 
   @override
   Future<void> playMediaItem(MediaItem mediaItem) async {
-    this.mediaItem.value = mediaItem;
+    this.mediaItem.add(mediaItem);
+    print(
+        'AAAA MEDIA ITEM= ${this.mediaItem.value?.title}, ${this.mediaItem.value?.artUri},');
   }
 
   @override
@@ -199,6 +201,7 @@ class PlayerService extends GetxService {
     }
     if (GetPlatform.isMobile) {
       _player.onPlayerStateChanged.listen((state) async {
+        print('AAAA call _transformEvent');
         wrapper!.playbackState.add(await _transformEvent(state));
       });
     }
@@ -286,21 +289,6 @@ class PlayerService extends GetxService {
     PlayContent playContent,
     PlaylistModel playlist,
   ) async {
-    // Save scaled album cover in file for the just_audio_background service to
-    // display on android control center.
-    final hasCoverImage = playContent.albumCover.isNotEmpty;
-    late final File coverFile;
-    if (hasCoverImage) {
-      final tmpDir = await getTemporaryDirectory();
-      // FIXME: Clear cover cache.
-      coverFile = File(
-        '${tmpDir.path}/cover.cache.${DateTime.now().microsecondsSinceEpoch.toString()}',
-      );
-      await coverFile.writeAsBytes(
-        base64Decode(playContent.albumCover),
-        flush: true,
-      );
-    }
     // Read the full album cover image to display in music page.
     final p = await Get.find<MetadataService>().readMetadata(
       playContent.contentPath,
@@ -310,7 +298,25 @@ class PlayerService extends GetxService {
     currentContent.value = p;
     currentPlaylist = playlist;
     await _player.setSourceDeviceFile(p.contentPath);
+    print('AAAA ABOUT TO CHECK MOBILE');
     if (GetPlatform.isMobile) {
+      // Save scaled album cover in file for the just_audio_background service to
+      // display on android control center.
+      final hasCoverImage = currentContent.value.albumCover.isNotEmpty;
+      final coverFile = File(
+        '${(await getTemporaryDirectory()).path}/cover.cache.${DateTime.now().microsecondsSinceEpoch.toString()}',
+      );
+      print('AAAA ABOUT TO CHECK MOBILE 1 $hasCoverImage');
+      if (hasCoverImage) {
+        print('AAAA ABOUT TO CHECK MOBILE 2');
+        await coverFile.writeAsBytes(
+          base64Decode(currentContent.value.albumCover),
+          flush: true,
+        );
+        print('AAAA ABOUT TO CHECK MOBILE 5');
+      }
+      print('AAAA UPDATE COVER IMAGE TO ${coverFile.uri}');
+
       await wrapper?.playMediaItem(
         MediaItem(
           id: p.contentPath,
