@@ -6,6 +6,7 @@ import 'package:audio_service/audio_service.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../models/play_content.model.dart';
@@ -299,6 +300,7 @@ class PlayerService extends GetxService {
       // Save scaled album cover in file for the just_audio_background service to
       // display on android control center.
       final hasCoverImage = currentContent.value.albumCover.isNotEmpty;
+      await clearCoverImageCache();
       final coverFile = File(
         '${(await getTemporaryDirectory()).path}/cover.cache.${DateTime.now().microsecondsSinceEpoch.toString()}',
       );
@@ -505,4 +507,17 @@ class PlayerService extends GetxService {
 
   /// Return current curation.
   Future<Duration?> playerDuration() => _player.getDuration();
+
+  /// Clear tmp cover image files.
+  ///
+  /// Only cache on Android, so this clean function also only usable on Android.
+  Future<void> clearCoverImageCache() async {
+    final cacheDir = Directory((await getTemporaryDirectory()).path);
+    // All cover image cache are named with cover.cache.*
+    await for (final e in cacheDir.list()) {
+      if (e is File && basename(e.path).startsWith('cover.cache.')) {
+        await e.delete();
+      }
+    }
+  }
 }
