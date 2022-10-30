@@ -316,7 +316,7 @@ class PlayerService extends GetxService {
       // I can not find the root cause but this action can fix the problem.
       // Need further solution in future.
       // 雷军？金凡！
-      if (_player.state == PlayerState.playing) {
+      if (GetPlatform.isAndroid && _player.state == PlayerState.playing) {
         await stop();
         await play();
       }
