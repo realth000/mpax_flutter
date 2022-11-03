@@ -1,5 +1,6 @@
 import 'dart:ffi';
 import 'dart:io';
+import 'dart:isolate';
 
 import 'package:ffi/ffi.dart';
 import 'package:flutter/services.dart';
@@ -35,17 +36,27 @@ class Metadata {
 }
 
 class TagLib {
-  final int _disable_all_static_warning = 0;
+  TagLib({required this.filePath});
+
+  final String filePath;
 
   /// Read [Metadata] from file.
-  static Future<Metadata?> readMetadata({required String filePath}) async {
+  Future<Metadata?> readMetadata() async {
     if (filePath.isEmpty) {
       return null;
     }
+    final p = ReceivePort();
+    await Isolate.spawn(_readMetadata, p.sendPort);
+    return await p.first as Metadata?;
+  }
+
+  Future<dynamic> _readMetadata(SendPort p) async {
     try {
-      final tagLib = NativeLibrary(Platform.isWindows
-          ? DynamicLibrary.open('tag_c.dll')
-          : DynamicLibrary.open('libtag_c.so'));
+      final tagLib = NativeLibrary(
+        Platform.isWindows
+            ? DynamicLibrary.open('tag_c.dll')
+            : DynamicLibrary.open('libtag_c.so'),
+      );
       late final Pointer<Char> tagFileName;
       if (Platform.isWindows) {
         tagFileName = filePath.toNativeUtf8().cast();
@@ -64,7 +75,7 @@ class TagLib {
       }
       final tagFile = tagLib.taglib_file_new(tagFileName);
       if (tagLib.taglib_file_is_valid(tagFile) == 0) {
-        return null;
+        Isolate.exit(p);
       }
       final tagFileTag = tagLib.taglib_file_tag(tagFile);
 
@@ -119,7 +130,8 @@ class TagLib {
 //      malloc.free(tagFile);
 //      malloc.free(tagFileName);
 
-      tagLib.taglib_tag_free_strings();
+      tagLib
+        ..taglib_tag_free_strings()
 //      tagLib.taglib_free(tagProp.cast<Void>());
 //      tagLib.taglib_free(tagFileTagComment.cast<Void>());
 //      tagLib.taglib_free(tagFileTagGenre.cast<Void>());
@@ -127,12 +139,12 @@ class TagLib {
 //      tagLib.taglib_free(tagFileTagArtist.cast<Void>());
 //      tagLib.taglib_free(tagFileTagTitle.cast<Void>());
 //      tagLib.taglib_free(tagFileTag.cast<Void>());
-      tagLib.taglib_file_free(tagFile);
+        ..taglib_file_free(tagFile);
       malloc.free(tagFileName);
-      return metaData;
+      return Isolate.exit(p, metaData);
     } on PlatformException {
       print('Failed to read $PlatformException');
     }
-    return null;
+    return Isolate.exit(p);
   }
 }

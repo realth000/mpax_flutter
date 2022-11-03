@@ -133,8 +133,6 @@ class _ScanController extends GetxController {
         Get.find<ConfigService>().getBool('ScanSkipRecordedFile') ?? false;
     loadImage.value =
         Get.find<ConfigService>().getBool('ScanLoadImage') ?? true;
-    print(
-        'AAAA GET BOOL: ${Get.find<ConfigService>().getBool('ScanLoadImage')}');
   }
 
   final searchSkipRecorded = false.obs;

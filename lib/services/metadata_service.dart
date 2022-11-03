@@ -46,7 +46,7 @@ class MetadataService extends GetxService {
     } else {
       late final tl.Metadata? metadata;
       try {
-        metadata = await tl.TagLib.readMetadata(filePath: contentPath);
+        metadata = await tl.TagLib(filePath: contentPath).readMetadata();
         if (metadata == null) {
           return PlayContent.fromPath(contentPath);
         }
@@ -59,8 +59,12 @@ class MetadataService extends GetxService {
   }
 
   /// Fetch metadata with package metadata_god.
-  Future<PlayContent> _applyMetadataFromMG(String contentPath,
-      mg.Metadata metadata, bool loadImage, bool scaleImage) async {
+  Future<PlayContent> _applyMetadataFromMG(
+    String contentPath,
+    mg.Metadata metadata,
+    bool loadImage,
+    bool scaleImage,
+  ) async {
     final playContent = PlayContent.fromPath(contentPath);
     if (metadata.artist != null) {
       playContent.artist = metadata.artist!;
