@@ -21,7 +21,8 @@ class MediaLibraryService extends GetxService {
   static const allMediaTableName = 'all_media';
 
   /// Info table columns.
-  static const infoTableColumns = 'id INT NOT NULL PRIMARY KEY, sort INT, '
+  static const infoTableColumns =
+      'id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, sort INT, '
       'playlist_name TEXT, table_name TEXT';
 
   /// Playlist table columns.
@@ -179,11 +180,6 @@ class MediaLibraryService extends GetxService {
       await txn.execute('DROP TABLE IF EXISTS ${playlistModel.tableName}');
       // Not using truncate because table name may change like what qt version
       // does.
-      await txn.delete(
-        infoTableName,
-        where: 'table_name = ?',
-        whereArgs: <String>[playlistModel.tableName],
-      );
       await txn.execute(
         'CREATE TABLE  ${playlistModel.tableName}($playlistTableColumns)',
       );

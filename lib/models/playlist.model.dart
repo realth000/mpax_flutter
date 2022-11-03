@@ -104,7 +104,6 @@ class PlaylistModel {
   Map<String, dynamic> toMap() {
     id++;
     return {
-      'id': id,
       'sort': contentList.length,
       'playlist_name': name,
       'table_name': tableName,
