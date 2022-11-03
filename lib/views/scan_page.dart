@@ -56,6 +56,24 @@ class _ScanBodyWidget extends StatelessWidget {
                 Text('Skip recorded music files'.tr),
               ],
             ),
+            Row(
+              children: <Widget>[
+                Obx(
+                  () => Checkbox(
+                    value: _controller.loadImage.value,
+                    onChanged: (value) async {
+                      if (value == null) {
+                        return;
+                      }
+                      _controller.loadImage.value = value;
+                      await Get.find<ConfigService>()
+                          .saveBool('ScanLoadImage', value);
+                    },
+                  ),
+                ),
+                Text('Load image in audio metadata tags'.tr),
+              ],
+            ),
             ListTile(
               leading: const Icon(Icons.add),
               title: Text('Add directory to scan'.tr),
@@ -113,9 +131,14 @@ class _ScanController extends GetxController {
     }
     searchSkipRecorded.value =
         Get.find<ConfigService>().getBool('ScanSkipRecordedFile') ?? false;
+    loadImage.value =
+        Get.find<ConfigService>().getBool('ScanLoadImage') ?? true;
+    print(
+        'AAAA GET BOOL: ${Get.find<ConfigService>().getBool('ScanLoadImage')}');
   }
 
   final searchSkipRecorded = false.obs;
+  final loadImage = true.obs;
 
   ConfigService configService = Get.find<ConfigService>();
   final _scanList = <String, _ScanTargetItemWidget>{}.obs;

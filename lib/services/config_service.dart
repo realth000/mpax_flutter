@@ -12,6 +12,7 @@ const Map<String, Type> configMap = <String, Type>{
   'Locale': String,
   'FollowSystemLocale': bool,
   'ScanSkipRecordedFile': bool,
+  'ScanLoadImage': bool,
   'PlayerVolume': double,
   'KeymapPlayPause': String,
   'KeymapPlayPrevious': String,

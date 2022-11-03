@@ -73,4 +73,5 @@ const Map<String, String> translationZhCn = <String, String>{
   'Play and Pause': '播放和暂停',
   'Play Previous': '播放上一首',
   'Play Next': '播放下一首',
+  'Load image in audio metadata tags': '读取音频文件中的图片标签',
 };

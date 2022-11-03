@@ -12,21 +12,27 @@ import '../services/metadata_service.dart';
 /// Option used in scanning audio files.
 class AudioScanOptions {
   /// Construct form raw options.
-  AudioScanOptions.raw({required this.searchAll});
+  AudioScanOptions.raw({required this.searchAll, required this.loadImage});
 
   /// Construct from app config.
   AudioScanOptions.fromConfig() {
     final configService = Get.find<ConfigService>();
     searchAll = configService.getBool('ScanSkipRecordedFile') ?? false;
+    loadImage = configService.getBool('ScanLoadImage') ?? true;
   }
 
   /// Update some part.
-  AudioScanOptions copyWith({bool? searchAll}) => AudioScanOptions.raw(
+  AudioScanOptions copyWith({bool? searchAll, bool? loadImage}) =>
+      AudioScanOptions.raw(
         searchAll: searchAll ?? this.searchAll,
+        loadImage: loadImage ?? this.loadImage,
       );
 
   /// If false, skip already included audio files (those were scanned before).
   bool searchAll = false;
+
+  /// Load cover image or not.
+  bool loadImage = false;
 }
 
 /// Scanner for audio.
@@ -84,7 +90,10 @@ class AudioScanner {
         if (entry.path.endsWith('mp3')) {
           _scanStreamSink.add(entry.path);
           list.add(
-            await _metadataService.readMetadata(entry.path, loadImage: true),
+            await _metadataService.readMetadata(
+              entry.path,
+              loadImage: options?.loadImage ?? true,
+            ),
           );
         }
 
@@ -108,7 +117,10 @@ class AudioScanner {
             // Add to list.
             _scanStreamSink.add(entry.path);
             list.add(
-              await _metadataService.readMetadata(entry.path, loadImage: true),
+              await _metadataService.readMetadata(
+                entry.path,
+                loadImage: options?.loadImage ?? true,
+              ),
             );
 
             /// Short return list to reduce memory use.

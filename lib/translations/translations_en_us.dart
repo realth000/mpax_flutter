@@ -74,4 +74,5 @@ const Map<String, String> translationEnUs = <String, String>{
   'Play and Pause': 'Play and Pause',
   'Play Previous': 'Play Previous',
   'Play Next': 'Play Next',
+  'Load image in audio metadata tags': 'Load image in audio metadata tags',
 };
