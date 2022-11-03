@@ -35,6 +35,7 @@ dependencies:
   # sudo apt install libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev
   audioplayers: ^1.1.1
   badges: ^2.0.3
+  ffi: ^2.0.1
   file_picker: ^5.1.0
   flex_color_scheme: ^6.0.1
   flutter:
