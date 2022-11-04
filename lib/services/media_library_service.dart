@@ -180,6 +180,11 @@ class MediaLibraryService extends GetxService {
       await txn.execute('DROP TABLE IF EXISTS ${playlistModel.tableName}');
       // Not using truncate because table name may change like what qt version
       // does.
+      await txn.delete(
+        infoTableName,
+        where: 'table_name = ?',
+        whereArgs: <String>[playlistModel.tableName],
+      );
       await txn.execute(
         'CREATE TABLE  ${playlistModel.tableName}($playlistTableColumns)',
       );
