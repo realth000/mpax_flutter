@@ -263,7 +263,19 @@ class MediaMetadataDialog extends StatelessWidget {
     }
     if (playContent.length > 0) {
       _addSpace();
-      _addReadonlyProperty('${playContent.length}', 'Length');
+      _addReadonlyProperty('${playContent.length} s', 'Length'.tr);
+    }
+    if (playContent.sampleRate > 0) {
+      _addSpace();
+      _addReadonlyProperty('${playContent.sampleRate} Hz', 'Sample Rate'.tr);
+    }
+    if (playContent.bitRate > 0) {
+      _addSpace();
+      _addReadonlyProperty('${playContent.bitRate} kbps', 'Bitrate'.tr);
+    }
+    if (playContent.channels > 0) {
+      _addSpace();
+      _addReadonlyProperty('${playContent.channels}', 'Channels'.tr);
     }
     return widgetList;
   }

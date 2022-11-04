@@ -74,4 +74,8 @@ const Map<String, String> translationZhCn = <String, String>{
   'Play Previous': '播放上一首',
   'Play Next': '播放下一首',
   'Load image in audio metadata tags': '读取音频文件中的图片标签',
+  'Length': '时长',
+  'Sample Rate': '采样率',
+  'Bitrate': '比特率',
+  'Channels': '声道',
 };
