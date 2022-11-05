@@ -1,12 +1,12 @@
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mpax_flutter/desktop/pages/scaffold_pages.dart';
 
 import '../themes/app_themes.dart';
 import '../widgets/app_player_widget.dart';
 import 'components/navigation_bar/navigation_bar_view.dart';
 import 'components/window_bar_buttons/window_bar_buttons.dart';
+import 'pages/scaffold_pages.dart';
 import 'services/scaffold_service.dart';
 
 /// Main scaffold use in desktop.

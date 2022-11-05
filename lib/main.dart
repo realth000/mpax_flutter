@@ -28,12 +28,10 @@ void main() async {
 
   if (GetPlatform.isDesktop) {
     doWhenWindowReady(() {
-      doWhenWindowReady(() {
-        appWindow.size = const Size(1024, 768);
-        appWindow.minSize = const Size(1024, 768);
-        appWindow.alignment = Alignment.center;
-        appWindow.show();
-      });
+      appWindow.minSize = const Size(1024, 768);
+      appWindow.size = const Size(1024, 768);
+      appWindow.alignment = Alignment.center;
+      appWindow.show();
     });
   }
 }

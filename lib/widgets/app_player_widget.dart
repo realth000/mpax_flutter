@@ -257,51 +257,42 @@ class MPaxPlayerWidget extends GetView<PlayerService> {
         ),
       );
 
-  Widget _buildControlRow() => ConstrainedBox(
-        constraints: BoxConstraints(maxHeight: widgetHeight / 2),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: <Widget>[
-            _buildControlButtons(),
-            const SizedBox(
-              width: 5,
-              height: 5,
+  Widget _buildControlRow() => Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: <Widget>[
+          _buildControlButtons(),
+          const SizedBox(
+            width: 5,
+            height: 5,
+          ),
+          Obx(
+            () => Text(
+              _durationToString(controller.currentPosition.value),
+              maxLines: 1,
             ),
-            Expanded(
-              child: Row(
-                children: <Widget>[
-                  Obx(
-                    () => Text(
-                      _durationToString(controller.currentPosition.value),
-                      maxLines: 1,
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 10,
-                    height: 10,
-                  ),
-                  Expanded(
-                    child: _DesktopProgressWidget(),
-                  ),
-                  const SizedBox(
-                    width: 10,
-                    height: 10,
-                  ),
-                  Obx(
-                    () => Text(
-                      _durationToString(controller.currentDuration.value),
-                      maxLines: 1,
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 15,
-                    height: 15,
-                  ),
-                ],
-              ),
+          ),
+          const SizedBox(
+            width: 10,
+            height: 10,
+          ),
+          Expanded(
+            child: _DesktopProgressWidget(),
+          ),
+          const SizedBox(
+            width: 10,
+            height: 10,
+          ),
+          Obx(
+            () => Text(
+              _durationToString(controller.currentDuration.value),
+              maxLines: 1,
             ),
-          ],
-        ),
+          ),
+          const SizedBox(
+            width: 15,
+            height: 15,
+          ),
+        ],
       );
 
   Widget _buildControlButtons() => Row(
@@ -389,22 +380,19 @@ class MPaxPlayerWidget extends GetView<PlayerService> {
             Expanded(
               child: Column(
                 children: <Widget>[
-                  ConstrainedBox(
-                    constraints: BoxConstraints(maxHeight: widgetHeight / 2),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        // Audio info
-                        Expanded(
-                          child: _buildAudioInfoWidget(context),
-                        ),
-                        const SizedBox(
-                          width: 10,
-                          height: 10,
-                        ),
-                        _buildVolumeController(),
-                      ],
-                    ),
+                  Row(
+                    //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      // Audio info
+                      Expanded(
+                        child: _buildAudioInfoWidget(context),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                        height: 10,
+                      ),
+                      _buildVolumeController(),
+                    ],
                   ),
                   Expanded(
                     child: _buildControlRow(),
