@@ -27,7 +27,7 @@ class MediaLibraryService extends GetxService {
 
   /// Playlist table columns.
   static const playlistTableColumns =
-      'id INT NOT NULL PRIMARY KEY, path TEXT, name TEXT, size INT, '
+      'id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, path TEXT, name TEXT, size INT, '
       'title TEXT, artist TEXT, album_title TEXT, album_artist TEXT, '
       'album_year INT, album_track_count INT, track_number INT, bit_rate INT, '
       'sample_rate INT, genre TEXT, comment TEXT, channels INT, length INT, '
