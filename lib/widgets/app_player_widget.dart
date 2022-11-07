@@ -27,18 +27,10 @@ class _DesktopProgressWidget extends GetView<PlayerService> {
         () => Slider(
           value: controller.currentPosition.value.inSeconds.toDouble(),
           max: (controller.currentDuration.value).inSeconds.toDouble(),
-          onChangeStart: (value) {
-            controller.durationSub.pause();
-            controller.positionSub.pause();
-          },
           onChanged: (value) async {
             await controller.seekToDuration(
               Duration(milliseconds: (value * 1000).toInt()),
             );
-          },
-          onChangeEnd: (value) {
-            controller.durationSub.resume();
-            controller.positionSub.resume();
           },
         ),
       );

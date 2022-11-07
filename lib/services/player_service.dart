@@ -110,19 +110,11 @@ class PlayerService extends GetxService {
   /// If [playHistoryList] clears, reset playHistoryPos to initial value (-1).
   var playHistoryPos = -1;
 
-  /// Current playing audio position stream.
-  late Stream<Duration> positionStream = _player.onPositionChanged;
-
-  /// Current playing audio duration stream.
-  late Stream<Duration?> durationStream = _player.onDurationChanged;
-
   /// Current playing position.
   final currentPosition = Duration.zero.obs;
 
   /// Current duration position.
   final currentDuration = const Duration(seconds: 1).obs;
-  late final StreamSubscription<Duration> positionSub;
-  late final StreamSubscription<Duration?> durationSub;
 
   /// Player volume
   ///
@@ -218,14 +210,14 @@ class PlayerService extends GetxService {
         await seekToAnother(true);
       }
     });
-    positionSub = _player.onPositionChanged.listen((position) {
+    _player.onPositionChanged.listen((position) {
       if (position < Duration.zero) {
         currentPosition.value = Duration.zero;
       } else {
         currentPosition.value = position;
       }
     });
-    durationSub = _player.onDurationChanged.listen((duration) {
+    _player.onDurationChanged.listen((duration) {
       if (duration <= Duration.zero) {
         currentDuration.value = currentPosition.value;
       } else {
