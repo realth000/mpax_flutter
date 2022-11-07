@@ -198,6 +198,10 @@ class _SettingsBodyWidget extends GetView<ConfigService> {
                     value: 'Shift+Alt+←',
                     child: Text('Shift+Alt+←'),
                   ),
+                  PopupMenuItem(
+                    value: 'Ctrl+Alt+V',
+                    child: Text('Ctrl+Alt+V'),
+                  ),
                 ],
                 onSelected: (value) async {
                   if (await Get.find<ShortcutService>()
@@ -224,6 +228,10 @@ class _SettingsBodyWidget extends GetView<ConfigService> {
                   PopupMenuItem(
                     value: 'Shift+Alt+→',
                     child: Text('Shift+Alt+→'),
+                  ),
+                  PopupMenuItem(
+                    value: 'Ctrl+Alt+N',
+                    child: Text('Ctrl+Alt+N'),
                   ),
                 ],
                 onSelected: (value) async {
