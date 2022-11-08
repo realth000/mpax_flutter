@@ -20,18 +20,33 @@ class MediaLibraryService extends GetxService {
   /// Table name of all media table.
   static const allMediaTableName = 'all_media';
 
+  /// Table name of album cover table.
+  static const albumCoverTableName = 'alum_cover_table';
+
   /// Info table columns.
   static const infoTableColumns =
       'id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, sort INT, '
       'playlist_name TEXT, table_name TEXT';
 
   /// Playlist table columns.
+  ///
+  /// Album cover image contains image id in [albumCoverTableName], related album
+  /// cover image value can be found in that table.
+  /// album_cover column did not use foreign key because of compatibility with
+  /// old version apps, this breaking change MUST fix in future.
   static const playlistTableColumns =
       'id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, path TEXT, name TEXT, size INT, '
       'title TEXT, artist TEXT, album_title TEXT, album_artist TEXT, '
       'album_year INT, album_track_count INT, track_number INT, bit_rate INT, '
       'sample_rate INT, genre TEXT, comment TEXT, channels INT, length INT, '
       'album_cover TEXT ';
+
+  /// Album cover table
+  ///
+  /// Save album cover image base64 encoded value here.
+  static const albumCoverTableColumns =
+      'id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, '
+      'album_cover TEXT NOT NULL UNIQUE';
 
   /// A special playlist contains all audio content as the library.
   final List<PlaylistModel> allPlaylist = <PlaylistModel>[].obs;
@@ -133,6 +148,10 @@ class MediaLibraryService extends GetxService {
       );
     }
     final db = await _database;
+    await db.execute(
+      'CREATE TABLE IF NOT EXISTS '
+      '$albumCoverTableName($albumCoverTableColumns)',
+    );
     // Fetch playlist data from database.
     // As created info table if not exists, no exception here.
     final List<Map<String, dynamic>> infoTable = await db.query(infoTableName);
@@ -143,6 +162,60 @@ class MediaLibraryService extends GetxService {
       final List<Map<String, dynamic>> playlistTable =
           await db.query(model.tableName);
       for (final playContent in playlistTable) {
+        // Now the value in [albumCover] column should be the related id in
+        // albumCoverTable, need to get it from albumCoverTable.
+        final albumCoverTableID = playContent['album_cover'];
+        if (albumCoverTableID is int) {
+          final List<Map<String, dynamic>> coverResultList = await db.query(
+            albumCoverTableName,
+            where: 'id = ?',
+            whereArgs: [albumCoverTableID],
+          );
+          if (coverResultList.isEmpty) {
+            continue;
+          }
+          playContent['album_cover'] = coverResultList[0]['album_cover'];
+        } else {
+          // Is string type, should be the base64 encoded value.
+          // Save in album_cover table.
+          final List<Map<String, dynamic>> existList = await db.query(
+            albumCoverTableName,
+            where: 'album_cover = ?',
+            whereArgs: [albumCoverTableID],
+          );
+          if (existList.isEmpty) {
+            // Album cover base64 string not exists in albumCoverTable, save it.
+            final id = await db.insert(
+              albumCoverTableName,
+              <String, dynamic>{
+                'album_cover': albumCoverTableID,
+              },
+              conflictAlgorithm: ConflictAlgorithm.ignore,
+            );
+            // Save album cover id in the playlist model.
+            await db.update(
+              model.tableName,
+              <String, dynamic>{
+                'album_cover': id.toString(),
+              },
+              where: 'path = ?',
+              whereArgs: [playContent['path']],
+              conflictAlgorithm: ConflictAlgorithm.ignore,
+            );
+          } else {
+            // Album cover base64 string exists in albumCoverTable.
+            // Update the album_cover column in playlist table.
+            await db.update(
+              model.tableName,
+              <String, dynamic>{
+                'album_cover': existList[0]['album_cover'],
+              },
+              where: 'path = ?',
+              whereArgs: [playContent['path']],
+              conflictAlgorithm: ConflictAlgorithm.ignore,
+            );
+          }
+        }
         final c = _fromDataMap(playContent);
         model.contentList.add(c);
         if (model.tableName == allMediaTableName) {

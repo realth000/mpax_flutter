@@ -47,6 +47,9 @@ class MediaItemController extends GetxController {
   }
 
   Future<void> _loadAlbumCover() async {
+    if (playContentAlbumCover.isNotEmpty) {
+      return;
+    }
     playContentAlbumCover.value =
         (await Get.find<MetadataService>().readMetadata(
       playContent.value.contentPath,

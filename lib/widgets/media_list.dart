@@ -16,6 +16,7 @@ class MediaList extends StatelessWidget {
     for (final playContent in playlist.contentList) {
       list.add(MediaItemTile(playContent, playlist));
     }
+    //Get.find<MediaLibraryService>().savePlaylist(playlist);
     return list;
   }
 
