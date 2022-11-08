@@ -27,7 +27,7 @@ class MetadataService extends GetxService {
     // Because taglib_ffi can load sample rate, bitrate and ..., but can
     // not handle latin1 parameters, only use in utf8 environment and not need
     // cover images.
-    if (Platform.isWindows || loadImage) {
+    if (Platform.isWindows) {
       late final mg.Metadata? metadata;
       try {
         metadata = await mg.MetadataGod.getMetadata(contentPath);
@@ -50,8 +50,23 @@ class MetadataService extends GetxService {
         if (metadata == null) {
           return PlayContent.fromPath(contentPath);
         }
-        return _applyMetadataFromTL(
-            contentPath, metadata, loadImage, scaleImage);
+        final playContent = await _applyMetadataFromTL(
+          contentPath,
+          metadata,
+          loadImage,
+          scaleImage,
+        );
+        final mgData = await mg.MetadataGod.getMetadata(contentPath);
+        if (mgData == null) {
+          return playContent;
+        }
+        final mgPlayContent = await _applyMetadataFromMG(
+            contentPath, mgData, loadImage, scaleImage);
+        playContent
+          ..albumCover = mgPlayContent.albumCover ?? ''
+          ..albumArtist = mgPlayContent.albumArtist ?? ''
+          ..albumTrackCount = mgPlayContent.albumTrackCount ?? 0;
+        return playContent;
       } on PlatformException {
         return PlayContent.fromPath(contentPath);
       }

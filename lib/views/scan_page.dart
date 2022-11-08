@@ -56,24 +56,24 @@ class _ScanBodyWidget extends StatelessWidget {
                 Text('Skip recorded music files'.tr),
               ],
             ),
-            Row(
-              children: <Widget>[
-                Obx(
-                  () => Checkbox(
-                    value: _controller.loadImage.value,
-                    onChanged: (value) async {
-                      if (value == null) {
-                        return;
-                      }
-                      _controller.loadImage.value = value;
-                      await Get.find<ConfigService>()
-                          .saveBool('ScanLoadImage', value);
-                    },
-                  ),
-                ),
-                Text('Load image in audio metadata tags'.tr),
-              ],
-            ),
+            // Row(
+            //   children: <Widget>[
+            //     Obx(
+            //       () => Checkbox(
+            //         value: _controller.loadImage.value,
+            //         onChanged: (value) async {
+            //           if (value == null) {
+            //             return;
+            //           }
+            //           _controller.loadImage.value = value;
+            //           await Get.find<ConfigService>()
+            //               .saveBool('ScanLoadImage', value);
+            //         },
+            //       ),
+            //     ),
+            //     Text('Load image in audio metadata tags'.tr),
+            //   ],
+            // ),
             ListTile(
               leading: const Icon(Icons.add),
               title: Text('Add directory to scan'.tr),
@@ -131,8 +131,10 @@ class _ScanController extends GetxController {
     }
     searchSkipRecorded.value =
         Get.find<ConfigService>().getBool('ScanSkipRecordedFile') ?? false;
-    loadImage.value =
-        Get.find<ConfigService>().getBool('ScanLoadImage') ?? true;
+    loadImage
+      ..value = Get.find<ConfigService>().getBool('ScanLoadImage') ?? true
+      // Temporarily always enable load image.
+      ..value = true;
   }
 
   final searchSkipRecorded = false.obs;
