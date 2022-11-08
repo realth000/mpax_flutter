@@ -6,7 +6,6 @@ import 'package:path/path.dart' as path;
 
 import '../models/play_content.model.dart';
 import '../models/playlist.model.dart';
-import '../services/metadata_service.dart';
 import '../services/player_service.dart';
 import '../widgets/media_menu.dart';
 import '../widgets/util_widgets.dart';
@@ -14,54 +13,24 @@ import '../widgets/util_widgets.dart';
 /// Controller widget.
 class MediaItemController extends GetxController {
   /// Constructor.
-  MediaItemController(PlayContent playContent, this.model) {
-    this.playContent.value = playContent;
-  }
+  MediaItemController(this.playContent, this.model);
 
   /// Global player service.
   PlayerService playerService = Get.find<PlayerService>();
 
   /// Current audio content.
-  final playContent = PlayContent().obs;
-
-  /// Current audio content album cover image (base64 encoded).
-  ///
-  /// Album cover in mobile media playlist [ListView] is lazy loaded, means
-  /// there is a delay between "get [playContent] from database file" and "load
-  /// album cover image from file", this can help reduce database file size and
-  /// make generating database file costs less time.
-  /// But this also means we should have an extra variable to store the picture
-  /// data to "change" and tell GetX to refresh UI, because [playContent] not
-  /// "changes" if only [playContent.albumCover] changes.
-  /// In future, if need to refresh other info in UI (such as title, artist and
-  /// album), we may need to do the same (use extra variables).
-  final playContentAlbumCover = ''.obs;
+  PlayContent playContent;
 
   /// Current controlling model.
   PlaylistModel model;
 
-  @override
-  Future<void> onInit() async {
-    super.onInit();
-    await _loadAlbumCover();
-  }
-
-  Future<void> _loadAlbumCover() async {
-    playContentAlbumCover.value =
-        (await Get.find<MetadataService>().readMetadata(
-      playContent.value.contentPath,
-      loadImage: true,
-    ))
-            .albumCover;
-  }
-
   /// Tell the player service to play current audio content.
   Future<void> play() async {
-    if (playContent.value.contentPath.isEmpty) {
+    if (playContent.contentPath.isEmpty) {
       // Not play empty path.
       return;
     }
-    await playerService.setCurrentContent(playContent.value, model);
+    await playerService.setCurrentContent(playContent, model);
     await playerService.play();
   }
 }
@@ -69,12 +38,12 @@ class MediaItemController extends GetxController {
 /// Widget for audio content to show in list.
 class MediaItemTile extends StatelessWidget {
   /// Constructor.
-  MediaItemTile(PlayContent playContent, this.model, {super.key}) {
-    _controller = Get.put(
-      MediaItemController(playContent, model),
-      tag: playContent.contentPath,
-    );
+  MediaItemTile(this.playContent, this.model, {super.key}) {
+    _controller = MediaItemController(playContent, model);
   }
+
+  /// Current content.
+  final PlayContent playContent;
 
   /// Controller of current content.
   late final MediaItemController _controller;
@@ -82,26 +51,29 @@ class MediaItemTile extends StatelessWidget {
   /// Playlist of current content.
   final PlaylistModel model;
 
+  Widget _leadingIcon() {
+    if (playContent.albumCover.isEmpty) {
+      return const SizedBox(
+        width: 56,
+        height: 56,
+        child: Icon(Icons.music_note),
+      );
+    }
+    return Image.memory(
+      base64Decode(playContent.albumCover),
+      width: 56,
+      height: 56,
+      isAntiAlias: true,
+    );
+  }
+
   @override
   Widget build(BuildContext context) => ListTile(
-        leading: Obx(
-          () => _controller.playContentAlbumCover.value.isEmpty
-              ? const SizedBox(
-                  width: 56,
-                  height: 56,
-                  child: Icon(Icons.music_note),
-                )
-              : Image.memory(
-                  base64Decode(_controller.playContentAlbumCover.value),
-                  width: 56,
-                  height: 56,
-                  isAntiAlias: true,
-                ),
-        ),
+        leading: ListTileLeading(child: _leadingIcon()),
         title: Text(
-          _controller.playContent.value.title.isEmpty
-              ? path.basename(_controller.playContent.value.contentPath)
-              : _controller.playContent.value.title,
+          playContent.title.isEmpty
+              ? path.basename(playContent.contentPath)
+              : playContent.title,
           maxLines: 2,
           style: const TextStyle(
             fontSize: 15,
@@ -111,17 +83,17 @@ class MediaItemTile extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(
-              _controller.playContent.value.artist,
+              playContent.artist,
               maxLines: 1,
               style: const TextStyle(
                 fontSize: 14,
               ),
             ),
             Text(
-              _controller.playContent.value.albumTitle.isEmpty
-                  ? _controller.playContent.value.contentPath
+              playContent.albumTitle.isEmpty
+                  ? playContent.contentPath
                       .replaceFirst('/storage/emulated/0/', '')
-                  : _controller.playContent.value.albumTitle,
+                  : playContent.albumTitle,
               maxLines: 1,
               style: const TextStyle(
                 fontSize: 14,
@@ -132,16 +104,14 @@ class MediaItemTile extends StatelessWidget {
         trailing: IconButton(
           onPressed: () async {
             final result = await Get.dialog(
-              MediaItemMenu(_controller.playContent.value, _controller.model),
+              MediaItemMenu(_controller.playContent, _controller.model),
             );
             switch (result) {
               case MediaItemMenuActions.play:
                 await _controller.play();
                 break;
               case MediaItemMenuActions.viewMetadata:
-                await Get.dialog(
-                  MediaMetadataDialog(_controller.playContent.value),
-                );
+                await Get.dialog(MediaMetadataDialog(playContent));
             }
           },
           icon: const Icon(Icons.more_horiz),
