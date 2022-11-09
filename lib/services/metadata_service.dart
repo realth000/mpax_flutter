@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter/services.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:get/get.dart';
 import 'package:metadata_god/metadata_god.dart' as mg;
@@ -36,7 +35,7 @@ class MetadataService extends GetxService {
         }
         return _applyMetadataFromMG(
             contentPath, metadata, loadImage, scaleImage);
-      } catch (e) {
+      } on Exception catch (_) {
         // May have ffi exception.
         // Can not read metadata, maybe from m4a files.
         //   Only write basic info.
@@ -45,12 +44,13 @@ class MetadataService extends GetxService {
       }
     } else {
       late final tl.Metadata? metadata;
+      late final PlayContent playContent;
       try {
         metadata = await tl.TagLib(filePath: contentPath).readMetadata();
         if (metadata == null) {
           return PlayContent.fromPath(contentPath);
         }
-        final playContent = await _applyMetadataFromTL(
+        playContent = await _applyMetadataFromTL(
           contentPath,
           metadata,
           loadImage,
@@ -67,8 +67,9 @@ class MetadataService extends GetxService {
           ..albumArtist = mgPlayContent.albumArtist ?? ''
           ..albumTrackCount = mgPlayContent.albumTrackCount ?? 0;
         return playContent;
-      } on PlatformException {
-        return PlayContent.fromPath(contentPath);
+      } on Exception catch (_) {
+        //   TODO: Should print something here.
+        return playContent;
       }
     }
   }
