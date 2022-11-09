@@ -79,4 +79,6 @@ const Map<String, String> translationEnUs = <String, String>{
   'Sample Rate': 'Sample Rate',
   'Bitrate': 'Bitrate',
   'Channels': 'Channels',
+  'App Bottom Height': 'App Bottom Height',
+  'Avoid hovered by navigation bar': 'Avoid hovered by navigation bar',
 };

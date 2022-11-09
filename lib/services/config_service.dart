@@ -17,6 +17,7 @@ const Map<String, Type> configMap = <String, Type>{
   'KeymapPlayPause': String,
   'KeymapPlayPrevious': String,
   'KeymapPlayNext': String,
+  'AppBottomUnderfootHeight': double,
 };
 
 /// Config service for app, globally.
@@ -24,6 +25,10 @@ class ConfigService extends GetxService {
   late final SharedPreferences _config;
 
   static final _configMap = Map.from(configMap);
+
+  /// Store app bottom height value (double) to let other widgets to use.
+  late final appBottomHeight =
+      (getDouble('AppBottomUnderfootHeight') ?? 20).obs;
 
   /// Get the config map contains config name and config type.
   Map get configs => _configMap;

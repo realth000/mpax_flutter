@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../mobile/components/mobile_underfoot.dart';
 import '../services/search_service.dart';
 import '../widgets/media_list_item.dart';
 import '../widgets/util_widgets.dart';
@@ -233,5 +234,7 @@ class SearchPage extends GetView<SearchService> {
                   ),
           ),
         ),
+        bottomNavigationBar:
+            GetPlatform.isMobile ? const MobileUnderfoot() : null,
       );
 }

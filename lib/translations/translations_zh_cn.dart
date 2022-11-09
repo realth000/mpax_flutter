@@ -78,4 +78,6 @@ const Map<String, String> translationZhCn = <String, String>{
   'Sample Rate': '采样率',
   'Bitrate': '比特率',
   'Channels': '声道',
+  'App Bottom Height': '应用底部高度',
+  'Avoid hovered by navigation bar': '防止被导航栏挡住',
 };

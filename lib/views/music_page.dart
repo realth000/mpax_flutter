@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../mobile/components/mobile_underfoot.dart';
 import '../services/player_service.dart';
 import '../widgets/media_list_item.dart';
 
@@ -198,5 +199,7 @@ class MusicPage extends GetView<PlayerService> {
             ],
           ),
         ),
+        bottomNavigationBar:
+            GetPlatform.isMobile ? const MobileUnderfoot() : null,
       );
 }

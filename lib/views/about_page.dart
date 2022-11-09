@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../mobile/components/mobile_underfoot.dart';
 import '../widgets/app_app_bar.dart';
 import '../widgets/app_drawer.dart';
 import '../widgets/app_player_widget.dart';
@@ -22,7 +23,13 @@ class AboutPage extends StatelessWidget {
         ),
         drawer: const MPaxDrawer(),
         body: _AboutPageBodyWidget(),
-        bottomNavigationBar: const MPaxPlayerWidget(),
+        bottomNavigationBar: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            const MPaxPlayerWidget(),
+            if (GetPlatform.isMobile) const MobileUnderfoot(),
+          ],
+        ),
       );
 }
 

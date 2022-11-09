@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../desktop/services/shortcut_service.dart';
+import '../mobile/components/mobile_underfoot.dart';
 import '../services/config_service.dart';
 import '../services/locale_service.dart';
 import '../services/theme_service.dart';
@@ -32,9 +33,15 @@ class SettingsPage extends StatelessWidget {
         appBar: MPaxAppBar(
           title: 'Settings'.tr,
         ),
-        bottomNavigationBar: const MPaxPlayerWidget(),
         drawer: const MPaxDrawer(),
         body: _SettingsBodyWidget(),
+        bottomNavigationBar: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            const MPaxPlayerWidget(),
+            if (GetPlatform.isMobile) MobileUnderfoot(),
+          ],
+        ),
       );
 }
 
@@ -133,6 +140,54 @@ class _SettingsBodyWidget extends GetView<ConfigService> {
               trailing: Obx(() => Text(_localeService.locale.value.tr)),
               onTap: () async => _openLocaleMenu(),
             ),
+            if (GetPlatform.isMobile)
+              ListTile(
+                leading: const ListTileLeading(
+                  child: Icon(Icons.height),
+                ),
+                title: Text('App Bottom Height'.tr),
+                subtitle: Text('Avoid hovered by navigation bar'.tr),
+                trailing: PopupMenuButton<double>(
+                  child: Obx(
+                    () => Text(
+                      controller.appBottomHeight.value.toInt().toString(),
+                    ),
+                  ),
+                  itemBuilder: (context) => const <PopupMenuItem<double>>[
+                    PopupMenuItem(
+                      value: 10,
+                      child: Text('10'),
+                    ),
+                    PopupMenuItem(
+                      value: 20,
+                      child: Text('20'),
+                    ),
+                    PopupMenuItem(
+                      value: 40,
+                      child: Text('40'),
+                    ),
+                    PopupMenuItem(
+                      value: 50,
+                      child: Text('50'),
+                    ),
+                    PopupMenuItem(
+                      value: 60,
+                      child: Text('60'),
+                    ),
+                    PopupMenuItem(
+                      value: 70,
+                      child: Text('70'),
+                    ),
+                  ],
+                  onSelected: (value) async {
+                    controller.appBottomHeight.value = value;
+                    await controller.saveDouble(
+                      'AppBottomUnderfootHeight',
+                      value,
+                    );
+                  },
+                ),
+              ),
           ],
         ),
       );

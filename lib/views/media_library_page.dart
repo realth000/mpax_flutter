@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../mobile/components/mobile_underfoot.dart';
 import '../routes/app_pages.dart';
 import '../services/media_library_service.dart';
 import '../widgets/app_app_bar.dart';
@@ -31,8 +32,14 @@ class MediaLibraryPage extends GetView<MediaLibraryService> {
             ),
           ],
         ),
-        bottomNavigationBar: const MPaxPlayerWidget(),
         drawer: const MPaxDrawer(),
         body: MediaList(controller.allContentModel),
+        bottomNavigationBar: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            const MPaxPlayerWidget(),
+            if (GetPlatform.isMobile) const MobileUnderfoot(),
+          ],
+        ),
       );
 }

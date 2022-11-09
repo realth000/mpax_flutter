@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:path/path.dart' as path;
 
+import '../mobile/components/mobile_underfoot.dart';
 import '../services/config_service.dart';
 import '../services/media_library_service.dart';
 import '../services/metadata_service.dart';
@@ -26,9 +27,15 @@ class ScanPage extends StatelessWidget {
         appBar: MPaxAppBar(
           title: 'Scan music'.tr,
         ),
-        bottomNavigationBar: const MPaxPlayerWidget(),
         drawer: const MPaxDrawer(),
         body: _ScanBodyWidget(),
+        bottomNavigationBar: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            const MPaxPlayerWidget(),
+            if (GetPlatform.isMobile) const MobileUnderfoot(),
+          ],
+        ),
       );
 }
 

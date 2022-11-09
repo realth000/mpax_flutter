@@ -2,6 +2,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../mobile/components/mobile_underfoot.dart';
 import '../models/playlist.model.dart';
 import '../routes/app_pages.dart';
 import '../services/media_library_service.dart';
@@ -115,12 +116,18 @@ class PlaylistPage extends GetView<MediaLibraryService> {
             ),
           ],
         ),
-        bottomNavigationBar: const MPaxPlayerWidget(),
         drawer: const MPaxDrawer(),
         body: Obx(
           () => ListView(
             children: _buildPlaylistList(),
           ),
+        ),
+        bottomNavigationBar: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            const MPaxPlayerWidget(),
+            if (GetPlatform.isMobile) const MobileUnderfoot(),
+          ],
         ),
       );
 }
