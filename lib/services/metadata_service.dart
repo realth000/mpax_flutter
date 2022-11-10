@@ -35,7 +35,7 @@ class MetadataService extends GetxService {
         }
         return _applyMetadataFromMG(
             contentPath, metadata, loadImage, scaleImage);
-      } on Exception catch (_) {
+      } catch (_) {
         // May have ffi exception.
         // Can not read metadata, maybe from m4a files.
         //   Only write basic info.
@@ -67,7 +67,7 @@ class MetadataService extends GetxService {
           ..albumArtist = mgPlayContent.albumArtist ?? ''
           ..albumTrackCount = mgPlayContent.albumTrackCount ?? 0;
         return playContent;
-      } on Exception catch (_) {
+      } catch (_) {
         //   TODO: Should print something here.
         return playContent;
       }
