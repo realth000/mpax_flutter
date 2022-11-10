@@ -8,6 +8,6 @@ class DesktopMediaLibraryPage extends GetView<MediaLibraryService> {
   @override
   Widget build(BuildContext context) => Padding(
         padding: const EdgeInsets.all(10),
-        child: MediaTable(controller.allContentModel),
+        child: Obx(() => MediaTable(controller.allContentModel)),
       );
 }
