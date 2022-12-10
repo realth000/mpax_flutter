@@ -20,12 +20,18 @@ class Metadata {
     required this.bitrate,
     required this.channels,
     required this.length,
+    this.albumArtist,
+    this.albumTotalTrack,
+    this.lyrics,
+    this.albumCover,
   });
 
   final String? title;
   final String? artist;
   final String? album;
+  final String? albumArtist;
   final int? track;
+  final int? albumTotalTrack;
   final int? year;
   final String? genre;
   final String? comment;
@@ -33,6 +39,8 @@ class Metadata {
   final int? bitrate;
   final int? channels;
   final int? length;
+  final String? lyrics;
+  final Uint8List? albumCover;
 }
 
 class TagLib {
@@ -146,5 +154,57 @@ class TagLib {
       print('Failed to read $PlatformException');
     }
     return Isolate.exit(p);
+  }
+
+  Future<Metadata?> readMetadataEx() async {
+    if (filePath.isEmpty) {
+      return null;
+    }
+    final p = ReceivePort();
+    await Isolate.spawn(_readMetadataEx, p.sendPort);
+    return await p.first as Metadata?;
+  }
+
+  Future<dynamic> _readMetadataEx(SendPort p) async {
+    try {
+      final meipuru = NativeLibrary(
+        Platform.isWindows
+            ? DynamicLibrary.open('libMeipuruLibC.dll')
+            : DynamicLibrary.open('libMeipuruLibC.so'),
+      );
+      late final Pointer<Char> tagFileName;
+      if (Platform.isWindows) {
+        tagFileName = filePath.toNativeUtf8().cast();
+      } else {
+        tagFileName = filePath.toNativeUtf8().cast();
+      }
+      final originalTag = meipuru.MeipuruReadID3v2Tag(tagFileName);
+      final id3v2Tag = originalTag.cast<MeipuruID3v2Tag>().ref;
+      final metaData = Metadata(
+        title: id3v2Tag.title.cast<Utf8>().toDartString(),
+        artist: id3v2Tag.artist.cast<Utf8>().toDartString(),
+        album: id3v2Tag.albumTitle.cast<Utf8>().toDartString(),
+        track: id3v2Tag.track,
+        year: id3v2Tag.year,
+        genre: id3v2Tag.genre.cast<Utf8>().toDartString(),
+        comment: id3v2Tag.comment.cast<Utf8>().toDartString(),
+        sampleRate: id3v2Tag.sampleRate,
+        bitrate: id3v2Tag.bitRate,
+        channels: id3v2Tag.channels,
+        length: id3v2Tag.length,
+        albumArtist: id3v2Tag.albumArtist.cast<Utf8>().toDartString(),
+        albumTotalTrack: id3v2Tag.albumTotalTrack,
+        lyrics: id3v2Tag.lyrics
+            .cast<Utf8>()
+            .toDartString(length: id3v2Tag.lyricsLength),
+        albumCover: id3v2Tag.albumCover
+            .cast<Uint8>()
+            .asTypedList(id3v2Tag.albumCoverLength),
+      );
+      meipuru.MeipuruFree(originalTag.cast());
+      return Isolate.exit(p, metaData);
+    } catch (e) {
+      print('Error in readMetadataEx: $e');
+    }
   }
 }

@@ -575,6 +575,50 @@ class NativeLibrary {
   late final _taglib_id3v2_set_default_text_encoding =
       _taglib_id3v2_set_default_text_encodingPtr
           .asFunction<void Function(int)>();
+
+  ffi.Pointer<MeipuruTag> MeipuruReadTag(
+    ffi.Pointer<ffi.Char> filePath,
+  ) {
+    return _MeipuruReadTag(
+      filePath,
+    );
+  }
+
+  late final _MeipuruReadTagPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Pointer<MeipuruTag> Function(
+              ffi.Pointer<ffi.Char>)>>('MeipuruReadTag');
+  late final _MeipuruReadTag = _MeipuruReadTagPtr.asFunction<
+      ffi.Pointer<MeipuruTag> Function(ffi.Pointer<ffi.Char>)>();
+
+  ffi.Pointer<MeipuruID3v2Tag> MeipuruReadID3v2Tag(
+    ffi.Pointer<ffi.Char> filePath,
+  ) {
+    return _MeipuruReadID3v2Tag(
+      filePath,
+    );
+  }
+
+  late final _MeipuruReadID3v2TagPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Pointer<MeipuruID3v2Tag> Function(
+              ffi.Pointer<ffi.Char>)>>('MeipuruReadID3v2Tag');
+  late final _MeipuruReadID3v2Tag = _MeipuruReadID3v2TagPtr.asFunction<
+      ffi.Pointer<MeipuruID3v2Tag> Function(ffi.Pointer<ffi.Char>)>();
+
+  void MeipuruFree(
+    ffi.Pointer<ffi.Void> pointer,
+  ) {
+    return _MeipuruFree(
+      pointer,
+    );
+  }
+
+  late final _MeipuruFreePtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Void>)>>(
+          'MeipuruFree');
+  late final _MeipuruFree =
+      _MeipuruFreePtr.asFunction<void Function(ffi.Pointer<ffi.Void>)>();
 }
 
 /// [ TagLib C Binding ]
@@ -618,4 +662,92 @@ abstract class TagLib_ID3v2_Encoding {
   static const int TagLib_ID3v2_UTF16 = 1;
   static const int TagLib_ID3v2_UTF16BE = 2;
   static const int TagLib_ID3v2_UTF8 = 3;
+}
+
+class MeipuruTag extends ffi.Struct {
+  external ffi.Pointer<ffi.Char> filePath;
+
+  external ffi.Pointer<ffi.Char> fileName;
+
+  external ffi.Pointer<ffi.Char> title;
+
+  external ffi.Pointer<ffi.Char> artist;
+
+  external ffi.Pointer<ffi.Char> albumTitle;
+
+  external ffi.Pointer<ffi.Char> albumArtist;
+
+  @ffi.UnsignedInt()
+  external int year;
+
+  @ffi.UnsignedInt()
+  external int track;
+
+  @ffi.Int()
+  external int albumTotalTrack;
+
+  external ffi.Pointer<ffi.Char> genre;
+
+  external ffi.Pointer<ffi.Char> comment;
+
+  @ffi.Int()
+  external int bitRate;
+
+  @ffi.Int()
+  external int sampleRate;
+
+  @ffi.Int()
+  external int channels;
+
+  @ffi.Int()
+  external int length;
+}
+
+class MeipuruID3v2Tag extends ffi.Struct {
+  external ffi.Pointer<ffi.Char> filePath;
+
+  external ffi.Pointer<ffi.Char> fileName;
+
+  external ffi.Pointer<ffi.Char> title;
+
+  external ffi.Pointer<ffi.Char> artist;
+
+  external ffi.Pointer<ffi.Char> albumTitle;
+
+  external ffi.Pointer<ffi.Char> albumArtist;
+
+  @ffi.UnsignedInt()
+  external int year;
+
+  @ffi.UnsignedInt()
+  external int track;
+
+  @ffi.Int()
+  external int albumTotalTrack;
+
+  external ffi.Pointer<ffi.Char> genre;
+
+  external ffi.Pointer<ffi.Char> comment;
+
+  @ffi.Int()
+  external int bitRate;
+
+  @ffi.Int()
+  external int sampleRate;
+
+  @ffi.Int()
+  external int channels;
+
+  @ffi.Int()
+  external int length;
+
+  external ffi.Pointer<ffi.Char> lyrics;
+
+  @ffi.UnsignedLong()
+  external int lyricsLength;
+
+  external ffi.Pointer<ffi.Char> albumCover;
+
+  @ffi.UnsignedInt()
+  external int albumCoverLength;
 }

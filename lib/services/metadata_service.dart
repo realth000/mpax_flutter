@@ -46,7 +46,7 @@ class MetadataService extends GetxService {
       late final tl.Metadata? metadata;
       late final PlayContent playContent;
       try {
-        metadata = await tl.TagLib(filePath: contentPath).readMetadata();
+        metadata = await tl.TagLib(filePath: contentPath).readMetadataEx();
         if (metadata == null) {
           return PlayContent.fromPath(contentPath);
         }
@@ -56,20 +56,20 @@ class MetadataService extends GetxService {
           loadImage,
           scaleImage,
         );
-        final mgData = await mg.MetadataGod.getMetadata(contentPath);
-        if (mgData == null) {
-          return playContent;
-        }
-        final mgPlayContent = await _applyMetadataFromMG(
-            contentPath, mgData, loadImage, scaleImage);
-        playContent
-          ..albumCover = mgPlayContent.albumCover ?? ''
-          ..albumArtist = mgPlayContent.albumArtist ?? ''
-          ..albumTrackCount = mgPlayContent.albumTrackCount ?? 0;
+        // final mgData = await mg.MetadataGod.getMetadata(contentPath);
+        // if (mgData == null) {
+        //   return playContent;
+        // }
+        // final mgPlayContent = await _applyMetadataFromMG(
+        //     contentPath, mgData, loadImage, scaleImage);
+        // playContent
+        //   ..albumCover = mgPlayContent.albumCover ?? ''
+        //   ..albumArtist = mgPlayContent.albumArtist ?? ''
+        //   ..albumTrackCount = mgPlayContent.albumTrackCount ?? 0;
         return playContent;
       } catch (_) {
         //   TODO: Should print something here.
-        return playContent;
+        return PlayContent.fromPath(contentPath);
       }
     }
   }
@@ -182,20 +182,28 @@ class MetadataService extends GetxService {
       playContent.length = metadata.length!;
     }
 
-    //  if (metadata.picture == null || !loadImage) {
-    //     return playContent;
-    //  }
+    if (metadata.albumTotalTrack != 0) {
+      playContent.albumTrackCount = metadata.albumTotalTrack!;
+    }
 
-    //   if (scaleImage && GetPlatform.isMobile) {
-    //     final tmpList = await FlutterImageCompress.compressWithList(
-    //       metadata.picture!.data,
-    //       minWidth: 120,
-    //       minHeight: 120,
-    //     );
-    //     playContent.albumCover = base64Encode(tmpList);
-    //   } else if (!scaleImage) {
-    //     playContent.albumCover = base64Encode(metadata.picture!.data);
-    //   }
+    if (metadata.albumArtist != null) {
+      playContent.albumArtist = metadata.albumArtist!;
+    }
+
+    if (metadata.albumCover == null || !loadImage) {
+      return playContent;
+    }
+
+    if (scaleImage && GetPlatform.isMobile) {
+      final tmpList = await FlutterImageCompress.compressWithList(
+        metadata.albumCover!,
+        minWidth: 120,
+        minHeight: 120,
+      );
+      playContent.albumCover = base64Encode(tmpList);
+    } else if (!scaleImage) {
+      playContent.albumCover = base64Encode(metadata.albumCover!);
+    }
     return playContent;
   }
 
