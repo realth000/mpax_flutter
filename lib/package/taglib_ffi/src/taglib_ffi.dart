@@ -169,7 +169,7 @@ class TagLib {
     try {
       final meipuru = NativeLibrary(
         Platform.isWindows
-            ? DynamicLibrary.open('libMeipuruLibC.dll')
+            ? DynamicLibrary.open('MeipuruLibC.dll')
             : DynamicLibrary.open('libMeipuruLibC.so'),
       );
       late final Pointer<Char> tagFileName;
@@ -180,6 +180,9 @@ class TagLib {
       }
       final originalTag = meipuru.MeipuruReadID3v2Tag(tagFileName);
       final id3v2Tag = originalTag.cast<MeipuruID3v2Tag>().ref;
+      print('AAAA reading ${id3v2Tag.fileName.cast<Utf8>().toDartString()}');
+      print('AAAA lyric length=${id3v2Tag.lyricsLength}');
+      print('AAAA albumCover length=${id3v2Tag.albumCoverLength}');
       final metaData = Metadata(
         title: id3v2Tag.title.cast<Utf8>().toDartString(),
         artist: id3v2Tag.artist.cast<Utf8>().toDartString(),
@@ -197,9 +200,12 @@ class TagLib {
         lyrics: id3v2Tag.lyrics
             .cast<Utf8>()
             .toDartString(length: id3v2Tag.lyricsLength),
-        albumCover: id3v2Tag.albumCover
-            .cast<Uint8>()
-            .asTypedList(id3v2Tag.albumCoverLength),
+        albumCover: id3v2Tag.albumCoverLength >= 0 &&
+                id3v2Tag.albumCoverLength <= 1073741823
+            ? id3v2Tag.albumCover
+                .cast<Uint8>()
+                .asTypedList(id3v2Tag.albumCoverLength)
+            : null,
       );
       meipuru.MeipuruFree(originalTag.cast());
       return Isolate.exit(p, metaData);

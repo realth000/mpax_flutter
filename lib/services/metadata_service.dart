@@ -26,7 +26,7 @@ class MetadataService extends GetxService {
     // Because taglib_ffi can load sample rate, bitrate and ..., but can
     // not handle latin1 parameters, only use in utf8 environment and not need
     // cover images.
-    if (Platform.isWindows) {
+    if (Platform.isWindows && false) {
       late final mg.Metadata? metadata;
       try {
         metadata = await mg.MetadataGod.getMetadata(contentPath);
