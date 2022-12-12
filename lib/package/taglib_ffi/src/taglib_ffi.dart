@@ -1,7 +1,9 @@
+import 'dart:convert';
 import 'dart:ffi';
 import 'dart:io';
 import 'dart:isolate';
 
+import 'package:charset/charset.dart' as charset;
 import 'package:ffi/ffi.dart';
 import 'package:flutter/services.dart';
 
@@ -40,7 +42,7 @@ class Metadata {
   final int? channels;
   final int? length;
   final String? lyrics;
-  final Uint8List? albumCover;
+  final String? albumCover;
 }
 
 class TagLib {
@@ -175,14 +177,25 @@ class TagLib {
       late final Pointer<Char> tagFileName;
       if (Platform.isWindows) {
         tagFileName = filePath.toNativeUtf8().cast();
+        // try {
+        //   final locale = await Get.find<LocaleService>().getLocale();
+        //   print('AAAA LOCALE: ${locale}');
+        //   if (locale.languageCode == 'zh' && locale.countryCode == 'CN') {
+        //     //if (locale != null && locale == 'zh_CN') {
+        //     // tagFileName = filePath.toNativeGbk().cast();
+        //     tagFileName = filePath.toNativeUtf8().cast();
+        //   } else {
+        //     tagFileName = filePath.toNativeUtf8().cast();
+        //   }
+        // } catch (e) {
+        //   print('Error in _readMetadataEx getting tagFileName: $e');
+        //   tagFileName = filePath.toNativeUtf8().cast();
+        // }
       } else {
         tagFileName = filePath.toNativeUtf8().cast();
       }
       final originalTag = meipuru.MeipuruReadID3v2Tag(tagFileName);
       final id3v2Tag = originalTag.cast<MeipuruID3v2Tag>().ref;
-      print('AAAA reading ${id3v2Tag.fileName.cast<Utf8>().toDartString()}');
-      print('AAAA lyric length=${id3v2Tag.lyricsLength}');
-      print('AAAA albumCover length=${id3v2Tag.albumCoverLength}');
       final metaData = Metadata(
         title: id3v2Tag.title.cast<Utf8>().toDartString(),
         artist: id3v2Tag.artist.cast<Utf8>().toDartString(),
@@ -200,11 +213,8 @@ class TagLib {
         lyrics: id3v2Tag.lyrics
             .cast<Utf8>()
             .toDartString(length: id3v2Tag.lyricsLength),
-        albumCover: id3v2Tag.albumCoverLength >= 0 &&
-                id3v2Tag.albumCoverLength <= 1073741823
-            ? id3v2Tag.albumCover
-                .cast<Uint8>()
-                .asTypedList(id3v2Tag.albumCoverLength)
+        albumCover: id3v2Tag.albumCoverLength > 0
+            ? id3v2Tag.albumCover.cast<Utf8>().toDartString()
             : null,
       );
       meipuru.MeipuruFree(originalTag.cast());
@@ -212,5 +222,26 @@ class TagLib {
     } catch (e) {
       print('Error in readMetadataEx: $e');
     }
+  }
+}
+
+/// Convert extension for Windows.
+extension StringTagLibPointer on String {
+  /// To Latin1 FFI pointer method.
+  Pointer<Uint8> toNativeLatin1({Allocator allocator = malloc}) {
+    final units = latin1.encode(this);
+    final result = allocator<Uint8>(units.length + 1);
+    final nativeString = result.asTypedList(units.length + 1)..setAll(0, units);
+    nativeString[units.length] = 0;
+    return result.cast();
+  }
+
+  /// To GBK FFI pointer method.
+  Pointer<Uint8> toNativeGbk({Allocator allocator = malloc}) {
+    final units = charset.gbk.encode(this);
+    final result = allocator<Uint8>(units.length + 1);
+    final nativeString = result.asTypedList(units.length + 1)..setAll(0, units);
+    nativeString[units.length] = 0;
+    return result.cast();
   }
 }

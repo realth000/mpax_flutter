@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:devicelocale/devicelocale.dart' as deviceLocale;
 import 'package:get/get.dart';
 
 import 'config_service.dart';
@@ -38,6 +39,10 @@ class LocaleService extends GetxService {
     }
     return fallbackLocale;
   }
+
+  /// Get system locale.
+  static Future<String?> getSystemLocale() async =>
+      deviceLocale.Devicelocale.currentLocale;
 
   /// Change locale, if [localeName] is valid, change to that locale, otherwise
   /// auto changes.

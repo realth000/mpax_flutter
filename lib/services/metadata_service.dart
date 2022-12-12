@@ -26,7 +26,7 @@ class MetadataService extends GetxService {
     // Because taglib_ffi can load sample rate, bitrate and ..., but can
     // not handle latin1 parameters, only use in utf8 environment and not need
     // cover images.
-    if (Platform.isWindows && false) {
+    if (Platform.isWindows) {
       late final mg.Metadata? metadata;
       try {
         metadata = await mg.MetadataGod.getMetadata(contentPath);
@@ -34,7 +34,11 @@ class MetadataService extends GetxService {
           return PlayContent.fromPath(contentPath);
         }
         return _applyMetadataFromMG(
-            contentPath, metadata, loadImage, scaleImage);
+          contentPath,
+          metadata,
+          loadImage,
+          scaleImage,
+        );
       } catch (_) {
         // May have ffi exception.
         // Can not read metadata, maybe from m4a files.
@@ -135,8 +139,12 @@ class MetadataService extends GetxService {
   }
 
   /// Fetch metadata with package taglib_ffi.
-  Future<PlayContent> _applyMetadataFromTL(String contentPath,
-      tl.Metadata metadata, bool loadImage, bool scaleImage) async {
+  Future<PlayContent> _applyMetadataFromTL(
+    String contentPath,
+    tl.Metadata metadata,
+    bool loadImage,
+    bool scaleImage,
+  ) async {
     final playContent = PlayContent.fromPath(contentPath);
     if (metadata.artist != null) {
       playContent.artist = metadata.artist!;
@@ -194,16 +202,21 @@ class MetadataService extends GetxService {
       return playContent;
     }
 
-    if (scaleImage && GetPlatform.isMobile) {
-      final tmpList = await FlutterImageCompress.compressWithList(
-        metadata.albumCover!,
-        minWidth: 120,
-        minHeight: 120,
-      );
-      playContent.albumCover = base64Encode(tmpList);
-    } else if (!scaleImage) {
-      playContent.albumCover = base64Encode(metadata.albumCover!);
+    if (false) {
+      playContent.albumCover = metadata.albumCover!;
+    } else {
+      if (scaleImage && GetPlatform.isMobile) {
+        final tmpList = await FlutterImageCompress.compressWithList(
+          base64Decode(metadata.albumCover!),
+          minWidth: 120,
+          minHeight: 120,
+        );
+        playContent.albumCover = base64Encode(tmpList);
+      } else if (!scaleImage) {
+        playContent.albumCover = metadata.albumCover!;
+      }
     }
+
     return playContent;
   }
 

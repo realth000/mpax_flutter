@@ -227,6 +227,14 @@ class PlayerService extends GetxService {
     // Load configs.
     playMode = _configService.getString('PlayMode') ?? _repeatString;
     await switchPlayMode(playMode);
+    return this;
+  }
+
+  /// Load init media content form config.
+  ///
+  /// Separate this because this step can also be done after UI setup and if
+  /// running too early cause error in other services init.
+  Future<void> loadInitMedia() async {
     final currentMedia = File(_configService.getString('CurrentMedia') ?? '');
     if (currentMedia.existsSync()) {
       // FIXME: Add current playlist config save and load.
@@ -242,7 +250,6 @@ class PlayerService extends GetxService {
         }
       }
     }
-    return this;
   }
 
   /// Change current playing audio to given [playContent], and current playing
