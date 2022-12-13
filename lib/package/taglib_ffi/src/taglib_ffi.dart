@@ -221,6 +221,7 @@ class TagLib {
       return Isolate.exit(p, metaData);
     } catch (e) {
       print('Error in readMetadataEx: $e');
+      return Isolate.exit(p, null);
     }
   }
 }
