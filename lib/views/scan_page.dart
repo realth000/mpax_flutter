@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -252,25 +250,25 @@ class _ScanTargetItemController extends GetxController {
     update();
   }
 
-  Future<void> scan(String targetPath) async {
-    if (targetPath.isEmpty) {
-      return;
-    }
-    final d = Directory(targetPath);
-    // FileSystemEntity.isFileSync(entry.toString())
-    await for (final entry in d.list(recursive: true, followLinks: false)) {
-      if (entry.statSync().type == FileSystemEntityType.file) {
-        if (!entry.path.endsWith('mp3')) {
-          continue;
-        }
-        // Add to list
-        mediaLibraryService
-            .addContent(await _metadataService.readMetadata(entry.path));
-      } else if (entry.statSync().type == FileSystemEntityType.directory) {
-        await scan(entry.path);
-      }
-    }
-  }
+//  Future<void> scan(String targetPath) async {
+//    if (targetPath.isEmpty) {
+//      return;
+//    }
+//    final d = Directory(targetPath);
+//    // FileSystemEntity.isFileSync(entry.toString())
+//    await for (final entry in d.list(recursive: true, followLinks: false)) {
+//      if (entry.statSync().type == FileSystemEntityType.file) {
+//        if (!entry.path.endsWith('mp3')) {
+//          continue;
+//        }
+//        // Add to list
+//        mediaLibraryService
+//            .addContent(await _metadataService.readMetadata(entry.path));
+//      } else if (entry.statSync().type == FileSystemEntityType.directory) {
+//        await scan(entry.path);
+//      }
+//    }
+//  }
 }
 
 class _ScanTargetItemWidget extends StatelessWidget {

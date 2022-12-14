@@ -42,7 +42,7 @@ class Metadata {
   final int? channels;
   final int? length;
   final String? lyrics;
-  final String? albumCover;
+  final Uint8List? albumCover;
 }
 
 class TagLib {
@@ -195,6 +195,10 @@ class TagLib {
         tagFileName = filePath.toNativeUtf8().cast();
       }
       final originalTag = meipuru.MeipuruReadID3v2Tag(tagFileName);
+      if (originalTag.address == nullptr.address) {
+        print('FFI returned nullptr in meipuru.MeipuruReadID3v2Tag');
+        return Isolate.exit(p);
+      }
       final id3v2Tag = originalTag.cast<MeipuruID3v2Tag>().ref;
       final metaData = Metadata(
         title: id3v2Tag.title.cast<Utf8>().toDartString(),
@@ -214,10 +218,12 @@ class TagLib {
             .cast<Utf8>()
             .toDartString(length: id3v2Tag.lyricsLength),
         albumCover: id3v2Tag.albumCoverLength > 0
-            ? id3v2Tag.albumCover.cast<Utf8>().toDartString()
+            ? id3v2Tag.albumCover
+                .cast<Uint8>()
+                .asTypedList(id3v2Tag.albumCoverLength)
             : null,
       );
-      meipuru.MeipuruFree(originalTag.cast());
+      // meipuru.MeipuruFreeID3v2Tag(originalTag);
       return Isolate.exit(p, metaData);
     } catch (e) {
       print('Error in readMetadataEx: $e');

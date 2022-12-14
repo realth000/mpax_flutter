@@ -98,11 +98,12 @@ class AudioScanner {
         }
 
         /// Short return list to reduce memory use.
-        if (list.length >= 10) {
+        if (list.length >= 200) {
           _mediaLibraryService.addContentList(list);
           if (targetModel != null) {
             targetModel!.addContentList(list);
           }
+          await _mediaLibraryService.saveAllPlaylist();
           _scannedCount += list.length;
           list.clear();
         }

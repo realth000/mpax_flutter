@@ -203,17 +203,17 @@ class MetadataService extends GetxService {
     }
 
     if (false) {
-      playContent.albumCover = metadata.albumCover!;
+      playContent.albumCover = base64Encode(metadata.albumCover!);
     } else {
       if (scaleImage && GetPlatform.isMobile) {
         final tmpList = await FlutterImageCompress.compressWithList(
-          base64Decode(metadata.albumCover!),
+          metadata.albumCover!,
           minWidth: 120,
           minHeight: 120,
         );
         playContent.albumCover = base64Encode(tmpList);
       } else if (!scaleImage) {
-        playContent.albumCover = metadata.albumCover!;
+        playContent.albumCover = base64Encode(metadata.albumCover!);
       }
     }
 

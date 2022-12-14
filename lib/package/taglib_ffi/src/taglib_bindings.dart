@@ -606,19 +606,33 @@ class NativeLibrary {
   late final _MeipuruReadID3v2Tag = _MeipuruReadID3v2TagPtr.asFunction<
       ffi.Pointer<MeipuruID3v2Tag> Function(ffi.Pointer<ffi.Char>)>();
 
-  void MeipuruFree(
-    ffi.Pointer<ffi.Void> pointer,
+  void MeipuruFreeTag(
+    ffi.Pointer<MeipuruTag> tag,
   ) {
-    return _MeipuruFree(
-      pointer,
+    return _MeipuruFreeTag(
+      tag,
     );
   }
 
-  late final _MeipuruFreePtr =
-      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Void>)>>(
-          'MeipuruFree');
-  late final _MeipuruFree =
-      _MeipuruFreePtr.asFunction<void Function(ffi.Pointer<ffi.Void>)>();
+  late final _MeipuruFreeTagPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<MeipuruTag>)>>(
+          'MeipuruFreeTag');
+  late final _MeipuruFreeTag =
+      _MeipuruFreeTagPtr.asFunction<void Function(ffi.Pointer<MeipuruTag>)>();
+
+  void MeipuruFreeID3v2Tag(
+    ffi.Pointer<MeipuruID3v2Tag> id3V2Tag,
+  ) {
+    return _MeipuruFreeID3v2Tag(
+      id3V2Tag,
+    );
+  }
+
+  late final _MeipuruFreeID3v2TagPtr = _lookup<
+          ffi.NativeFunction<ffi.Void Function(ffi.Pointer<MeipuruID3v2Tag>)>>(
+      'MeipuruFreeID3v2Tag');
+  late final _MeipuruFreeID3v2Tag = _MeipuruFreeID3v2TagPtr.asFunction<
+      void Function(ffi.Pointer<MeipuruID3v2Tag>)>();
 }
 
 /// [ TagLib C Binding ]

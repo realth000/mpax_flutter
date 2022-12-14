@@ -9,11 +9,11 @@ extern "C" {
 #ifdef MEIPURU_LIB
 #if (defined(_WIN32) || defined(_WIN64))
 #define MEIPURU_EXPORT __declspec(dllexport)
-#else
-#define MEIPURU_EXPORT __declspec(dllimport)
-#endif // MSVC
 #elif defined(__GNUC__)
-#define MEIPURU_EXPORT __attribute__ ((visibility("default")))
+#define MEIPURU_EXPORT __attribute__((visibility("default")))
+#else
+#define MEIPURU_EXPORT
+#endif
 #else
 #define MEIPURU_EXPORT
 #endif
@@ -63,10 +63,12 @@ MEIPURU_EXPORT MeipuruTag *MeipuruReadTag(const char *filePath);
 
 MEIPURU_EXPORT MeipuruID3v2Tag *MeipuruReadID3v2Tag(const char *filePath);
 
-MEIPURU_EXPORT void MeipuruFree(void *pointer);
+MEIPURU_EXPORT void MeipuruFreeTag(MeipuruTag *tag);
+
+MEIPURU_EXPORT void MeipuruFreeID3v2Tag(MeipuruID3v2Tag *id3V2Tag);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif //MEIPURU_BINDING_H
+#endif//MEIPURU_BINDING_H
