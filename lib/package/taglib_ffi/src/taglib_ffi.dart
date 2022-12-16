@@ -168,8 +168,10 @@ class TagLib {
   }
 
   Future<dynamic> _readMetadataEx(SendPort p) async {
+    Pointer<MeipuruID3v2Tag> originalTag = nullptr;
+    late final NativeLibrary meipuru;
     try {
-      final meipuru = NativeLibrary(
+      meipuru = NativeLibrary(
         Platform.isWindows
             ? DynamicLibrary.open('MeipuruLibC.dll')
             : DynamicLibrary.open('libMeipuruLibC.so'),
@@ -194,7 +196,7 @@ class TagLib {
       } else {
         tagFileName = filePath.toNativeUtf8().cast();
       }
-      final originalTag = meipuru.MeipuruReadID3v2Tag(tagFileName);
+      originalTag = meipuru.MeipuruReadID3v2Tag(tagFileName);
       if (originalTag.address == nullptr.address) {
         print('FFI returned nullptr in meipuru.MeipuruReadID3v2Tag');
         return Isolate.exit(p);
@@ -223,9 +225,12 @@ class TagLib {
                 .asTypedList(id3v2Tag.albumCoverLength)
             : null,
       );
-      // meipuru.MeipuruFreeID3v2Tag(originalTag);
+      meipuru.MeipuruFreeID3v2Tag(originalTag);
       return Isolate.exit(p, metaData);
     } catch (e) {
+      if (originalTag != nullptr) {
+        meipuru.MeipuruFreeID3v2Tag(originalTag);
+      }
       print('Error in readMetadataEx: $e');
       return Isolate.exit(p, null);
     }
