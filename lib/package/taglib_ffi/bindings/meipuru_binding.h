@@ -19,44 +19,44 @@ extern "C" {
 #endif
 
 typedef struct {
-    const char *filePath;
-    const char *fileName;
-    const char *title;
-    const char *artist;
-    const char *albumTitle;
-    const char *albumArtist;
-    const unsigned int year;
-    const unsigned int track;
-    const int albumTotalTrack;
-    const char *genre;
-    const char *comment;
-    const int bitRate;
-    const int sampleRate;
-    const int channels;
-    const int length;
+    char *filePath;
+    char *fileName;
+    char *title;
+    char *artist;
+    char *albumTitle;
+    char *albumArtist;
+    unsigned int year;
+    unsigned int track;
+    int albumTotalTrack;
+    char *genre;
+    char *comment;
+    int bitRate;
+    int sampleRate;
+    int channels;
+    int length;
 } MeipuruTag;
 
 
 typedef struct {
-    const char *filePath;
-    const char *fileName;
-    const char *title;
-    const char *artist;
-    const char *albumTitle;
-    const char *albumArtist;
-    const unsigned int year;
-    const unsigned int track;
-    const int albumTotalTrack;
-    const char *genre;
-    const char *comment;
-    const int bitRate;
-    const int sampleRate;
-    const int channels;
-    const int length;
-    const char *lyrics;
-    const unsigned long lyricsLength;
-    const char *albumCover;
-    const unsigned int albumCoverLength;
+    char *filePath;
+    char *fileName;
+    char *title;
+    char *artist;
+    char *albumTitle;
+    char *albumArtist;
+    unsigned int year;
+    unsigned int track;
+    int albumTotalTrack;
+    char *genre;
+    char *comment;
+    int bitRate;
+    int sampleRate;
+    int channels;
+    int length;
+    char *lyrics;
+    unsigned long lyricsLength;
+    char *albumCover;
+    unsigned int albumCoverLength;
 } MeipuruID3v2Tag;
 
 MEIPURU_EXPORT MeipuruTag *MeipuruReadTag(const char *filePath);

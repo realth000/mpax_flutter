@@ -216,9 +216,11 @@ class TagLib {
         length: id3v2Tag.length,
         albumArtist: id3v2Tag.albumArtist.cast<Utf8>().toDartString(),
         albumTotalTrack: id3v2Tag.albumTotalTrack,
-        lyrics: id3v2Tag.lyrics
-            .cast<Utf8>()
-            .toDartString(length: id3v2Tag.lyricsLength),
+        lyrics: id3v2Tag.lyricsLength > 0
+            ? id3v2Tag.lyrics
+                .cast<Utf8>()
+                .toDartString(length: id3v2Tag.lyricsLength)
+            : null,
         albumCover: id3v2Tag.albumCoverLength > 0
             ? id3v2Tag.albumCover
                 .cast<Uint8>()
