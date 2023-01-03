@@ -178,7 +178,7 @@ class TagLib {
       );
       late final Pointer<Char> tagFileName;
       if (Platform.isWindows) {
-        tagFileName = filePath.toNativeUtf8().cast();
+        tagFileName = filePath.toNativeGbk().cast();
         // try {
         //   final locale = await Get.find<LocaleService>().getLocale();
         //   print('AAAA LOCALE: ${locale}');
@@ -251,11 +251,11 @@ extension StringTagLibPointer on String {
   }
 
   /// To GBK FFI pointer method.
-  Pointer<Uint8> toNativeGbk({Allocator allocator = malloc}) {
+  Pointer<Utf16> toNativeGbk({Allocator allocator = malloc}) {
     final units = charset.gbk.encode(this);
     final result = allocator<Uint8>(units.length + 1);
     final nativeString = result.asTypedList(units.length + 1)..setAll(0, units);
     nativeString[units.length] = 0;
-    return result.cast();
+    return result.cast<Utf16>();
   }
 }
