@@ -7,6 +7,7 @@ import '../../../services/media_library_service.dart';
 import '../../../utils/scan_target_controller.dart';
 import '../../../widgets/add_playlist_widget.dart';
 import '../../../widgets/util_widgets.dart';
+import '../../components/media_table/media_table_controller.dart';
 import '../../components/media_table/media_table_view.dart';
 import 'playlist_page_controller.dart';
 
@@ -38,6 +39,14 @@ class DesktopPlaylistPage extends StatelessWidget {
     );
     if (await scanner.scan() > 0) {
       await _libraryService.savePlaylist(playlistModel);
+    }
+    final tableController = Get.find<MediaTableController>();
+    // Refresh playlist table if current playlist is arg playlistModel.
+    // TODO: Make this not ugly.
+    if (playlistModel.tableName == tableController.playlist.value.tableName) {
+      _controller.currentPlaylist.value = PlaylistModel();
+      _controller.currentPlaylist.value =
+          _libraryService.findPlaylistByTableName(playlistModel.tableName);
     }
   }
 
