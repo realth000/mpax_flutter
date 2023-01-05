@@ -77,6 +77,13 @@ class DesktopPlaylistPage extends StatelessWidget {
                   break;
                 case 2:
                   await _libraryService.removePlaylist(model);
+                  // When going to delete current showing playlist, delete it.
+                  final currentShowingPlaylist =
+                      Get.find<DesktopPlaylistPageController>().currentPlaylist;
+                  if (model.tableName ==
+                      currentShowingPlaylist.value.tableName) {
+                    currentShowingPlaylist.value = PlaylistModel();
+                  }
                   break;
                 default:
                   break;
