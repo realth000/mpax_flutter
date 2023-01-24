@@ -29,16 +29,15 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
-  audio_service: ^0.18.8
-  bitsdojo_window: ^0.1.5
-  charset: ^1.1.0
-  devicelocale: ^0.5.5
-  just_audio: ^0.9.30
   # sudo apt install libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev
-  audioplayers: ^1.1.1
+  audio_service: ^0.18.9
+  audioplayers: ^1.2.0
   badges: ^2.0.3
+  bitsdojo_window: ^0.1.5
+  charset: ^1.1.1
+  devicelocale: ^0.5.5
   ffi: ^2.0.1
-  file_picker: ^5.2.4
+  file_picker: ^5.2.5
   flex_color_scheme: ^6.1.2
   flutter:
     sdk: flutter
@@ -47,16 +46,17 @@ dependencies:
   get: ^4.6.5
   #  id3: ^1.0.0+1
   #  image: ^3.2.0
-  # sudo apt-get install keybinder-3.0
-  # sudo apt install libkeybinder-3.0-0 libkeybinder-3.0-dev
   hotkey_manager: ^0.1.7
+  just_audio: ^0.9.31
   metadata_god: ^0.3.1
   path: ^1.8.2
   path_provider: ^2.0.11
   pluto_grid: ^5.4.9
-  shared_preferences: ^2.0.15
-  sqflite: ^2.2.2
-  url_launcher: ^6.1.7
+  shared_preferences: ^2.0.17
+  # sudo apt-get install keybinder-3.0
+  # sudo apt install libkeybinder-3.0-0 libkeybinder-3.0-dev
+  sqflite: ^2.2.3
+  url_launcher: ^6.1.8
 
 dev_dependencies:
   flutter_launcher_icons: ^0.11.0
