@@ -16,9 +16,9 @@
         <a href="https://github.com/realth000/mpax_flutter/releases">
             <img src="https://img.shields.io/badge/-Linux-313196?&logo=Linux&logoColor=f0f0f0"/></a>
         <a href="https://flutter.dev/">
-            <img src="https://img.shields.io/badge/Flutter-3.3.8-blue?logo=flutter"/></a>
+            <img src="https://img.shields.io/badge/Flutter-3.7.0-blue?logo=flutter"/></a>
         <a href="https://www.dart.org/">
-            <img src="https://img.shields.io/badge/Dart-2.18-blue?logo=dart"/></a>
+            <img src="https://img.shields.io/badge/Dart-2.19-blue?logo=dart"/></a>
         <a href="https://github.com/realth000/mpax_flutter/blob/master/LICENSE">
             <img src="https://img.shields.io/github/license/realth000/mpax_flutter"/></a>
         <a href="https://www.codacy.com/gh/realth000/mpax_flutter/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=realth000/mpax_flutter&amp;utm_campaign=Badge_Grade">
@@ -83,10 +83,13 @@ Run ``flutter build android --verbose``
 ### Windows
 
 1. Run ``flutter build windows --verbose``
-2. Download [sqlite3.dll](https://github.com/tekartik/sqflite/raw/master/sqflite_common_ffi/lib/src/windows/sqlite3.dll) and put in the same folder as the executable.
+2. Download [sqlite3.dll](https://github.com/tekartik/sqflite/raw/master/sqflite_common_ffi/lib/src/windows/sqlite3.dll)
+   and put in the same folder as the executable.
 
 ### Linux
 
-1. Run ``sudo apt install libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libkeybinder-3.0-0 libkeybinder-3.0-dev libsqlite3-0 libsqlite3-dev libtagc0-dev``
+1.
+
+Run ``sudo apt install libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libkeybinder-3.0-0 libkeybinder-3.0-dev libsqlite3-0 libsqlite3-dev libtagc0-dev``
 
 2. Run `` flutter build linux --verbose``
