@@ -1,7 +1,6 @@
 import 'package:get/get.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:sqflite_common/sqlite_api.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 import '../models/play_content.model.dart';
@@ -36,10 +35,10 @@ class MediaLibraryService extends GetxService {
   /// A special playlist contains all audio content as the library.
   final List<PlaylistModel> allPlaylist = <PlaylistModel>[].obs;
 
-  PlaylistModel _allContent = PlaylistModel();
+  final _allContent = PlaylistModel().obs;
 
   /// Return the library.
-  PlaylistModel get allContentModel => _allContent;
+  PlaylistModel get allContentModel => _allContent.value;
 
   // Used for prevent same name playlist.
   String _lastTimeStamp = '';
@@ -48,18 +47,18 @@ class MediaLibraryService extends GetxService {
   late final Future<Database> _database;
 
   /// Return library audio content list.
-  List<PlayContent> get content => _allContent.contentList;
+  List<PlayContent> get content => _allContent.value.contentList;
 
   /// Add audio content to library.
   ///
   /// If duplicate in content path, do nothing and return false.
   bool addContent(PlayContent playContent) {
-    for (final content in _allContent.contentList) {
+    for (final content in _allContent.value.contentList) {
       if (content.contentPath == playContent.contentPath) {
         return false;
       }
     }
-    _allContent.contentList.add(playContent);
+    _allContent.value.contentList.add(playContent);
     return true;
   }
 
@@ -98,8 +97,8 @@ class MediaLibraryService extends GetxService {
 
   /// Clear the library.
   void resetLibrary() {
-    _allContent.contentList.clear();
-    _resetPlaylistModel(_allContent);
+    _allContent.value.contentList.clear();
+    _resetPlaylistModel(_allContent.value);
   }
 
   /// Regenerate the table name and clear all audio contents.
@@ -146,9 +145,9 @@ class MediaLibraryService extends GetxService {
         final c = _fromDataMap(playContent);
         model.contentList.add(c);
         if (model.tableName == allMediaTableName) {
-          _allContent = model;
+          _allContent.value = model;
         } else {
-          _allContent.contentList.add(c);
+          _allContent.value.contentList.add(c);
         }
       }
 
@@ -236,10 +235,10 @@ class MediaLibraryService extends GetxService {
   ///
   /// Call this if any playlist changes.
   Future<void> saveMediaLibrary() async {
-    _allContent
+    _allContent.value
       ..name = allMediaTableName
       ..tableName = allMediaTableName;
-    await _savePlaylist(_allContent);
+    await _savePlaylist(_allContent.value);
   }
 
   /// Save library and all other playlists to database.
@@ -264,8 +263,8 @@ class MediaLibraryService extends GetxService {
 
   /// Return the playlist with the given [tableName].
   PlaylistModel findPlaylistByTableName(String tableName) {
-    if (_allContent.tableName == tableName) {
-      return _allContent;
+    if (_allContent.value.tableName == tableName) {
+      return _allContent.value;
     }
     for (final model in allPlaylist) {
       if (model.tableName == tableName) {
@@ -298,7 +297,7 @@ class MediaLibraryService extends GetxService {
 
   /// Find audio content from library (in memory) with specified file path.
   PlayContent? findPlayContent(String contentPath) =>
-      _allContent.find(contentPath);
+      _allContent.value.find(contentPath);
 
   /// Find audio content from database (on disk) with specified file path.
   ///
@@ -339,9 +338,9 @@ class MediaLibraryService extends GetxService {
       final c = _fromDataMap(playContent);
       model.contentList.add(c);
       if (model.tableName == allMediaTableName) {
-        _allContent = model;
+        _allContent.value = model;
       } else {
-        _allContent.contentList.add(c);
+        _allContent.value.contentList.add(c);
       }
     }
     return model;
