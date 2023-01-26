@@ -31,7 +31,7 @@ class MediaTable extends StatelessWidget {
   final columns = <PlutoColumn>[
     // State row, accept: String.fromCharCode(Icons.play_arrow.codePoint)
     PlutoColumn(
-      title: 'State'.tr,
+      title: '',
       field: 'state',
       type: PlutoColumnType.text(),
       renderer: (rendererContext) => Text(
@@ -41,11 +41,13 @@ class MediaTable extends StatelessWidget {
           fontFamily: 'MaterialIcons',
         ),
       ),
-      width: 80,
+      width: 50,
       enableEditingMode: false,
       enableSorting: false,
       enableRowChecked: true,
-      enableContextMenu: true,
+      enableContextMenu: false,
+      enableColumnDrag: false,
+      enableDropToResize: false,
       enableRowDrag: true,
     ),
     PlutoColumn(
