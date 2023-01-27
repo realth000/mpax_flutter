@@ -49,6 +49,11 @@ dependencies:
   hotkey_manager: ^0.1.7
   just_audio: ^0.9.31
   metadata_god: ^0.3.1
+  on_audio_query:
+    git:
+      url: https://github.com/realth000/on_audio_query
+      ref: b2398fe83489ada28a8a59d8bac39cade2514da9
+      path: on_audio_query
   path: ^1.8.2
   path_provider: ^2.0.11
   pluto_grid: ^5.4.9

@@ -15,6 +15,7 @@ import '../themes/app_themes.dart';
 import '../translations/translations.dart';
 import 'desktop/services/scaffold_service.dart';
 import 'desktop/services/shortcut_service.dart';
+import 'mobile/services/media_query_service.dart';
 import 'services/search_service.dart';
 
 void main() async {
@@ -95,6 +96,10 @@ Future<void> initServices() async {
   await Get.putAsync(() async => ThemeService().init());
   await Get.putAsync(() async => LocaleService().init());
   await Get.putAsync(() async => MetadataService().init());
+  // First initialize [MediaQueryService] and then [MediaLibraryService].
+  if (GetPlatform.isAndroid) {
+    await Get.putAsync(() async => MediaQueryService().init());
+  }
   await Get.putAsync(() async => MediaLibraryService().init());
   if (GetPlatform.isMobile) {
     await Get.putAsync(() async => PlayerService(wrapper: wrapper).init());

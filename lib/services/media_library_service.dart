@@ -3,6 +3,7 @@ import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
+import '../mobile/services/media_query_service.dart';
 import '../models/play_content.model.dart';
 import '../models/playlist.model.dart';
 
@@ -48,6 +49,15 @@ class MediaLibraryService extends GetxService {
 
   /// Return library audio content list.
   List<PlayContent> get content => _allContent.value.contentList;
+
+  /// On use media store on Android, avoid to use tag readers for large mount of
+  /// audios.
+  /// If set to true, only use tag readers for extra information (e.g. bit rate)
+  /// for single audio file and not use sqlite (we do not need such database).
+  /// If set to true, scanning audios should only add audio files to android
+  /// media store.
+  /// Use as an experimental option.
+  final androidOnlyUseMediaStore = true;
 
   /// Add audio content to library.
   ///
@@ -112,6 +122,12 @@ class MediaLibraryService extends GetxService {
   Future<MediaLibraryService> init() async {
     /// Load audio from database.
     if (GetPlatform.isMobile) {
+      if (androidOnlyUseMediaStore) {
+        // Only use Android media store, not use sqlite database.
+        _allContent.value.contentList =
+            await Get.find<MediaQueryService>().allAudioFiles();
+        return this;
+      }
       _database = openDatabase(
         join(await getDatabasesPath(), databaseName),
         onCreate: (db, version) => db.execute(
