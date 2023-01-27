@@ -19,6 +19,13 @@ class MediaQueryService extends GetxService {
   /// Contains all playlist from Android media store.
   late final List<aq.PlaylistModel> playlistList;
 
+  /// Request permissions.
+  Future<void> requestPermissions() async {
+    if (!await _audioQuery.permissionsStatus()) {
+      await _audioQuery.permissionsRequest();
+    }
+  }
+
   /// Reload all kinds of info from Android media store.
   Future<void> reloadAllMedia() async {
     audioList = await _audioQuery.queryAudios();
