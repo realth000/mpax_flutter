@@ -28,9 +28,9 @@ class MediaQueryService extends GetxService {
 
   /// Reload all kinds of info from Android media store.
   Future<void> reloadAllMedia() async {
+    await requestPermissions();
     audioList = await _audioQuery.queryAudios();
     artistList = await _audioQuery.queryArtists();
-    print('AAAA audio[20]: ${audioList[20]}');
     // FIXME: Query albums should not throw exception "null is not sub type of int".
     // albumList = await _audioQuery.queryAlbums();
     playlistList = await _audioQuery.queryPlaylists();
