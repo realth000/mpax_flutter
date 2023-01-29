@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:get/get.dart';
 import 'package:on_audio_query/on_audio_query.dart' as aq;
 
@@ -38,9 +40,16 @@ class MediaQueryService extends GetxService {
 
   /// Return a list of [PlayContent] contains all audios in media store.
   /// Some audio properties should load later by tag readers.
-  Future<List<PlayContent>> allAudioFiles() async {
+  Future<List<PlayContent>> allAudioContents() async {
     final contentList = <PlayContent>[];
     audioList.forEach((audio) async {
+      var cover =
+          await _audioQuery.queryArtwork(audio.id, aq.ArtworkType.AUDIO);
+      cover ??= await _audioQuery.queryArtwork(audio.id, aq.ArtworkType.ALBUM);
+      var coverBase64 = '';
+      if (cover != null && cover.artwork != null) {
+        coverBase64 = base64Encode(cover.artwork!);
+      }
       contentList.add(
         PlayContent.fromData(
           audio.data,
@@ -49,24 +58,25 @@ class MediaQueryService extends GetxService {
           audio.artist ?? '',
           audio.title,
           audio.track ?? 0,
-          0,
           // bitrate
-          '',
-          // albumArtist
-          audio.album ?? '',
           0,
+          // albumArtist
+          '',
+          audio.album ?? '',
           // albumYear
           0,
           // albumTrackCount
-          audio.genre ?? '',
-          '',
-          // comment
           0,
+          audio.genre ?? '',
+          // comment
+          '',
           // sampleRate
           0,
           // channels
+          0,
           audio.duration ?? 0,
-          '', // albumCover
+          // albumCover
+          coverBase64,
         ),
       );
     });

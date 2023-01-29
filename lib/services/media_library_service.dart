@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:on_audio_query/on_audio_query.dart' as aq;
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -37,6 +38,9 @@ class MediaLibraryService extends GetxService {
   final List<PlaylistModel> allPlaylist = <PlaylistModel>[].obs;
 
   final _allContent = PlaylistModel().obs;
+
+  // Save all [AudioModel] from Android media store.
+  var _allAudioModel = <aq.AudioModel>[];
 
   /// Return the library.
   PlaylistModel get allContentModel => _allContent.value;
@@ -123,9 +127,11 @@ class MediaLibraryService extends GetxService {
     /// Load audio from database.
     if (GetPlatform.isMobile) {
       if (androidOnlyUseMediaStore) {
+        _allAudioModel = Get.find<MediaQueryService>().audioList;
+
         // Only use Android media store, not use sqlite database.
         _allContent.value
-          ..contentList = await Get.find<MediaQueryService>().allAudioFiles()
+          ..contentList = await Get.find<MediaQueryService>().allAudioContents()
           ..name = allMediaTableName
           ..tableName = allMediaTableName;
         return this;
