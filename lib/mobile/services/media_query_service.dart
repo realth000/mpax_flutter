@@ -42,7 +42,7 @@ class MediaQueryService extends GetxService {
   /// Some audio properties should load later by tag readers.
   Future<List<PlayContent>> allAudioContents() async {
     final contentList = <PlayContent>[];
-    audioList.forEach((audio) async {
+    for (final audio in audioList) {
       var cover =
           await _audioQuery.queryArtwork(audio.id, aq.ArtworkType.AUDIO);
       cover ??= await _audioQuery.queryArtwork(audio.id, aq.ArtworkType.ALBUM);
@@ -79,7 +79,7 @@ class MediaQueryService extends GetxService {
           coverBase64,
         ),
       );
-    });
+    }
     return contentList;
   }
 

@@ -45,6 +45,9 @@ class MPaxApp extends StatelessWidget {
 
   String _initialRoute() {
     if (GetPlatform.isMobile) {
+      if (GetPlatform.isAndroid) {
+        return MPaxRoutes.library;
+      }
       final mediaLibraryService = Get.find<MediaLibraryService>();
       return mediaLibraryService.content.isNotEmpty
           ? MPaxRoutes.library
