@@ -43,13 +43,6 @@ class MediaQueryService extends GetxService {
   Future<List<PlayContent>> allAudioContents() async {
     final contentList = <PlayContent>[];
     for (final audio in audioList) {
-      var cover =
-          await _audioQuery.queryArtwork(audio.id, aq.ArtworkType.AUDIO);
-      cover ??= await _audioQuery.queryArtwork(audio.id, aq.ArtworkType.ALBUM);
-      var coverBase64 = '';
-      if (cover != null && cover.artwork != null) {
-        coverBase64 = base64Encode(cover.artwork!);
-      }
       contentList.add(
         PlayContent.fromData(
           audio.data,
@@ -76,7 +69,7 @@ class MediaQueryService extends GetxService {
           0,
           audio.duration ?? 0,
           // albumCover
-          coverBase64,
+          '',
         ),
       );
     }
@@ -87,5 +80,15 @@ class MediaQueryService extends GetxService {
   Future<MediaQueryService> init() async {
     await reloadAllMedia();
     return this;
+  }
+
+  Future<String> loadAlbumCover(aq.AudioModel audio) async {
+    var cover = await _audioQuery.queryArtwork(audio.id, aq.ArtworkType.AUDIO);
+    cover ??= await _audioQuery.queryArtwork(audio.id, aq.ArtworkType.ALBUM);
+    var coverBase64 = '';
+    if (cover != null && cover.artwork != null) {
+      coverBase64 = base64Encode(cover.artwork!);
+    }
+    return coverBase64;
   }
 }
