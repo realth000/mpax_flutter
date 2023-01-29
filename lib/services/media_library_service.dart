@@ -124,8 +124,10 @@ class MediaLibraryService extends GetxService {
     if (GetPlatform.isMobile) {
       if (androidOnlyUseMediaStore) {
         // Only use Android media store, not use sqlite database.
-        _allContent.value.contentList =
-            await Get.find<MediaQueryService>().allAudioFiles();
+        _allContent.value
+          ..contentList = await Get.find<MediaQueryService>().allAudioFiles()
+          ..name = allMediaTableName
+          ..tableName = allMediaTableName;
         return this;
       }
       _database = openDatabase(
