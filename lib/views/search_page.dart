@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 
 import '../mobile/components/mobile_underfoot.dart';
 import '../services/search_service.dart';
+import '../utils/media_loader.dart';
 import '../widgets/media_list_item.dart';
 import '../widgets/util_widgets.dart';
 
@@ -190,12 +191,30 @@ class SearchPage extends GetView<SearchService> {
         ),
       );
 
+//   Widget _buildSearchResultPage(BuildContext context) => Obx(
+//         () => ListView.builder(
+//           itemCount: controller.resultList.length,
+//           itemBuilder: (context, index) => MediaItemTile(
+//             controller.resultList[index],
+//             controller.playlist.value,
+//           ),
+//         ),
+//       );
+
   Widget _buildSearchResultPage(BuildContext context) => Obx(
         () => ListView.builder(
           itemCount: controller.resultList.length,
-          itemBuilder: (context, index) => MediaItemTile(
-            controller.resultList[index],
-            controller.playlist.value,
+          itemBuilder: (context, index) => FutureBuilder(
+            future: reloadContent(controller.resultList[index]),
+            builder: (context, snapshot) {
+              if (snapshot.hasError ||
+                  !snapshot.hasData ||
+                  snapshot.data == null) {
+                return MediaItemTile(
+                    controller.resultList[index], controller.playlist.value);
+              }
+              return MediaItemTile(snapshot.data!, controller.playlist.value);
+            },
           ),
         ),
       );
