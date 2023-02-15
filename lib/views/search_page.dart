@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 
 import '../mobile/components/mobile_underfoot.dart';
@@ -78,6 +79,13 @@ class SearchPage extends GetView<SearchService> {
                                 _includeController.text,
                                 _excludeController.text,
                               );
+                              if (controller.resultList.value.isEmpty) {
+                                await Fluttertoast.showToast(
+                                  msg: 'Empty search result'.tr,
+                                  toastLength: Toast.LENGTH_SHORT,
+                                );
+                                return;
+                              }
                               controller.showResultPage.value = true;
                             },
                             child: Text('Search'.tr),

@@ -81,4 +81,5 @@ const Map<String, String> translationEnUs = <String, String>{
   'Channels': 'Channels',
   'App Bottom Height': 'App Bottom Height',
   'Avoid hovered by navigation bar': 'Avoid hovered by navigation bar',
+  'Empty search result': 'Empty search result',
 };

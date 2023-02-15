@@ -80,4 +80,5 @@ const Map<String, String> translationZhCn = <String, String>{
   'Channels': '声道',
   'App Bottom Height': '应用底部高度',
   'Avoid hovered by navigation bar': '防止被导航栏挡住',
+  'Empty search result': '搜索结果为空',
 };
