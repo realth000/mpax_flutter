@@ -157,12 +157,12 @@ class MediaTable extends StatelessWidget {
           );
         },
         onSorted: (sortEvent) async {
-          _controller.playlist.value.contentList = (await _controller.sort(
-            _controller.playlist.value,
-            sortEvent.column.field,
-            _sortMap[sortEvent.column.sort]!,
-          ))
-              .contentList;
+          // _controller.playlist.value = await _controller.sort(
+          //   _controller.playlist.value,
+          //
+          //   sortEvent.column.field,
+          //   _sortMap[sortEvent.column.sort]!,
+          // );
         },
         onRowsMoved: (movedEvent) async {
           final r = _controller.playlist.value.contentList.firstWhere(
