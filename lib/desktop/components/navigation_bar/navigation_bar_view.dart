@@ -27,7 +27,7 @@ class MPaxNavigationBar extends StatelessWidget {
           onDestinationSelected: (index) {
             _pageController.currentIndex.value = index;
           },
-          labelType: NavigationRailLabelType.selected,
+          labelType: NavigationRailLabelType.none,
         ),
       );
 }
