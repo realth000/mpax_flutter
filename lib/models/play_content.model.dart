@@ -104,6 +104,9 @@ class PlayContent {
   /// Audio duration in seconds..
   int length = -1;
 
+  /// Audio lyrics.
+  String lyrics = '';
+
   /// Id in the database table, not used away from database.
   static int id = -1;
 
@@ -129,6 +132,7 @@ class PlayContent {
       'channels': channels,
       'length': length,
       'album_cover': albumCover,
+      'lyrics': lyrics,
     };
   }
 }

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../services/player_service.dart';
+import '../../../widgets/lyric_widget.dart';
 
 /// Music page for desktop platforms.
 ///
@@ -20,17 +21,32 @@ class DesktopMusicPage extends GetView<PlayerService> {
   const DesktopMusicPage({super.key});
 
   @override
-  Widget build(BuildContext context) => SizedBox(
-        width: Get.width / 4 * 3,
-        height: Get.width / 4 * 3,
-        child: Obx(
-          () => controller.currentContent.value.albumCover.isEmpty
-              ? const Icon(Icons.music_note)
-              : Image.memory(
-                  base64Decode(
-                    controller.currentContent.value.albumCover,
-                  ),
-                ),
-        ),
+  Widget build(BuildContext context) => Flex(
+        direction: Axis.horizontal,
+        children: [
+          const SizedBox(
+            width: 10,
+            height: 10,
+          ),
+          SizedBox(
+            width: Get.width / 3 * 1,
+            height: Get.width / 3 * 1,
+            child: Obx(
+              () => controller.currentContent.value.albumCover.isEmpty
+                  ? const Icon(Icons.music_note)
+                  : Image.memory(
+                      base64Decode(
+                        controller.currentContent.value.albumCover,
+                      ),
+                    ),
+            ),
+          ),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(10),
+              child: LyricWidget(),
+            ),
+          ),
+        ],
       );
 }

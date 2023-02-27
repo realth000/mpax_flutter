@@ -32,7 +32,7 @@ class MediaLibraryService extends GetxService {
       'title TEXT, artist TEXT, album_title TEXT, album_artist TEXT, '
       'album_year INT, album_track_count INT, track_number INT, bit_rate INT, '
       'sample_rate INT, genre TEXT, comment TEXT, channels INT, length INT, '
-      'album_cover TEXT ';
+      'album_cover TEXT, lyrics TEXT';
 
   /// A special playlist contains all audio content as the library.
   final List<PlaylistModel> allPlaylist = <PlaylistModel>[].obs;
