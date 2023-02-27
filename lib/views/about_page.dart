@@ -58,7 +58,7 @@ class _AboutPageBodyWidget extends StatelessWidget {
     return Scrollbar(
       child: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(15),
+          padding: const EdgeInsets.all(10),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[

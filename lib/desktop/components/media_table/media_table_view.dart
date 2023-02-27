@@ -194,7 +194,7 @@ class MediaTable extends StatelessWidget {
           // First construct [MediaTableToolbar],
           // then find [MediaTableToolbarController].
           final w = Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
+            padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
             child: MediaTableToolbar(
               stateManater: stateManager,
             ),
