@@ -1,0 +1,3 @@
+[submodule "lib/package/taglib_ffi"]
+	path = lib/package/taglib_ffi
+	url = https://github.com/realth000/taglib_ffi.git

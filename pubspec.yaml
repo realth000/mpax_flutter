@@ -66,6 +66,8 @@ dependencies:
   # sudo apt-get install keybinder-3.0
   # sudo apt install libkeybinder-3.0-0 libkeybinder-3.0-dev
   sqflite: ^2.2.3
+  taglib_ffi:
+    path: ./lib/package/taglib_ffi
   url_launcher: ^6.1.9
 
 dev_dependencies:
