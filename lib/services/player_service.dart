@@ -11,9 +11,9 @@ import 'package:path_provider/path_provider.dart';
 
 import '../models/play_content.model.dart';
 import '../models/playlist.model.dart';
-import '../services/config_service.dart';
-import '../services/media_library_service.dart';
-import '../services/metadata_service.dart';
+import 'config_service.dart';
+import 'media_library_service.dart';
+import 'metadata_service.dart';
 
 /// Wrapper for mobile
 class PlayerWrapper extends BaseAudioHandler with QueueHandler, SeekHandler {
