@@ -77,6 +77,7 @@ class PlayerService extends GetxService {
 
   final _configService = Get.find<ConfigService>();
   final _libraryService = Get.find<MediaLibraryService>();
+  final _metadataService = Get.find<MetadataService>();
   final _player = AudioPlayer();
 
   /// Only use on mobile platforms.
@@ -204,6 +205,8 @@ class PlayerService extends GetxService {
     });
     _player.onPlayerComplete.listen((state) async {
       if (playMode == _repeatOneString) {
+        currentContent.value.lyrics =
+            await _metadataService.loadLyrics(currentContent.value);
         await _player.setSourceDeviceFile(currentContent.value.contentPath);
         await _player.resume();
       } else {
@@ -287,11 +290,12 @@ class PlayerService extends GetxService {
     PlaylistModel playlist,
   ) async {
     // Read the full album cover image to display in music page.
-    final p = await Get.find<MetadataService>().readMetadata(
+    final p = await _metadataService.readMetadata(
       playContent.contentPath,
       loadImage: true,
       scaleImage: false,
     );
+    p.lyrics = await _metadataService.loadLyrics(p);
     currentContent.value = p;
     currentPlaylist = playlist;
     await _player.setSourceDeviceFile(p.contentPath);

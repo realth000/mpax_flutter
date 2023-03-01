@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:get/get.dart';
 import 'package:metadata_god/metadata_god.dart' as mg;
+import 'package:path/path.dart' as path;
 import 'package:taglib_ffi/taglib_ffi.dart' as tl;
 
 import '../models/play_content.model.dart';
@@ -220,6 +221,70 @@ class MetadataService extends GetxService {
     playContent.lyrics = metadata.lyrics ?? '';
 
     return playContent;
+  }
+
+  /// Load lyrics with given content.
+  ///
+  /// Load priority:
+  /// 1. Lyrics in [content].
+  /// 2. Lyrics in [content] file: reload lyrics from file.
+  /// 3. Same name "*.lrc" file in same folder.
+  /// 4. "<Artist> - <Title>.lrc" file in same folder.
+  /// 5. User selected file.
+  ///
+  /// When [forceReload] is true, skip step 1.
+  /// When [loadFilePath] is not null, only run step 5.
+  Future<String> loadLyrics(
+    PlayContent content, {
+    bool? forceReload,
+    String? loadFilePath,
+  }) async {
+    late String lyricsFilePath;
+    late File lyricsFile;
+    if (loadFilePath != null) {
+      /// 5. User selected file.
+      lyricsFile = File(loadFilePath);
+      return lyricsFile.existsSync() ? await lyricsFile.readAsString() : '';
+    }
+    // 1. Lyrics in [content].
+    if (content.lyrics.isNotEmpty && forceReload != null && !forceReload) {
+      return content.lyrics;
+    }
+    // 2. Lyrics in [content] file: reload lyrics from file.
+    final metadata = await readMetadata(content.contentPath);
+    if (metadata.lyrics.isNotEmpty) {
+      /// TODO: If lyrics are saved in database or we should consider save this
+      /// data to somewhere, we need to save this.
+      return metadata.lyrics;
+    }
+    final ext = path.extension(content.contentPath);
+    // 3. Same name "*.lrc" file in same folder.
+    lyricsFilePath = ext.isEmpty
+        ? '${metadata.contentPath}.lrc'
+        : metadata.contentPath
+            .replaceAll(path.extension(metadata.contentPath), '.lrc');
+    lyricsFile = File(lyricsFilePath);
+    if (lyricsFile.existsSync()) {
+      final s = await lyricsFile.readAsString();
+      if (s.isNotEmpty) {
+        return s;
+      }
+    }
+
+    /// 4. "<Artist> - <Title>.lrc" file in same folder.
+    if (content.title.isNotEmpty) {
+      lyricsFilePath = content.artist.isEmpty
+          ? '${path.dirname(content.contentPath)}/${content.title}.lrc'
+          : '${path.dirname(content.contentPath)}/${content.artist} - ${content.title}.lrc';
+      lyricsFile = File(lyricsFilePath);
+      if (lyricsFile.existsSync()) {
+        final s = await lyricsFile.readAsString();
+        if (s.isNotEmpty) {
+          return s;
+        }
+      }
+    }
+    return '';
   }
 
   /// Init function, run before app start.
