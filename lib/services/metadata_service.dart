@@ -72,8 +72,9 @@ class MetadataService extends GetxService {
         //   ..albumArtist = mgPlayContent.albumArtist ?? ''
         //   ..albumTrackCount = mgPlayContent.albumTrackCount ?? 0;
         return playContent;
-      } catch (_) {
-        //   TODO: Should print something here.
+      } catch (e) {
+        //   TODO: Do something here.
+        print('AAAA error: $e');
         return PlayContent.fromPath(contentPath);
       }
     }

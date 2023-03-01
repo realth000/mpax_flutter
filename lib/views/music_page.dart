@@ -5,12 +5,13 @@ import 'package:get/get.dart';
 
 import '../mobile/components/mobile_underfoot.dart';
 import '../services/player_service.dart';
+import '../widgets/lyric_widget.dart';
 import '../widgets/media_list_item.dart';
 
 /// Play content page, showing details about current playing audio.
 class MusicPage extends GetView<PlayerService> {
   /// Constructor.
-  const MusicPage({super.key});
+  MusicPage({super.key});
 
   /// Define small space box width.
   static const spaceSmallWidth = 10.0;
@@ -23,6 +24,11 @@ class MusicPage extends GetView<PlayerService> {
 
   /// Define space box height.
   static const spaceHeight = 40.0;
+
+  final _bodyPageController = PageController(
+    initialPage: 0,
+    keepPage: true,
+  );
 
   String _durationToString(Duration duration) {
     final secs = duration.inSeconds;
@@ -173,23 +179,32 @@ class MusicPage extends GetView<PlayerService> {
         body: Center(
           child: Column(
             children: [
-              _buildLargeSpace(),
+              _buildSmallSpace(),
               Expanded(
-                child: SizedBox(
-                  width: Get.width / 4 * 3,
-                  height: Get.width / 4 * 3,
-                  child: Obx(
-                    () => controller.currentContent.value.albumCover.isEmpty
-                        ? const Icon(Icons.music_note)
-                        : Image.memory(
-                            base64Decode(
-                              controller.currentContent.value.albumCover,
-                            ),
-                          ),
-                  ),
+                child: PageView(
+                  controller: _bodyPageController,
+                  children: [
+                    SizedBox(
+                      width: Get.width / 4 * 3,
+                      height: Get.width / 4 * 3,
+                      child: Obx(
+                        () => controller.currentContent.value.albumCover.isEmpty
+                            ? const Icon(Icons.music_note)
+                            : Image.memory(
+                                base64Decode(
+                                  controller.currentContent.value.albumCover,
+                                ),
+                              ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: LyricWidget(),
+                    )
+                  ],
                 ),
               ),
-              _buildLargeSpace(),
+              _buildSmallSpace(),
               _buildProgressRow(context),
               _buildSmallSpace(),
               _buildSeekDurationRow(),
