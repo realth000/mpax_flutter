@@ -200,22 +200,20 @@ class MetadataService extends GetxService {
       playContent.albumArtist = metadata.albumArtist!;
     }
 
-    if (metadata.albumCover == null || !loadImage) {
-      return playContent;
-    }
-
-    if (false) {
-      playContent.albumCover = base64Encode(metadata.albumCover!);
-    } else {
-      if (scaleImage && GetPlatform.isMobile) {
-        final tmpList = await FlutterImageCompress.compressWithList(
-          metadata.albumCover!,
-          minWidth: 120,
-          minHeight: 120,
-        );
-        playContent.albumCover = base64Encode(tmpList);
-      } else if (!scaleImage) {
+    if (metadata.albumCover != null && loadImage) {
+      if (false) {
         playContent.albumCover = base64Encode(metadata.albumCover!);
+      } else {
+        if (scaleImage && GetPlatform.isMobile) {
+          final tmpList = await FlutterImageCompress.compressWithList(
+            metadata.albumCover!,
+            minWidth: 120,
+            minHeight: 120,
+          );
+          playContent.albumCover = base64Encode(tmpList);
+        } else if (!scaleImage) {
+          playContent.albumCover = base64Encode(metadata.albumCover!);
+        }
       }
     }
 
