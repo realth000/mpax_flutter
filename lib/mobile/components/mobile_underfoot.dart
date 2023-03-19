@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../services/config_service.dart';
+import '../../services/settings_service.dart';
 
 /// Underfoot widget at the bottom of app on mobile platforms.
 ///
@@ -19,7 +19,7 @@ class MobileUnderfoot extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Obx(
         () => SizedBox(
-          height: Get.find<ConfigService>().appBottomHeight.value,
+          height: Get.find<SettingsService>().appBottomHeight.value,
         ),
       );
 }

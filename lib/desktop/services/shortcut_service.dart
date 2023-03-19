@@ -1,8 +1,8 @@
 import 'package:get/get.dart';
 import 'package:hotkey_manager/hotkey_manager.dart';
 
-import '../../services/config_service.dart';
 import '../../services/player_service.dart';
+import '../../services/settings_service.dart';
 import '../../utils/keymap_conversion.dart';
 
 class _KeymapConfigPair {
@@ -26,7 +26,7 @@ class _KeymapConfigPair {
 /// Manage shortcuts on desktop platforms.
 class ShortcutService extends GetxService {
   final _playerService = Get.find<PlayerService>();
-  final _configService = Get.find<ConfigService>();
+  final _configService = Get.find<SettingsService>();
 
   /// Key is the config name in [configMap].
   /// Value use to generate [HotKey].

@@ -5,9 +5,9 @@ import 'package:get/get.dart';
 
 import '../models/play_content.model.dart';
 import '../models/playlist.model.dart';
-import '../services/config_service.dart';
 import '../services/media_library_service.dart';
 import '../services/metadata_service.dart';
+import '../services/settings_service.dart';
 
 /// Option used in scanning audio files.
 class AudioScanOptions {
@@ -16,7 +16,7 @@ class AudioScanOptions {
 
   /// Construct from app config.
   AudioScanOptions.fromConfig() {
-    final configService = Get.find<ConfigService>();
+    final configService = Get.find<SettingsService>();
     searchAll = configService.getBool('ScanSkipRecordedFile') ?? false;
     loadImage = configService.getBool('ScanLoadImage') ?? true;
   }

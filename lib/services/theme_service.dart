@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import 'config_service.dart';
+import 'settings_service.dart';
 
 /// All theme mode in app.
 enum MPaxThemeMode {
@@ -26,7 +26,7 @@ const darkModeString = 'Dark mode';
 
 /// Controlling theme, globally.
 class ThemeService extends GetxService {
-  final _configService = Get.find<ConfigService>();
+  final _configService = Get.find<SettingsService>();
 
   /// If use dark theme.
   bool useDarkTheme = Get.isDarkMode;

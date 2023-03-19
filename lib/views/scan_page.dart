@@ -4,9 +4,9 @@ import 'package:get/get.dart';
 import 'package:path/path.dart' as path;
 
 import '../mobile/components/mobile_underfoot.dart';
-import '../services/config_service.dart';
 import '../services/media_library_service.dart';
 import '../services/metadata_service.dart';
+import '../services/settings_service.dart';
 import '../utils/scan_target_controller.dart';
 import '../widgets/app_app_bar.dart';
 import '../widgets/app_drawer.dart';
@@ -53,7 +53,7 @@ class _ScanBodyWidget extends StatelessWidget {
                         return;
                       }
                       _controller.searchSkipRecorded.value = value;
-                      await Get.find<ConfigService>()
+                      await Get.find<SettingsService>()
                           .saveBool('ScanSkipRecordedFile', value);
                     },
                   ),
@@ -127,7 +127,7 @@ class _ScanBodyWidget extends StatelessWidget {
 
 class _ScanController extends GetxController {
   _ScanController() {
-    final targets = Get.find<ConfigService>().getStringList('ScanTargetList');
+    final targets = Get.find<SettingsService>().getStringList('ScanTargetList');
     if (targets == null) {
       return;
     }
@@ -135,9 +135,9 @@ class _ScanController extends GetxController {
       _scanList[target] = _ScanTargetItemWidget(target);
     }
     searchSkipRecorded.value =
-        Get.find<ConfigService>().getBool('ScanSkipRecordedFile') ?? false;
+        Get.find<SettingsService>().getBool('ScanSkipRecordedFile') ?? false;
     loadImage
-      ..value = Get.find<ConfigService>().getBool('ScanLoadImage') ?? true
+      ..value = Get.find<SettingsService>().getBool('ScanLoadImage') ?? true
       // Temporarily always enable load image.
       ..value = true;
   }
@@ -145,7 +145,7 @@ class _ScanController extends GetxController {
   final searchSkipRecorded = false.obs;
   final loadImage = true.obs;
 
-  ConfigService configService = Get.find<ConfigService>();
+  SettingsService configService = Get.find<SettingsService>();
   final _scanList = <String, _ScanTargetItemWidget>{}.obs;
   MediaLibraryService libraryService = Get.find<MediaLibraryService>();
 
@@ -177,7 +177,7 @@ class _ScanController extends GetxController {
   }
 
   Future<void> scanTargetList() async {
-    if (Get.find<ConfigService>().getBool('ScanSkipRecordedFile') == false) {
+    if (Get.find<SettingsService>().getBool('ScanSkipRecordedFile') == false) {
       libraryService.resetLibrary();
     }
     await Future.forEach(_scanList.entries, (entry) async {

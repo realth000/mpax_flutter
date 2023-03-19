@@ -3,8 +3,8 @@ import 'package:get/get.dart';
 
 import '../desktop/services/shortcut_service.dart';
 import '../mobile/components/mobile_underfoot.dart';
-import '../services/config_service.dart';
 import '../services/locale_service.dart';
+import '../services/settings_service.dart';
 import '../services/theme_service.dart';
 import '../widgets/app_app_bar.dart';
 import '../widgets/app_drawer.dart';
@@ -52,7 +52,7 @@ class _ThemeGroup {
   final String name;
 }
 
-class _SettingsBodyWidget extends GetView<ConfigService> {
+class _SettingsBodyWidget extends GetView<SettingsService> {
   _SettingsBodyWidget() {
     if (GetPlatform.isDesktop) {
       _keymapPlayPause.value =

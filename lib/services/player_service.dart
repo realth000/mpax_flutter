@@ -11,9 +11,9 @@ import 'package:path_provider/path_provider.dart';
 
 import '../models/play_content.model.dart';
 import '../models/playlist.model.dart';
-import 'config_service.dart';
 import 'media_library_service.dart';
 import 'metadata_service.dart';
+import 'settings_service.dart';
 
 /// Wrapper for mobile
 class PlayerWrapper extends BaseAudioHandler with QueueHandler, SeekHandler {
@@ -75,7 +75,7 @@ class PlayerService extends GetxService {
   static const IconData _repeatOneIcon = Icons.repeat_one;
   static const IconData _shuffleIcon = Icons.shuffle;
 
-  final _configService = Get.find<ConfigService>();
+  final _configService = Get.find<SettingsService>();
   final _libraryService = Get.find<MediaLibraryService>();
   final _metadataService = Get.find<MetadataService>();
   final _player = AudioPlayer();
@@ -152,7 +152,7 @@ class PlayerService extends GetxService {
     }
     await _player.setVolume(volume);
     this.volume.value = volume;
-    await Get.find<ConfigService>().saveDouble('PlayerVolume', volume);
+    await Get.find<SettingsService>().saveDouble('PlayerVolume', volume);
   }
 
   Future<PlaybackState> _transformEvent(PlayerState event) async =>
@@ -185,7 +185,7 @@ class PlayerService extends GetxService {
 
   /// Init function, run before app start.
   Future<PlayerService> init() async {
-    final v = Get.find<ConfigService>().getDouble('PlayerVolume');
+    final v = Get.find<SettingsService>().getDouble('PlayerVolume');
     if (v != null) {
       volume.value = v;
       volumeBeforeMute = v;

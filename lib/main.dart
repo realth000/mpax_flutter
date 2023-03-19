@@ -5,11 +5,11 @@ import 'package:get/get.dart';
 import 'package:hotkey_manager/hotkey_manager.dart';
 
 import '../routes/app_pages.dart';
-import '../services/config_service.dart';
 import '../services/locale_service.dart';
 import '../services/media_library_service.dart';
 import '../services/metadata_service.dart';
 import '../services/player_service.dart';
+import '../services/settings_service.dart';
 import '../services/theme_service.dart';
 import '../themes/app_themes.dart';
 import '../translations/translations.dart';
@@ -96,7 +96,7 @@ Future<void> initServices() async {
     );
   }
   // Use service.init() here to make sure service is init.
-  await Get.putAsync(() async => ConfigService().init());
+  await Get.putAsync(() async => SettingsService().init());
   await Get.putAsync(() async => ThemeService().init());
   await Get.putAsync(() async => LocaleService().init());
   await Get.putAsync(() async => MetadataService().init());

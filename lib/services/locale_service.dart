@@ -3,11 +3,11 @@ import 'dart:ui';
 import 'package:devicelocale/devicelocale.dart' as deviceLocale;
 import 'package:get/get.dart';
 
-import 'config_service.dart';
+import 'settings_service.dart';
 
 /// Locale (translation) service for app, globally.
 class LocaleService extends GetxService {
-  final _configService = Get.find<ConfigService>();
+  final _configService = Get.find<SettingsService>();
 
   /// Current using locale.
   RxString locale = ''.obs;

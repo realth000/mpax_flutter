@@ -20,8 +20,8 @@ const Map<String, Type> configMap = <String, Type>{
   'AppBottomUnderfootHeight': double,
 };
 
-/// Config service for app, globally.
-class ConfigService extends GetxService {
+/// Settings service for app, globally.
+class SettingsService extends GetxService {
   late final SharedPreferences _config;
 
   static final _configMap = Map.from(configMap);
@@ -34,7 +34,7 @@ class ConfigService extends GetxService {
   Map get configs => _configMap;
 
   /// Init function, run before app start.
-  Future<ConfigService> init() async {
+  Future<SettingsService> init() async {
     _config = await SharedPreferences.getInstance();
     _configMap['ScanTargetList'] = _config.getStringList('ScanTargetList');
     return this;
