@@ -83,4 +83,6 @@ const Map<String, String> translationEnUs = <String, String>{
   'Avoid hovered by navigation bar': 'Avoid hovered by navigation bar',
   'Empty search result': 'Empty search result',
   'No lyrics': 'No lyrics',
+  'Native title bar': 'Native title bar',
+  'Use system native title bar': 'Use system native title bar',
 };

@@ -82,4 +82,6 @@ const Map<String, String> translationZhCn = <String, String>{
   'Avoid hovered by navigation bar': '防止被导航栏挡住',
   'Empty search result': '搜索结果为空',
   'No lyrics': '没有歌词',
+  'Native title bar': '原生标题栏',
+  'Use system native title bar': '使用系统原生的标题栏',
 };

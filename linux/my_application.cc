@@ -1,4 +1,4 @@
-#include <bitsdojo_window_linux/bitsdojo_window_plugin.h>
+//#include <bitsdojo_window_linux/bitsdojo_window_plugin.h>
 #include "my_application.h"
 
 #include <flutter_linux/flutter_linux.h>
@@ -48,8 +48,8 @@ static void my_application_activate(GApplication* application) {
     gtk_window_set_title(window, "mpax_flutter");
   }
 
-  auto bdw = bitsdojo_window_from(window);            // <--- add this line
-  bdw->setCustomFrame(true);                          // <-- add this line
+//  auto bdw = bitsdojo_window_from(window);            // <--- add this line
+//  bdw->setCustomFrame(true);                          // <-- add this line
   // Do NOT comment this line, otherwise may over flow before show the window!
   gtk_window_set_default_size(window, 1024, 768);   // <-- comment this line
   gtk_widget_show(GTK_WIDGET(window));

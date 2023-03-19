@@ -1,8 +1,8 @@
 import 'package:audio_service/audio_service.dart';
-import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hotkey_manager/hotkey_manager.dart';
+import 'package:window_manager/window_manager.dart';
 
 import '../routes/app_pages.dart';
 import '../services/locale_service.dart';
@@ -23,17 +23,13 @@ void main() async {
   if (GetPlatform.isDesktop) {
     // For hot restart.
     await hotKeyManager.unregisterAll();
+    await windowManager.ensureInitialized();
   }
   await initServices();
   runApp(const MPaxApp());
 
   if (GetPlatform.isDesktop) {
-    doWhenWindowReady(() {
-      appWindow.minSize = const Size(1024, 768);
-      appWindow.size = const Size(1024, 768);
-      appWindow.alignment = Alignment.center;
-      appWindow.show();
-    });
+    await initWindow();
   }
   // Load init data when start.
   await Get.find<PlayerService>().loadInitMedia();
@@ -113,5 +109,28 @@ Future<void> initServices() async {
   await Get.putAsync(() async => SearchService().init());
   if (GetPlatform.isDesktop) {
     await Get.putAsync(() async => ShortcutService().init());
+  }
+}
+
+/// Init app window settings.
+Future<void> initWindow() async {
+  final settingsService = Get.find<SettingsService>();
+
+  final useSystemNativeTitleBar =
+      settingsService.getBool('UseSystemNativeTitleBar') ?? false;
+
+  await windowManager.waitUntilReadyToShow(
+    WindowOptions(
+      size: const Size(1024, 768),
+      minimumSize: const Size(1024, 768),
+      // center: true,
+      skipTaskbar: false,
+      title: 'MPax',
+      titleBarStyle:
+          useSystemNativeTitleBar ? TitleBarStyle.normal : TitleBarStyle.hidden,
+    ),
+  );
+  if (!useSystemNativeTitleBar) {
+    await windowManager.setAsFrameless();
   }
 }

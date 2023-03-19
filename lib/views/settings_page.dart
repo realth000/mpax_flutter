@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:window_manager/window_manager.dart';
 
 import '../desktop/services/shortcut_service.dart';
 import '../mobile/components/mobile_underfoot.dart';
@@ -92,7 +93,7 @@ class _SettingsBodyWidget extends GetView<SettingsService> {
     await _localeService.changeLocale(locale);
   }
 
-  Widget _buildAppearanceCard() => Card(
+  Widget _buildAppearanceCard(BuildContext context) => Card(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
@@ -106,31 +107,7 @@ class _SettingsBodyWidget extends GetView<SettingsService> {
                 level: 0,
               ),
             ),
-            Obx(
-              () => ListTile(
-                leading: const ListTileLeading(
-                  child: Icon(Icons.invert_colors),
-                  // child: Icon(Icons.theme),
-                ),
-                title: Text('Theme'.tr),
-                subtitle: Text(_themeService.themeModeString.value.tr),
-                trailing: ToggleButtons(
-                  onPressed: (index) async {
-                    if (_selections[index]) {
-                      return;
-                    }
-                    for (var i = 0; i < _selections.length; i++) {
-                      _selections[i] = false;
-                    }
-                    _selections[index] = true;
-                    await _themeService
-                        .changeThemeMode(_themeList[index].themeMode);
-                  },
-                  isSelected: _selections,
-                  children: _themeIcons,
-                ),
-              ),
-            ),
+            _buildThemeWidget(context),
             ListTile(
               leading: const ListTileLeading(
                 child: Icon(Icons.language),
@@ -140,55 +117,104 @@ class _SettingsBodyWidget extends GetView<SettingsService> {
               trailing: Obx(() => Text(_localeService.locale.value.tr)),
               onTap: () async => _openLocaleMenu(),
             ),
-            if (GetPlatform.isMobile)
-              ListTile(
-                leading: const ListTileLeading(
-                  child: Icon(Icons.height),
-                ),
-                title: Text('App Bottom Height'.tr),
-                subtitle: Text('Avoid hovered by navigation bar'.tr),
-                trailing: PopupMenuButton<double>(
-                  child: Obx(
-                    () => Text(
-                      controller.appBottomHeight.value.toInt().toString(),
-                    ),
-                  ),
-                  itemBuilder: (context) => const <PopupMenuItem<double>>[
-                    PopupMenuItem(
-                      value: 10,
-                      child: Text('10'),
-                    ),
-                    PopupMenuItem(
-                      value: 20,
-                      child: Text('20'),
-                    ),
-                    PopupMenuItem(
-                      value: 40,
-                      child: Text('40'),
-                    ),
-                    PopupMenuItem(
-                      value: 50,
-                      child: Text('50'),
-                    ),
-                    PopupMenuItem(
-                      value: 60,
-                      child: Text('60'),
-                    ),
-                    PopupMenuItem(
-                      value: 70,
-                      child: Text('70'),
-                    ),
-                  ],
-                  onSelected: (value) async {
-                    controller.appBottomHeight.value = value;
-                    await controller.saveDouble(
-                      'AppBottomUnderfootHeight',
-                      value,
-                    );
-                  },
-                ),
-              ),
+            if (GetPlatform.isMobile) _buildMobileAppBottomWidget(),
+            if (GetPlatform.isDesktop)
+              _buildDesktopUseNativeTitleBarWidget(context),
           ],
+        ),
+      );
+
+  Widget _buildThemeWidget(BuildContext context) => Obx(
+        () => ListTile(
+          leading: const ListTileLeading(
+            child: Icon(Icons.invert_colors),
+            // child: Icon(Icons.theme),
+          ),
+          title: Text('Theme'.tr),
+          subtitle: Text(_themeService.themeModeString.value.tr),
+          trailing: ToggleButtons(
+            onPressed: (index) async {
+              if (_selections[index]) {
+                return;
+              }
+              for (var i = 0; i < _selections.length; i++) {
+                _selections[i] = false;
+              }
+              _selections[index] = true;
+              await _themeService.changeThemeMode(_themeList[index].themeMode);
+            },
+            isSelected: _selections,
+            children: _themeIcons,
+          ),
+        ),
+      );
+
+  Widget _buildMobileAppBottomWidget() => ListTile(
+        leading: const ListTileLeading(
+          child: Icon(Icons.height),
+        ),
+        title: Text('App Bottom Height'.tr),
+        subtitle: Text('Avoid hovered by navigation bar'.tr),
+        trailing: PopupMenuButton<double>(
+          child: Obx(
+            () => Text(
+              controller.appBottomHeight.value.toInt().toString(),
+            ),
+          ),
+          itemBuilder: (context) => const <PopupMenuItem<double>>[
+            PopupMenuItem(
+              value: 10,
+              child: Text('10'),
+            ),
+            PopupMenuItem(
+              value: 20,
+              child: Text('20'),
+            ),
+            PopupMenuItem(
+              value: 40,
+              child: Text('40'),
+            ),
+            PopupMenuItem(
+              value: 50,
+              child: Text('50'),
+            ),
+            PopupMenuItem(
+              value: 60,
+              child: Text('60'),
+            ),
+            PopupMenuItem(
+              value: 70,
+              child: Text('70'),
+            ),
+          ],
+          onSelected: (value) async {
+            controller.appBottomHeight.value = value;
+            await controller.saveDouble(
+              'AppBottomUnderfootHeight',
+              value,
+            );
+          },
+        ),
+      );
+
+  Widget _buildDesktopUseNativeTitleBarWidget(BuildContext context) => ListTile(
+        leading: const Icon(Icons.padding),
+        title: Text('Native title bar'.tr),
+        subtitle: Text('Use system native title bar'.tr),
+        trailing: Obx(
+          () => Switch(
+            value: controller.desktopUseNativeTittleBar.value,
+            onChanged: (value) async {
+              if (value) {
+                await windowManager.setTitleBarStyle(TitleBarStyle.normal);
+              } else {
+                await windowManager.setTitleBarStyle(TitleBarStyle.hidden);
+                await windowManager.setAsFrameless();
+              }
+              await controller.saveBool('UseSystemNativeTitleBar', value);
+              controller.desktopUseNativeTittleBar.value = value;
+            },
+          ),
         ),
       );
 
@@ -311,7 +337,7 @@ class _SettingsBodyWidget extends GetView<SettingsService> {
       _selections[0] = true;
     }
 
-    final widgetList = <Widget>[_buildAppearanceCard()];
+    final widgetList = <Widget>[_buildAppearanceCard(context)];
 
     if (GetPlatform.isDesktop) {
       widgetList.add(_buildDesktopKeymapCard(context));

@@ -18,6 +18,7 @@ const Map<String, Type> configMap = <String, Type>{
   'KeymapPlayPrevious': String,
   'KeymapPlayNext': String,
   'AppBottomUnderfootHeight': double,
+  'UseSystemNativeTitleBar': bool,
 };
 
 /// Settings service for app, globally.
@@ -29,6 +30,10 @@ class SettingsService extends GetxService {
   /// Store app bottom height value (double) to let other widgets to use.
   late final appBottomHeight =
       (getDouble('AppBottomUnderfootHeight') ?? 20).obs;
+
+  /// Store app title bar style state.
+  late final desktopUseNativeTittleBar =
+      (getBool('UseSystemNativeTitleBar') ?? false).obs;
 
   /// Get the config map contains config name and config type.
   Map get configs => _configMap;
