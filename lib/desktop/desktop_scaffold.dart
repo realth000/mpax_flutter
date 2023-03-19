@@ -26,11 +26,23 @@ class MPaxScaffold extends GetView<ScaffoldService> {
   Widget build(BuildContext context) => Scaffold(
         body: Row(
           children: <Widget>[
-            Row(
-              children: [
-                MPaxNavigationBar(),
-                MoveWindow(),
-              ],
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 90),
+              child: Column(
+                children: [
+                  ConstrainedBox(
+                      constraints: const BoxConstraints(
+                        maxHeight: 280, // 272
+                      ),
+                      child: MPaxNavigationBar()),
+                  Expanded(
+                    child: ColoredBox(
+                      color: _topBarColor(context),
+                      child: MoveWindow(),
+                    ),
+                  ),
+                ],
+              ),
             ),
             Expanded(
               child: Column(
