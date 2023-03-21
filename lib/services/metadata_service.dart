@@ -16,6 +16,7 @@ class MetadataService extends GetxService {
     String contentPath, {
     bool loadImage = false,
     bool scaleImage = true,
+    bool fast = true,
   }) async {
     final s = File(contentPath).statSync();
     if (s.type != FileSystemEntityType.file) {
@@ -27,7 +28,7 @@ class MetadataService extends GetxService {
     // Because taglib_ffi can load sample rate, bitrate and ..., but can
     // not handle latin1 parameters, only use in utf8 environment and not need
     // cover images.
-    if (Platform.isWindows && false) {
+    if (fast) {
       late final mg.Metadata? metadata;
       try {
         metadata = await mg.MetadataGod.getMetadata(contentPath);

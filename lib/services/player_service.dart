@@ -294,6 +294,7 @@ class PlayerService extends GetxService {
       playContent.contentPath,
       loadImage: true,
       scaleImage: false,
+      fast: false,
     );
     p.lyrics = await _metadataService.loadLyrics(p);
     currentContent.value = p;
