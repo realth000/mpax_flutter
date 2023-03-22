@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 
-import '../models/play_content.model.dart';
-import '../models/playlist.model.dart';
+import '../models/music_model.dart';
+import '../models/playlist_model.dart';
 import 'media_library_service.dart';
 
 /// Service for searching in playlist, globally.
@@ -39,7 +39,7 @@ class SearchService extends GetxService {
   final showResultPage = false.obs;
 
   /// Store search result
-  final resultList = <PlayContent>[].obs;
+  final resultList = <Music>[].obs;
 
   /// Current searching playlist.
   final playlist = PlaylistModel().obs;
@@ -47,7 +47,7 @@ class SearchService extends GetxService {
   /// Init function, run before app start.
   Future<SearchService> init() async => this;
 
-  bool _filterWithExclude(PlayContent content) {
+  bool _filterWithExclude(Music content) {
     if (title.value &&
         content.title.toLowerCase().contains(_includeTextLowerCase) &&
         !content.title.toLowerCase().contains(_excludeTextLowerCase)) {
@@ -69,19 +69,19 @@ class SearchService extends GetxService {
       return true;
     }
     if (contentPath.value &&
-        content.contentPath.toLowerCase().contains(_includeTextLowerCase) &&
-        !content.contentPath.toLowerCase().contains(_excludeTextLowerCase)) {
+        content.filePath.toLowerCase().contains(_includeTextLowerCase) &&
+        !content.filePath.toLowerCase().contains(_excludeTextLowerCase)) {
       return true;
     }
     if (contentName.value &&
-        content.contentName.toLowerCase().contains(_includeTextLowerCase) &&
-        !content.contentName.toLowerCase().contains(_excludeTextLowerCase)) {
+        content.fileName.toLowerCase().contains(_includeTextLowerCase) &&
+        !content.fileName.toLowerCase().contains(_excludeTextLowerCase)) {
       return true;
     }
     return false;
   }
 
-  bool _filter(PlayContent content) {
+  bool _filter(Music content) {
     if (title.value &&
         content.title.toLowerCase().contains(_includeTextLowerCase)) {
       return true;
@@ -99,11 +99,11 @@ class SearchService extends GetxService {
       return true;
     }
     if (contentPath.value &&
-        content.contentPath.toLowerCase().contains(_includeTextLowerCase)) {
+        content.filePath.toLowerCase().contains(_includeTextLowerCase)) {
       return true;
     }
     if (contentName.value &&
-        content.contentName.toLowerCase().contains(_includeTextLowerCase)) {
+        content.fileName.toLowerCase().contains(_includeTextLowerCase)) {
       return true;
     }
     return false;
@@ -121,7 +121,7 @@ class SearchService extends GetxService {
     _excludeTextLowerCase = excludeText.toLowerCase();
     playlist.value = Get.find<MediaLibraryService>()
         .findPlaylistByTableName(playlistTableName);
-    final resultList = <PlayContent>[];
+    final resultList = <Music>[];
     if (this.excludeText.isEmpty) {
       for (final content in playlist.value.contentList) {
         if (_filter(content)) {

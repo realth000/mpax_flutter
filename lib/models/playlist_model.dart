@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'play_content.model.dart';
+import 'music_model.dart';
 
 /// Model of playlist.
 ///
@@ -20,17 +20,14 @@ class PlaylistModel {
   String tableName = '';
 
   /// Audio models list.
-  List<PlayContent> contentList = <PlayContent>[];
-
-  /// Id used in database, means nothing without database.
-  static int id = -1;
+  List<Music> contentList = <Music>[];
 
   /// Tell if the specified audio file already exists in playlist.
   ///
   /// Run by file path.
-  bool contains(PlayContent playContent) {
+  bool contains(Music playContent) {
     for (final content in contentList) {
-      if (content.contentPath == playContent.contentPath) {
+      if (content.filePath == playContent.filePath) {
         return true;
       }
     }
@@ -38,9 +35,9 @@ class PlaylistModel {
   }
 
   /// Tell if the specified path file already exists in playlist.
-  PlayContent? find(String contentPath) {
+  Music? find(String contentPath) {
     for (final content in contentList) {
-      if (content.contentPath == contentPath) {
+      if (content.filePath == contentPath) {
         return content;
       }
     }
@@ -48,7 +45,7 @@ class PlaylistModel {
   }
 
   /// Add a list of audio model to playlist, not duplicate with same path file.
-  void addContentList(List<PlayContent> playContentList) {
+  void addContentList(List<Music> playContentList) {
     for (final content in playContentList) {
       if (contains(content)) {
         continue;
@@ -66,15 +63,15 @@ class PlaylistModel {
   ///
   /// If it's the first one, the last one will be returned.
   /// Find current playContent position by [contentList.last.contentPath].
-  PlayContent findPreviousContent(PlayContent playContent) {
+  Music findPreviousContent(Music playContent) {
     if (contentList.isEmpty) {
-      return PlayContent();
+      return Music();
     }
-    if (contentList.first.contentPath == playContent.contentPath) {
+    if (contentList.first.filePath == playContent.filePath) {
       return contentList.last;
     }
     for (var i = contentList.length - 1; i > -1; i--) {
-      if (contentList[i].contentPath == playContent.contentPath) {
+      if (contentList[i].filePath == playContent.filePath) {
         return contentList[i - 1];
       }
     }
@@ -85,15 +82,15 @@ class PlaylistModel {
   ///
   /// If it's the last one, the first one will be returned.
   /// Find current playContent position by [contentList.last.contentPath].
-  PlayContent findNextContent(PlayContent playContent) {
+  Music findNextContent(Music playContent) {
     if (contentList.isEmpty) {
-      return PlayContent();
+      return Music();
     }
-    if (contentList.last.contentPath == playContent.contentPath) {
+    if (contentList.last.filePath == playContent.filePath) {
       return contentList.first;
     }
     for (var i = 0; i < contentList.length; i++) {
-      if (contentList[i].contentPath == playContent.contentPath) {
+      if (contentList[i].filePath == playContent.filePath) {
         return contentList[i + 1];
       }
     }
@@ -102,7 +99,6 @@ class PlaylistModel {
 
   /// Convert to map format, sqflite need this.
   Map<String, dynamic> toMap() {
-    id++;
     return {
       'sort': contentList.length,
       'playlist_name': name,
@@ -111,16 +107,16 @@ class PlaylistModel {
   }
 
   /// Return a random audio content in playlist.
-  PlayContent randomPlayContent() {
+  Music randomPlayContent() {
     if (contentList.isEmpty) {
-      return PlayContent();
+      return Music();
     }
     return contentList[Random().nextInt(contentList.length)];
   }
 
-  /// Remove same [PlayContent] with same [filePathList].
+  /// Remove same [Music] with same [filePathList].
   Future<void> removeByPathList(List<String> filePathList) async {
     contentList
-        .removeWhere((content) => filePathList.contains(content.contentPath));
+        .removeWhere((content) => filePathList.contains(content.filePath));
   }
 }

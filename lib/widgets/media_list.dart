@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../controllers/media_list_controller.dart';
-import '../models/playlist.model.dart';
+import '../models/playlist_model.dart';
 import '../utils/media_loader.dart';
 import '../widgets/media_list_item.dart';
 

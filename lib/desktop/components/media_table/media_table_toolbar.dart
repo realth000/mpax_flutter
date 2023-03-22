@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
-import '../../../models/play_content.model.dart';
-import '../../../models/playlist.model.dart';
+import '../../../models/music_model.dart';
+import '../../../models/playlist_model.dart';
 import '../../../services/media_library_service.dart';
 import '../../../services/metadata_service.dart';
 import '../../../widgets/add_playlist_widget.dart';
@@ -85,7 +85,7 @@ class MediaTableToolbar extends GetView<MediaTableController> {
                       if (name == null) {
                         return;
                       }
-                      final list = <PlayContent>[];
+                      final list = <Music>[];
                       for (final c in controller.checkedRowPathList) {
                         // list.add(PlayContent.fromPath(c));
                         list.add(

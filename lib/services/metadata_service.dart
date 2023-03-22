@@ -7,12 +7,12 @@ import 'package:metadata_god/metadata_god.dart' as mg;
 import 'package:path/path.dart' as path;
 import 'package:taglib_ffi/taglib_ffi.dart' as tl;
 
-import '../models/play_content.model.dart';
+import '../models/music_model.dart';
 
 /// Manage audio metadata, globally.
 class MetadataService extends GetxService {
-  /// Get a [PlayContent] filled with metadata read from given [contentPath].
-  Future<PlayContent> readMetadata(
+  /// Get a [Music] filled with metadata read from given [contentPath].
+  Future<Music> readMetadata(
     String contentPath, {
     bool loadImage = false,
     bool scaleImage = true,
@@ -20,7 +20,7 @@ class MetadataService extends GetxService {
   }) async {
     final s = File(contentPath).statSync();
     if (s.type != FileSystemEntityType.file) {
-      return PlayContent();
+      return Music();
     }
 
     // Because metadata_god can load image and handles both utf8 and latin1
@@ -33,7 +33,7 @@ class MetadataService extends GetxService {
       try {
         metadata = await mg.MetadataGod.getMetadata(contentPath);
         if (metadata == null) {
-          return PlayContent.fromPath(contentPath);
+          return Music.fromPath(contentPath);
         }
         return _applyMetadataFromMG(
           contentPath,
@@ -46,15 +46,15 @@ class MetadataService extends GetxService {
         // Can not read metadata, maybe from m4a files.
         //   Only write basic info.
         //   TODO: Should print something here.
-        return PlayContent.fromPath(contentPath);
+        return Music.fromPath(contentPath);
       }
     } else {
       late final tl.Metadata? metadata;
-      late final PlayContent playContent;
+      late final Music playContent;
       try {
         metadata = await tl.TagLib(filePath: contentPath).readMetadataEx();
         if (metadata == null) {
-          return PlayContent.fromPath(contentPath);
+          return Music.fromPath(contentPath);
         }
         playContent = await _applyMetadataFromTL(
           contentPath,
@@ -76,19 +76,19 @@ class MetadataService extends GetxService {
       } catch (e) {
         //   TODO: Do something here.
         print('AAAA error: $e');
-        return PlayContent.fromPath(contentPath);
+        return Music.fromPath(contentPath);
       }
     }
   }
 
   /// Fetch metadata with package metadata_god.
-  Future<PlayContent> _applyMetadataFromMG(
+  Future<Music> _applyMetadataFromMG(
     String contentPath,
     mg.Metadata metadata,
     bool loadImage,
     bool scaleImage,
   ) async {
-    final playContent = PlayContent.fromPath(contentPath);
+    final playContent = Music.fromPath(contentPath);
     if (metadata.artist != null) {
       playContent.artist = metadata.artist!;
     }
@@ -96,7 +96,7 @@ class MetadataService extends GetxService {
       playContent.title = metadata.title!;
     }
     if (playContent.title.isEmpty) {
-      playContent.title = playContent.contentName;
+      playContent.title = playContent.fileName;
     }
     if (metadata.trackNumber != null) {
       playContent.trackNumber = metadata.trackNumber!;
@@ -142,13 +142,13 @@ class MetadataService extends GetxService {
   }
 
   /// Fetch metadata with package taglib_ffi.
-  Future<PlayContent> _applyMetadataFromTL(
+  Future<Music> _applyMetadataFromTL(
     String contentPath,
     tl.Metadata metadata,
     bool loadImage,
     bool scaleImage,
   ) async {
-    final playContent = PlayContent.fromPath(contentPath);
+    final playContent = Music.fromPath(contentPath);
     if (metadata.artist != null) {
       playContent.artist = metadata.artist!;
     }
@@ -156,7 +156,7 @@ class MetadataService extends GetxService {
       playContent.title = metadata.title!;
     }
     if (playContent.title.isEmpty) {
-      playContent.title = playContent.contentName;
+      playContent.title = playContent.fileName;
     }
     if (metadata.track != null) {
       playContent.trackNumber = metadata.track!;
@@ -235,7 +235,7 @@ class MetadataService extends GetxService {
   /// When [forceReload] is true, skip step 1.
   /// When [loadFilePath] is not null, only run step 5.
   Future<String> loadLyrics(
-    PlayContent content, {
+    Music content, {
     bool? forceReload,
     String? loadFilePath,
   }) async {
@@ -251,18 +251,18 @@ class MetadataService extends GetxService {
       return content.lyrics;
     }
     // 2. Lyrics in [content] file: reload lyrics from file.
-    final metadata = await readMetadata(content.contentPath);
+    final metadata = await readMetadata(content.filePath);
     if (metadata.lyrics.isNotEmpty) {
       /// TODO: If lyrics are saved in database or we should consider save this
       /// data to somewhere, we need to save this.
       return metadata.lyrics;
     }
-    final ext = path.extension(content.contentPath);
+    final ext = path.extension(content.filePath);
     // 3. Same name "*.lrc" file in same folder.
     lyricsFilePath = ext.isEmpty
-        ? '${metadata.contentPath}.lrc'
-        : metadata.contentPath
-            .replaceAll(path.extension(metadata.contentPath), '.lrc');
+        ? '${metadata.filePath}.lrc'
+        : metadata.filePath
+            .replaceAll(path.extension(metadata.filePath), '.lrc');
     lyricsFile = File(lyricsFilePath);
     if (lyricsFile.existsSync()) {
       final s = await lyricsFile.readAsString();
@@ -274,8 +274,8 @@ class MetadataService extends GetxService {
     /// 4. "<Artist> - <Title>.lrc" file in same folder.
     if (content.title.isNotEmpty) {
       lyricsFilePath = content.artist.isEmpty
-          ? '${path.dirname(content.contentPath)}/${content.title}.lrc'
-          : '${path.dirname(content.contentPath)}/${content.artist} - ${content.title}.lrc';
+          ? '${path.dirname(content.filePath)}/${content.title}.lrc'
+          : '${path.dirname(content.filePath)}/${content.artist} - ${content.title}.lrc';
       lyricsFile = File(lyricsFilePath);
       if (lyricsFile.existsSync()) {
         final s = await lyricsFile.readAsString();

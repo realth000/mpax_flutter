@@ -2,13 +2,55 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
-import '../../../models/play_content.model.dart';
-import '../../../models/playlist.model.dart';
+import '../../../models/music_model.dart';
+import '../../../models/playlist_model.dart';
 import '../../../services/locale_service.dart';
 import '../../../services/media_library_service.dart';
 import '../../../themes/media_table_themes.dart';
 import 'media_table_controller.dart';
 import 'media_table_toolbar.dart';
+
+class MediaTable1 extends StatelessWidget {
+  MediaTable1(PlaylistModel playlist, {super.key}) {
+    _controller.playlist.value = playlist;
+  }
+
+  final _controller = Get.put(MediaTableController(PlaylistModel()));
+
+  @override
+  Widget build(BuildContext context) {
+    final a;
+    return DataTable(
+      columns: [
+        DataColumn(
+          label: Text('name'),
+        ),
+        DataColumn(
+          label: Text('size'),
+          numeric: true,
+          onSort: (index, ascending) {},
+        ),
+      ],
+      rows:
+          List.generate(_controller.playlist.value.contentList.length, (index) {
+        final data = _controller.playlist.value.contentList[index];
+        var selected = false;
+        return DataRow.byIndex(
+          index: index,
+          cells: [
+            DataCell(Text(data.fileName)),
+            DataCell(Text('${data.fileSize}'))
+          ],
+          // selected: selected,
+          // onSelectChanged: (value) {
+          //   selected = value ?? false;
+          //   print('AAAA update selected=$selected');
+          // },
+        );
+      }),
+    );
+  }
+}
 
 /// Audio content table widget used on desktop platforms.
 class MediaTable extends StatelessWidget {
@@ -98,12 +140,12 @@ class MediaTable extends StatelessWidget {
     ),
   ];
 
-  List<PlutoRow> _buildRows(List<PlayContent> list) => List.generate(
+  List<PlutoRow> _buildRows(List<Music> list) => List.generate(
         list.length,
         (index) => PlutoRow(
           cells: {
             'state': PlutoCell(
-              value: list[index].contentPath ==
+              value: list[index].filePath ==
                       _controller.currentPlayingContent.value
                   ? playingIcon
                   : '',
@@ -111,14 +153,14 @@ class MediaTable extends StatelessWidget {
             'album_title': PlutoCell(value: list[index].albumTitle),
             'title': PlutoCell(
               value: list[index].title.isEmpty
-                  ? list[index].contentName
+                  ? list[index].fileName
                   : list[index].title,
             ),
             'artist': PlutoCell(value: list[index].artist),
             'album_artist': PlutoCell(value: list[index].albumArtist),
             'track_number': PlutoCell(value: list[index].trackNumber),
             'length': PlutoCell(value: list[index].length),
-            'path': PlutoCell(value: list[index].contentPath),
+            'path': PlutoCell(value: list[index].filePath),
           },
         ),
       );
@@ -167,13 +209,13 @@ class MediaTable extends StatelessWidget {
         onRowsMoved: (movedEvent) async {
           final r = _controller.playlist.value.contentList.firstWhere(
               (element) =>
-                  element.contentPath ==
+                  element.filePath ==
                   movedEvent.rows?[0]!.cells['path']!.value);
-          if (r.contentPath.isEmpty) {
+          if (r.filePath.isEmpty) {
             return;
           }
           _controller.playlist.value.contentList
-              .removeWhere((element) => element.contentPath == r.contentPath);
+              .removeWhere((element) => element.filePath == r.filePath);
           _controller.playlist.value.contentList.insert(movedEvent.idx!, r);
           await Get.find<MediaLibraryService>()
               .savePlaylist(_controller.playlist.value);

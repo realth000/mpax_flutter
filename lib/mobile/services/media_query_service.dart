@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:on_audio_query/on_audio_query.dart' as aq;
 
-import '../../models/play_content.model.dart';
+import '../../models/music_model.dart';
 
 /// Use media store on Android, provide fast music library load.
 class MediaQueryService extends GetxService {
@@ -38,13 +38,13 @@ class MediaQueryService extends GetxService {
     playlistList = await _audioQuery.queryPlaylists();
   }
 
-  /// Return a list of [PlayContent] contains all audios in media store.
+  /// Return a list of [Music] contains all audios in media store.
   /// Some audio properties should load later by tag readers.
-  Future<List<PlayContent>> allAudioContents() async {
-    final contentList = <PlayContent>[];
+  Future<List<Music>> allAudioContents() async {
+    final contentList = <Music>[];
     for (final audio in audioList) {
       contentList.add(
-        PlayContent.fromData(
+        Music.fromData(
           audio.data,
           audio.displayName,
           audio.size,

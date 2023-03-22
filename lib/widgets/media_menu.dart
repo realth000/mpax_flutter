@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../models/play_content.model.dart';
-import '../models/playlist.model.dart';
+import '../models/music_model.dart';
+import '../models/playlist_model.dart';
 import '../widgets/util_widgets.dart';
 
 /// Media context menu action types
@@ -20,7 +20,7 @@ class MediaItemMenu extends StatelessWidget {
   const MediaItemMenu(this.playContent, this.playlist, {super.key});
 
   /// Audio content to build from.
-  final PlayContent playContent;
+  final Music playContent;
 
   /// Playlist of the [playContent].
   final PlaylistModel playlist;

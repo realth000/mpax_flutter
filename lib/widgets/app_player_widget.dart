@@ -51,8 +51,8 @@ class MPaxPlayerWidget extends GetView<PlayerService> {
   String _getAlbumString() {
     if (controller.currentContent.value.artist.isNotEmpty) {
       return controller.currentContent.value.albumTitle;
-    } else if (controller.currentContent.value.contentPath.isNotEmpty) {
-      return controller.currentContent.value.contentPath
+    } else if (controller.currentContent.value.filePath.isNotEmpty) {
+      return controller.currentContent.value.filePath
           .replaceFirst('/storage/emulated/0/', '');
     } else {
       return '';
@@ -110,7 +110,7 @@ class MPaxPlayerWidget extends GetView<PlayerService> {
     final titleWidget = Obx(
       () => Text(
         controller.currentContent.value.title.isEmpty
-            ? controller.currentContent.value.contentName
+            ? controller.currentContent.value.fileName
             : controller.currentContent.value.title,
         style: const TextStyle(
           fontSize: 15,

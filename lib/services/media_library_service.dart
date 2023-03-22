@@ -1,12 +1,10 @@
 import 'package:get/get.dart';
 import 'package:on_audio_query/on_audio_query.dart' as aq;
-import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 import '../mobile/services/media_query_service.dart';
-import '../models/play_content.model.dart';
-import '../models/playlist.model.dart';
+import '../models/music_model.dart';
+import '../models/playlist_model.dart';
 
 /// Media library service, globally.
 ///
@@ -52,7 +50,7 @@ class MediaLibraryService extends GetxService {
   late final Future<Database> _database;
 
   /// Return library audio content list.
-  List<PlayContent> get content => _allContent.value.contentList;
+  List<Music> get content => _allContent.value.contentList;
 
   /// On use media store on Android, avoid to use tag readers for large mount of
   /// audios.
@@ -66,9 +64,9 @@ class MediaLibraryService extends GetxService {
   /// Add audio content to library.
   ///
   /// If duplicate in content path, do nothing and return false.
-  bool addContent(PlayContent playContent) {
+  bool addContent(Music playContent) {
     for (final content in _allContent.value.contentList) {
-      if (content.contentPath == playContent.contentPath) {
+      if (content.filePath == playContent.filePath) {
         return false;
       }
     }
@@ -79,7 +77,7 @@ class MediaLibraryService extends GetxService {
   /// Add a list of audio content.
   ///
   /// Return counts of content added.
-  int addContentList(List<PlayContent> playContentList) {
+  int addContentList(List<Music> playContentList) {
     /// Count.
     var added = 0;
     for (final content in playContentList) {
@@ -92,12 +90,14 @@ class MediaLibraryService extends GetxService {
 
   /// Add a playlist in library.
   Future<void> addPlaylist(PlaylistModel playlistModel) async {
+    return;
     allPlaylist.add(playlistModel);
     await _savePlaylist(playlistModel);
   }
 
   /// Remove a playlist, from library and from database.
   Future<void> removePlaylist(PlaylistModel playlistModel) async {
+    return;
     allPlaylist
         .removeWhere((element) => element.tableName == playlistModel.tableName);
     final db = await _database;
@@ -137,25 +137,26 @@ class MediaLibraryService extends GetxService {
           ..contentList.addAll(await queryService.allAudioContents());
         return this;
       }
-      _database = openDatabase(
-        join(await getDatabasesPath(), databaseName),
-        onCreate: (db, version) => db.execute(
-          'CREATE TABLE IF NOT EXISTS $infoTableName($infoTableColumns);',
-        ),
-        version: 1,
-      );
+      // _database = openDatabase(
+      //   join(await getDatabasesPath(), databaseName),
+      //   onCreate: (db, version) => db.execute(
+      //     'CREATE TABLE IF NOT EXISTS $infoTableName($infoTableColumns);',
+      //   ),
+      //   version: 1,
+      // );
     } else {
-      sqfliteFfiInit();
-      _database = databaseFactoryFfi.openDatabase(
-        join('./', databaseName),
-        options: OpenDatabaseOptions(
-          onCreate: (db, version) => db.execute(
-            'CREATE TABLE IF NOT EXISTS $infoTableName($infoTableColumns);',
-          ),
-          version: 1,
-        ),
-      );
+      // sqfliteFfiInit();
+      // _database = databaseFactoryFfi.openDatabase(
+      //   join('./', databaseName),
+      //   options: OpenDatabaseOptions(
+      //     onCreate: (db, version) => db.execute(
+      //       'CREATE TABLE IF NOT EXISTS $infoTableName($infoTableColumns);',
+      //     ),
+      //     version: 1,
+      //   ),
+      // );
     }
+    return this;
     final db = await _database;
     // Fetch playlist data from database.
     // As created info table if not exists, no exception here.
@@ -196,6 +197,7 @@ class MediaLibraryService extends GetxService {
   ///
   /// Save name, table name and audio content list.
   Future<void> _savePlaylist(PlaylistModel playlistModel) async {
+    return;
     if (playlistModel.tableName.isEmpty) {
       playlistModel.tableName = _regenerateTableName();
     }
@@ -299,8 +301,7 @@ class MediaLibraryService extends GetxService {
     return PlaylistModel();
   }
 
-  PlayContent _fromDataMap(Map<String, dynamic> dataMap) =>
-      PlayContent.fromData(
+  Music _fromDataMap(Map<String, dynamic> dataMap) => Music.fromData(
         dataMap['path'],
         dataMap['name'],
         dataMap['size'],
@@ -321,16 +322,17 @@ class MediaLibraryService extends GetxService {
       );
 
   /// Find audio content from library (in memory) with specified file path.
-  PlayContent? findPlayContent(String contentPath) =>
+  Music? findPlayContent(String contentPath) =>
       _allContent.value.find(contentPath);
 
   /// Find audio content from database (on disk) with specified file path.
   ///
   /// Not used yet.
-  Future<PlayContent?> findPlayContentFromDatabase(
+  Future<Music?> findPlayContentFromDatabase(
     String contentPath,
     String playlistTableName,
   ) async {
+    return null;
     final db = await _database;
     final List<Map<String, dynamic>> currentContent = await db.query(
       playlistTableName,
@@ -351,6 +353,7 @@ class MediaLibraryService extends GetxService {
     String column,
     String sort,
   ) async {
+    return playlist;
     final db = await _database;
     final model = PlaylistModel()
       ..name = playlist.name

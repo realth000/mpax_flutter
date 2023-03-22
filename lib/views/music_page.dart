@@ -161,7 +161,7 @@ class MusicPage extends GetView<PlayerService> {
             title: Obx(
               () => Text(
                 controller.currentContent.value.title.isEmpty
-                    ? controller.currentContent.value.contentName
+                    ? controller.currentContent.value.fileName
                     : controller.currentContent.value.title,
                 maxLines: 1,
               ),

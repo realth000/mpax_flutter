@@ -3,8 +3,8 @@ import 'dart:io';
 
 import 'package:get/get.dart';
 
-import '../models/play_content.model.dart';
-import '../models/playlist.model.dart';
+import '../models/music_model.dart';
+import '../models/playlist_model.dart';
 import '../services/media_library_service.dart';
 import '../services/metadata_service.dart';
 import '../services/settings_service.dart';
@@ -67,7 +67,7 @@ class AudioScanner {
   /// Start scan.
   Future<int> scan() async {
     _scannedCount = 0;
-    final scannedAudioList = <PlayContent>[];
+    final scannedAudioList = <Music>[];
     late final Directory d;
     if (targetPath.isNotEmpty) {
       d = Directory(targetPath);
@@ -84,7 +84,7 @@ class AudioScanner {
     return _scannedCount;
   }
 
-  Future<void> _scan(FileSystemEntity entry, List<PlayContent> list) async {
+  Future<void> _scan(FileSystemEntity entry, List<Music> list) async {
     switch (entry.statSync().type) {
       case FileSystemEntityType.file:
         if (entry.path.endsWith('mp3')) {

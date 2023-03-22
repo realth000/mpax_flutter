@@ -9,8 +9,8 @@ import 'package:get/get.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
-import '../models/play_content.model.dart';
-import '../models/playlist.model.dart';
+import '../models/music_model.dart';
+import '../models/playlist_model.dart';
 import 'media_library_service.dart';
 import 'metadata_service.dart';
 import 'settings_service.dart';
@@ -101,7 +101,7 @@ class PlayerService extends GetxService {
   ///
   /// Every time when [playHistoryList] changes, update [playHistoryPos]
   /// because current playing position is updated.
-  final playHistoryList = <PlayContent>[];
+  final playHistoryList = <Music>[];
 
   /// Current position in [playHistoryList].
   ///
@@ -132,7 +132,7 @@ class PlayerService extends GetxService {
   PlaylistModel currentPlaylist = PlaylistModel();
 
   /// Current playing content.
-  final currentContent = PlayContent().obs;
+  final currentContent = Music().obs;
 
   /// Current play mode.
   String playMode = _repeatString;
@@ -207,7 +207,7 @@ class PlayerService extends GetxService {
       if (playMode == _repeatOneString) {
         currentContent.value.lyrics =
             await _metadataService.loadLyrics(currentContent.value);
-        await _player.setSourceDeviceFile(currentContent.value.contentPath);
+        await _player.setSourceDeviceFile(currentContent.value.filePath);
         await _player.resume();
       } else {
         await seekToAnother(true);
@@ -266,7 +266,7 @@ class PlayerService extends GetxService {
   /// Also clear [playHistoryList]. If do not want to clear [playHistoryList],
   /// use [_setCurrentPathToPlayer].
   Future<void> setCurrentContent(
-    PlayContent playContent,
+    Music playContent,
     PlaylistModel playlist,
   ) async {
     await _setCurrentPathToPlayer(playContent, playlist);
@@ -281,17 +281,17 @@ class PlayerService extends GetxService {
     }
   }
 
-  /// Set current playing audio to given [PlayContent]
+  /// Set current playing audio to given [Music]
   /// and do not clear [playHistoryList].
   /// If want to both set audio and clean [playHistoryList],
   /// use [setCurrentContent].
   Future<void> _setCurrentPathToPlayer(
-    PlayContent playContent,
+    Music playContent,
     PlaylistModel playlist,
   ) async {
     // Read the full album cover image to display in music page.
     final p = await _metadataService.readMetadata(
-      playContent.contentPath,
+      playContent.filePath,
       loadImage: true,
       scaleImage: false,
       fast: false,
@@ -299,7 +299,7 @@ class PlayerService extends GetxService {
     p.lyrics = await _metadataService.loadLyrics(p);
     currentContent.value = p;
     currentPlaylist = playlist;
-    await _player.setSourceDeviceFile(p.contentPath);
+    await _player.setSourceDeviceFile(p.filePath);
     if (GetPlatform.isMobile) {
       // Save scaled album cover in file for the just_audio_background service to
       // display on android control center.
@@ -327,8 +327,8 @@ class PlayerService extends GetxService {
 
       await wrapper?.playMediaItem(
         MediaItem(
-          id: p.contentPath,
-          title: p.title.isEmpty ? p.contentName : p.title,
+          id: p.filePath,
+          title: p.title.isEmpty ? p.fileName : p.title,
           artist: p.artist,
           album: p.albumTitle,
           duration: Duration(seconds: p.length),
@@ -338,7 +338,7 @@ class PlayerService extends GetxService {
     }
     await _configService.saveString(
       'CurrentMedia',
-      currentContent.value.contentPath,
+      currentContent.value.filePath,
     );
     await _configService.saveString(
       'CurrentPlaylist',
@@ -352,7 +352,7 @@ class PlayerService extends GetxService {
     // Use for debugging.
     // await _player.seek(Duration(seconds: (_player.duration!.inSeconds * 0.98)
     // .toInt()));
-    await _player.play(DeviceFileSource(currentContent.value.contentPath));
+    await _player.play(DeviceFileSource(currentContent.value.filePath));
   }
 
   /// Play when paused, pause when playing.
@@ -360,7 +360,7 @@ class PlayerService extends GetxService {
     if (_player.state == PlayerState.playing) {
       await _player.pause();
       return;
-    } else if (currentContent.value.contentPath.isNotEmpty) {
+    } else if (currentContent.value.filePath.isNotEmpty) {
       await _player.resume();
       return;
     } else {
@@ -435,7 +435,7 @@ class PlayerService extends GetxService {
           // the tail of list.
           // Need to grow history list.
           final c = currentPlaylist.randomPlayContent();
-          if (c.contentPath.isEmpty) {
+          if (c.filePath.isEmpty) {
             await play();
             return;
           }
@@ -453,7 +453,7 @@ class PlayerService extends GetxService {
         case _repeatOneString:
         default:
           final content = currentPlaylist.findNextContent(currentContent.value);
-          if (content.contentPath.isEmpty) {
+          if (content.filePath.isEmpty) {
             return;
           }
           await setCurrentContent(content, currentPlaylist);
@@ -481,7 +481,7 @@ class PlayerService extends GetxService {
             }
           }
           final c = currentPlaylist.randomPlayContent();
-          if (c.contentPath.isEmpty) {
+          if (c.filePath.isEmpty) {
             await play();
             return;
           }
@@ -495,7 +495,7 @@ class PlayerService extends GetxService {
         default:
           final content =
               currentPlaylist.findPreviousContent(currentContent.value);
-          if (content.contentPath.isEmpty) {
+          if (content.filePath.isEmpty) {
             return;
           }
           await setCurrentContent(content, currentPlaylist);

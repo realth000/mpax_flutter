@@ -1,42 +1,46 @@
 import 'dart:io';
 
+import 'package:isar/isar.dart';
 import 'package:path/path.dart' as path;
+
+import 'artist_model.dart';
 
 /// Model class for audio content.
 ///
 /// Maintains audio info.
-class PlayContent {
+@Collection()
+class Music {
   /// Default empty constructor.
-  PlayContent();
+  Music();
 
   /// Construct by file path.
   ///
-  /// Only make [contentName] and [contentSize].
-  PlayContent.fromPath(this.contentPath) {
-    contentName = path.basename(contentPath);
-    contentSize = File(contentPath).lengthSync();
+  /// Only make [fileName] and [fileSize].
+  Music.fromPath(this.filePath) {
+    fileName = path.basename(filePath);
+    fileSize = File(filePath).lengthSync();
   }
 
   /// Construct by file system entity.
   ///
-  /// Including [contentSize].
-  PlayContent.fromEntry(FileSystemEntity file) {
+  /// Including [fileSize].
+  Music.fromEntry(FileSystemEntity file) {
     if (file.statSync().type != FileSystemEntityType.file) {
       return;
     }
     final f = File(file.path);
-    contentPath = f.path;
-    contentName = path.basename(f.path);
-    contentSize = f.lengthSync();
+    filePath = f.path;
+    fileName = path.basename(f.path);
+    fileSize = f.lengthSync();
   }
 
   /// Construct directly from data.
   ///
   /// All data types are needed.
-  PlayContent.fromData(
-    this.contentPath,
-    this.contentName,
-    this.contentSize,
+  Music.fromData(
+    this.filePath,
+    this.fileName,
+    this.fileSize,
     this.artist,
     this.title,
     this.trackNumber,
@@ -53,17 +57,21 @@ class PlayContent {
     this.albumCover,
   );
 
+  /// Id in database.
+  Id? id = Isar.autoIncrement;
+
   /// File path of this audio.
-  String contentPath = '';
+  @Index(unique: true, caseSensitive: true)
+  final String filePath;
 
   /// File name of this audio.
-  String contentName = '';
+  String fileName = '';
 
   /// File size of this audio.
-  int contentSize = -1;
+  int fileSize = -1;
 
   /// Artist or singer of this audio.
-  String artist = '';
+  Artist artist;
 
   /// Title name of this audio.
   String title = '';
@@ -107,17 +115,13 @@ class PlayContent {
   /// Audio lyrics.
   String lyrics = '';
 
-  /// Id in the database table, not used away from database.
-  static int id = -1;
-
   /// Convert to map, sqflite3 need this format.
   Map<String, dynamic> toMap() {
-    id++;
     return {
       'id': id,
-      'path': contentPath,
-      'name': contentName,
-      'size': contentSize,
+      'path': filePath,
+      'name': fileName,
+      'size': fileSize,
       'title': title,
       'artist': artist,
       'album_title': albumTitle,

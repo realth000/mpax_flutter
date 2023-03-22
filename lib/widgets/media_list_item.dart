@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:path/path.dart' as path;
 
-import '../models/play_content.model.dart';
-import '../models/playlist.model.dart';
+import '../models/music_model.dart';
+import '../models/playlist_model.dart';
 import '../services/player_service.dart';
 import '../widgets/media_menu.dart';
 import '../widgets/util_widgets.dart';
@@ -19,14 +19,14 @@ class MediaItemController extends GetxController {
   PlayerService playerService = Get.find<PlayerService>();
 
   /// Current audio content.
-  PlayContent playContent;
+  Music playContent;
 
   /// Current controlling model.
   PlaylistModel model;
 
   /// Tell the player service to play current audio content.
   Future<void> play() async {
-    if (playContent.contentPath.isEmpty) {
+    if (playContent.filePath.isEmpty) {
       // Not play empty path.
       return;
     }
@@ -43,7 +43,7 @@ class MediaItemTile extends StatelessWidget {
   }
 
   /// Current content.
-  final PlayContent playContent;
+  final Music playContent;
 
   /// Controller of current content.
   late final MediaItemController _controller;
@@ -72,7 +72,7 @@ class MediaItemTile extends StatelessWidget {
         leading: ListTileLeading(child: _leadingIcon()),
         title: Text(
           playContent.title.isEmpty
-              ? path.basename(playContent.contentPath)
+              ? path.basename(playContent.filePath)
               : playContent.title,
           maxLines: 2,
           style: const TextStyle(
@@ -91,7 +91,7 @@ class MediaItemTile extends StatelessWidget {
             ),
             Text(
               playContent.albumTitle.isEmpty
-                  ? playContent.contentPath
+                  ? playContent.filePath
                       .replaceFirst('/storage/emulated/0/', '')
                   : playContent.albumTitle,
               maxLines: 1,
@@ -130,7 +130,7 @@ class MediaMetadataDialog extends StatelessWidget {
   MediaMetadataDialog(this.playContent, {super.key});
 
   /// audio content to show.
-  final PlayContent playContent;
+  final Music playContent;
   final _formKey = GlobalKey<FormState>();
 
   /// Widget list.
@@ -190,21 +190,21 @@ class MediaMetadataDialog extends StatelessWidget {
 
   List<Widget> _buildMetadataList() {
     _addReadonlyProperty(
-      playContent.contentPath.replaceFirst('/storage/emulated/0/', ''),
+      playContent.filePath.replaceFirst('/storage/emulated/0/', ''),
       'File path'.tr,
     );
-    if (playContent.contentName.isNotEmpty) {
+    if (playContent.fileName.isNotEmpty) {
       _addSpace();
       _addReadonlyProperty(
-        playContent.contentName,
+        playContent.fileName,
         'File name'.tr,
       );
     }
-    if (playContent.contentSize > 0) {
+    if (playContent.fileSize > 0) {
       _addSpace();
       _addReadonlyProperty(
-        '${_toReadableSize(playContent.contentSize)}'
-        '(${playContent.contentSize} Bytes)',
+        '${_toReadableSize(playContent.fileSize)}'
+        '(${playContent.fileSize} Bytes)',
         'File size'.tr,
       );
     }

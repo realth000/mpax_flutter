@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../mobile/components/mobile_underfoot.dart';
-import '../models/playlist.model.dart';
+import '../models/playlist_model.dart';
 import '../routes/app_pages.dart';
 import '../services/media_library_service.dart';
 import '../utils/scan_target_controller.dart';

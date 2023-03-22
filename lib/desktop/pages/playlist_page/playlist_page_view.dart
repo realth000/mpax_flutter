@@ -2,7 +2,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../models/playlist.model.dart';
+import '../../../models/playlist_model.dart';
 import '../../../services/media_library_service.dart';
 import '../../../utils/scan_target_controller.dart';
 import '../../../widgets/add_playlist_widget.dart';

@@ -7,6 +7,7 @@ list(APPEND FLUTTER_PLUGIN_LIST
   bitsdojo_window_linux
   devicelocale
   hotkey_manager
+  isar_flutter_libs
   metadata_god
   screen_retriever
   url_launcher_linux

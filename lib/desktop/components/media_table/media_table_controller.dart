@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
-import '../../../models/play_content.model.dart';
-import '../../../models/playlist.model.dart';
+import '../../../models/music_model.dart';
+import '../../../models/playlist_model.dart';
 import '../../../services/media_library_service.dart';
 import '../../../services/player_service.dart';
 
@@ -65,7 +65,7 @@ class MediaTableController extends GetxController {
   ///
   /// Call may from a double-click on MediaTable, MediaTable item context menu
   /// request or some other thing.
-  Future<void> playAudio(PlayContent? content, PlaylistModel playlist) async {
+  Future<void> playAudio(Music? content, PlaylistModel playlist) async {
     if (content == null) {
       return;
     }
@@ -79,7 +79,7 @@ class MediaTableController extends GetxController {
     // When current playing audio changes, update currentPlayingContent to
     // notify UI to change state icon.
     _playerService.currentContent.listen((content) {
-      currentPlayingContent.value = content.contentPath;
+      currentPlayingContent.value = content.filePath;
     });
     ever(playlist, (_) => checkedRowPathList.value.clear());
     // When current playing audio changes, update the state icon in table.

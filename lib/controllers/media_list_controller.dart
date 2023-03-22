@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
-import '../models/play_content.model.dart';
-import '../models/playlist.model.dart';
+import '../models/music_model.dart';
+import '../models/playlist_model.dart';
 
 /// Controller of [MediaList]
 /// Control load data.
@@ -17,10 +17,10 @@ class MediaListController extends GetxController {
   final PlaylistModel playlist;
 
   /// [Iterator] of [playlist].
-  late final Iterator<PlayContent> it;
+  late final Iterator<Music> it;
 
   /// [PlaylistModel] to show.
-  final showList = <PlayContent>[];
+  final showList = <Music>[];
 
   /// Controller of MediaList scrolling.
   final scrollController = ScrollController();
