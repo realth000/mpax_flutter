@@ -97,15 +97,6 @@ class PlaylistModel {
     return contentList.first;
   }
 
-  /// Convert to map format, sqflite need this.
-  Map<String, dynamic> toMap() {
-    return {
-      'sort': contentList.length,
-      'playlist_name': name,
-      'table_name': tableName,
-    };
-  }
-
   /// Return a random audio content in playlist.
   Music randomPlayContent() {
     if (contentList.isEmpty) {

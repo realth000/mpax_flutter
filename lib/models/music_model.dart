@@ -3,22 +3,22 @@ import 'dart:io';
 import 'package:isar/isar.dart';
 import 'package:path/path.dart' as path;
 
+import 'album_model.dart';
 import 'artist_model.dart';
+import 'artwork_model.dart';
 
 /// Model class for audio content.
 ///
 /// Maintains audio info.
 @Collection()
 class Music {
-  /// Default empty constructor.
-  Music();
-
   /// Construct by file path.
   ///
   /// Only make [fileName] and [fileSize].
   Music.fromPath(this.filePath) {
     fileName = path.basename(filePath);
     fileSize = File(filePath).lengthSync();
+    // TODO: Retrieve metadata.
   }
 
   /// Construct by file system entity.
@@ -41,7 +41,7 @@ class Music {
     this.filePath,
     this.fileName,
     this.fileSize,
-    this.artist,
+    Artist artist,
     this.title,
     this.trackNumber,
     this.bitRate,
@@ -55,10 +55,14 @@ class Music {
     this.channels,
     this.length,
     this.albumCover,
-  );
+  ) {
+    isar.artist.put(artist);
+  }
 
   /// Id in database.
   Id? id = Isar.autoIncrement;
+
+  //////////////  File Properties //////////////
 
   /// File path of this audio.
   @Index(unique: true, caseSensitive: true)
@@ -70,73 +74,45 @@ class Music {
   /// File size of this audio.
   int fileSize = -1;
 
-  /// Artist or singer of this audio.
-  Artist artist;
+  //////////////  Music metadata Properties //////////////
 
   /// Title name of this audio.
-  String title = '';
+  String? title;
 
-  /// Track number in album of this audio.
-  int trackNumber = -1;
-
-  /// Bit rate, for *.mp3, usually 128kbps/240kbps/320kbps.
-  int bitRate = -1;
-
-  /// Artists of the album, may be more than one artist.
-  String albumArtist = '';
-
-  /// Name of the album.
-  String albumTitle = '';
-
-  /// Album cover image, base64 encoded data.
-  String albumCover = '';
-
-  /// Album publish year.
-  int albumYear = -1;
-
-  /// Album total track counts.
-  int albumTrackCount = -1;
-
-  /// Genre of the album.
-  String genre = '';
-
-  /// Comment of this audio.
-  String comment = '';
-
-  /// Sample rate of this audio, usually 44100kHz/48000kHz.
-  int sampleRate = -1;
-
-  /// Channel numbers count, usually 2.
-  int channels = -1;
-
-  /// Audio duration in seconds..
-  int length = -1;
+  /// Artist or singer of this audio.
+  final artist = IsarLink<Artist>();
 
   /// Audio lyrics.
-  String lyrics = '';
+  String? lyrics;
 
-  /// Convert to map, sqflite3 need this format.
-  Map<String, dynamic> toMap() {
-    return {
-      'id': id,
-      'path': filePath,
-      'name': fileName,
-      'size': fileSize,
-      'title': title,
-      'artist': artist,
-      'album_title': albumTitle,
-      'album_artist': albumArtist,
-      'album_year': albumYear,
-      'album_track_count': albumTrackCount,
-      'track_number': trackNumber,
-      'bit_rate': bitRate,
-      'sample_rate': sampleRate,
-      'genre': genre,
-      'comment': comment,
-      'channels': channels,
-      'length': length,
-      'album_cover': albumCover,
-      'lyrics': lyrics,
-    };
-  }
+  /// All artworks.
+  final artworkMap = <ArtworkType, IsarLink<Artwork>>{};
+
+  //////////////  Album Properties //////////////
+
+  /// Album of this audio.
+  final album = IsarLink<Album>();
+
+  /// Track number in album of this audio.
+  int? trackNumber = -1;
+
+  /// Genre of the album.
+  String? genre;
+
+  /// Comment of this audio.
+  String? comment;
+
+  //////////////  Audio Properties //////////////
+
+  /// Bit rate, for *.mp3, usually 128kbps/240kbps/320kbps.
+  final int? bitRate;
+
+  /// Sample rate of this audio, usually 44100kHz/48000kHz.
+  final int? sampleRate;
+
+  /// Channel numbers count, usually 2.
+  final int? channels;
+
+  /// Audio duration in seconds..
+  final int? length;
 }

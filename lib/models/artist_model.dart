@@ -6,12 +6,15 @@ import 'music_model.dart';
 /// Artist model.
 @Collection()
 class Artist {
+  /// Constructor.
+  Artist({required this.name});
+
   /// Id in database.
   Id id = Isar.autoIncrement;
 
   /// Artist name, should be unique.
   @Index(unique: true, caseSensitive: true)
-  String name = '';
+  String name;
 
   /// All music performed by this artist.
   final musicList = IsarLinks<Music>();
