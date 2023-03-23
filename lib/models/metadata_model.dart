@@ -4,6 +4,9 @@ import 'artwork_model.dart';
 ///
 /// Maybe only used by [MetadataService].
 class Metadata {
+  /// Default constructor.
+  Metadata();
+
   /// Title string.
   String? title;
 
@@ -27,10 +30,31 @@ class Metadata {
   /// Artwork map.
   ///
   /// Unknown type (position) artwork should <= 1.
-  Map<ArtworkType, Artwork>? artworkList;
+  Map<ArtworkType, Artwork>? artworkMap;
+
+  /// Music genre.
+  String? genre;
+
+  /// Audio track number.
+  int? track;
+
+  /// Audio bit rate.
+  int? bitrate;
+
+  /// Audio sample rate.
+  int? sampleRate;
+
+  /// Channels count, usually 2.
+  int? channels;
+
+  /// Audio length, should in seconds.
+  int? length;
 
   /// Lyrics string.
   ///
   /// Should including time and in *.lrc format.
   String? lyrics;
+
+  /// Comment string.
+  String? comment;
 }

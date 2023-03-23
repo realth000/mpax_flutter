@@ -76,7 +76,7 @@ class AudioScanner {
     await _scan(d, scannedAudioList);
     _mediaLibraryService.addContentList(scannedAudioList);
     if (targetModel != null) {
-      targetModel!.addContentList(scannedAudioList);
+      targetModel!.addMusicList(scannedAudioList);
     }
     _scannedCount += scannedAudioList.length;
     scannedAudioList.clear();
@@ -101,7 +101,7 @@ class AudioScanner {
         if (list.length >= 200) {
           _mediaLibraryService.addContentList(list);
           if (targetModel != null) {
-            targetModel!.addContentList(list);
+            targetModel!.addMusicList(list);
           }
           await _mediaLibraryService.saveAllPlaylist();
           _scannedCount += list.length;
@@ -128,7 +128,7 @@ class AudioScanner {
             if (list.length >= 10) {
               _mediaLibraryService.addContentList(list);
               if (targetModel != null) {
-                targetModel!.addContentList(list);
+                targetModel!.addMusicList(list);
               }
               _scannedCount += list.length;
               list.clear();

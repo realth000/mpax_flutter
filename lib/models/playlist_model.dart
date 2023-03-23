@@ -1,33 +1,38 @@
 import 'dart:math';
 
+import 'package:isar/isar.dart';
+
 import 'music_model.dart';
 
 /// Model of playlist.
 ///
 /// Maintains a list of audio files, and information/property about playlist.
+@Collection()
 class PlaylistModel {
   /// Constructor.
   PlaylistModel();
 
-  /// Construct by info and audio content list.
-  PlaylistModel.fromInfo(this.name, this.tableName, this.contentList);
+  /// Id in database.
+  Id id = Isar.autoIncrement;
 
   /// Playlist name, human readable name.
   String name = '';
 
-  /// Playlist name only used with database to tell difference from other same
-  /// [name] playlists, usually not display on UI.
-  String tableName = '';
-
-  /// Audio models list.
-  List<Music> contentList = <Music>[];
+  /// All music.
+  ///
+  /// Do not use [IsarLinks] because we want to keep [musicList] sorted.
+  /// And all [Music] link saved in must NOT be null.
+  /// TODO: Check whether deleting a [Music] will leave an empty [IsarLink].
+  /// If so, we should check every time access them or keep observing.
+  final musicList = <IsarLink<Music>>[];
 
   /// Tell if the specified audio file already exists in playlist.
   ///
   /// Run by file path.
-  bool contains(Music playContent) {
-    for (final content in contentList) {
-      if (content.filePath == playContent.filePath) {
+  // TODO: Maybe should implement this with database.
+  bool contains(Music music) {
+    for (final content in musicList.where((link) => link.value != null)) {
+      if (content.value!.filePath == music.filePath) {
         return true;
       }
     }
@@ -35,43 +40,45 @@ class PlaylistModel {
   }
 
   /// Tell if the specified path file already exists in playlist.
+  // TODO: Maybe should implement this with database.
   Music? find(String contentPath) {
-    for (final content in contentList) {
-      if (content.filePath == contentPath) {
-        return content;
+    for (final content in musicList.where((link) => link.value != null)) {
+      if (content.value!.filePath == contentPath) {
+        return content.value;
       }
     }
     return null;
   }
 
   /// Add a list of audio model to playlist, not duplicate with same path file.
-  void addContentList(List<Music> playContentList) {
-    for (final content in playContentList) {
+  void addMusicList(List<Music> musicList) {
+    for (final content in musicList) {
+      // TODO: Maybe [IsarLink] is similar to [Set], which means we do not need to prevent repeat.
       if (contains(content)) {
         continue;
       }
-      contentList.add(content);
+      musicList.add(content);
     }
   }
 
   /// Clear audio file list.
-  void clearContent() {
-    contentList.clear();
+  void clearMusicList() {
+    musicList.clear();
   }
 
   /// Find previous audio content of the given playContent.
   ///
   /// If it's the first one, the last one will be returned.
   /// Find current playContent position by [contentList.last.contentPath].
-  Music findPreviousContent(Music playContent) {
-    if (contentList.isEmpty) {
-      return Music();
+  Music? findPreviousMusic(Music playContent) {
+    if (musicList.isEmpty) {
+      return null;
     }
-    if (contentList.first.filePath == playContent.filePath) {
-      return contentList.last;
+    if (musicList.first.value!.filePath == playContent.filePath) {
+      return musicList.last.value;
     }
-    for (var i = contentList.length - 1; i > -1; i--) {
-      if (contentList[i].filePath == playContent.filePath) {
+    for (var i = musicList.length - 1; i > -1; i--) {
+      if (musicList[i].value?.filePath == playContent.filePath) {
         return contentList[i - 1];
       }
     }
@@ -82,9 +89,9 @@ class PlaylistModel {
   ///
   /// If it's the last one, the first one will be returned.
   /// Find current playContent position by [contentList.last.contentPath].
-  Music findNextContent(Music playContent) {
+  Music? findNextContent(Music playContent) {
     if (contentList.isEmpty) {
-      return Music();
+      return null;
     }
     if (contentList.last.filePath == playContent.filePath) {
       return contentList.first;
@@ -98,9 +105,9 @@ class PlaylistModel {
   }
 
   /// Return a random audio content in playlist.
-  Music randomPlayContent() {
+  Music? randomPlayContent() {
     if (contentList.isEmpty) {
-      return Music();
+      return null;
     }
     return contentList[Random().nextInt(contentList.length)];
   }

@@ -118,7 +118,7 @@ class MediaLibraryService extends GetxService {
   /// Regenerate the table name and clear all audio contents.
   void _resetPlaylistModel(PlaylistModel model) {
     model
-      ..clearContent()
+      ..clearMusicList()
       ..tableName = _regenerateTableName();
   }
 

@@ -16,6 +16,7 @@ import '../translations/translations.dart';
 import 'desktop/services/scaffold_service.dart';
 import 'desktop/services/shortcut_service.dart';
 import 'mobile/services/media_query_service.dart';
+import 'services/database_service.dart';
 import 'services/search_service.dart';
 
 void main() async {
@@ -93,6 +94,7 @@ Future<void> initServices() async {
   }
   // Use service.init() here to make sure service is init.
   await Get.putAsync(() async => SettingsService().init());
+  await Get.putAsync(() async => DatabaseService().init());
   await Get.putAsync(() async => ThemeService().init());
   await Get.putAsync(() async => LocaleService().init());
   await Get.putAsync(() async => MetadataService().init());

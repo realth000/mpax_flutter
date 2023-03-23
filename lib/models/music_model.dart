@@ -17,6 +17,7 @@ class Music {
   /// Construct by file path.
   ///
   /// Only make [fileName] and [fileSize].
+  /// Need to call [refreshMetadata] after call this.
   Music.fromPath(this.filePath) {
     fileName = path.basename(filePath);
     fileSize = File(filePath).lengthSync();
@@ -25,6 +26,7 @@ class Music {
   /// Construct by file system entity.
   ///
   /// Including [fileSize].
+  /// Need to call [refreshMetadata] after call this.
   Music.fromEntry(FileSystemEntity file) {
     if (file.statSync().type != FileSystemEntityType.file) {
       return;
@@ -35,44 +37,56 @@ class Music {
     fileSize = f.lengthSync();
   }
 
-  /// Construct directly from data.
-  ///
-  /// All data types are needed.
-  Music.fromData(
-    this.filePath,
-    this.fileName,
-    this.fileSize,
-    Artist artist,
-    this.title,
-    this.trackNumber,
-    this.bitRate,
-    this.genre,
-    this.comment,
-    this.sampleRate,
-    this.channels,
-    this.length,
-  ) {
-    isar.artist.put(artist);
-  }
-
   /// Read metadata from file.
+  ///
+  /// This should always called after init a [Music] to fill metadata.
+  /// This function not placed in constructor because it is "async".
   Future<bool> refreshMetadata({
     String? filePath,
     bool loadImage = false,
     bool scaleImage = true,
     bool fast = true,
   }) async {
+    /// Get file info.
     if (filePath != null) {
       this.filePath = filePath;
       fileName = path.basename(filePath);
       fileSize = File(this.filePath).lengthSync();
     }
-    final metadata =
-        await Get.find<MetadataService>().readMetadata(this.filePath);
+    final metadataService = Get.find<MetadataService>();
+    final metadata = await metadataService.readMetadata(this.filePath);
     if (metadata == null) {
       return false;
     }
     title = metadata.title ?? fileName;
+    if (metadata.artist != null) {
+      artists.add(metadataService.fetchArtist(metadata.artist!));
+    }
+    lyrics = metadata.lyrics;
+    if (metadata.artworkMap != null) {
+      metadata.artworkMap!.forEach((type, artwork) {
+        if (artworkMap.containsKey(type)) {
+          artworkMap[type]!.value =
+              metadataService.fetchArtwork(artwork.format, artwork.data);
+        } else {
+          final link = IsarLink<Artwork>()
+            ..value =
+                metadataService.fetchArtwork(artwork.format, artwork.data);
+          artworkMap[type] = link;
+        }
+      });
+    }
+    if (metadata.title != null) {
+      album.value = metadataService.fetchAlbum(
+          metadata.title!, artists.map((e) => e.name).toList());
+    }
+    trackNumber = metadata.track;
+    genre = metadata.genre;
+    comment = metadata.comment;
+    bitRate = metadata.bitrate;
+    sampleRate = metadata.sampleRate;
+    channels = metadata.channels;
+    length = metadata.length;
     return true;
   }
 
@@ -97,7 +111,7 @@ class Music {
   String? title;
 
   /// Artist or singer of this audio.
-  final artist = IsarLink<Artist>();
+  final artists = IsarLinks<Artist>();
 
   /// Audio lyrics.
   String? lyrics;
@@ -108,6 +122,8 @@ class Music {
   //////////////  Album Properties //////////////
 
   /// Album of this audio.
+  ///
+  /// Have back link from [Album.albumMusic]
   final album = IsarLink<Album>();
 
   /// Track number in album of this audio.

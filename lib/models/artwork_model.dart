@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:crypto/crypto.dart';
 import 'package:isar/isar.dart';
 
 /// All cover image types.
@@ -41,13 +44,21 @@ enum ArtworkFormat {
 @Collection()
 class Artwork {
   /// Constructor.
-  Artwork({required this.format, required this.data});
+  Artwork({required this.format, required this.data}) {
+    dataHash = md5.convert(utf8.encode(data)).toString();
+  }
 
   /// Id in database.
   Id id = Isar.autoIncrement;
 
   /// Format.
   final ArtworkFormat format;
+
+  /// Data hash.
+  ///
+  /// Use to specify artworks.
+  @Index(unique: true)
+  late final String dataHash;
 
   /// Data.
   final String data;

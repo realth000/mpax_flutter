@@ -22,7 +22,7 @@ class Album {
   /// Album title
   @Index(
     unique: true,
-    caseSensitive: false,
+    caseSensitive: true,
     composite: [CompositeIndex('artist')],
   )
   String title;
@@ -34,7 +34,7 @@ class Album {
   ///
   /// May change but currently we only use one at the same time.
   /// User may choose from [Artwork]s in [albumMusic].
-  final artworkList = IsarLink<Artwork>();
+  final artworkList = IsarLinks<Artwork>();
 
   /// Album year.
   int? year;
@@ -43,6 +43,6 @@ class Album {
   int? trackCount;
 
   /// Contained music.
-  @Backlink(to: 'Music')
-  final albumMusic = IsarLink<Music>();
+  @Backlink(to: 'album')
+  final albumMusic = IsarLinks<Music>();
 }

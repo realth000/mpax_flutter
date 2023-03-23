@@ -494,7 +494,7 @@ class PlayerService extends GetxService {
         case _repeatOneString:
         default:
           final content =
-              currentPlaylist.findPreviousContent(currentContent.value);
+              currentPlaylist.findPreviousMusic(currentContent.value);
           if (content.filePath.isEmpty) {
             return;
           }
