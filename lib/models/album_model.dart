@@ -1,15 +1,17 @@
 import 'package:isar/isar.dart';
 
+import 'artist_model.dart';
 import 'artwork_model.dart';
 import 'music_model.dart';
 
 /// Album model.
+///
+/// [title] together with [artist] can specify a certain [Album].
 @Collection()
 class Album {
   /// Constructor
   Album({
     required this.title,
-    this.artist,
     this.year,
     this.trackCount,
   });
@@ -26,7 +28,7 @@ class Album {
   String title;
 
   /// Album artist.
-  String? artist;
+  final artist = IsarLinks<Artist>();
 
   /// Album cover data, base64 encoded.
   ///

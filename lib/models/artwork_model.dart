@@ -7,17 +7,20 @@ enum ArtworkType {
   /// In front cover.
   frontCover,
 
-  /// Back cover
+  /// Back cover.
   backCover,
 
-  /// Artist cover
+  /// Artist cover.
   artist,
 
   /// Album dic cover (most usually used).
   disc,
 
-  /// Icon
+  /// Icon.
   icon,
+
+  /// Unknown type.
+  unknown,
 }
 
 /// Cover image supported formats.
@@ -27,6 +30,9 @@ enum ArtworkFormat {
 
   /// Png format.
   png,
+
+  /// Unknown format.
+  unknown,
 }
 
 /// Cover image.

@@ -1,8 +1,10 @@
 import 'dart:io';
 
+import 'package:get/get.dart';
 import 'package:isar/isar.dart';
 import 'package:path/path.dart' as path;
 
+import '../services/metadata_service.dart';
 import 'album_model.dart';
 import 'artist_model.dart';
 import 'artwork_model.dart';
@@ -18,7 +20,6 @@ class Music {
   Music.fromPath(this.filePath) {
     fileName = path.basename(filePath);
     fileSize = File(filePath).lengthSync();
-    // TODO: Retrieve metadata.
   }
 
   /// Construct by file system entity.
@@ -45,18 +46,34 @@ class Music {
     this.title,
     this.trackNumber,
     this.bitRate,
-    this.albumArtist,
-    this.albumTitle,
-    this.albumYear,
-    this.albumTrackCount,
     this.genre,
     this.comment,
     this.sampleRate,
     this.channels,
     this.length,
-    this.albumCover,
   ) {
     isar.artist.put(artist);
+  }
+
+  /// Read metadata from file.
+  Future<bool> refreshMetadata({
+    String? filePath,
+    bool loadImage = false,
+    bool scaleImage = true,
+    bool fast = true,
+  }) async {
+    if (filePath != null) {
+      this.filePath = filePath;
+      fileName = path.basename(filePath);
+      fileSize = File(this.filePath).lengthSync();
+    }
+    final metadata =
+        await Get.find<MetadataService>().readMetadata(this.filePath);
+    if (metadata == null) {
+      return false;
+    }
+    title = metadata.title ?? fileName;
+    return true;
   }
 
   /// Id in database.
@@ -66,7 +83,7 @@ class Music {
 
   /// File path of this audio.
   @Index(unique: true, caseSensitive: true)
-  final String filePath;
+  late final String filePath;
 
   /// File name of this audio.
   String fileName = '';
@@ -105,14 +122,14 @@ class Music {
   //////////////  Audio Properties //////////////
 
   /// Bit rate, for *.mp3, usually 128kbps/240kbps/320kbps.
-  final int? bitRate;
+  int? bitRate;
 
   /// Sample rate of this audio, usually 44100kHz/48000kHz.
-  final int? sampleRate;
+  int? sampleRate;
 
   /// Channel numbers count, usually 2.
-  final int? channels;
+  int? channels;
 
   /// Audio duration in seconds..
-  final int? length;
+  int? length;
 }

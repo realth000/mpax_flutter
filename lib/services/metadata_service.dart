@@ -7,20 +7,28 @@ import 'package:metadata_god/metadata_god.dart' as mg;
 import 'package:path/path.dart' as path;
 import 'package:taglib_ffi/taglib_ffi.dart' as tl;
 
+import '../models/album_model.dart';
 import '../models/music_model.dart';
 
 /// Manage audio metadata, globally.
 class MetadataService extends GetxService {
-  /// Get a [Music] filled with metadata read from given [contentPath].
-  Future<Music> readMetadata(
-    String contentPath, {
+  ///
+  Album fetchMetadata(
+    title,
+    artist, {
+    String albumTitle,
+  }) {}
+
+  /// Get a [Music] filled with metadata read from given [filePath].
+  Future<Music?> readMetadata(
+    String filePath, {
     bool loadImage = false,
     bool scaleImage = true,
     bool fast = true,
   }) async {
-    final s = File(contentPath).statSync();
+    final s = File(filePath).statSync();
     if (s.type != FileSystemEntityType.file) {
-      return Music();
+      return null;
     }
 
     // Because metadata_god can load image and handles both utf8 and latin1
@@ -31,12 +39,12 @@ class MetadataService extends GetxService {
     if (fast) {
       late final mg.Metadata? metadata;
       try {
-        metadata = await mg.MetadataGod.getMetadata(contentPath);
+        metadata = await mg.MetadataGod.getMetadata(filePath);
         if (metadata == null) {
-          return Music.fromPath(contentPath);
+          return Music.fromPath(filePath);
         }
         return _applyMetadataFromMG(
-          contentPath,
+          filePath,
           metadata,
           loadImage,
           scaleImage,
@@ -46,37 +54,26 @@ class MetadataService extends GetxService {
         // Can not read metadata, maybe from m4a files.
         //   Only write basic info.
         //   TODO: Should print something here.
-        return Music.fromPath(contentPath);
+        return Music.fromPath(filePath);
       }
     } else {
       late final tl.Metadata? metadata;
-      late final Music playContent;
+      late final Music music;
       try {
-        metadata = await tl.TagLib(filePath: contentPath).readMetadataEx();
+        metadata = await tl.TagLib(filePath: filePath).readMetadataEx();
         if (metadata == null) {
-          return Music.fromPath(contentPath);
+          return Music.fromPath(filePath);
         }
-        playContent = await _applyMetadataFromTL(
-          contentPath,
+        return await _applyMetadataFromTL(
+          filePath,
           metadata,
           loadImage,
           scaleImage,
         );
-        // final mgData = await mg.MetadataGod.getMetadata(contentPath);
-        // if (mgData == null) {
-        //   return playContent;
-        // }
-        // final mgPlayContent = await _applyMetadataFromMG(
-        //     contentPath, mgData, loadImage, scaleImage);
-        // playContent
-        //   ..albumCover = mgPlayContent.albumCover ?? ''
-        //   ..albumArtist = mgPlayContent.albumArtist ?? ''
-        //   ..albumTrackCount = mgPlayContent.albumTrackCount ?? 0;
-        return playContent;
       } catch (e) {
         //   TODO: Do something here.
         print('AAAA error: $e');
-        return Music.fromPath(contentPath);
+        return Music.fromPath(filePath);
       }
     }
   }
@@ -88,44 +85,44 @@ class MetadataService extends GetxService {
     bool loadImage,
     bool scaleImage,
   ) async {
-    final playContent = Music.fromPath(contentPath);
+    final music = Music.fromPath(contentPath);
     if (metadata.artist != null) {
-      playContent.artist = metadata.artist!;
+      music.artist = metadata.artist!;
     }
     if (metadata.title != null) {
-      playContent.title = metadata.title!;
+      music.title = metadata.title!;
     }
-    if (playContent.title.isEmpty) {
-      playContent.title = playContent.fileName;
+    if (music.title.isEmpty) {
+      music.title = music.fileName;
     }
     if (metadata.trackNumber != null) {
-      playContent.trackNumber = metadata.trackNumber!;
+      music.trackNumber = metadata.trackNumber!;
     }
     if (metadata.albumArtist != null) {
-      playContent.albumArtist = metadata.albumArtist!;
+      music.albumArtist = metadata.albumArtist!;
     }
     if (metadata.album != null) {
-      playContent.albumTitle = metadata.album!;
+      music.albumTitle = metadata.album!;
     }
     if (metadata.year != null) {
-      playContent.albumYear = metadata.year!;
+      music.albumYear = metadata.year!;
     }
     if (metadata.trackTotal != null) {
-      playContent.albumTrackCount = metadata.trackTotal!;
+      music.albumTrackCount = metadata.trackTotal!;
     }
     // FIXME: Seems some files have a genre value ' ',
     // is blank but contains a space.
     // Do not know is id3 tag standard or file corruption or mis-edit,
     // just filter this situation now.
     if (metadata.genre != null && metadata.genre != ' ') {
-      playContent.genre = metadata.genre!;
+      music.genre = metadata.genre!;
     }
     // if (metadata.bitrate != null) {
     //   playContent.bitRate = metadata.bitrate!;
     // }
 
     if (metadata.picture == null || !loadImage) {
-      return playContent;
+      return music;
     }
 
     if (scaleImage && GetPlatform.isMobile) {
@@ -134,11 +131,11 @@ class MetadataService extends GetxService {
         minWidth: 120,
         minHeight: 120,
       );
-      playContent.albumCover = base64Encode(tmpList);
+      music.albumCover = base64Encode(tmpList);
     } else if (!scaleImage) {
-      playContent.albumCover = base64Encode(metadata.picture!.data);
+      music.albumCover = base64Encode(metadata.picture!.data);
     }
-    return playContent;
+    return music;
   }
 
   /// Fetch metadata with package taglib_ffi.
