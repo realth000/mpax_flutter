@@ -21,7 +21,7 @@ class DesktopPlaylistPage extends StatelessWidget {
 
   Widget _getPlaylistCover(PlaylistModel model) {
     // TODO: Get first media audio cover here.
-    if (model.contentList.isEmpty) {
+    if (model.musicList.isEmpty) {
       return const Icon(Icons.queue_music);
     } else {
       return const Icon(Icons.featured_play_list);
@@ -43,11 +43,11 @@ class DesktopPlaylistPage extends StatelessWidget {
     final tableController = Get.find<MediaTableController>();
     // Refresh playlist table if current playlist is arg playlistModel.
     // TODO: Make this not ugly.
-    if (playlistModel.tableName == tableController.playlist.value.tableName) {
-      _controller.currentPlaylist.value = PlaylistModel();
-      _controller.currentPlaylist.value =
-          _libraryService.findPlaylistByTableName(playlistModel.tableName);
-    }
+    // if (playlistModel.tableName == tableController.playlist.value.tableName) {
+    //   _controller.currentPlaylist.value = PlaylistModel();
+    //   _controller.currentPlaylist.value =
+    //       _libraryService.findPlaylistByTableName(playlistModel.tableName);
+    // }
   }
 
   Widget _buildPlaylistView() {
@@ -80,10 +80,11 @@ class DesktopPlaylistPage extends StatelessWidget {
                   // When going to delete current showing playlist, delete it.
                   final currentShowingPlaylist =
                       Get.find<DesktopPlaylistPageController>().currentPlaylist;
-                  if (model.tableName ==
-                      currentShowingPlaylist.value.tableName) {
-                    currentShowingPlaylist.value = PlaylistModel();
-                  }
+                  // TODO: Delete selected playlist here.
+                  // if (model.tableName ==
+                  //     currentShowingPlaylist.value.tableName) {
+                  //   currentShowingPlaylist.value = PlaylistModel();
+                  // }
                   break;
                 default:
                   break;
@@ -91,8 +92,9 @@ class DesktopPlaylistPage extends StatelessWidget {
             },
           ),
           onTap: () {
-            _controller.currentPlaylist.value =
-                _libraryService.findPlaylistByTableName(model.tableName);
+            // TODO: Update current playlist here.
+            // _controller.currentPlaylist.value =
+            // _libraryService.findPlaylistByTableName(model.tableName);
           },
         ),
       );

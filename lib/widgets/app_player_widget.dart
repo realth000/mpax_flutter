@@ -49,14 +49,15 @@ class MPaxPlayerWidget extends GetView<PlayerService> {
   static final double albumCoverHeight = GetPlatform.isMobile ? 56 : 120;
 
   String _getAlbumString() {
-    if (controller.currentContent.value.artist.isNotEmpty) {
-      return controller.currentContent.value.albumTitle;
-    } else if (controller.currentContent.value.filePath.isNotEmpty) {
-      return controller.currentContent.value.filePath
-          .replaceFirst('/storage/emulated/0/', '');
-    } else {
-      return '';
-    }
+    // if (controller.currentContent.value.artist.isNotEmpty) {
+    //   return controller.currentContent.value.albumTitle;
+    // } else if (controller.currentContent.value.filePath.isNotEmpty) {
+    //   return controller.currentContent.value.filePath
+    //       .replaceFirst('/storage/emulated/0/', '');
+    // } else {
+    //   return '';
+    // }
+    return '';
   }
 
   Future<void> _toMusicPage() async {
@@ -79,7 +80,7 @@ class MPaxPlayerWidget extends GetView<PlayerService> {
   }
 
   Widget _buildAudioAlbumCoverWidget(BuildContext context) {
-    if (controller.currentContent.value.albumCover.isEmpty) {
+    if (controller.currentContent.value.artworkMap.isEmpty) {
       return GestureDetector(
         onTapUp: (details) async {
           await _toMusicPage();
@@ -99,7 +100,8 @@ class MPaxPlayerWidget extends GetView<PlayerService> {
           width: albumCoverHeight,
           height: albumCoverHeight,
           child: Image.memory(
-            base64Decode(controller.currentContent.value.albumCover),
+            // base64Decode(controller.currentContent.value.albumCover),
+            base64Decode(''),
           ),
         ),
       );
@@ -109,9 +111,10 @@ class MPaxPlayerWidget extends GetView<PlayerService> {
   Widget _buildAudioInfoWidget(BuildContext context) {
     final titleWidget = Obx(
       () => Text(
-        controller.currentContent.value.title.isEmpty
-            ? controller.currentContent.value.fileName
-            : controller.currentContent.value.title,
+        ''.obs.value,
+        // controller.currentContent.value.title.isEmpty
+        //     ? controller.currentContent.value.fileName
+        //     : controller.currentContent.value.title,
         style: const TextStyle(
           fontSize: 15,
         ),
@@ -123,9 +126,10 @@ class MPaxPlayerWidget extends GetView<PlayerService> {
 
     final artistWidget = Obx(
       () => Text(
-        controller.currentContent.value.artist.isEmpty
-            ? ''
-            : controller.currentContent.value.artist,
+        ''.obs.value,
+        // controller.currentContent.value.artist.isEmpty
+        //     ? ''
+        //     : controller.currentContent.value.artist,
         style: TextStyle(
           color: Colors.grey[600],
         ),
@@ -137,7 +141,8 @@ class MPaxPlayerWidget extends GetView<PlayerService> {
 
     final albumWidget = Obx(
       () => Text(
-        _getAlbumString(),
+        // _getAlbumString(),
+        ''.obs.value,
         style: TextStyle(
           color: Colors.grey[600],
         ),

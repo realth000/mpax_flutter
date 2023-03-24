@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 
 import '../mobile/components/mobile_underfoot.dart';
 import '../models/playlist_model.dart';
-import '../routes/app_pages.dart';
 import '../services/media_library_service.dart';
 import '../utils/scan_target_controller.dart';
 import '../widgets/add_playlist_widget.dart';
@@ -75,11 +74,12 @@ class PlaylistPage extends GetView<MediaLibraryService> {
 
   Widget _getPlaylistCover(PlaylistModel model) {
     // TODO: Get first media audio cover here.
-    if (model.contentList.isEmpty) {
-      return const Icon(Icons.queue_music);
-    } else {
-      return const Icon(Icons.featured_play_list);
-    }
+    // if (model.contentList.isEmpty) {
+    //   return const Icon(Icons.queue_music);
+    // } else {
+    //   return const Icon(Icons.featured_play_list);
+    // }
+    return Placeholder();
   }
 
   ListTile _buildPlaylistItem(PlaylistModel model) => ListTile(
@@ -90,10 +90,10 @@ class PlaylistPage extends GetView<MediaLibraryService> {
           icon: const Icon(Icons.menu),
         ),
         onTap: () async {
-          await Get.toNamed(
-            MPaxRoutes.playlistContent
-                .replaceFirst(':playlist_table_name', model.tableName),
-          );
+          // await Get.toNamed(
+          //   MPaxRoutes.playlistContent
+          //       .replaceFirst(':playlist_table_name', model.tableName),
+          // );
         },
       );
 

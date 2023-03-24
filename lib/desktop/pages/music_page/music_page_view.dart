@@ -32,12 +32,14 @@ class DesktopMusicPage extends GetView<PlayerService> {
             width: Get.width / 3 * 1,
             height: Get.width / 3 * 1,
             child: Obx(
-              () => controller.currentContent.value.albumCover.isEmpty
+              () => controller.currentContent.value.artworkMap.isEmpty
                   ? const Icon(Icons.music_note)
                   : Image.memory(
-                      base64Decode(
-                        controller.currentContent.value.albumCover,
-                      ),
+                      // FIXME: Decode artwork here.
+                      base64Decode(''
+                          // controller.currentContent.value.artworkMap[keys[0]]
+                          //     .value.data,
+                          ),
                     ),
             ),
           ),

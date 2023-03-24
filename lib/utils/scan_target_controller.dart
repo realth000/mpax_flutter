@@ -85,6 +85,8 @@ class AudioScanner {
   }
 
   Future<void> _scan(FileSystemEntity entry, List<Music> list) async {
+    /*
+
     switch (entry.statSync().type) {
       case FileSystemEntityType.file:
         if (entry.path.endsWith('mp3')) {
@@ -139,5 +141,7 @@ class AudioScanner {
         }
         break;
     }
+  }
+     */
   }
 }

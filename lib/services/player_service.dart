@@ -246,12 +246,13 @@ class PlayerService extends GetxService {
       final currentPlaylist =
           _libraryService.findPlaylistByTableName(currentPlaylistString);
       // _libraryService
-      if (currentPlaylist.tableName.isNotEmpty) {
-        final content = _libraryService.findPlayContent(currentMedia.path);
-        if (content != null) {
-          await setCurrentContent(content, currentPlaylist);
-        }
-      }
+      // TODO: Load init media here.
+      // if (currentPlaylist.tableName.isNotEmpty) {
+      //   final content = _libraryService.findPlayContent(currentMedia.path);
+      //   if (content != null) {
+      //     await setCurrentContent(content, currentPlaylist);
+      //   }
+      // }
     }
   }
 
@@ -296,21 +297,21 @@ class PlayerService extends GetxService {
       scaleImage: false,
       fast: false,
     );
-    p.lyrics = await _metadataService.loadLyrics(p);
-    currentContent.value = p;
-    currentPlaylist = playlist;
-    await _player.setSourceDeviceFile(p.filePath);
+    // p.lyrics = await _metadataService.loadLyrics(p) ?? '';
+    // currentContent.value = p;
+    // currentPlaylist = playlist;
+    // await _player.setSourceDeviceFile(p.filePath);
     if (GetPlatform.isMobile) {
       // Save scaled album cover in file for the just_audio_background service to
       // display on android control center.
-      final hasCoverImage = currentContent.value.albumCover.isNotEmpty;
+      final hasCoverImage = currentContent.value.artworkMap.isNotEmpty;
       await clearCoverImageCache();
       final coverFile = File(
         '${(await getTemporaryDirectory()).path}/cover.cache.${DateTime.now().microsecondsSinceEpoch.toString()}',
       );
       if (hasCoverImage) {
         await coverFile.writeAsBytes(
-          base64Decode(currentContent.value.albumCover),
+          base64Decode(''),
           flush: true,
         );
       }
@@ -325,26 +326,28 @@ class PlayerService extends GetxService {
       //  await play();
       //}
 
-      await wrapper?.playMediaItem(
-        MediaItem(
-          id: p.filePath,
-          title: p.title.isEmpty ? p.fileName : p.title,
-          artist: p.artist,
-          album: p.albumTitle,
-          duration: Duration(seconds: p.length),
-          artUri: hasCoverImage ? coverFile.uri : null,
-        ),
-      );
+      // TODO: Add media item to wrapper here.
+      // await wrapper?.playMediaItem(
+      //   MediaItem(
+      //     id: p.filePath,
+      //     title: p.title.isEmpty ? p.fileName : p.title,
+      //     artist: p.artist,
+      //     album: p.albumTitle,
+      //     duration: Duration(seconds: p.length),
+      //     artUri: hasCoverImage ? coverFile.uri : null,
+      //   ),
+      // );
     }
     await _configService.saveString(
       'CurrentMedia',
       currentContent.value.filePath,
     );
-    await _configService.saveString(
-      'CurrentPlaylist',
-      currentPlaylist.tableName,
-    );
-    currentContent.value = p;
+    // TODO: Update current playlist here.
+    // await _configService.saveString(
+    //   'CurrentPlaylist',
+    //   currentPlaylist.tableName,
+    // );
+    // currentContent.value = p;
   }
 
   /// Start play.
@@ -435,12 +438,12 @@ class PlayerService extends GetxService {
           // the tail of list.
           // Need to grow history list.
           final c = currentPlaylist.randomPlayContent();
-          if (c.filePath.isEmpty) {
-            await play();
-            return;
-          }
-          await _setCurrentPathToPlayer(c, currentPlaylist);
-          playHistoryList.add(c);
+          // if (c.filePath.isEmpty) {
+          //   await play();
+          //   return;
+          // }
+          // await _setCurrentPathToPlayer(c, currentPlaylist);
+          // playHistoryList.add(c);
           playHistoryPos = playHistoryList.length - 1;
           // For test
           // final d = await _player.load();
@@ -453,10 +456,10 @@ class PlayerService extends GetxService {
         case _repeatOneString:
         default:
           final content = currentPlaylist.findNextContent(currentContent.value);
-          if (content.filePath.isEmpty) {
-            return;
-          }
-          await setCurrentContent(content, currentPlaylist);
+          // if (content.filePath.isEmpty) {
+          //   return;
+          // }
+          // await setCurrentContent(content, currentPlaylist);
           // For test
           // final d = await _player.load();
           // if (d != null) {
@@ -481,13 +484,13 @@ class PlayerService extends GetxService {
             }
           }
           final c = currentPlaylist.randomPlayContent();
-          if (c.filePath.isEmpty) {
-            await play();
-            return;
-          }
-          await _setCurrentPathToPlayer(c, currentPlaylist);
-          playHistoryList.insert(0, c);
-          playHistoryPos = 0;
+          // if (c.filePath.isEmpty) {
+          //   await play();
+          //   return;
+          // }
+          // await _setCurrentPathToPlayer(c, currentPlaylist);
+          // playHistoryList.insert(0, c);
+          // playHistoryPos = 0;
           await play();
           break;
         case _repeatString:
@@ -495,10 +498,10 @@ class PlayerService extends GetxService {
         default:
           final content =
               currentPlaylist.findPreviousMusic(currentContent.value);
-          if (content.filePath.isEmpty) {
-            return;
-          }
-          await setCurrentContent(content, currentPlaylist);
+          // if (content.filePath.isEmpty) {
+          //   return;
+          // }
+          // await setCurrentContent(content, currentPlaylist);
           await play();
       }
     }

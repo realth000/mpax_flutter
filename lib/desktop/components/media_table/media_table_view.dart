@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:isar/isar.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../../models/music_model.dart';
@@ -31,9 +32,8 @@ class MediaTable1 extends StatelessWidget {
           onSort: (index, ascending) {},
         ),
       ],
-      rows:
-          List.generate(_controller.playlist.value.contentList.length, (index) {
-        final data = _controller.playlist.value.contentList[index];
+      rows: List.generate(_controller.playlist.value.musicList.length, (index) {
+        final data = _controller.playlist.value.musicList[index].value!;
         var selected = false;
         return DataRow.byIndex(
           index: index,
@@ -140,27 +140,30 @@ class MediaTable extends StatelessWidget {
     ),
   ];
 
-  List<PlutoRow> _buildRows(List<Music> list) => List.generate(
+  List<PlutoRow> _buildRows(List<IsarLink<Music>> list) => List.generate(
         list.length,
         (index) => PlutoRow(
           cells: {
             'state': PlutoCell(
-              value: list[index].filePath ==
+              value: list[index].value!.filePath ==
                       _controller.currentPlayingContent.value
                   ? playingIcon
                   : '',
             ),
-            'album_title': PlutoCell(value: list[index].albumTitle),
+            'album_title':
+                PlutoCell(value: list[index].value!.album.value?.title),
             'title': PlutoCell(
-              value: list[index].title.isEmpty
-                  ? list[index].fileName
-                  : list[index].title,
+              value: list[index].value!.title!.isEmpty
+                  ? list[index].value!.fileName
+                  : list[index].value!.title,
             ),
-            'artist': PlutoCell(value: list[index].artist),
-            'album_artist': PlutoCell(value: list[index].albumArtist),
-            'track_number': PlutoCell(value: list[index].trackNumber),
-            'length': PlutoCell(value: list[index].length),
-            'path': PlutoCell(value: list[index].filePath),
+            // 'artist': PlutoCell(value: list[index].artists),
+            'artist': PlutoCell(),
+            // 'album_artist': PlutoCell(value: list[index].albumArtist),
+            'album_artist': PlutoCell(),
+            'track_number': PlutoCell(value: list[index].value!.trackNumber),
+            'length': PlutoCell(value: list[index].value!.length),
+            'path': PlutoCell(value: list[index].value!.filePath),
           },
         ),
       );
@@ -173,7 +176,7 @@ class MediaTable extends StatelessWidget {
   @override
   Widget build(BuildContext context) => PlutoGrid(
         columns: columns,
-        rows: _buildRows(_controller.playlist.value.contentList),
+        rows: _buildRows(_controller.playlist.value.musicList),
         onLoaded: (event) {
           // _stateManager = event.stateManager;
           _controller.tableStateManager = event.stateManager;
@@ -207,16 +210,15 @@ class MediaTable extends StatelessWidget {
           // );
         },
         onRowsMoved: (movedEvent) async {
-          final r = _controller.playlist.value.contentList.firstWhere(
-              (element) =>
-                  element.filePath ==
-                  movedEvent.rows?[0]!.cells['path']!.value);
-          if (r.filePath.isEmpty) {
+          final r = _controller.playlist.value.musicList.firstWhere((element) =>
+              element.value!.filePath ==
+              movedEvent.rows[0].cells['path']!.value);
+          if (r.value!.filePath.isEmpty) {
             return;
           }
-          _controller.playlist.value.contentList
-              .removeWhere((element) => element.filePath == r.filePath);
-          _controller.playlist.value.contentList.insert(movedEvent.idx!, r);
+          _controller.playlist.value.musicList.removeWhere(
+              (element) => element.value!.filePath == r.value!.filePath);
+          _controller.playlist.value.musicList.insert(movedEvent.idx, r);
           await Get.find<MediaLibraryService>()
               .savePlaylist(_controller.playlist.value);
         },

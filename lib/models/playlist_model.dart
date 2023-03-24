@@ -79,10 +79,11 @@ class PlaylistModel {
     }
     for (var i = musicList.length - 1; i > -1; i--) {
       if (musicList[i].value?.filePath == playContent.filePath) {
-        return contentList[i - 1];
+        // FIXME: May return null here.
+        return musicList[i - 1].value;
       }
     }
-    return contentList.first;
+    return musicList.first.value;
   }
 
   /// Find next audio content of the given playContent.
@@ -90,31 +91,32 @@ class PlaylistModel {
   /// If it's the last one, the first one will be returned.
   /// Find current playContent position by [contentList.last.contentPath].
   Music? findNextContent(Music playContent) {
-    if (contentList.isEmpty) {
+    if (musicList.isEmpty) {
       return null;
     }
-    if (contentList.last.filePath == playContent.filePath) {
-      return contentList.first;
+    if (musicList.last.value!.filePath == playContent.filePath) {
+      return musicList.first.value;
     }
-    for (var i = 0; i < contentList.length; i++) {
-      if (contentList[i].filePath == playContent.filePath) {
-        return contentList[i + 1];
+    for (var i = 0; i < musicList.length; i++) {
+      if (musicList[i].value?.filePath == playContent.filePath) {
+        return musicList[i + 1].value;
       }
     }
-    return contentList.first;
+    return musicList.first.value;
   }
 
   /// Return a random audio content in playlist.
   Music? randomPlayContent() {
-    if (contentList.isEmpty) {
+    if (musicList.isEmpty) {
       return null;
     }
-    return contentList[Random().nextInt(contentList.length)];
+    return musicList[Random().nextInt(musicList.length)].value;
   }
 
   /// Remove same [Music] with same [filePathList].
   Future<void> removeByPathList(List<String> filePathList) async {
-    contentList
-        .removeWhere((content) => filePathList.contains(content.filePath));
+    musicList.removeWhere(
+      (content) => filePathList.contains(content.value!.filePath),
+    );
   }
 }

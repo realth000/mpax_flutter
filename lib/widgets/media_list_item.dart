@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:path/path.dart' as path;
 
 import '../models/music_model.dart';
 import '../models/playlist_model.dart';
@@ -52,7 +51,7 @@ class MediaItemTile extends StatelessWidget {
   final PlaylistModel model;
 
   Widget _leadingIcon() {
-    if (playContent.albumCover.isEmpty) {
+    if (playContent.artworkMap.isEmpty) {
       return const SizedBox(
         width: 56,
         height: 56,
@@ -60,7 +59,8 @@ class MediaItemTile extends StatelessWidget {
       );
     }
     return Image.memory(
-      base64Decode(playContent.albumCover),
+      // base64Decode(playContent.albumCover),
+      base64Decode(''),
       width: 56,
       height: 56,
       isAntiAlias: true,
@@ -71,9 +71,10 @@ class MediaItemTile extends StatelessWidget {
   Widget build(BuildContext context) => ListTile(
         leading: ListTileLeading(child: _leadingIcon()),
         title: Text(
-          playContent.title.isEmpty
-              ? path.basename(playContent.filePath)
-              : playContent.title,
+          '',
+          // playContent.title.isEmpty
+          //     ? path.basename(playContent.filePath)
+          //     : playContent.title,
           maxLines: 2,
           style: const TextStyle(
             fontSize: 15,
@@ -83,17 +84,18 @@ class MediaItemTile extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(
-              playContent.artist,
+              '',
               maxLines: 1,
               style: const TextStyle(
                 fontSize: 14,
               ),
             ),
             Text(
-              playContent.albumTitle.isEmpty
-                  ? playContent.filePath
-                      .replaceFirst('/storage/emulated/0/', '')
-                  : playContent.albumTitle,
+              '',
+              // playContent.albumTitle.isEmpty
+              //     ? playContent.filePath
+              //         .replaceFirst('/storage/emulated/0/', '')
+              //     : playContent.albumTitle,
               maxLines: 1,
               style: const TextStyle(
                 fontSize: 14,
@@ -208,75 +210,75 @@ class MediaMetadataDialog extends StatelessWidget {
         'File size'.tr,
       );
     }
-    if (playContent.title.isNotEmpty) {
-      _addSpace();
-      _addReadonlyProperty(
-        playContent.title,
-        'Title'.tr,
-      );
-    }
-    if (playContent.artist.isNotEmpty) {
-      _addSpace();
-      _addReadonlyProperty(
-        playContent.artist,
-        'Artist'.tr,
-      );
-    }
-    if (playContent.trackNumber >= 0) {
-      _addSpace();
-      _addReadonlyProperty(
-        '${playContent.trackNumber}',
-        'Track number'.tr,
-      );
-    }
-    if (playContent.albumTitle.isNotEmpty) {
-      _addSpace();
-      _addReadonlyProperty(
-        playContent.albumTitle,
-        'Album name'.tr,
-      );
-    }
-    if (playContent.albumArtist.isNotEmpty) {
-      _addSpace();
-      _addReadonlyProperty(
-        playContent.albumArtist,
-        'Album artist'.tr,
-      );
-    }
-    if (playContent.albumYear >= 0) {
-      _addSpace();
-      _addReadonlyProperty(
-        '${playContent.albumYear}',
-        'Album year'.tr,
-      );
-    }
-    if (playContent.albumTrackCount >= 0) {
-      _addSpace();
-      _addReadonlyProperty(
-        '${playContent.albumTrackCount}',
-        'Album track count'.tr,
-      );
-    }
-    if (playContent.genre.isNotEmpty) {
-      _addSpace();
-      _addReadonlyProperty(playContent.genre, 'Genre'.tr);
-    }
-    if (playContent.length > 0) {
-      _addSpace();
-      _addReadonlyProperty('${playContent.length} s', 'Length'.tr);
-    }
-    if (playContent.sampleRate > 0) {
-      _addSpace();
-      _addReadonlyProperty('${playContent.sampleRate} Hz', 'Sample Rate'.tr);
-    }
-    if (playContent.bitRate > 0) {
-      _addSpace();
-      _addReadonlyProperty('${playContent.bitRate} kbps', 'Bitrate'.tr);
-    }
-    if (playContent.channels > 0) {
-      _addSpace();
-      _addReadonlyProperty('${playContent.channels}', 'Channels'.tr);
-    }
+    // if (playContent.title.isNotEmpty) {
+    //   _addSpace();
+    //   _addReadonlyProperty(
+    //     playContent.title,
+    //     'Title'.tr,
+    //   );
+    // }
+    // if (playContent.artist.isNotEmpty) {
+    //   _addSpace();
+    //   _addReadonlyProperty(
+    //     playContent.artist,
+    //     'Artist'.tr,
+    //   );
+    // }
+    // if (playContent.trackNumber >= 0) {
+    //   _addSpace();
+    //   _addReadonlyProperty(
+    //     '${playContent.trackNumber}',
+    //     'Track number'.tr,
+    //   );
+    // }
+    // if (playContent.albumTitle.isNotEmpty) {
+    //   _addSpace();
+    //   _addReadonlyProperty(
+    //     playContent.albumTitle,
+    //     'Album name'.tr,
+    //   );
+    // }
+    // if (playContent.albumArtist.isNotEmpty) {
+    //   _addSpace();
+    //   _addReadonlyProperty(
+    //     playContent.albumArtist,
+    //     'Album artist'.tr,
+    //   );
+    // }
+    // if (playContent.albumYear >= 0) {
+    //   _addSpace();
+    //   _addReadonlyProperty(
+    //     '${playContent.albumYear}',
+    //     'Album year'.tr,
+    //   );
+    // }
+    // if (playContent.albumTrackCount >= 0) {
+    //   _addSpace();
+    //   _addReadonlyProperty(
+    //     '${playContent.albumTrackCount}',
+    //     'Album track count'.tr,
+    //   );
+    // }
+    // if (playContent.genre.isNotEmpty) {
+    //   _addSpace();
+    //   _addReadonlyProperty(playContent.genre, 'Genre'.tr);
+    // }
+    // if (playContent.length > 0) {
+    //   _addSpace();
+    //   _addReadonlyProperty('${playContent.length} s', 'Length'.tr);
+    // }
+    // if (playContent.sampleRate > 0) {
+    //   _addSpace();
+    //   _addReadonlyProperty('${playContent.sampleRate} Hz', 'Sample Rate'.tr);
+    // }
+    // if (playContent.bitRate > 0) {
+    //   _addSpace();
+    //   _addReadonlyProperty('${playContent.bitRate} kbps', 'Bitrate'.tr);
+    // }
+    // if (playContent.channels > 0) {
+    //   _addSpace();
+    //   _addReadonlyProperty('${playContent.channels}', 'Channels'.tr);
+    // }
     return widgetList;
   }
 

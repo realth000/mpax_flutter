@@ -160,17 +160,19 @@ class MusicPage extends GetView<PlayerService> {
             minLeadingWidth: 0,
             title: Obx(
               () => Text(
-                controller.currentContent.value.title.isEmpty
-                    ? controller.currentContent.value.fileName
-                    : controller.currentContent.value.title,
+                controller.currentContent.value.fileName,
+                // controller.currentContent.value.title.isEmpty
+                //     ? controller.currentContent.value.fileName
+                //     : controller.currentContent.value.title,
                 maxLines: 1,
               ),
             ),
             subtitle: Obx(
               () => Text(
-                controller.currentContent.value.artist.isEmpty
-                    ? ''
-                    : controller.currentContent.value.artist,
+                '',
+                // controller.currentContent.value.artist.isEmpty
+                //     ? ''
+                //     : controller.currentContent.value.artist,
                 maxLines: 1,
               ),
             ),
@@ -188,12 +190,12 @@ class MusicPage extends GetView<PlayerService> {
                       width: Get.width / 4 * 3,
                       height: Get.width / 4 * 3,
                       child: Obx(
-                        () => controller.currentContent.value.albumCover.isEmpty
+                        () => controller.currentContent.value.artworkMap.isEmpty
                             ? const Icon(Icons.music_note)
                             : Image.memory(
-                                base64Decode(
-                                  controller.currentContent.value.albumCover,
-                                ),
+                                base64Decode(''
+                                    // controller.currentContent.value.artworkMap[''],
+                                    ),
                               ),
                       ),
                     ),

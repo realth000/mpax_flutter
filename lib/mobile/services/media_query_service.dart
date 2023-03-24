@@ -42,6 +42,8 @@ class MediaQueryService extends GetxService {
   /// Some audio properties should load later by tag readers.
   Future<List<Music>> allAudioContents() async {
     final contentList = <Music>[];
+    // TODO: Construct from Android media query result here.
+    /*
     for (final audio in audioList) {
       contentList.add(
         Music.fromData(
@@ -73,6 +75,7 @@ class MediaQueryService extends GetxService {
         ),
       );
     }
+     */
     return contentList;
   }
 

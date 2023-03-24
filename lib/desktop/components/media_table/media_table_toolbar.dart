@@ -3,9 +3,6 @@ import 'package:get/get.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../../models/music_model.dart';
-import '../../../models/playlist_model.dart';
-import '../../../services/media_library_service.dart';
-import '../../../services/metadata_service.dart';
 import '../../../widgets/add_playlist_widget.dart';
 import '../../../widgets/util_widgets.dart';
 import 'media_table_controller.dart';
@@ -86,30 +83,32 @@ class MediaTableToolbar extends GetView<MediaTableController> {
                         return;
                       }
                       final list = <Music>[];
-                      for (final c in controller.checkedRowPathList) {
-                        // list.add(PlayContent.fromPath(c));
-                        list.add(
-                          await Get.find<MetadataService>().readMetadata(
-                            c,
-                            loadImage: true,
-                          ),
-                        );
-                      }
-                      final p = PlaylistModel()
-                        ..name = name
-                        ..contentList = list;
-                      await Get.find<MediaLibraryService>().addPlaylist(p);
+                      // TODO: Add to playlist here.
+                      // for (final c in controller.checkedRowPathList) {
+                      // list.add(PlayContent.fromPath(c));
+                      // list.add(
+                      //   await Get.find<MetadataService>().readMetadata(
+                      //     c,
+                      //     loadImage: true,
+                      //   ),
+                      // );
+                      // }
+                      // final p = PlaylistModel()
+                      //   ..name = name
+                      //   ..contentList = list;
+                      // await Get.find<MediaLibraryService>().addPlaylist(p);
                       break;
                     case _MenuOption.deleteFromPlaylist:
-                      final currentPagePlaylist =
-                          Get.find<MediaLibraryService>()
-                              .findPlaylistByTableName(
-                        controller.playlist.value.tableName,
-                      );
-                      await currentPagePlaylist
-                          .removeByPathList(controller.checkedRowPathList);
-                      controller.checkedRowPathList.clear();
-                      controller.tableStateManager?.notifyListeners();
+                    // TODO: Delete from playlist here.
+                    // final currentPagePlaylist =
+                    //     Get.find<MediaLibraryService>()
+                    //         .findPlaylistByTableName(
+                    //   controller.playlist.value.tableName,
+                    // );
+                    // await currentPagePlaylist
+                    //     .removeByPathList(controller.checkedRowPathList);
+                    // controller.checkedRowPathList.clear();
+                    // controller.tableStateManager?.notifyListeners();
                   }
                 },
               ),

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../routes/app_pages.dart';
-import '../services/player_service.dart';
 
 /// App drawer.
 class MPaxDrawer extends StatelessWidget {
@@ -39,21 +38,21 @@ class MPaxDrawer extends StatelessWidget {
               title: Text('Current Playlist'.tr),
               selected: Get.currentRoute == MPaxRoutes.playlistContent,
               onTap: () async {
-                final currentPlaylistTableName =
-                    Get.find<PlayerService>().currentPlaylist.tableName;
-                if (currentPlaylistTableName.isEmpty) {
-                  Get.snackbar(
-                    'No audio playing'.tr,
-                    'Choose one to play ^_^'.tr,
-                  );
-                  return;
-                }
-                await Get.offAndToNamed(
-                  MPaxRoutes.playlistContent.replaceFirst(
-                    ':playlist_table_name',
-                    currentPlaylistTableName,
-                  ),
-                );
+                // final currentPlaylistTableName =
+                //     Get.find<PlayerService>().currentPlaylist.tableName;
+                // if (currentPlaylistTableName.isEmpty) {
+                //   Get.snackbar(
+                //     'No audio playing'.tr,
+                //     'Choose one to play ^_^'.tr,
+                //   );
+                //   return;
+                // }
+                // await Get.offAndToNamed(
+                //   MPaxRoutes.playlistContent.replaceFirst(
+                //     ':playlist_table_name',
+                //     currentPlaylistTableName,
+                //   ),
+                // );
               },
             ),
             ListTile(

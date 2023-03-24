@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../mobile/components/mobile_underfoot.dart';
-import '../routes/app_pages.dart';
 import '../services/media_library_service.dart';
 import '../widgets/app_app_bar.dart';
 import '../widgets/app_drawer.dart';
@@ -21,9 +20,9 @@ class PlaylistContentPage extends StatelessWidget {
       .findPlaylistByTableName(Get.parameters['playlist_table_name'] ?? '');
 
   String _wrapPlaylistName() {
-    if (playlist.tableName == MediaLibraryService.allMediaTableName) {
-      return 'Library'.tr;
-    }
+    // if (playlist.tableName == MediaLibraryService.allMediaTableName) {
+    //   return 'Library'.tr;
+    // }
     return playlist.name;
   }
 
@@ -33,12 +32,13 @@ class PlaylistContentPage extends StatelessWidget {
           title: _wrapPlaylistName(),
           actions: <Widget>[
             IconButton(
-              onPressed: () async => Get.toNamed(
-                MPaxRoutes.search.replaceFirst(
-                  ':playlist_table_name',
-                  playlist.tableName,
-                ),
-              ),
+              // onPressed: () async => Get.toNamed(
+              //   MPaxRoutes.search.replaceFirst(
+              //     ':playlist_table_name',
+              //     playlist.tableName,
+              //   ),
+              // ),
+              onPressed: () {},
               icon: const Icon(Icons.search),
             ),
           ],

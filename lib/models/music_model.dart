@@ -14,6 +14,9 @@ import 'artwork_model.dart';
 /// Maintains audio info.
 @Collection()
 class Music {
+  /// Default empty constructor.
+  Music();
+
   /// Construct by file path.
   ///
   /// Only make [fileName] and [fileSize].

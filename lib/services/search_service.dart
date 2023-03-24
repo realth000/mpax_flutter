@@ -48,64 +48,64 @@ class SearchService extends GetxService {
   Future<SearchService> init() async => this;
 
   bool _filterWithExclude(Music content) {
-    if (title.value &&
-        content.title.toLowerCase().contains(_includeTextLowerCase) &&
-        !content.title.toLowerCase().contains(_excludeTextLowerCase)) {
-      return true;
-    }
-    if (artist.value &&
-        content.artist.toLowerCase().contains(_includeTextLowerCase) &&
-        !content.artist.toLowerCase().contains(_excludeTextLowerCase)) {
-      return true;
-    }
-    if (albumTitle.value &&
-        content.albumTitle.toLowerCase().contains(_includeTextLowerCase) &&
-        !content.albumTitle.toLowerCase().contains(_excludeTextLowerCase)) {
-      return true;
-    }
-    if (albumArtist.value &&
-        content.albumArtist.toLowerCase().contains(_includeTextLowerCase) &&
-        !content.albumArtist.toLowerCase().contains(_excludeTextLowerCase)) {
-      return true;
-    }
-    if (contentPath.value &&
-        content.filePath.toLowerCase().contains(_includeTextLowerCase) &&
-        !content.filePath.toLowerCase().contains(_excludeTextLowerCase)) {
-      return true;
-    }
-    if (contentName.value &&
-        content.fileName.toLowerCase().contains(_includeTextLowerCase) &&
-        !content.fileName.toLowerCase().contains(_excludeTextLowerCase)) {
-      return true;
-    }
+    // if (title.value &&
+    //     content.title.toLowerCase().contains(_includeTextLowerCase) &&
+    //     !content.title.toLowerCase().contains(_excludeTextLowerCase)) {
+    //   return true;
+    // }
+    // if (artist.value &&
+    //     content.artist.toLowerCase().contains(_includeTextLowerCase) &&
+    //     !content.artist.toLowerCase().contains(_excludeTextLowerCase)) {
+    //   return true;
+    // }
+    // if (albumTitle.value &&
+    //     content.albumTitle.toLowerCase().contains(_includeTextLowerCase) &&
+    //     !content.albumTitle.toLowerCase().contains(_excludeTextLowerCase)) {
+    //   return true;
+    // }
+    // if (albumArtist.value &&
+    //     content.albumArtist.toLowerCase().contains(_includeTextLowerCase) &&
+    //     !content.albumArtist.toLowerCase().contains(_excludeTextLowerCase)) {
+    //   return true;
+    // }
+    // if (contentPath.value &&
+    //     content.filePath.toLowerCase().contains(_includeTextLowerCase) &&
+    //     !content.filePath.toLowerCase().contains(_excludeTextLowerCase)) {
+    //   return true;
+    // }
+    // if (contentName.value &&
+    //     content.fileName.toLowerCase().contains(_includeTextLowerCase) &&
+    //     !content.fileName.toLowerCase().contains(_excludeTextLowerCase)) {
+    //   return true;
+    // }
     return false;
   }
 
   bool _filter(Music content) {
-    if (title.value &&
-        content.title.toLowerCase().contains(_includeTextLowerCase)) {
-      return true;
-    }
-    if (artist.value &&
-        content.artist.toLowerCase().contains(_includeTextLowerCase)) {
-      return true;
-    }
-    if (albumTitle.value &&
-        content.albumTitle.toLowerCase().contains(_includeTextLowerCase)) {
-      return true;
-    }
-    if (albumArtist.value &&
-        content.albumArtist.toLowerCase().contains(_includeTextLowerCase)) {
-      return true;
-    }
-    if (contentPath.value &&
-        content.filePath.toLowerCase().contains(_includeTextLowerCase)) {
-      return true;
-    }
-    if (contentName.value &&
-        content.fileName.toLowerCase().contains(_includeTextLowerCase)) {
-      return true;
-    }
+    // if (title.value &&
+    //     content.title.toLowerCase().contains(_includeTextLowerCase)) {
+    //   return true;
+    // }
+    // if (artist.value &&
+    //     content.artist.toLowerCase().contains(_includeTextLowerCase)) {
+    //   return true;
+    // }
+    // if (albumTitle.value &&
+    //     content.albumTitle.toLowerCase().contains(_includeTextLowerCase)) {
+    //   return true;
+    // }
+    // if (albumArtist.value &&
+    //     content.albumArtist.toLowerCase().contains(_includeTextLowerCase)) {
+    //   return true;
+    // }
+    // if (contentPath.value &&
+    //     content.filePath.toLowerCase().contains(_includeTextLowerCase)) {
+    //   return true;
+    // }
+    // if (contentName.value &&
+    //     content.fileName.toLowerCase().contains(_includeTextLowerCase)) {
+    //   return true;
+    // }
     return false;
   }
 
@@ -123,15 +123,15 @@ class SearchService extends GetxService {
         .findPlaylistByTableName(playlistTableName);
     final resultList = <Music>[];
     if (this.excludeText.isEmpty) {
-      for (final content in playlist.value.contentList) {
-        if (_filter(content)) {
-          resultList.add(content);
+      for (final content in playlist.value.musicList) {
+        if (_filter(content.value!)) {
+          resultList.add(content.value!);
         }
       }
     } else {
-      for (final content in playlist.value.contentList) {
-        if (_filterWithExclude(content)) {
-          resultList.add(content);
+      for (final content in playlist.value.musicList) {
+        if (_filterWithExclude(content.value!)) {
+          resultList.add(content.value!);
         }
       }
     }

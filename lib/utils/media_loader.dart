@@ -15,10 +15,10 @@ Future<Music> reloadContent(Music playContent) async {
     playContent.filePath,
     loadImage: true,
   );
-  if (p.albumCover.isNotEmpty) {
-    playContent.albumCover = p.albumCover;
-    return playContent;
-  }
+  // if (p.albumCover.isNotEmpty) {
+  //   playContent.albumCover = p.albumCover;
+  //   return playContent;
+  // }
 // Load album cover from Android media store.
   final am = _mediaQueryService.audioList.firstWhereOrNull(
     (audio) => audio.data == playContent.filePath,
@@ -26,7 +26,7 @@ Future<Music> reloadContent(Music playContent) async {
   if (am != null) {
     final albumCover = await _mediaQueryService.loadAlbumCover(am);
     if (albumCover.isNotEmpty) {
-      playContent.albumCover = albumCover;
+      // playContent.albumCover = albumCover;
     }
   }
   return playContent;
