@@ -10,8 +10,8 @@ import '../models/playlist_model.dart';
 class MediaListController extends GetxController {
   /// Constructor.
   MediaListController(this.playlist) {
-    it = playlist.musicList.iterator;
-    _fetchMediaData();
+    // it = playlist.musicList.iterator;
+    // it = _fetchMediaData();
   }
 
   /// [PlaylistModel] contains all data.

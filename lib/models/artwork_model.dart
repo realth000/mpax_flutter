@@ -1,7 +1,12 @@
 import 'dart:convert';
 
 import 'package:crypto/crypto.dart';
+import 'package:get/get.dart';
 import 'package:isar/isar.dart';
+
+import '../services/database_service.dart';
+
+part 'artwork_model.g.dart';
 
 /// All cover image types.
 ///
@@ -41,6 +46,9 @@ enum ArtworkFormat {
 /// Cover image.
 ///
 /// For [Album], or [Music].
+/// Not have an [ArtworkType] field because the same [Artwork] may have
+/// different [ArtworkType]s in different stored objects.
+/// To directly store in [Album] and [Music], use [ArtworkWithType].
 @Collection()
 class Artwork {
   /// Constructor.
@@ -52,7 +60,8 @@ class Artwork {
   Id id = Isar.autoIncrement;
 
   /// Format.
-  final ArtworkFormat format;
+  @Enumerated(EnumType.name)
+  ArtworkFormat format;
 
   /// Data hash.
   ///
@@ -61,5 +70,44 @@ class Artwork {
   late final String dataHash;
 
   /// Data.
-  final String data;
+  String data;
+}
+
+/// Typed Artwork.
+///
+/// Use to save in [Album] and [Music].
+/// Works like a wrapper because the same [Artwork] may have different
+/// [ArtworkType]s in different stored objects.
+@Collection()
+class ArtworkWithType {
+  /// Constructor.
+  ArtworkWithType(this.type);
+
+  /// Save to database.
+  Future<void> save() async {
+    final storage = Get.find<DatabaseService>().storage;
+    await storage.writeTxn(() async {
+      await artwork.save();
+      await storage.artworkWithTypes.put(this);
+    });
+  }
+
+  /// Save to database synchronously.
+  void saveSync() {
+    final storage = Get.find<DatabaseService>().storage;
+    storage.writeTxnSync(() async {
+      await artwork.save();
+      await storage.artworkWithTypes.put(this);
+    });
+  }
+
+  /// Id in database.
+  Id id = Isar.autoIncrement;
+
+  /// Artwork type.
+  @Enumerated(EnumType.name)
+  ArtworkType type = ArtworkType.unknown;
+
+  /// Artwork.
+  IsarLink<Artwork> artwork = IsarLink<Artwork>();
 }

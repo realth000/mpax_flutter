@@ -124,14 +124,14 @@ class SearchService extends GetxService {
     final resultList = <Music>[];
     if (this.excludeText.isEmpty) {
       for (final content in playlist.value.musicList) {
-        if (_filter(content.value!)) {
-          resultList.add(content.value!);
+        if (_filter(content)) {
+          resultList.add(content);
         }
       }
     } else {
       for (final content in playlist.value.musicList) {
-        if (_filterWithExclude(content.value!)) {
-          resultList.add(content.value!);
+        if (_filterWithExclude(content)) {
+          resultList.add(content);
         }
       }
     }

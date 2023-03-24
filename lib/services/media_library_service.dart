@@ -1,5 +1,4 @@
 import 'package:get/get.dart';
-import 'package:isar/isar.dart';
 import 'package:on_audio_query/on_audio_query.dart' as aq;
 import 'package:sqflite/sqflite.dart';
 
@@ -51,7 +50,7 @@ class MediaLibraryService extends GetxService {
   late final Future<Database> _database;
 
   /// Return library audio content list.
-  List<IsarLink<Music>> get content => _allContent.value.musicList;
+  List<Music> get content => _allContent.value.musicList;
 
   /// On use media store on Android, avoid to use tag readers for large mount of
   /// audios.
@@ -67,7 +66,7 @@ class MediaLibraryService extends GetxService {
   /// If duplicate in content path, do nothing and return false.
   bool addContent(Music playContent) {
     for (final content in _allContent.value.musicList) {
-      if (content.value!.filePath == playContent.filePath) {
+      if (content.filePath == playContent.filePath) {
         return false;
       }
     }

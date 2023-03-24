@@ -80,7 +80,7 @@ class MPaxPlayerWidget extends GetView<PlayerService> {
   }
 
   Widget _buildAudioAlbumCoverWidget(BuildContext context) {
-    if (controller.currentContent.value.artworkMap.isEmpty) {
+    if (controller.currentContent.value.artworkList.isEmpty) {
       return GestureDetector(
         onTapUp: (details) async {
           await _toMusicPage();

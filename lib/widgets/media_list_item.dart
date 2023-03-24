@@ -51,7 +51,7 @@ class MediaItemTile extends StatelessWidget {
   final PlaylistModel model;
 
   Widget _leadingIcon() {
-    if (playContent.artworkMap.isEmpty) {
+    if (playContent.artworkList.isEmpty) {
       return const SizedBox(
         width: 56,
         height: 56,

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:isar/isar.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../../models/music_model.dart';
@@ -33,7 +32,7 @@ class MediaTable1 extends StatelessWidget {
         ),
       ],
       rows: List.generate(_controller.playlist.value.musicList.length, (index) {
-        final data = _controller.playlist.value.musicList[index].value!;
+        final data = _controller.playlist.value.musicList[index];
         var selected = false;
         return DataRow.byIndex(
           index: index,
@@ -140,30 +139,29 @@ class MediaTable extends StatelessWidget {
     ),
   ];
 
-  List<PlutoRow> _buildRows(List<IsarLink<Music>> list) => List.generate(
+  List<PlutoRow> _buildRows(List<Music> list) => List.generate(
         list.length,
         (index) => PlutoRow(
           cells: {
             'state': PlutoCell(
-              value: list[index].value!.filePath ==
+              value: list[index].filePath ==
                       _controller.currentPlayingContent.value
                   ? playingIcon
                   : '',
             ),
-            'album_title':
-                PlutoCell(value: list[index].value!.album.value?.title),
+            'album_title': PlutoCell(value: list[index].album.value?.title),
             'title': PlutoCell(
-              value: list[index].value!.title!.isEmpty
-                  ? list[index].value!.fileName
-                  : list[index].value!.title,
+              value: list[index].title!.isEmpty
+                  ? list[index].fileName
+                  : list[index].title,
             ),
             // 'artist': PlutoCell(value: list[index].artists),
             'artist': PlutoCell(),
             // 'album_artist': PlutoCell(value: list[index].albumArtist),
             'album_artist': PlutoCell(),
-            'track_number': PlutoCell(value: list[index].value!.trackNumber),
-            'length': PlutoCell(value: list[index].value!.length),
-            'path': PlutoCell(value: list[index].value!.filePath),
+            'track_number': PlutoCell(value: list[index].trackNumber),
+            'length': PlutoCell(value: list[index].length),
+            'path': PlutoCell(value: list[index].filePath),
           },
         ),
       );
@@ -211,13 +209,12 @@ class MediaTable extends StatelessWidget {
         },
         onRowsMoved: (movedEvent) async {
           final r = _controller.playlist.value.musicList.firstWhere((element) =>
-              element.value!.filePath ==
-              movedEvent.rows[0].cells['path']!.value);
-          if (r.value!.filePath.isEmpty) {
+              element.filePath == movedEvent.rows[0].cells['path']!.value);
+          if (r.filePath.isEmpty) {
             return;
           }
-          _controller.playlist.value.musicList.removeWhere(
-              (element) => element.value!.filePath == r.value!.filePath);
+          _controller.playlist.value.musicList
+              .removeWhere((element) => element.filePath == r.filePath);
           _controller.playlist.value.musicList.insert(movedEvent.idx, r);
           await Get.find<MediaLibraryService>()
               .savePlaylist(_controller.playlist.value);

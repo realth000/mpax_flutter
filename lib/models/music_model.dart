@@ -4,10 +4,13 @@ import 'package:get/get.dart';
 import 'package:isar/isar.dart';
 import 'package:path/path.dart' as path;
 
+import '../services/database_service.dart';
 import '../services/metadata_service.dart';
 import 'album_model.dart';
 import 'artist_model.dart';
 import 'artwork_model.dart';
+
+part 'music_model.g.dart';
 
 /// Model class for audio content.
 ///
@@ -57,6 +60,7 @@ class Music {
       fileSize = File(this.filePath).lengthSync();
     }
     final metadataService = Get.find<MetadataService>();
+    final storage = Get.find<DatabaseService>().storage;
     final metadata = await metadataService.readMetadata(this.filePath);
     if (metadata == null) {
       return false;
@@ -68,21 +72,39 @@ class Music {
     lyrics = metadata.lyrics;
     if (metadata.artworkMap != null) {
       metadata.artworkMap!.forEach((type, artwork) {
-        if (artworkMap.containsKey(type)) {
-          artworkMap[type]!.value =
-              metadataService.fetchArtwork(artwork.format, artwork.data);
-        } else {
-          final link = IsarLink<Artwork>()
-            ..value =
+        // Check whether [type] already exists.
+        for (var i = 0; i < artworkList.length; i++) {
+          if (artworkList.elementAt(i).type == type) {
+            final tmpArtwork =
                 metadataService.fetchArtwork(artwork.format, artwork.data);
-          artworkMap[type] = link;
+            artworkList.elementAt(i).artwork.value = tmpArtwork;
+            return;
+          }
         }
+        // Now [type] not exists in [artworkList], add a new one.
+        final tmpArtwork = ArtworkWithType(type)
+          ..artwork.value =
+              metadataService.fetchArtwork(artwork.format, artwork.data)
+          ..save();
+        artworkList.add(tmpArtwork);
       });
     }
+    // Get.find<DatabaseService>().musicSchema.writeTxn((isar) async {
+    // });
     if (metadata.title != null) {
       album.value = metadataService.fetchAlbum(
-          metadata.title!, artists.map((e) => e.name).toList());
+        metadata.title!,
+        artists.map((e) => e.name).toList(),
+      );
     }
+    // All objects come from fetchXXX is already saved in storage.
+    // So only need to save "link".
+    await storage.writeTxn(() async {
+      await storage.musics.put(this);
+      await artists.save();
+      await artworkList.save();
+      await album.save();
+    });
     trackNumber = metadata.track;
     genre = metadata.genre;
     comment = metadata.comment;
@@ -94,12 +116,12 @@ class Music {
   }
 
   /// Id in database.
-  Id? id = Isar.autoIncrement;
+  Id id = Isar.autoIncrement;
 
   //////////////  File Properties //////////////
 
   /// File path of this audio.
-  @Index(unique: true, caseSensitive: true)
+  @Index(unique: true)
   late final String filePath;
 
   /// File name of this audio.
@@ -120,7 +142,12 @@ class Music {
   String? lyrics;
 
   /// All artworks.
-  final artworkMap = <ArtworkType, IsarLink<Artwork>>{};
+  ///
+  /// Isar does not support [Map].
+  /// Save [ArtworkWithType] because it records [Artwork] position info.
+  /// But each [ArtworkType] should be less than 2, so always check same type
+  /// exists or not before add/update values.
+  final artworkList = IsarLinks<ArtworkWithType>();
 
   //////////////  Album Properties //////////////
 

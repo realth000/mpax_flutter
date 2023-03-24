@@ -304,7 +304,7 @@ class PlayerService extends GetxService {
     if (GetPlatform.isMobile) {
       // Save scaled album cover in file for the just_audio_background service to
       // display on android control center.
-      final hasCoverImage = currentContent.value.artworkMap.isNotEmpty;
+      final hasCoverImage = currentContent.value.artworkList.isNotEmpty;
       await clearCoverImageCache();
       final coverFile = File(
         '${(await getTemporaryDirectory()).path}/cover.cache.${DateTime.now().microsecondsSinceEpoch.toString()}',
