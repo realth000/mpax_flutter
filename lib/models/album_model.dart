@@ -23,20 +23,9 @@ class Album {
     List<String>? artistNames,
   }) {
     if (artistNames == null || artistNames.isEmpty) {
-      _artistNamesHash =
-          md5.convert([DateTime.now().microsecondsSinceEpoch]).toString();
+      artistNamesHash = calculateEmptyNamesHash();
     } else {
-      _artistNamesHash = md5
-          .convert(
-            artistNames
-                .sorted(
-                    (s1, s2) => s1.toLowerCase().compareTo(s2.toLowerCase()))
-                .map((name) => utf8.encode(name))
-                .toList()
-                .expand((x) => x)
-                .toList(),
-          )
-          .toString();
+      artistNamesHash = calculateNamesHash(artistNames);
     }
   }
 
@@ -46,11 +35,12 @@ class Album {
   /// Album artist.
   final artists = IsarLinks<Artist>();
 
+  /// Album artist hash.
   @Index(
     unique: true,
     composite: [CompositeIndex('title')],
   )
-  late String _artistNamesHash;
+  late String artistNamesHash;
 
   /// Album title
   @Index()
@@ -71,4 +61,20 @@ class Album {
   /// Contained music.
   @Backlink(to: 'album')
   final albumMusic = IsarLinks<Music>();
+
+  /// Calculate a hash from empty names.
+  static String calculateEmptyNamesHash() =>
+      md5.convert([DateTime.now().microsecondsSinceEpoch]).toString();
+
+  /// Calculate hash from names.
+  static String calculateNamesHash(List<String> names) => md5
+      .convert(
+        names
+            .sorted((s1, s2) => s1.toLowerCase().compareTo(s2.toLowerCase()))
+            .map((name) => utf8.encode(name))
+            .toList()
+            .expand((x) => x)
+            .toList(),
+      )
+      .toString();
 }

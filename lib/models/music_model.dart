@@ -9,6 +9,7 @@ import '../services/metadata_service.dart';
 import 'album_model.dart';
 import 'artist_model.dart';
 import 'artwork_model.dart';
+import 'artwork_with_type_model.dart';
 
 part 'music_model.g.dart';
 
@@ -67,16 +68,20 @@ class Music {
     }
     title = metadata.title ?? fileName;
     if (metadata.artist != null) {
-      artists.add(metadataService.fetchArtist(metadata.artist!));
+      final artist = await metadataService.fetchArtist(metadata.artist!);
+      await artist.addMusic(this);
+      artists.add(artist);
     }
     lyrics = metadata.lyrics;
     if (metadata.artworkMap != null) {
-      metadata.artworkMap!.forEach((type, artwork) {
+      metadata.artworkMap!.forEach((type, artwork) async {
         // Check whether [type] already exists.
         for (var i = 0; i < artworkList.length; i++) {
           if (artworkList.elementAt(i).type == type) {
-            final tmpArtwork =
-                metadataService.fetchArtwork(artwork.format, artwork.data);
+            final tmpArtwork = await metadataService.fetchArtwork(
+              artwork.format,
+              artwork.data,
+            );
             artworkList.elementAt(i).artwork.value = tmpArtwork;
             return;
           }
@@ -84,15 +89,15 @@ class Music {
         // Now [type] not exists in [artworkList], add a new one.
         final tmpArtwork = ArtworkWithType(type)
           ..artwork.value =
-              metadataService.fetchArtwork(artwork.format, artwork.data)
-          ..save();
+              await metadataService.fetchArtwork(artwork.format, artwork.data);
+        await tmpArtwork.save();
         artworkList.add(tmpArtwork);
       });
     }
     // Get.find<DatabaseService>().musicSchema.writeTxn((isar) async {
     // });
     if (metadata.title != null) {
-      album.value = metadataService.fetchAlbum(
+      album.value = await metadataService.fetchAlbum(
         metadata.title!,
         artists.map((e) => e.name).toList(),
       );
@@ -100,7 +105,7 @@ class Music {
     // All objects come from fetchXXX is already saved in storage.
     // So only need to save "link".
     await storage.writeTxn(() async {
-      await storage.musics.put(this);
+      // await storage.musics.put(this);
       await artists.save();
       await artworkList.save();
       await album.save();

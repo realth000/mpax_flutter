@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:get/get.dart';
+import 'package:isar/isar.dart';
 import 'package:metadata_god/metadata_god.dart' as mg;
 import 'package:path/path.dart' as path;
 import 'package:taglib_ffi/taglib_ffi.dart' as tl;
@@ -12,41 +13,68 @@ import '../models/artist_model.dart';
 import '../models/artwork_model.dart';
 import '../models/metadata_model.dart';
 import '../models/music_model.dart';
+import 'database_service.dart';
 
 /// Manage audio metadata, globally.
 class MetadataService extends GetxService {
+  final _storage = Get.find<DatabaseService>().storage;
+
   /// Return a [Music].
   ///
   /// If exists a music with [filePath], return it.
   /// Otherwise make a new [Music].
-  Music fetchMusic(
+  Future<Music> fetchMusic(
     String filePath,
-  ) {
-    throw UnimplementedError('Check, create or update Music here');
+  ) async {
+    final storedMusic =
+        await _storage.musics.where().filePathEqualTo(filePath).findFirst();
+    if (storedMusic != null) {
+      return storedMusic;
+    }
+    final music = Music.fromPath(filePath);
+    await music.refreshMetadata();
+    await _storage.writeTxn(() async => _storage.musics.put(music));
+    return music;
   }
 
   /// Return a [Artist].
   ///
   /// If exists an artist with [name], return it.
   /// Otherwise make a new [Artist].
-  Artist fetchArtist(
+  Future<Artist> fetchArtist(
     String name,
-  ) {
-    throw UnimplementedError('Check, create or update Artist here');
+  ) async {
+    final storedArtist =
+        await _storage.artists.where().nameEqualTo(name).findFirst();
+    if (storedArtist != null) {
+      return storedArtist;
+    }
+    final artist = Artist(name: name);
+    await _storage.writeTxn(() async => _storage.artists.put(artist));
+    return artist;
   }
 
   /// Return a [Album].
   ///
   /// If exists an album with [title] and [artists], return it.
   /// Otherwise make a new [Album].
-  Album fetchAlbum(
+  Future<Album> fetchAlbum(
     String title,
     List<String> artists, {
     String? albumTitle,
     int? albumTrackCount,
     Map<ArtworkType, Artwork>? artworkList,
-  }) {
-    throw UnimplementedError('Check, create or update Album here');
+  }) async {
+    final a = await _storage.albums
+        .where()
+        .artistNamesHashEqualToAnyTitle(Album.calculateNamesHash(artists))
+        .findFirst();
+    if (a != null) {
+      return a;
+    }
+    final album = Album(title: title, artistNames: artists);
+    await _storage.writeTxn(() async => _storage.albums.put(album));
+    return album;
   }
 
   /// Return a [Artwork].
@@ -54,8 +82,17 @@ class MetadataService extends GetxService {
   /// If exists an artwork with [Artwork.dataHash] equals to hashed [data],
   /// return it.
   /// Otherwise make a new [Artwork].
-  Artwork fetchArtwork(ArtworkFormat format, String data) {
-    throw UnimplementedError('Check, create or return Artwork here');
+  Future<Artwork> fetchArtwork(ArtworkFormat format, String data) async {
+    final a = await _storage.artworks
+        .where()
+        .dataHashEqualTo(Artwork.calculateDataHash(data))
+        .findFirst();
+    if (a != null) {
+      return a;
+    }
+    final artwork = Artwork(format: format, data: data);
+    await _storage.writeTxn(() async => _storage.artworks.put(artwork));
+    return artwork;
   }
 
   /// Get a [Music] filled with metadata read from given [filePath].

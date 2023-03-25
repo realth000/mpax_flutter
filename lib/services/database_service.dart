@@ -4,6 +4,7 @@ import 'package:isar/isar.dart';
 import '../models/album_model.dart';
 import '../models/artist_model.dart';
 import '../models/artwork_model.dart';
+import '../models/artwork_with_type_model.dart';
 import '../models/music_model.dart';
 import '../models/playlist_model.dart';
 
@@ -25,5 +26,15 @@ class DatabaseService extends GetxService {
       PlaylistModelSchema,
     ]);
     return this;
+  }
+
+  /// Save artist to database.
+  Future<void> saveArtist(Artist artist) async {
+    await storage.writeTxn(() async => storage.artists.put(artist));
+  }
+
+  /// Save artwork to database.
+  Future<void> saveArtwork(Artwork artwork) async {
+    await storage.writeTxn(() async => storage.artworks.put(artwork));
   }
 }
