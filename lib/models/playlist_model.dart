@@ -1,8 +1,9 @@
 import 'dart:math';
 
-import 'package:collection/collection.dart';
+import 'package:get/get.dart';
 import 'package:isar/isar.dart';
 
+import '../services/database_service.dart';
 import 'music_model.dart';
 
 part 'playlist_model.g.dart';
@@ -11,9 +12,9 @@ part 'playlist_model.g.dart';
 ///
 /// Maintains a list of audio files, and information/property about playlist.
 @Collection()
-class PlaylistModel {
+class Playlist {
   /// Constructor.
-  PlaylistModel();
+  Playlist();
 
   /// Id in database.
   Id id = Isar.autoIncrement;
@@ -38,6 +39,20 @@ class PlaylistModel {
     }
     return ret;
   }
+
+  /// Load all music to a playlist.
+  static Future<void> loadAllMusicSyncToPlaylist(Playlist playlist) async {
+    final allMusic =
+        await Get.find<DatabaseService>().storage.musics.where().findAll();
+    print('AAAA allMusic length= ${allMusic.length}');
+    playlist.name = 'all_media';
+    playlist._musicList
+      ..clear()
+      ..addAll(allMusic);
+  }
+
+  /// Whether is an empty playlist.
+  bool get isEmpty => _musicIdSortList.isEmpty;
 
   /// Store [Music] sort in [_musicList] by Music's [Id].
   ///

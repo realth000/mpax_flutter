@@ -9,8 +9,9 @@ import '../widgets/media_list_item.dart';
 /// Media list widget, contains a list of audio content.
 class MediaList extends StatelessWidget {
   /// Constructor.
-  MediaList(PlaylistModel playlist, {super.key}) {
+  MediaList(Playlist playlist, {super.key}) {
     Get.put(MediaListController(playlist));
+    print('AAAA put MediaListController length = ${playlist.musicList.length}');
   }
 
   @override
@@ -25,7 +26,9 @@ class MediaList extends StatelessWidget {
                   !snapshot.hasData ||
                   snapshot.data == null) {
                 return MediaItemTile(
-                    controller.showList[i], controller.playlist);
+                  controller.showList[i],
+                  controller.playlist,
+                );
               }
               return MediaItemTile(snapshot.data!, controller.playlist);
             },

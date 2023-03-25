@@ -33,7 +33,7 @@ class MediaLibraryPage extends GetView<MediaLibraryService> {
           ],
         ),
         drawer: const MPaxDrawer(),
-        body: MediaList(controller.allContentModel),
+        body: Obx(() => MediaList(controller.allMusic.value)),
         bottomNavigationBar: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[

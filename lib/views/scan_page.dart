@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:path/path.dart' as path;
 
+import '../controllers/scan_target_controller.dart';
 import '../mobile/components/mobile_underfoot.dart';
 import '../services/media_library_service.dart';
 import '../services/metadata_service.dart';
 import '../services/settings_service.dart';
-import '../utils/scan_target_controller.dart';
 import '../widgets/app_app_bar.dart';
 import '../widgets/app_drawer.dart';
 import '../widgets/app_player_widget.dart';

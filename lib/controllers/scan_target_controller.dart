@@ -5,8 +5,8 @@ import 'package:get/get.dart';
 
 import '../models/music_model.dart';
 import '../models/playlist_model.dart';
+import '../services/database_service.dart';
 import '../services/media_library_service.dart';
-import '../services/metadata_service.dart';
 import '../services/settings_service.dart';
 
 /// Option used in scanning audio files.
@@ -43,7 +43,6 @@ class AudioScanner {
   AudioScanner({required this.targetPath, this.targetModel, this.options});
 
   final _mediaLibraryService = Get.find<MediaLibraryService>();
-  final _metadataService = Get.find<MetadataService>();
 
   final _scanStreamController = StreamController<String>(sync: true);
 
@@ -54,10 +53,10 @@ class AudioScanner {
   /// Scan start path, go into that directory.
   final String targetPath;
 
-  /// Save all scanned audio content in this [PlaylistModel] and
+  /// Save all scanned audio content in this [Playlist] and
   /// [_mediaLibraryService].
   /// Can be null which means only save in library.
-  PlaylistModel? targetModel;
+  Playlist? targetModel;
 
   /// Options use in scanning.
   AudioScanOptions? options;
@@ -85,18 +84,14 @@ class AudioScanner {
   }
 
   Future<void> _scan(FileSystemEntity entry, List<Music> list) async {
-    /*
-
     switch (entry.statSync().type) {
       case FileSystemEntityType.file:
         if (entry.path.endsWith('mp3')) {
           _scanStreamSink.add(entry.path);
-          list.add(
-            await _metadataService.readMetadata(
-              entry.path,
-              loadImage: options?.loadImage ?? true,
-            ),
-          );
+          final music = Music.fromPath(entry.path);
+          await Get.find<DatabaseService>().saveMusic(music);
+          await music.refreshMetadata();
+          list.add(music);
         }
 
         /// Short return list to reduce memory use.
@@ -119,12 +114,10 @@ class AudioScanner {
             }
             // Add to list.
             _scanStreamSink.add(entry.path);
-            list.add(
-              await _metadataService.readMetadata(
-                entry.path,
-                loadImage: options?.loadImage ?? true,
-              ),
-            );
+            final music = Music.fromPath(entry.path);
+            await Get.find<DatabaseService>().saveMusic(music);
+            await music.refreshMetadata();
+            list.add(music);
 
             /// Short return list to reduce memory use.
             if (list.length >= 10) {
@@ -140,8 +133,9 @@ class AudioScanner {
           }
         }
         break;
+      default:
+        // Do nothing.
+        break;
     }
-  }
-     */
   }
 }

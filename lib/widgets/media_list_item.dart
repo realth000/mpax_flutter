@@ -21,7 +21,7 @@ class MediaItemController extends GetxController {
   Music playContent;
 
   /// Current controlling model.
-  PlaylistModel model;
+  Playlist model;
 
   /// Tell the player service to play current audio content.
   Future<void> play() async {
@@ -48,7 +48,7 @@ class MediaItemTile extends StatelessWidget {
   late final MediaItemController _controller;
 
   /// Playlist of current content.
-  final PlaylistModel model;
+  final Playlist model;
 
   Widget _leadingIcon() {
     if (playContent.artworkList.isEmpty) {

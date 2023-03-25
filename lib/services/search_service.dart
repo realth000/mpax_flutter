@@ -42,7 +42,7 @@ class SearchService extends GetxService {
   final resultList = <Music>[].obs;
 
   /// Current searching playlist.
-  final playlist = PlaylistModel().obs;
+  final playlist = Playlist().obs;
 
   /// Init function, run before app start.
   Future<SearchService> init() async => this;

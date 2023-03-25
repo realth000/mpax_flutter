@@ -21,7 +21,7 @@ class Artist {
       }
     }
     musicList.add(music);
-    await musicList.save();
+    await Get.find<DatabaseService>().writeTxn(() async => musicList.save());
     if (music.album.value != null) {
       var contains = false;
       final tmpAlbum = music.album.value!;
@@ -34,7 +34,8 @@ class Artist {
       }
       if (!contains) {
         albumList.add(music.album.value!);
-        await albumList.save();
+        await Get.find<DatabaseService>()
+            .writeTxn(() async => albumList.save());
       }
     }
     await Get.find<DatabaseService>().saveArtist(this);

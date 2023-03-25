@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:isar/isar.dart';
 
 import '../models/music_model.dart';
 import '../models/playlist_model.dart';
@@ -10,17 +9,19 @@ import '../models/playlist_model.dart';
 class MediaListController extends GetxController {
   /// Constructor.
   MediaListController(this.playlist) {
-    // it = playlist.musicList.iterator;
-    // it = _fetchMediaData();
+    it = playlist.musicList.iterator;
+    _fetchMediaData();
+    print(
+        'AAAA construct MediaListController: length = ${playlist.musicList.length}');
   }
 
-  /// [PlaylistModel] contains all data.
-  final PlaylistModel playlist;
+  /// [Playlist] contains all data.
+  final Playlist playlist;
 
   /// [Iterator] of [playlist].
-  late final Iterator<IsarLink<Music>> it;
+  late final Iterator<Music> it;
 
-  /// [PlaylistModel] to show.
+  /// [Playlist] to show.
   final showList = <Music>[];
 
   /// Controller of MediaList scrolling.
@@ -35,7 +36,7 @@ class MediaListController extends GetxController {
   void _fetchMediaData() {
     var count = 0;
     for (; count < increaseCount && it.moveNext(); count++) {
-      showList.add(it.current.value!);
+      showList.add(it.current);
     }
     currentCount += count;
     update();

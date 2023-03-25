@@ -1,6 +1,5 @@
 import 'package:get/get.dart';
 import 'package:on_audio_query/on_audio_query.dart' as aq;
-import 'package:sqflite/sqflite.dart';
 
 import '../mobile/services/media_query_service.dart';
 import '../models/music_model.dart';
@@ -33,24 +32,19 @@ class MediaLibraryService extends GetxService {
       'album_cover TEXT, lyrics TEXT';
 
   /// A special playlist contains all audio content as the library.
-  final List<PlaylistModel> allPlaylist = <PlaylistModel>[].obs;
+  final List<Playlist> allPlaylist = <Playlist>[].obs;
 
-  final _allContent = PlaylistModel().obs;
+  final _allMusic = Playlist().obs;
 
   // Save all [AudioModel] from Android media store.
   var _allAudioModel = <aq.AudioModel>[];
 
   /// Return the library.
-  PlaylistModel get allContentModel => _allContent.value;
+  Rx<Playlist> get allMusic => _allMusic;
 
   // Used for prevent same name playlist.
   String _lastTimeStamp = '';
   int _lastCount = 0;
-
-  late final Future<Database> _database;
-
-  /// Return library audio content list.
-  List<Music> get content => _allContent.value.musicList;
 
   /// On use media store on Android, avoid to use tag readers for large mount of
   /// audios.
@@ -65,7 +59,7 @@ class MediaLibraryService extends GetxService {
   ///
   /// If duplicate in content path, do nothing and return false.
   bool addContent(Music playContent) {
-    for (final content in _allContent.value.musicList) {
+    for (final content in _allMusic.value.musicList) {
       if (content.filePath == playContent.filePath) {
         return false;
       }
@@ -90,14 +84,14 @@ class MediaLibraryService extends GetxService {
   }
 
   /// Add a playlist in library.
-  Future<void> addPlaylist(PlaylistModel playlistModel) async {
+  Future<void> addPlaylist(Playlist playlistModel) async {
     return;
     allPlaylist.add(playlistModel);
     await _savePlaylist(playlistModel);
   }
 
   /// Remove a playlist, from library and from database.
-  Future<void> removePlaylist(PlaylistModel playlistModel) async {
+  Future<void> removePlaylist(Playlist playlistModel) async {
     return;
     // allPlaylist
     //     .removeWhere((element) => element.tableName == playlistModel.tableName);
@@ -117,7 +111,7 @@ class MediaLibraryService extends GetxService {
   }
 
   /// Regenerate the table name and clear all audio contents.
-  void _resetPlaylistModel(PlaylistModel model) {
+  void _resetPlaylistModel(Playlist model) {
     // model
     //   ..clearMusicList()
     //   ..tableName = _regenerateTableName();
@@ -157,6 +151,8 @@ class MediaLibraryService extends GetxService {
       //   ),
       // );
     }
+    await Playlist.loadAllMusicSyncToPlaylist(_allMusic.value);
+    _allMusic.refresh();
     /*
     final db = await _database;
     // Fetch playlist data from database.
@@ -190,7 +186,7 @@ class MediaLibraryService extends GetxService {
   ///
   /// Library should also be saved because the [playlistModel] may be a new
   /// list and updated library may not haven't saved yet.
-  Future<void> savePlaylist(PlaylistModel playlistModel) async {
+  Future<void> savePlaylist(Playlist playlistModel) async {
     await saveMediaLibrary();
     await _savePlaylist(playlistModel);
   }
@@ -198,7 +194,7 @@ class MediaLibraryService extends GetxService {
   /// Save playlist to database.
   ///
   /// Save name, table name and audio content list.
-  Future<void> _savePlaylist(PlaylistModel playlistModel) async {
+  Future<void> _savePlaylist(Playlist playlistModel) async {
     /*
     if (playlistModel.tableName.isEmpty) {
       playlistModel.tableName = _regenerateTableName();
@@ -294,7 +290,7 @@ class MediaLibraryService extends GetxService {
 // }
 
   /// Return the playlist with the given [tableName].
-  PlaylistModel findPlaylistByTableName(String tableName) {
+  Playlist findPlaylistByTableName(String tableName) {
     // if (_allContent.value.tableName == tableName) {
     //   return _allContent.value;
     // }
@@ -303,7 +299,7 @@ class MediaLibraryService extends GetxService {
     //     return model;
     //   }
     // }
-    return PlaylistModel();
+    return Playlist();
   }
 
 // Music _fromDataMap(Map<String, dynamic> dataMap) =>

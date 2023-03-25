@@ -2,10 +2,10 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../controllers/scan_target_controller.dart';
 import '../mobile/components/mobile_underfoot.dart';
 import '../models/playlist_model.dart';
 import '../services/media_library_service.dart';
-import '../utils/scan_target_controller.dart';
 import '../widgets/add_playlist_widget.dart';
 import '../widgets/app_app_bar.dart';
 import '../widgets/app_drawer.dart';
@@ -17,7 +17,7 @@ class PlaylistPage extends GetView<MediaLibraryService> {
   /// Constructor.
   const PlaylistPage({super.key});
 
-  Future<void> _addAudioByScanning(PlaylistModel playlistModel) async {
+  Future<void> _addAudioByScanning(Playlist playlistModel) async {
     final targetPath = await FilePicker.platform.getDirectoryPath();
     if (targetPath == null) {
       return;
@@ -31,7 +31,7 @@ class PlaylistPage extends GetView<MediaLibraryService> {
     }
   }
 
-  Widget _buildPlaylistMenu(PlaylistModel playlistModel) => ModalDialog(
+  Widget _buildPlaylistMenu(Playlist playlistModel) => ModalDialog(
         child: Column(
           children: <Widget>[
             ListTile(
@@ -59,7 +59,7 @@ class PlaylistPage extends GetView<MediaLibraryService> {
         ),
       );
 
-  Future<void> _openPlaylistMenu(PlaylistModel playlistModel) async {
+  Future<void> _openPlaylistMenu(Playlist playlistModel) async {
     await Get.dialog(_buildPlaylistMenu(playlistModel));
   }
 
@@ -68,11 +68,11 @@ class PlaylistPage extends GetView<MediaLibraryService> {
     if (name == null) {
       return;
     }
-    final p = PlaylistModel()..name = name;
+    final p = Playlist()..name = name;
     await controller.addPlaylist(p);
   }
 
-  Widget _getPlaylistCover(PlaylistModel model) {
+  Widget _getPlaylistCover(Playlist model) {
     // TODO: Get first media audio cover here.
     // if (model.contentList.isEmpty) {
     //   return const Icon(Icons.queue_music);
@@ -82,7 +82,7 @@ class PlaylistPage extends GetView<MediaLibraryService> {
     return Placeholder();
   }
 
-  ListTile _buildPlaylistItem(PlaylistModel model) => ListTile(
+  ListTile _buildPlaylistItem(Playlist model) => ListTile(
         leading: _getPlaylistCover(model),
         title: Text(model.name),
         trailing: IconButton(

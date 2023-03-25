@@ -18,8 +18,10 @@ final playingIcon = String.fromCharCode(Icons.play_arrow.codePoint);
 /// one, being a service and refresh different tables is not efficient.
 class MediaTableController extends GetxController {
   /// Constructor.
-  MediaTableController(PlaylistModel playlist) {
+  MediaTableController(Playlist playlist) {
     this.playlist.value = playlist;
+    print(
+        'AAAA desktop MediaTableController init length = ${playlist.musicList.length}');
   }
 
   /// Whether to show filters.
@@ -33,7 +35,7 @@ class MediaTableController extends GetxController {
   final currentPlayingContent = ''.obs;
 
   /// Playlist in this table.
-  final playlist = PlaylistModel().obs;
+  final playlist = Playlist().obs;
 
   final _playerService = Get.find<PlayerService>();
   final _libraryService = Get.find<MediaLibraryService>();
@@ -43,9 +45,9 @@ class MediaTableController extends GetxController {
   /// Didn't want to do this but no other solutions.
   late PlutoGridStateManager? tableStateManager;
 
-  /// Return a sorted [PlaylistModel] with [sort] order in [column].
-  Future<PlaylistModel> sort(
-    PlaylistModel playlist,
+  /// Return a sorted [Playlist] with [sort] order in [column].
+  Future<Playlist> sort(
+    Playlist playlist,
     String column,
     String sort,
   ) async {
@@ -60,14 +62,14 @@ class MediaTableController extends GetxController {
     // }
     // await _libraryService.savePlaylist(p);
     // return p;
-    return PlaylistModel();
+    return Playlist();
   }
 
   /// Require [PlayerService] to play specified [content].
   ///
   /// Call may from a double-click on MediaTable, MediaTable item context menu
   /// request or some other thing.
-  Future<void> playAudio(Music? content, PlaylistModel playlist) async {
+  Future<void> playAudio(Music? content, Playlist playlist) async {
     if (content == null) {
       return;
     }

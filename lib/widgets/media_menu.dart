@@ -23,7 +23,7 @@ class MediaItemMenu extends StatelessWidget {
   final Music playContent;
 
   /// Playlist of the [playContent].
-  final PlaylistModel playlist;
+  final Playlist playlist;
 
   @override
   Widget build(BuildContext context) => ModalDialog(

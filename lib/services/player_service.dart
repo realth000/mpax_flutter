@@ -129,7 +129,7 @@ class PlayerService extends GetxService {
   double volumeBeforeMute = 0.3;
 
   /// Current playing playlist.
-  PlaylistModel currentPlaylist = PlaylistModel();
+  Playlist currentPlaylist = Playlist();
 
   /// Current playing content.
   final currentContent = Music().obs;
@@ -268,7 +268,7 @@ class PlayerService extends GetxService {
   /// use [_setCurrentPathToPlayer].
   Future<void> setCurrentContent(
     Music playContent,
-    PlaylistModel playlist,
+    Playlist playlist,
   ) async {
     await _setCurrentPathToPlayer(playContent, playlist);
     // Clear play history no matter in shuffle play mode or not,
@@ -288,7 +288,7 @@ class PlayerService extends GetxService {
   /// use [setCurrentContent].
   Future<void> _setCurrentPathToPlayer(
     Music playContent,
-    PlaylistModel playlist,
+    Playlist playlist,
   ) async {
     // Read the full album cover image to display in music page.
     final p = await _metadataService.readMetadata(

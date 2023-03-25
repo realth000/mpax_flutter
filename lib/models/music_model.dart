@@ -90,7 +90,7 @@ class Music {
         final tmpArtwork = ArtworkWithType(type)
           ..artwork.value =
               await metadataService.fetchArtwork(artwork.format, artwork.data);
-        await tmpArtwork.save();
+        await storage.writeTxn(() async => tmpArtwork.save());
         artworkList.add(tmpArtwork);
       });
     }

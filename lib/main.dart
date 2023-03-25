@@ -47,7 +47,7 @@ class MPaxApp extends StatelessWidget {
         return MPaxRoutes.library;
       }
       final mediaLibraryService = Get.find<MediaLibraryService>();
-      return mediaLibraryService.content.isNotEmpty
+      return mediaLibraryService.allMusic.value.isEmpty
           ? MPaxRoutes.library
           : MPaxRoutes.home;
     } else {

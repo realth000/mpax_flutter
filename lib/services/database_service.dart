@@ -28,6 +28,16 @@ class DatabaseService extends GetxService {
     return this;
   }
 
+  /// Run a write transaction.
+  Future<void> writeTxn(Future Function() callback) async {
+    await storage.writeTxn(callback);
+  }
+
+  /// Save music to database.
+  Future<void> saveMusic(Music music) async {
+    await storage.writeTxn(() async => storage.musics.put(music));
+  }
+
   /// Save artist to database.
   Future<void> saveArtist(Artist artist) async {
     await storage.writeTxn(() async => storage.artists.put(artist));

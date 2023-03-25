@@ -2,9 +2,9 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../controllers/scan_target_controller.dart';
 import '../../../models/playlist_model.dart';
 import '../../../services/media_library_service.dart';
-import '../../../utils/scan_target_controller.dart';
 import '../../../widgets/add_playlist_widget.dart';
 import '../../../widgets/util_widgets.dart';
 import '../../components/media_table/media_table_controller.dart';
@@ -19,7 +19,7 @@ class DesktopPlaylistPage extends StatelessWidget {
   final _controller = Get.put(DesktopPlaylistPageController());
   final _libraryService = Get.find<MediaLibraryService>();
 
-  Widget _getPlaylistCover(PlaylistModel model) {
+  Widget _getPlaylistCover(Playlist model) {
     // TODO: Get first media audio cover here.
     if (model.musicList.isEmpty) {
       return const Icon(Icons.queue_music);
@@ -28,7 +28,7 @@ class DesktopPlaylistPage extends StatelessWidget {
     }
   }
 
-  Future<void> _addAudioByScanning(PlaylistModel playlistModel) async {
+  Future<void> _addAudioByScanning(Playlist playlistModel) async {
     final targetPath = await FilePicker.platform.getDirectoryPath();
     if (targetPath == null) {
       return;
@@ -134,7 +134,7 @@ class DesktopPlaylistPage extends StatelessWidget {
                               if (name == null) {
                                 return;
                               }
-                              final p = PlaylistModel()..name = name;
+                              final p = Playlist()..name = name;
                               await _libraryService.addPlaylist(p);
                             },
                             icon: const Icon(Icons.add),

@@ -5,5 +5,5 @@ import '../../../models/playlist_model.dart';
 /// Controller of playlist page.
 class DesktopPlaylistPageController extends GetxController {
   /// Current showing playlist.
-  final currentPlaylist = PlaylistModel().obs;
+  final currentPlaylist = Playlist().obs;
 }
