@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../views/about_page.dart';
-import '../../views/scan_page.dart';
 import '../../views/settings_page.dart';
 import 'media_library_page.dart';
 import 'music_page/music_page_view.dart';
@@ -17,7 +16,6 @@ class ScaffoldPages {
     DesktopMediaLibraryPage(),
     DesktopPlaylistPage(),
     const DesktopMusicPage(),
-    ScanPage().body,
     SettingsPage().body,
     AboutPage().body,
   ];

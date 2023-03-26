@@ -61,12 +61,12 @@ class MPaxDrawer extends StatelessWidget {
               onTap: () async => Get.offAndToNamed(MPaxRoutes.music),
               style: ListTileStyle.drawer,
             ),
-            ListTile(
-              leading: const Icon(Icons.find_in_page),
-              title: Text('Scan'.tr),
-              selected: Get.currentRoute == MPaxRoutes.scan,
-              onTap: () async => Get.offAndToNamed(MPaxRoutes.scan),
-            ),
+            // ListTile(
+            //   leading: const Icon(Icons.find_in_page),
+            //   title: Text('Scan'.tr),
+            //   selected: Get.currentRoute == MPaxRoutes.scan,
+            //   onTap: () async => Get.offAndToNamed(MPaxRoutes.scan),
+            // ),
             ListTile(
               leading: const Icon(Icons.settings),
               title: Text('Settings'.tr),

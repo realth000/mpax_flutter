@@ -35,20 +35,25 @@ class Playlist {
   List<Music> get musicList {
     final ret = <Music>[];
     for (final id in _musicIdSortList) {
+      final m = _findMusicById(id);
+      if (m == null) {
+        continue;
+      }
       ret.add(_findMusicById(id)!);
     }
     return ret;
   }
 
   /// Load all music to a playlist.
-  static Future<void> loadAllMusicSyncToPlaylist(Playlist playlist) async {
+  static Future<Playlist> loadAllMusicSyncToPlaylist() async {
+    final playlist = Playlist();
     final allMusic =
         await Get.find<DatabaseService>().storage.musics.where().findAll();
-    print('AAAA allMusic length= ${allMusic.length}');
-    playlist.name = 'all_media';
-    playlist._musicList
-      ..clear()
-      ..addAll(allMusic);
+    playlist
+      ..name = 'all_media'
+      ..clearMusicList()
+      ..addMusicList(allMusic);
+    return playlist;
   }
 
   /// Whether is an empty playlist.
@@ -88,15 +93,21 @@ class Playlist {
   }
 
   /// Add a list of audio model to playlist, not duplicate with same path file.
-  void addMusicList(List<Music> musicList) {
-    for (final content in musicList) {
+  Future<void> addMusicList(List<Music> musicList) async {
+    for (final music in musicList) {
+      print('AAAA check music id=${music.id}');
       // TODO: Maybe [IsarLink] is similar to [Set], which means we do not need to prevent repeat.
-      if (contains(content)) {
+      if (contains(music)) {
         continue;
       }
-      musicList.add(content);
-      _musicIdSortList.add(content.id);
+      print('AAAA add music id =${music.id}!!');
+      _musicList.add(music);
+      _musicIdSortList.add(music.id);
     }
+    final storage = Get.find<DatabaseService>().storage;
+    await storage.writeTxn(() async => _musicList.save());
+    print(
+        'AAAA 1111111111 len=${_musicList.length},${_musicIdSortList.length}');
   }
 
   /// Clear audio file list.

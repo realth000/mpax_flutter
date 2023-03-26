@@ -7,7 +7,6 @@ import '../views/home_page.dart';
 import '../views/media_library_page.dart';
 import '../views/music_page.dart';
 import '../views/playlist_page.dart';
-import '../views/scan_page.dart';
 import '../views/search_page.dart';
 import '../views/settings_page.dart';
 
@@ -47,10 +46,6 @@ class MPaxPages {
     GetPage(
       name: MPaxRoutes.music,
       page: MusicPage.new,
-    ),
-    GetPage(
-      name: MPaxRoutes.scan,
-      page: () => const ScanPage(),
     ),
     GetPage(
       name: MPaxRoutes.settings,

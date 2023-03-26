@@ -9,6 +9,8 @@ class MediaTable extends StatelessWidget {
   /// Constructor.
   MediaTable(Playlist playlist, {super.key}) {
     _controller.playlist.value = playlist;
+    print(
+        'AAAA desktop MediaTable playlist length: = ${playlist.musicList.length}');
   }
 
   final _controller = Get.put(MediaTableController(Playlist()));

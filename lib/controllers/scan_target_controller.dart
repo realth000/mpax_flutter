@@ -44,12 +44,6 @@ class AudioScanner {
 
   final _mediaLibraryService = Get.find<MediaLibraryService>();
 
-  final _scanStreamController = StreamController<String>(sync: true);
-
-  /// Scanning stream, provide current scanning file path.
-  late final Stream<String> scanStream = _scanStreamController.stream;
-  late final _scanStreamSink = _scanStreamController.sink;
-
   /// Scan start path, go into that directory.
   final String targetPath;
 
@@ -75,11 +69,10 @@ class AudioScanner {
     await _scan(d, scannedAudioList);
     _mediaLibraryService.addContentList(scannedAudioList);
     if (targetModel != null) {
-      targetModel!.addMusicList(scannedAudioList);
+      await targetModel!.addMusicList(scannedAudioList);
     }
     _scannedCount += scannedAudioList.length;
     scannedAudioList.clear();
-    // await _scanStreamSink.close();
     return _scannedCount;
   }
 
@@ -87,7 +80,6 @@ class AudioScanner {
     switch (entry.statSync().type) {
       case FileSystemEntityType.file:
         if (entry.path.endsWith('mp3')) {
-          _scanStreamSink.add(entry.path);
           final music = Music.fromPath(entry.path);
           await Get.find<DatabaseService>().saveMusic(music);
           await music.refreshMetadata();
@@ -98,7 +90,7 @@ class AudioScanner {
         if (list.length >= 200) {
           _mediaLibraryService.addContentList(list);
           if (targetModel != null) {
-            targetModel!.addMusicList(list);
+            await targetModel!.addMusicList(list);
           }
           await _mediaLibraryService.saveAllPlaylist();
           _scannedCount += list.length;
@@ -113,7 +105,6 @@ class AudioScanner {
               continue;
             }
             // Add to list.
-            _scanStreamSink.add(entry.path);
             final music = Music.fromPath(entry.path);
             await Get.find<DatabaseService>().saveMusic(music);
             await music.refreshMetadata();
@@ -123,7 +114,7 @@ class AudioScanner {
             if (list.length >= 10) {
               _mediaLibraryService.addContentList(list);
               if (targetModel != null) {
-                targetModel!.addMusicList(list);
+                await targetModel!.addMusicList(list);
               }
               _scannedCount += list.length;
               list.clear();

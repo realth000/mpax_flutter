@@ -113,7 +113,7 @@ class DesktopPlaylistPage extends StatelessWidget {
               maxWidth: 200,
             ),
             child: Padding(
-              padding: EdgeInsets.only(left: 10, top: 5, bottom: 5),
+              padding: const EdgeInsets.only(left: 10, top: 5, bottom: 5),
               child: Card(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

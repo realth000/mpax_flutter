@@ -21,9 +21,6 @@ abstract class MPaxRoutes {
   /// Music page route name.
   static const String music = '/music';
 
-  /// Scan audio page route name.
-  static const String scan = '/scan';
-
   /// Settings page route name.
   static const String settings = '/settings';
 

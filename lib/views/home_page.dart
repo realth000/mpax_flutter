@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../mobile/components/mobile_underfoot.dart';
-import '../routes/app_pages.dart';
 import '../widgets/app_app_bar.dart';
 import '../widgets/app_drawer.dart';
 import '../widgets/app_player_widget.dart';
@@ -29,7 +28,7 @@ class HomePage extends StatelessWidget {
                 ),
                 ElevatedButton(
                   onPressed: () async {
-                    await Get.toNamed(MPaxRoutes.scan);
+                    // await Get.toNamed(MPaxRoutes.scan);
                   },
                   child: Text('Scan music'.tr),
                 ),

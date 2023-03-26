@@ -1,9 +1,11 @@
 import 'package:get/get.dart';
+import 'package:isar/isar.dart';
 import 'package:on_audio_query/on_audio_query.dart' as aq;
 
 import '../mobile/services/media_query_service.dart';
 import '../models/music_model.dart';
 import '../models/playlist_model.dart';
+import 'database_service.dart';
 
 /// Media library service, globally.
 ///
@@ -30,6 +32,8 @@ class MediaLibraryService extends GetxService {
       'album_year INT, album_track_count INT, track_number INT, bit_rate INT, '
       'sample_rate INT, genre TEXT, comment TEXT, channels INT, length INT, '
       'album_cover TEXT, lyrics TEXT';
+
+  final _databaseService = Get.find<DatabaseService>();
 
   /// A special playlist contains all audio content as the library.
   final List<Playlist> allPlaylist = <Playlist>[].obs;
@@ -151,8 +155,15 @@ class MediaLibraryService extends GetxService {
       //   ),
       // );
     }
-    await Playlist.loadAllMusicSyncToPlaylist(_allMusic.value);
-    _allMusic.refresh();
+    final allMusicFromDatabase = await _databaseService.storage.playlistModels
+        .where()
+        .idEqualTo(0)
+        .findFirst();
+    if (allMusicFromDatabase != null) {
+      _allMusic.value = allMusicFromDatabase;
+    } else {
+      print('AAAA all music length = ${_allMusic.value.musicList.length}');
+    }
     /*
     final db = await _database;
     // Fetch playlist data from database.
