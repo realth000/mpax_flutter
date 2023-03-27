@@ -1,3 +1,4 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:window_manager/window_manager.dart';
@@ -68,6 +69,14 @@ class _SettingsBodyWidget extends GetView<SettingsService> {
   final _themeService = Get.find<ThemeService>();
   final _localeService = Get.find<LocaleService>();
 
+  final _scrollController = ScrollController();
+  final _targetScrollController = ScrollController();
+
+  final _musicDirectoryList =
+      (Get.find<SettingsService>().getStringList('ScanTargetList') ??
+              <String>[])
+          .obs;
+
   // Keymap configs only use on desktop platforms.
   final _keymapPlayPause = ''.obs;
   final _keymapPlayPrevious = ''.obs;
@@ -92,6 +101,61 @@ class _SettingsBodyWidget extends GetView<SettingsService> {
     final locale = await Get.dialog(_LocaleMenu());
     await _localeService.changeLocale(locale);
   }
+
+  Widget _buildMusicDirectoryCard(BuildContext context) => Card(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(
+                left: 15,
+                top: 10,
+              ),
+              child: TitleText(
+                title: 'Music Directory'.tr,
+                level: 0,
+              ),
+            ),
+            ListTile(
+              leading: const ListTileLeading(
+                child: Icon(Icons.my_library_music),
+              ),
+              title: Text('Watch directories'.tr),
+              trailing: IconButton(
+                icon: Icon(Icons.add),
+                onPressed: () async {
+                  final directory =
+                      await FilePicker.platform.getDirectoryPath();
+                  if (directory == null ||
+                      _musicDirectoryList.contains(directory)) {
+                    return;
+                  }
+                  _musicDirectoryList
+                    ..add(directory)
+                    ..refresh();
+                },
+              ),
+            ),
+            Obx(
+              () => SingleChildScrollView(
+                controller: _targetScrollController,
+                child: ListView.builder(
+                  controller: _targetScrollController,
+                  itemCount: _musicDirectoryList.length,
+                  itemExtent: 40,
+                  itemBuilder: (context, index) => ListTile(
+                    leading: const ListTileLeading(
+                      child: Icon(Icons.folder),
+                    ),
+                    title: Text(_musicDirectoryList[index]),
+                  ),
+                  shrinkWrap: true,
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
 
   Widget _buildAppearanceCard(BuildContext context) => Card(
         child: Column(
@@ -337,14 +401,21 @@ class _SettingsBodyWidget extends GetView<SettingsService> {
       _selections[0] = true;
     }
 
-    final widgetList = <Widget>[_buildAppearanceCard(context)];
+    final widgetList = <Widget>[];
+
+    widgetList.add(_buildMusicDirectoryCard(context));
+
+    // Always show appearance card.
+    widgetList.add(_buildAppearanceCard(context));
 
     if (GetPlatform.isDesktop) {
       widgetList.add(_buildDesktopKeymapCard(context));
     }
 
     return Scrollbar(
+      controller: _scrollController,
       child: SingleChildScrollView(
+        controller: _scrollController,
         child: Padding(
           padding: const EdgeInsets.all(5),
           child: Column(

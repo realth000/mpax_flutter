@@ -29,10 +29,6 @@ class NavigationBarController extends GetxController {
       label: 'Music'.tr,
     ),
     NavigationBarItem(
-      icon: const Icon(Icons.find_in_page),
-      label: 'Scan'.tr,
-    ),
-    NavigationBarItem(
       icon: const Icon(Icons.settings),
       label: 'Settings'.tr,
     ),
