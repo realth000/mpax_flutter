@@ -7,6 +7,7 @@ import 'package:window_manager/window_manager.dart';
 import '../desktop/services/shortcut_service.dart';
 import '../mobile/components/mobile_underfoot.dart';
 import '../services/locale_service.dart';
+import '../services/media_library_service.dart';
 import '../services/settings_service.dart';
 import '../services/theme_service.dart';
 import '../widgets/app_app_bar.dart';
@@ -146,6 +147,8 @@ class _SettingsBodyWidget extends GetView<SettingsService> {
                     'ScanTargetList',
                     _musicDirectoryList,
                   );
+                  await Get.find<MediaLibraryService>()
+                      .addMusicFolder(directory);
                 },
               ),
             ),

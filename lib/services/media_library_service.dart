@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:get/get.dart';
 import 'package:isar/isar.dart';
 import 'package:on_audio_query/on_audio_query.dart' as aq;
@@ -5,6 +7,7 @@ import 'package:on_audio_query/on_audio_query.dart' as aq;
 import '../mobile/services/media_query_service.dart';
 import '../models/music_model.dart';
 import '../models/playlist_model.dart';
+import '../utils/util.dart';
 import 'database_service.dart';
 
 /// Media library service, globally.
@@ -386,4 +389,15 @@ class MediaLibraryService extends GetxService {
 // }
 // return model;
 // }
+
+  /// Add [folderPath] to monitor.
+  ///
+  /// After added, scan once to sync media data.
+  /// TODO: Maybe should do a second diff scan because the first scan may took
+  /// a long time and any update are invisible in first scan.
+  Future<void> addMusicFolder(String folderPath) async {
+    //
+    final d = await Directory(folderPath).listAll();
+    print('AAAA ${d.length}');
+  }
 }
