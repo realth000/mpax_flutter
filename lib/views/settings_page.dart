@@ -1,5 +1,6 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:window_manager/window_manager.dart';
 
@@ -12,6 +13,13 @@ import '../widgets/app_app_bar.dart';
 import '../widgets/app_drawer.dart';
 import '../widgets/app_player_widget.dart';
 import '../widgets/util_widgets.dart';
+
+/// Action types for [
+enum _MusicFolderMenuActions {
+  openFolder,
+  copyPath,
+  delete,
+}
 
 /// Auto theme mode icon.
 const autoModeIcon = Icon(Icons.auto_mode);
@@ -102,7 +110,7 @@ class _SettingsBodyWidget extends GetView<SettingsService> {
     await _localeService.changeLocale(locale);
   }
 
-  Widget _buildMusicDirectoryCard(BuildContext context) => Card(
+  Widget _buildMusicFoldersCard(BuildContext context) => Card(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -112,7 +120,7 @@ class _SettingsBodyWidget extends GetView<SettingsService> {
                 top: 10,
               ),
               child: TitleText(
-                title: 'Music Directory'.tr,
+                title: 'Media libraries'.tr,
                 level: 0,
               ),
             ),
@@ -120,9 +128,10 @@ class _SettingsBodyWidget extends GetView<SettingsService> {
               leading: const ListTileLeading(
                 child: Icon(Icons.my_library_music),
               ),
-              title: Text('Watch directories'.tr),
-              trailing: IconButton(
-                icon: Icon(Icons.add),
+              title: Text('Music Folders'.tr),
+              trailing: TextButton.icon(
+                icon: const Icon(Icons.add),
+                label: Text('Add'.tr),
                 onPressed: () async {
                   final directory =
                       await FilePicker.platform.getDirectoryPath();
@@ -133,26 +142,88 @@ class _SettingsBodyWidget extends GetView<SettingsService> {
                   _musicDirectoryList
                     ..add(directory)
                     ..refresh();
+                  await controller.saveStringList(
+                    'ScanTargetList',
+                    _musicDirectoryList,
+                  );
                 },
               ),
             ),
-            Obx(
-              () => SingleChildScrollView(
-                controller: _targetScrollController,
-                child: ListView.builder(
+            Padding(
+              padding: const EdgeInsets.only(left: 10, bottom: 5),
+              child: Obx(
+                () => SingleChildScrollView(
                   controller: _targetScrollController,
-                  itemCount: _musicDirectoryList.length,
-                  itemExtent: 40,
-                  itemBuilder: (context, index) => ListTile(
-                    leading: const ListTileLeading(
-                      child: Icon(Icons.folder),
+                  child: ListView.builder(
+                    controller: _targetScrollController,
+                    itemCount: _musicDirectoryList.length,
+                    itemExtent: 45,
+                    itemBuilder: (context, index) => ListTile(
+                      leading: const ListTileLeading(
+                        child: Icon(Icons.folder),
+                      ),
+                      title: Text(
+                        _musicDirectoryList[index],
+                        style: const TextStyle(fontSize: 14),
+                      ),
+                      trailing: PopupMenuButton(
+                        itemBuilder: (context) =>
+                            <PopupMenuItem<_MusicFolderMenuActions>>[
+                          PopupMenuItem(
+                            value: _MusicFolderMenuActions.openFolder,
+                            child: Row(
+                              children: [
+                                const Icon(Icons.folder_open),
+                                Text('Open folder'.tr),
+                              ],
+                            ),
+                          ),
+                          PopupMenuItem(
+                            value: _MusicFolderMenuActions.copyPath,
+                            child: Row(
+                              children: [
+                                const Icon(Icons.copy),
+                                Text('Copy path'.tr),
+                              ],
+                            ),
+                          ),
+                          PopupMenuItem(
+                            value: _MusicFolderMenuActions.delete,
+                            child: Row(
+                              children: [
+                                const Icon(Icons.delete),
+                                Text('Delete'.tr),
+                              ],
+                            ),
+                          ),
+                        ],
+                        onSelected: (value) async {
+                          switch (value) {
+                            case _MusicFolderMenuActions.openFolder:
+                              return;
+                            case _MusicFolderMenuActions.copyPath:
+                              await Clipboard.setData(
+                                ClipboardData(
+                                  text: _musicDirectoryList[index],
+                                ),
+                              );
+                              return;
+                            case _MusicFolderMenuActions.delete:
+                              _musicDirectoryList.removeAt(index);
+                              await controller.saveStringList(
+                                'ScanTargetList',
+                                _musicDirectoryList,
+                              );
+                              return;
+                          }
+                        },
+                      ),
                     ),
-                    title: Text(_musicDirectoryList[index]),
+                    shrinkWrap: true,
                   ),
-                  shrinkWrap: true,
                 ),
               ),
-            ),
+            )
           ],
         ),
       );
@@ -403,7 +474,7 @@ class _SettingsBodyWidget extends GetView<SettingsService> {
 
     final widgetList = <Widget>[];
 
-    widgetList.add(_buildMusicDirectoryCard(context));
+    widgetList.add(_buildMusicFoldersCard(context));
 
     // Always show appearance card.
     widgetList.add(_buildAppearanceCard(context));
