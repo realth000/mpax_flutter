@@ -14,7 +14,8 @@ final _mediaQueryService = Get.find<MediaQueryService>();
 Future<Music> reloadContent(Music music) async {
   print('AAAA reloadContent');
 // Load album cover from file.
-  final metadata = await _metadataService.readMetadata(
+//   final metadata = await _metadataService.readMetadata(
+  final metadata = await MetadataService.readMetadata(
     music.filePath,
     loadImage: true,
   );

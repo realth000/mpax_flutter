@@ -62,7 +62,7 @@ class Music {
     }
     final metadataService = Get.find<MetadataService>();
     final storage = Get.find<DatabaseService>().storage;
-    final metadata = await metadataService.readMetadata(this.filePath);
+    final metadata = await MetadataService.readMetadata(this.filePath);
     if (metadata == null) {
       return false;
     }

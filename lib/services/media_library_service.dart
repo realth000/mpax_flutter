@@ -3,12 +3,15 @@ import 'dart:io';
 import 'package:get/get.dart';
 import 'package:isar/isar.dart';
 import 'package:on_audio_query/on_audio_query.dart' as aq;
+import 'package:path/path.dart' as path;
 
 import '../mobile/services/media_query_service.dart';
+import '../models/metadata_model.dart';
 import '../models/music_model.dart';
 import '../models/playlist_model.dart';
 import '../utils/util.dart';
 import 'database_service.dart';
+import 'metadata_service.dart';
 
 /// Media library service, globally.
 ///
@@ -37,6 +40,7 @@ class MediaLibraryService extends GetxService {
       'album_cover TEXT, lyrics TEXT';
 
   final _databaseService = Get.find<DatabaseService>();
+  final _metadataService = Get.find<MetadataService>();
 
   /// A special playlist contains all audio content as the library.
   final List<Playlist> allPlaylist = <Playlist>[].obs;
@@ -395,9 +399,51 @@ class MediaLibraryService extends GetxService {
   /// After added, scan once to sync media data.
   /// TODO: Maybe should do a second diff scan because the first scan may took
   /// a long time and any update are invisible in first scan.
-  Future<void> addMusicFolder(String folderPath) async {
-    //
-    final d = await Directory(folderPath).listAll();
-    print('AAAA ${d.length}');
+  Future<void> addMusicFolder(
+    String folderPath, {
+    bool parallel = true,
+  }) async {
+    if (!parallel) {
+      final watch = Stopwatch()..start();
+      final allData = <Metadata>[];
+      //
+      final d = await Directory(folderPath).listAll();
+      print('AAAA ${d.length}');
+      for (final f in d) {
+        if (f.statSync().type != FileSystemEntityType.file) {
+          continue;
+        }
+        if (path.extension(f.path) != '.mp3') {
+          continue;
+        }
+        final data = await MetadataService.readMetadata(f.path);
+        if (data == null) {
+          print('AAAA null metadata for path ${f.path}');
+          continue;
+        }
+        allData.add(data);
+      }
+      print('AAAA addMusicFolder finish, count = ${allData.length}');
+      print(
+          'AAAA addMusicFolder finish, use ${watch.elapsed.inSeconds} seconds');
+      // flutter: AAAA addMusicFolder finish, count = 9104
+      // flutter: AAAA addMusicFolder finish, use 6 seconds
+    } else {
+      final watch = Stopwatch()..start();
+      final d = await Directory(folderPath).listAll();
+      final data = await _metadataService.readMetadataParallel(
+        d
+            .where(
+              (entity) =>
+                  entity.statSync().type == FileSystemEntityType.file &&
+                  path.extension(entity.path) == '.mp3',
+            )
+            .map((entity) => entity.path)
+            .toList(),
+      );
+      print('AAAA addMusicFolder finish, count = ${data.length}');
+      print(
+          'AAAA addMusicFolder finish, use ${watch.elapsed.inSeconds} seconds');
+    }
   }
 }

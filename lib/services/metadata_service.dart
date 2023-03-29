@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:get/get.dart';
 import 'package:isar/isar.dart';
+import 'package:isolate_manager/isolate_manager.dart';
 import 'package:metadata_god/metadata_god.dart' as mg;
 import 'package:path/path.dart' as path;
 import 'package:taglib_ffi/taglib_ffi.dart' as tl;
@@ -14,6 +15,11 @@ import '../models/artwork_model.dart';
 import '../models/metadata_model.dart';
 import '../models/music_model.dart';
 import 'database_service.dart';
+
+/// Read metadata in isolates
+@pragma('vm:entry-point')
+Future<List> _readMetadataParallelWrapper(dynamic path) async =>
+    [path, await MetadataService.readMetadata(path)];
 
 /// Manage audio metadata, globally.
 class MetadataService extends GetxService {
@@ -96,7 +102,7 @@ class MetadataService extends GetxService {
   }
 
   /// Get a [Music] filled with metadata read from given [filePath].
-  Future<Metadata?> readMetadata(
+  static Future<Metadata?> readMetadata(
     String filePath, {
     bool loadImage = false,
     bool scaleImage = true,
@@ -155,7 +161,7 @@ class MetadataService extends GetxService {
   }
 
   /// Fetch metadata with package metadata_god.
-  Future<Metadata?> _applyMetadataFromMG(
+  static Future<Metadata?> _applyMetadataFromMG(
     String contentPath,
     mg.Metadata metadata,
     bool loadImage,
@@ -202,7 +208,7 @@ class MetadataService extends GetxService {
   }
 
   /// Fetch metadata with package taglib_ffi.
-  Future<Metadata?> _applyMetadataFromTL(
+  static Future<Metadata?> _applyMetadataFromTL(
     String contentPath,
     tl.Metadata metadata,
     bool loadImage,
@@ -323,6 +329,35 @@ class MetadataService extends GetxService {
       }
     }
     return '';
+  }
+
+  /// Read metadata parallel.
+  Future<List<Metadata>> readMetadataParallel(
+    List<String> pathList, {
+    int concurrent = 8,
+  }) async {
+    final ret = <Metadata>[];
+
+    final isolateManager = IsolateManager.create(
+      _readMetadataParallelWrapper,
+      concurrent: concurrent,
+    );
+
+    await isolateManager.start();
+    isolateManager.stream.listen((result) {
+      if (result[1] == null) {
+        print('AAAA null metadata: ${result[0]}');
+        return;
+      }
+      ret.add(result[1]);
+    });
+    for (final p in pathList) {
+      await isolateManager.compute(p);
+    }
+    print('AAAA compute finish');
+    await isolateManager.stop;
+
+    return ret;
   }
 
   /// Init function, run before app start.
