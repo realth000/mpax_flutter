@@ -15,6 +15,9 @@ class DatabaseService extends GetxService {
   /// Music storage.
   late final Isar storage;
 
+  /// Whether we need a rescan on all monitor folders.
+  bool needRescanLibrary = false;
+
   /// Init function, run before app start.
   Future<DatabaseService> init() async {
     storage = await Isar.open([
@@ -23,8 +26,21 @@ class DatabaseService extends GetxService {
       ArtworkSchema,
       ArtworkWithTypeSchema,
       MusicSchema,
-      PlaylistModelSchema,
+      PlaylistSchema,
     ]);
+    // Check where library playlist exists.
+    // If not, create one.
+    final libraryPlaylist = await storage.playlists
+        .where()
+        .nameEqualTo(libraryPlaylistName)
+        .findFirst();
+    if (libraryPlaylist == null) {
+      needRescanLibrary = true;
+      await storage.writeTxn(
+        () async =>
+            storage.playlists.put(Playlist()..name = libraryPlaylistName),
+      );
+    }
     return this;
   }
 
@@ -33,18 +49,24 @@ class DatabaseService extends GetxService {
     await storage.writeTxn(callback);
   }
 
-  /// Save music to database.
+  /// Save [Music] to database.
   Future<void> saveMusic(Music music) async {
     await storage.writeTxn(() async => storage.musics.put(music));
   }
 
-  /// Save artist to database.
+  /// Save [Artist] to database.
   Future<void> saveArtist(Artist artist) async {
     await storage.writeTxn(() async => storage.artists.put(artist));
   }
 
-  /// Save artwork to database.
+  /// Save [Artwork] to database.
   Future<void> saveArtwork(Artwork artwork) async {
     await storage.writeTxn(() async => storage.artworks.put(artwork));
+  }
+
+  /// Save [ArtworkWithType] to database.
+  Future<void> saveArtworkWithType(ArtworkWithType artworkWithType) async {
+    await storage
+        .writeTxn(() async => storage.artworkWithTypes.put(artworkWithType));
   }
 }

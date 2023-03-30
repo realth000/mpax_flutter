@@ -162,7 +162,7 @@ class MediaLibraryService extends GetxService {
       //   ),
       // );
     }
-    final allMusicFromDatabase = await _databaseService.storage.playlistModels
+    final allMusicFromDatabase = await _databaseService.storage.playlists
         .where()
         .idEqualTo(0)
         .findFirst();
@@ -403,9 +403,10 @@ class MediaLibraryService extends GetxService {
     String folderPath, {
     bool parallel = true,
   }) async {
+    late final List<Metadata> allData;
     if (!parallel) {
       final watch = Stopwatch()..start();
-      final allData = <Metadata>[];
+      allData = <Metadata>[];
       //
       final d = await Directory(folderPath).listAll();
       print('AAAA ${d.length}');
@@ -416,7 +417,7 @@ class MediaLibraryService extends GetxService {
         if (path.extension(f.path) != '.mp3') {
           continue;
         }
-        final data = await MetadataService.readMetadata(f.path);
+        final data = await _metadataService.readMetadata(f.path);
         if (data == null) {
           print('AAAA null metadata for path ${f.path}');
           continue;
@@ -431,7 +432,7 @@ class MediaLibraryService extends GetxService {
     } else {
       final watch = Stopwatch()..start();
       final d = await Directory(folderPath).listAll();
-      final data = await _metadataService.readMetadataParallel(
+      allData = await _metadataService.readMetadataParallel(
         d
             .where(
               (entity) =>
@@ -441,9 +442,24 @@ class MediaLibraryService extends GetxService {
             .map((entity) => entity.path)
             .toList(),
       );
-      print('AAAA addMusicFolder finish, count = ${data.length}');
+      print('AAAA addMusicFolder finish, count = ${allData.length}');
       print(
           'AAAA addMusicFolder finish, use ${watch.elapsed.inSeconds} seconds');
+    }
+
+    // Save to music library playlist.
+    final storage = Get.find<DatabaseService>().storage;
+    final libraryPlaylist = await storage.playlists
+        .where()
+        .nameEqualTo(libraryPlaylistName)
+        .findFirst();
+    if (libraryPlaylist == null) {
+      return;
+    }
+    for (final d in allData) {
+      final music =
+          await Get.find<MetadataService>().fetchMusic(d.filePath, metadata: d);
+      await libraryPlaylist.addMusic(music);
     }
   }
 }

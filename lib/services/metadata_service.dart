@@ -12,14 +12,16 @@ import 'package:taglib_ffi/taglib_ffi.dart' as tl;
 import '../models/album_model.dart';
 import '../models/artist_model.dart';
 import '../models/artwork_model.dart';
+import '../models/artwork_with_type_model.dart';
 import '../models/metadata_model.dart';
 import '../models/music_model.dart';
+import '../models/playlist_model.dart';
 import 'database_service.dart';
 
 /// Read metadata in isolates
 @pragma('vm:entry-point')
 Future<List> _readMetadataParallelWrapper(dynamic path) async =>
-    [path, await MetadataService.readMetadata(path)];
+    [path, await MetadataService._readMetadata(path)];
 
 /// Manage audio metadata, globally.
 class MetadataService extends GetxService {
@@ -30,16 +32,17 @@ class MetadataService extends GetxService {
   /// If exists a music with [filePath], return it.
   /// Otherwise make a new [Music].
   Future<Music> fetchMusic(
-    String filePath,
-  ) async {
+    String filePath, {
+    Metadata? metadata,
+  }) async {
     final storedMusic =
         await _storage.musics.where().filePathEqualTo(filePath).findFirst();
     if (storedMusic != null) {
       return storedMusic;
     }
     final music = Music.fromPath(filePath);
-    await music.refreshMetadata();
     await _storage.writeTxn(() async => _storage.musics.put(music));
+    await music.refreshMetadata(metadata: metadata);
     return music;
   }
 
@@ -101,8 +104,61 @@ class MetadataService extends GetxService {
     return artwork;
   }
 
+  /// Return a [ArtworkWithType]
+  ///
+  /// If exists one with given [artworkType] and [artwork], return it.
+  /// Otherwise make a new [ArtworkWithType].
+  Future<ArtworkWithType> fetchArtworkWithType(
+    ArtworkType artworkType,
+    Artwork artwork,
+  ) async {
+    final awt = await _storage.artworkWithTypes
+        .filter()
+        .typeEqualTo(artworkType)
+        .and()
+        .artwork((q) => q.dataHashEqualTo(artwork.dataHash))
+        .findFirst();
+    if (awt != null) {
+      return awt;
+    }
+    final a = await fetchArtwork(artwork.format, artwork.data);
+    final artworkWithType = ArtworkWithType(artworkType)..artwork.value = a;
+    await _storage
+        .writeTxn(() async => _storage.artworkWithTypes.put(artworkWithType));
+    await artworkWithType.save();
+    return artworkWithType;
+  }
+
+  /// Return a list of [Playlist]. Returning a list because playlist allowed to
+  /// have same name.
+  ///
+  /// Return all playlist has the given [playlistName].
+  /// If not exists, return a new one.
+  Future<List<Playlist>> fetchPlaylist(
+    String playlistName,
+  ) async {
+    final p =
+        await _storage.playlists.where().nameEqualTo(playlistName).findAll();
+    if (p.isNotEmpty) {
+      return p;
+    }
+    final playlist = Playlist()..name = playlistName;
+    await _storage.writeTxn(() async => _storage.playlists.put(playlist));
+    return [playlist];
+  }
+
   /// Get a [Music] filled with metadata read from given [filePath].
-  static Future<Metadata?> readMetadata(
+  Future<Metadata?> readMetadata(
+    String filePath, {
+    bool loadImage = false,
+    bool scaleImage = true,
+    bool fast = true,
+  }) async =>
+      _readMetadata(filePath,
+          loadImage: loadImage, scaleImage: scaleImage, fast: fast);
+
+  /// Get a [Music] filled with metadata read from given [filePath].
+  static Future<Metadata?> _readMetadata(
     String filePath, {
     bool loadImage = false,
     bool scaleImage = true,
@@ -162,12 +218,12 @@ class MetadataService extends GetxService {
 
   /// Fetch metadata with package metadata_god.
   static Future<Metadata?> _applyMetadataFromMG(
-    String contentPath,
+    String filePath,
     mg.Metadata metadata,
     bool loadImage,
     bool scaleImage,
   ) async {
-    final ret = Metadata()
+    final ret = Metadata(filePath)
       ..artist = metadata.artist
       ..title = metadata.title
       ..track = metadata.trackNumber
@@ -209,12 +265,12 @@ class MetadataService extends GetxService {
 
   /// Fetch metadata with package taglib_ffi.
   static Future<Metadata?> _applyMetadataFromTL(
-    String contentPath,
+    String filePath,
     tl.Metadata metadata,
     bool loadImage,
     bool scaleImage,
   ) async {
-    final ret = Metadata()
+    final ret = Metadata(filePath)
       ..artist = metadata.artist
       ..title = metadata.title
       ..track = metadata.track

@@ -8,6 +8,10 @@ import 'music_model.dart';
 
 part 'playlist_model.g.dart';
 
+/// Const name for the special [Playlist] contains all music.
+/// There should be only one playlist using this name and always be.
+const libraryPlaylistName = 'all_music_library_name';
+
 /// Model of playlist.
 ///
 /// Maintains a list of audio files, and information/property about playlist.
@@ -20,6 +24,17 @@ class Playlist {
   Id id = Isar.autoIncrement;
 
   /// Playlist name, human readable name.
+  ///
+  /// Allow duplicate, works like foobar2000.
+  ///
+  /// There's a special playlist which contains all [Music] and acts like music
+  /// library. That playlist's name should be a const value and all other
+  /// playlists should not have a same name.
+  /// When searching data, filter that playlist according to whether search in
+  /// music library.
+  /// Put that playlist in the same Playlist Isar schema because it's actually
+  /// another playlist.
+  /// Now name is set to [libraryPlaylistName].
   @Index()
   String name = '';
 
@@ -90,6 +105,18 @@ class Playlist {
       }
     }
     return null;
+  }
+
+  /// Add music to current playlist.
+  /// No duplicate file path.
+  Future<void> addMusic(Music music) async {
+    if (contains(music)) {
+      return;
+    }
+    _musicList.add(music);
+    _musicIdSortList.add(music.id);
+    final storage = Get.find<DatabaseService>().storage;
+    await storage.writeTxn(() async => _musicList.save);
   }
 
   /// Add a list of audio model to playlist, not duplicate with same path file.

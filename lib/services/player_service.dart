@@ -292,7 +292,7 @@ class PlayerService extends GetxService {
   ) async {
     // Read the full album cover image to display in music page.
     // final p = await _metadataService.readMetadata(
-    final p = await MetadataService.readMetadata(
+    final p = await _metadataService.readMetadata(
       playContent.filePath,
       loadImage: true,
       scaleImage: false,

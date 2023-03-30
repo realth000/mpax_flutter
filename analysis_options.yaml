@@ -115,7 +115,7 @@ linter:
     eol_at_end_of_file: true
     exhaustive_cases: true
     file_names: true
-    flutter_style_todos: true
+    flutter_style_todos: false
     implementation_imports: true
     join_return_with_assignment: true
     leading_newlines_in_multiline_strings: true

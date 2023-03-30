@@ -10,6 +10,7 @@ import 'album_model.dart';
 import 'artist_model.dart';
 import 'artwork_model.dart';
 import 'artwork_with_type_model.dart';
+import 'metadata_model.dart';
 
 part 'music_model.g.dart';
 
@@ -53,6 +54,7 @@ class Music {
     bool loadImage = false,
     bool scaleImage = true,
     bool fast = true,
+    Metadata? metadata,
   }) async {
     /// Get file info.
     if (filePath != null) {
@@ -62,19 +64,21 @@ class Music {
     }
     final metadataService = Get.find<MetadataService>();
     final storage = Get.find<DatabaseService>().storage;
-    final metadata = await MetadataService.readMetadata(this.filePath);
-    if (metadata == null) {
+
+    /// Apply [metadata], if it's null, use [MetadataService.readMetadata].
+    final m = metadata ?? await metadataService.readMetadata(this.filePath);
+    if (m == null) {
       return false;
     }
-    title = metadata.title ?? fileName;
-    if (metadata.artist != null) {
-      final artist = await metadataService.fetchArtist(metadata.artist!);
+    title = m.title ?? fileName;
+    if (m.artist != null) {
+      final artist = await metadataService.fetchArtist(m.artist!);
       await artist.addMusic(this);
       artists.add(artist);
     }
-    lyrics = metadata.lyrics;
-    if (metadata.artworkMap != null) {
-      metadata.artworkMap!.forEach((type, artwork) async {
+    lyrics = m.lyrics;
+    if (m.artworkMap != null) {
+      m.artworkMap!.forEach((type, artwork) async {
         // Check whether [type] already exists.
         for (var i = 0; i < artworkList.length; i++) {
           if (artworkList.elementAt(i).type == type) {
@@ -87,18 +91,16 @@ class Music {
           }
         }
         // Now [type] not exists in [artworkList], add a new one.
-        final tmpArtwork = ArtworkWithType(type)
-          ..artwork.value =
-              await metadataService.fetchArtwork(artwork.format, artwork.data);
-        await storage.writeTxn(() async => tmpArtwork.save());
+        final tmpArtwork =
+            await metadataService.fetchArtworkWithType(type, artwork);
         artworkList.add(tmpArtwork);
       });
     }
     // Get.find<DatabaseService>().musicSchema.writeTxn((isar) async {
     // });
-    if (metadata.title != null) {
+    if (m.title != null) {
       album.value = await metadataService.fetchAlbum(
-        metadata.title!,
+        m.title!,
         artists.map((e) => e.name).toList(),
       );
     }
@@ -110,13 +112,13 @@ class Music {
       await artworkList.save();
       await album.save();
     });
-    trackNumber = metadata.track;
-    genre = metadata.genre;
-    comment = metadata.comment;
-    bitRate = metadata.bitrate;
-    sampleRate = metadata.sampleRate;
-    channels = metadata.channels;
-    length = metadata.length;
+    trackNumber = m.track;
+    genre = m.genre;
+    comment = m.comment;
+    bitRate = m.bitrate;
+    sampleRate = m.sampleRate;
+    channels = m.channels;
+    length = m.length;
     return true;
   }
 

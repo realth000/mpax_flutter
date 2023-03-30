@@ -5,7 +5,10 @@ import 'artwork_model.dart';
 /// Maybe only used by [MetadataService].
 class Metadata {
   /// Default constructor.
-  Metadata();
+  Metadata(this.filePath);
+
+  /// Music file path.
+  String filePath;
 
   /// Title string.
   String? title;

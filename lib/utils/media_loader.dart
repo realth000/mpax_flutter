@@ -15,7 +15,7 @@ Future<Music> reloadContent(Music music) async {
   print('AAAA reloadContent');
 // Load album cover from file.
 //   final metadata = await _metadataService.readMetadata(
-  final metadata = await MetadataService.readMetadata(
+  final metadata = await _metadataService.readMetadata(
     music.filePath,
     loadImage: true,
   );
