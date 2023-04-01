@@ -43,21 +43,7 @@ class Playlist {
   /// All [Music] link saved in must NOT be null.
   /// TODO: Check whether deleting a [Music] will leave an empty [IsarLink].
   /// If so, we should check every time access them or keep observing.
-  final _musicList = IsarLinks<Music>();
-
-  /// Get current music List.
-  @ignore
-  List<Music> get musicList {
-    final ret = <Music>[];
-    for (final id in _musicIdSortList) {
-      final m = _findMusicById(id);
-      if (m == null) {
-        continue;
-      }
-      ret.add(_findMusicById(id)!);
-    }
-    return ret;
-  }
+  final musicList = IsarLinks<Music>();
 
   /// Load all music to a playlist.
   static Future<Playlist> loadAllMusicSyncToPlaylist() async {
@@ -72,23 +58,23 @@ class Playlist {
   }
 
   /// Whether is an empty playlist.
-  bool get isEmpty => _musicIdSortList.isEmpty;
+  bool get isEmpty => musicIdSortList.isEmpty;
 
-  /// Store [Music] sort in [_musicList] by Music's [Id].
+  /// Store [Music] sort in [musicList] by Music's [Id].
   ///
-  /// Every time added or deleted [Music] in [_musicList], update sort.
-  /// Every change on sort not need to update [_musicList].
-  final _musicIdSortList = <Id>[];
+  /// Every time added or deleted [Music] in [musicList], update sort.
+  /// Every change on sort not need to update [musicList].
+  final musicIdSortList = <Id>[];
 
   /// Tell if the specified audio file already exists in playlist.
   ///
   /// Run by file path.
   // TODO: Maybe should implement this with database.
-  bool contains(Music music) => _musicIdSortList.contains(music.id);
+  bool contains(Music music) => musicIdSortList.contains(music.id);
 
-  /// Find music in [_musicList] by [Music.id].
+  /// Find music in [musicList] by [Music.id].
   Music? _findMusicById(Id id) {
-    for (final music in _musicList) {
+    for (final music in musicList) {
       if (music.id == id) {
         return music;
       }
@@ -99,7 +85,7 @@ class Playlist {
   /// Tell if the specified path file already exists in playlist.
   // TODO: Maybe should implement this with database.
   Music? find(String contentPath) {
-    for (final content in _musicList) {
+    for (final content in musicList) {
       if (content.filePath == contentPath) {
         return content;
       }
@@ -113,10 +99,12 @@ class Playlist {
     if (contains(music)) {
       return;
     }
-    _musicList.add(music);
-    _musicIdSortList.add(music.id);
+    musicList.add(music);
+    musicIdSortList.add(music.id);
     final storage = Get.find<DatabaseService>().storage;
-    await storage.writeTxn(() async => _musicList.save);
+    await storage.writeTxn(() async {
+      await musicList.save();
+    });
   }
 
   /// Add a list of audio model to playlist, not duplicate with same path file.
@@ -128,19 +116,17 @@ class Playlist {
         continue;
       }
       print('AAAA add music id =${music.id}!!');
-      _musicList.add(music);
-      _musicIdSortList.add(music.id);
+      this.musicList.add(music);
+      musicIdSortList.add(music.id);
     }
     final storage = Get.find<DatabaseService>().storage;
-    await storage.writeTxn(() async => _musicList.save());
-    print(
-        'AAAA 1111111111 len=${_musicList.length},${_musicIdSortList.length}');
+    await storage.writeTxn(() async => this.musicList.save());
   }
 
   /// Clear audio file list.
   void clearMusicList() {
-    _musicList.clear();
-    _musicIdSortList.clear();
+    musicList.clear();
+    musicIdSortList.clear();
   }
 
   /// Find previous audio content of the given playContent.
@@ -148,20 +134,20 @@ class Playlist {
   /// If it's the first one, the last one will be returned.
   /// Find current playContent position by [contentList.last.contentPath].
   Music? findPreviousMusic(Music music) {
-    if (_musicIdSortList.isEmpty) {
+    if (musicIdSortList.isEmpty) {
       return null;
     }
-    if (!_musicIdSortList.contains(music.id)) {
+    if (!musicIdSortList.contains(music.id)) {
       return null;
     }
-    if (_musicIdSortList.first == music.id) {
-      return _findMusicById(_musicIdSortList.last);
+    if (musicIdSortList.first == music.id) {
+      return _findMusicById(musicIdSortList.last);
     }
-    final pos = _musicIdSortList.firstWhereOrNull((id) => id == music.id);
+    final pos = musicIdSortList.firstWhereOrNull((id) => id == music.id);
     if (pos == null) {
       return null;
     }
-    return _findMusicById(_musicIdSortList[pos - 1]);
+    return _findMusicById(musicIdSortList[pos - 1]);
   }
 
   /// Find next audio content of the given playContent.
@@ -169,35 +155,35 @@ class Playlist {
   /// If it's the last one, the first one will be returned.
   /// Find current playContent position by [contentList.last.contentPath].
   Music? findNextContent(Music music) {
-    if (_musicList.isEmpty) {
+    if (musicList.isEmpty) {
       return null;
     }
-    if (!_musicIdSortList.contains(music.id)) {
+    if (!musicIdSortList.contains(music.id)) {
       return null;
     }
-    if (_musicIdSortList.last == music.id) {
-      return _findMusicById(_musicIdSortList.first);
+    if (musicIdSortList.last == music.id) {
+      return _findMusicById(musicIdSortList.first);
     }
-    final pos = _musicIdSortList.firstWhereOrNull((id) => id == music.id);
+    final pos = musicIdSortList.firstWhereOrNull((id) => id == music.id);
     if (pos == null) {
       return null;
     }
-    return _findMusicById(_musicIdSortList[pos + 1]);
+    return _findMusicById(musicIdSortList[pos + 1]);
   }
 
   /// Return a random audio content in playlist.
   Music? randomPlayContent() {
-    if (_musicList.isEmpty) {
+    if (musicList.isEmpty) {
       return null;
     }
     return _findMusicById(
-      _musicIdSortList[Random().nextInt(_musicIdSortList.length)],
+      musicIdSortList[Random().nextInt(musicIdSortList.length)],
     );
   }
 
   /// Remove same [Music] with same [filePathList].
 // Future<void> removeByPathList(List<String> filePathList) async {
-//   _musicList.removeWhere(
+//   musicList.removeWhere(
 //     (content) => filePathList.contains(content.value!.filePath),
 //   );
 // }

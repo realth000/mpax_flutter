@@ -1,4 +1,6 @@
 *.g.dart
+*.isar
+*.isar-lck
 # Miscellaneous
 *.class
 *.log

@@ -20,14 +20,17 @@ class DatabaseService extends GetxService {
 
   /// Init function, run before app start.
   Future<DatabaseService> init() async {
-    storage = await Isar.open([
-      AlbumSchema,
-      ArtistSchema,
-      ArtworkSchema,
-      ArtworkWithTypeSchema,
-      MusicSchema,
-      PlaylistSchema,
-    ]);
+    storage = await Isar.open(
+      [
+        AlbumSchema,
+        ArtistSchema,
+        ArtworkSchema,
+        ArtworkWithTypeSchema,
+        MusicSchema,
+        PlaylistSchema,
+      ],
+      name: 'mpax',
+    );
     // Check where library playlist exists.
     // If not, create one.
     final libraryPlaylist = await storage.playlists

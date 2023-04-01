@@ -30,7 +30,7 @@ class MediaTable extends StatelessWidget {
         ),
       ],
       rows: List.generate(_controller.playlist.value.musicList.length, (index) {
-        final data = _controller.playlist.value.musicList[index];
+        final data = _controller.playlist.value.musicList.elementAt(index);
         var selected = false;
         return DataRow.byIndex(
           index: index,

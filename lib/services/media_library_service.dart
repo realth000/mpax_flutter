@@ -164,12 +164,13 @@ class MediaLibraryService extends GetxService {
     }
     final allMusicFromDatabase = await _databaseService.storage.playlists
         .where()
-        .idEqualTo(0)
+        .nameEqualTo(libraryPlaylistName)
         .findFirst();
     if (allMusicFromDatabase != null) {
+      await allMusicFromDatabase.musicList.load();
       _allMusic.value = allMusicFromDatabase;
-    } else {
-      print('AAAA all music length = ${_allMusic.value.musicList.length}');
+      print(
+          'AAAA all music length = ${_allMusic.value.musicList.length} ${allMusicFromDatabase.musicList.length}');
     }
     /*
     final db = await _database;
@@ -461,5 +462,6 @@ class MediaLibraryService extends GetxService {
           await Get.find<MetadataService>().fetchMusic(d.filePath, metadata: d);
       await libraryPlaylist.addMusic(music);
     }
+    await storage.writeTxn(() async => storage.playlists.put(libraryPlaylist));
   }
 }
