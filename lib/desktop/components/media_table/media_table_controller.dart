@@ -85,7 +85,11 @@ class MediaTableController extends GetxController {
     _playerService.currentContent.listen((content) {
       currentPlayingContent.value = content.filePath;
     });
-    ever(playlist, (_) => checkedRowPathList.value.clear());
+    ever(
+      playlist,
+      (_) => selectStateList.value =
+          List.generate(playlist.value.musicList.length, (index) => false),
+    );
     // When current playing audio changes, update the state icon in table.
     // This means:
     // The current playing audio (specified by audio file path, as named,
@@ -93,21 +97,21 @@ class MediaTableController extends GetxController {
     // Other audios should not have "playing" state sign.
     //
     // Use "debounce" to set a delay, prevent high frequency of resetting.
-    debounce(
-      currentPlayingContent,
-      (contentPath) => {
-        if (tableStateManager != null)
-          {
-            for (final row in tableStateManager!.rows)
-              {
-                row.cells['state']!.value =
-                    row.cells['path']!.value == contentPath ? playingIcon : '',
-              },
-            refreshTable(),
-          }
-      },
-      time: const Duration(milliseconds: 300),
-    );
+    // debounce(
+    //   currentPlayingContent,
+    //   (contentPath) => {
+    //     if (tableStateManager != null)
+    //       {
+    //         for (final row in tableStateManager!.rows)
+    //           {
+    //             row.cells['state']!.value =
+    //                 row.cells['path']!.value == contentPath ? playingIcon : '',
+    //           },
+    //         refreshTable(),
+    //       }
+    //   },
+    //   time: const Duration(milliseconds: 300),
+    // );
   }
 
   /// Whether the column filters in audio table is visible.
@@ -115,10 +119,10 @@ class MediaTableController extends GetxController {
 
   /// Record all checked row's file path in table.
   ///
-  /// When using [checkedRowPathList], use with '.value', otherwise the UI table
+  /// When using [selectStateList], use with '.value', otherwise the UI table
   /// can not update.
-  /// e.g. _controller.checkedRowPathList.value
-  final checkedRowPathList = <String>[].obs;
+  /// e.g. _controller.selectStateList.value
+  final selectStateList = <bool>[].obs;
 
   /// Call table's [PlutoGridStateManager] to refresh table data.
   void refreshTable() {

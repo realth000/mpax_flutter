@@ -129,7 +129,7 @@ class Music {
 
   /// File path of this audio.
   @Index(unique: true)
-  late final String filePath;
+  String filePath = '';
 
   /// File name of this audio.
   String fileName = '';

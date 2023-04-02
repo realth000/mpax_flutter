@@ -287,21 +287,20 @@ class PlayerService extends GetxService {
   /// If want to both set audio and clean [playHistoryList],
   /// use [setCurrentContent].
   Future<void> _setCurrentPathToPlayer(
-    Music playContent,
+    Music music,
     Playlist playlist,
   ) async {
     // Read the full album cover image to display in music page.
     // final p = await _metadataService.readMetadata(
-    final p = await _metadataService.readMetadata(
-      playContent.filePath,
+    await music.refreshMetadata(
       loadImage: true,
       scaleImage: false,
       fast: false,
     );
-    // p.lyrics = await _metadataService.loadLyrics(p) ?? '';
-    // currentContent.value = p;
-    // currentPlaylist = playlist;
-    // await _player.setSourceDeviceFile(p.filePath);
+    music.lyrics = await _metadataService.loadLyrics(music) ?? '';
+    await _player.setSourceDeviceFile(music.filePath);
+    currentContent.value = music;
+    currentPlaylist = playlist;
     if (GetPlatform.isMobile) {
       // Save scaled album cover in file for the just_audio_background service to
       // display on android control center.
