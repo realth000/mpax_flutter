@@ -17,28 +17,6 @@ import 'metadata_service.dart';
 ///
 /// Maintains all media, and interact with database.
 class MediaLibraryService extends GetxService {
-  /// Name of info table in database, contains all playlists' table's info.
-  static const infoTableName = 'playlist_info_table';
-
-  /// Database file name.
-  static const databaseName = 'playlist.db';
-
-  /// Table name of all media table.
-  static const allMediaTableName = 'all_media';
-
-  /// Info table columns.
-  static const infoTableColumns =
-      'id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, sort INT, '
-      'playlist_name TEXT, table_name TEXT';
-
-  /// Playlist table columns.
-  static const playlistTableColumns =
-      'id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, path TEXT, name TEXT, size INT, '
-      'title TEXT, artist TEXT, album_title TEXT, album_artist TEXT, '
-      'album_year INT, album_track_count INT, track_number INT, bit_rate INT, '
-      'sample_rate INT, genre TEXT, comment TEXT, channels INT, length INT, '
-      'album_cover TEXT, lyrics TEXT';
-
   final _databaseService = Get.find<DatabaseService>();
   final _metadataService = Get.find<MetadataService>();
 
@@ -105,15 +83,6 @@ class MediaLibraryService extends GetxService {
   /// Remove a playlist, from library and from database.
   Future<void> removePlaylist(Playlist playlistModel) async {
     return;
-    // allPlaylist
-    //     .removeWhere((element) => element.tableName == playlistModel.tableName);
-    // final db = await _database;
-    // await db.delete(
-    //   infoTableName,
-    //   where: 'table_name = ?',
-    //   whereArgs: <String>[playlistModel.tableName],
-    // );
-    // await db.execute('DROP TABLE ${playlistModel.tableName}');
   }
 
   /// Clear the library.
@@ -136,32 +105,8 @@ class MediaLibraryService extends GetxService {
       if (androidOnlyUseMediaStore) {
         final queryService = Get.find<MediaQueryService>();
         _allAudioModel = queryService.audioList;
-
-        // Only use Android media store, not use sqlite database.
-        // _allContent.value
-        //   ..name = allMediaTableName
-        //   ..tableName = allMediaTableName
-        //   ..contentList.addAll(await queryService.allAudioContents());
         return this;
       }
-      // _database = openDatabase(
-      //   join(await getDatabasesPath(), databaseName),
-      //   onCreate: (db, version) => db.execute(
-      //     'CREATE TABLE IF NOT EXISTS $infoTableName($infoTableColumns);',
-      //   ),
-      //   version: 1,
-      // );
-    } else {
-      // sqfliteFfiInit();
-      // _database = databaseFactoryFfi.openDatabase(
-      //   join('./', databaseName),
-      //   options: OpenDatabaseOptions(
-      //     onCreate: (db, version) => db.execute(
-      //       'CREATE TABLE IF NOT EXISTS $infoTableName($infoTableColumns);',
-      //     ),
-      //     version: 1,
-      //   ),
-      // );
     }
     final allMusicFromDatabase = await _databaseService.storage.playlists
         .where()
@@ -173,32 +118,6 @@ class MediaLibraryService extends GetxService {
       print(
           'AAAA all music length = ${allMusic.value.musicList.length} ${allMusicFromDatabase.musicList.length}');
     }
-    /*
-    final db = await _database;
-    // Fetch playlist data from database.
-    // As created info table if not exists, no exception here.
-    final List<Map<String, dynamic>> infoTable = await db.query(infoTableName);
-    for (final table in infoTable) {
-      final model = PlaylistModel()
-        ..name = table['playlist_name']
-        ..tableName = table['table_name'];
-      final List<Map<String, dynamic>> playlistTable =
-          await db.query(model.tableName);
-      for (final playContent in playlistTable) {
-        final c = _fromDataMap(playContent);
-        model.contentList.add(c);
-        if (model.tableName == allMediaTableName) {
-          _allContent.value = model;
-        } else {
-          _allContent.value.contentList.add(c);
-        }
-      }
-
-      if (model.tableName != allMediaTableName) {
-        allPlaylist.add(model);
-      }
-    }
-     */
     return this;
   }
 
@@ -214,67 +133,7 @@ class MediaLibraryService extends GetxService {
   /// Save playlist to database.
   ///
   /// Save name, table name and audio content list.
-  Future<void> _savePlaylist(Playlist playlistModel) async {
-    /*
-    if (playlistModel.tableName.isEmpty) {
-      playlistModel.tableName = _regenerateTableName();
-    }
-    final db = await _database;
-    await db.transaction((txn) async {
-      await txn.execute('DROP TABLE IF EXISTS ${playlistModel.tableName}');
-      // Not using truncate because table name may change like what qt version
-      // does.
-      await txn.delete(
-        infoTableName,
-        where: 'table_name = ?',
-        whereArgs: <String>[playlistModel.tableName],
-      );
-      await txn.execute(
-        'CREATE TABLE  ${playlistModel.tableName}($playlistTableColumns)',
-      );
-      await txn.insert(
-        infoTableName,
-        playlistModel.toMap(),
-        conflictAlgorithm: ConflictAlgorithm.replace,
-      );
-      playlistModel.contentList.forEach((content) async {
-        await txn.insert(
-          playlistModel.tableName,
-          content.toMap(),
-          conflictAlgorithm: ConflictAlgorithm.replace,
-        );
-      });
-     */
-    /*
-        The following for loop will throw exception:
-        E/flutter (17641): [ERROR:flutter/runtime/dart_vm_initializer.cc(41)] Unhandled Exception: Concurrent modification during iteration: Instance(length:255) of '_GrowableList'.
-        E/flutter (17641): #0      ListIterator.moveNext (dart:_internal/iterable.dart:336:7)
-        E/flutter (17641): #1      MediaLibraryService.savePlaylist.<anonymous closure> (package:mpax_flutter/services/media_library_service.dart:121:41)
-        E/flutter (17641): <asynchronous suspension>
-        E/flutter (17641): #2      SqfliteDatabaseMixin._runTransaction (package:sqflite_common/src/database_mixin.dart:488:16)
-        E/flutter (17641): <asynchronous suspension>
-        E/flutter (17641): #3      BasicLock.synchronized (package:synchronized/src/basic_lock.dart:33:16)
-        E/flutter (17641): <asynchronous suspension>
-        E/flutter (17641): #4      SqfliteDatabaseMixin.txnSynchronized (package:sqflite_common/src/database_mixin.dart:344:14)
-        E/flutter (17641): <asynchronous suspension>
-        E/flutter (17641): #5      MediaLibraryService.savePlaylist (package:mpax_flutter/services/media_library_service.dart:99:5)
-        E/flutter (17641): <asynchronous suspension>
-        E/flutter (17641): #6      MediaLibraryService.saveMediaLibrary (package:mpax_flutter/services/media_library_service.dart:132:5)
-        E/flutter (17641): <asynchronous suspension>
-        E/flutter (17641): #7      MediaLibraryService.saveAllPlaylist (package:mpax_flutter/services/media_library_service.dart:136:5)
-        E/flutter (17641): <asynchronous suspension>
-        E/flutter (17641): #8      _ScanController.scanTargetList (package:mpax_flutter/views/scan_page.dart:119:5)
-        E/flutter (17641): <asynchronous suspension>
-        E/flutter (17641):
-       */
-    // for (var content in playlistModel.contentList) {
-    //   await txn.insert(
-    //     playlistModel.tableName,
-    //     content.toMap(),
-    //     conflictAlgorithm: ConflictAlgorithm.replace,
-    //   );
-    // }
-  }
+  Future<void> _savePlaylist(Playlist playlistModel) async {}
 
   /// Save the library to database.
   ///
@@ -355,46 +214,8 @@ class MediaLibraryService extends GetxService {
     String contentPath,
     String playlistTableName,
   ) async {
-    // final db = await _database;
-    // final List<Map<String, dynamic>> currentContent = await db.query(
-    //   playlistTableName,
-    //   where: 'path = ?',
-    //   whereArgs: [contentPath],
-    // );
-    // if (currentContent.length != 1) {
-    //   return null;
-    // }
-    // return _fromDataMap(currentContent[0]);
     return null;
   }
-
-  /// Get a sorted playlist
-  ///
-  /// From database.
-// Future<PlaylistModel> sortPlaylist(
-//   PlaylistModel playlist,
-//   String column,
-//   String sort,
-// ) async {
-// final db = await _database;
-// final model = PlaylistModel()
-//   ..name = playlist.name
-//   ..tableName = playlist.tableName;
-// final List<Map<String, dynamic>> playlistTable = await db.query(
-//   model.tableName,
-//   orderBy: '$column $sort',
-// );
-// for (final playContent in playlistTable) {
-//   final c = _fromDataMap(playContent);
-//   model.contentList.add(c);
-//   if (model.tableName == allMediaTableName) {
-//     _allContent.value = model;
-//   } else {
-//     _allContent.value.contentList.add(c);
-//   }
-// }
-// return model;
-// }
 
   /// Add [folderPath] to monitor.
   ///
@@ -429,8 +250,6 @@ class MediaLibraryService extends GetxService {
       print('AAAA addMusicFolder finish, count = ${allData.length}');
       print(
           'AAAA addMusicFolder finish, use ${watch.elapsed.inSeconds} seconds');
-      // flutter: AAAA addMusicFolder finish, count = 9104
-      // flutter: AAAA addMusicFolder finish, use 6 seconds
     } else {
       final watch = Stopwatch()..start();
       final d = await Directory(folderPath).listAll();

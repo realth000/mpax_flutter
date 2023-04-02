@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../../models/music_model.dart';
 import '../../../widgets/add_playlist_widget.dart';
@@ -16,10 +15,7 @@ enum _MenuOption {
 /// Toolbar use in audio table, in the table header.
 class MediaTableToolbar extends GetView<MediaTableController> {
   /// Constructor
-  const MediaTableToolbar({required this.stateManater, super.key});
-
-  /// [PlutoGridStateManager] to apply state change.
-  final PlutoGridStateManager stateManater;
+  const MediaTableToolbar({super.key});
 
   @override
   Widget build(BuildContext context) => Row(
@@ -75,7 +71,6 @@ class MediaTableToolbar extends GetView<MediaTableController> {
                     case _MenuOption.openOrCloseSearch:
                       final state = !controller.searchEnabled.value;
                       controller.searchEnabled.value = state;
-                      stateManater.setShowColumnFilter(state);
                       break;
                     case _MenuOption.addToPlaylist:
                       final name = await Get.dialog(AddPlaylistWidget());

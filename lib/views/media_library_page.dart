@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../mobile/components/mobile_underfoot.dart';
-import '../routes/app_pages.dart';
 import '../services/media_library_service.dart';
 import '../widgets/app_app_bar.dart';
 import '../widgets/app_drawer.dart';
@@ -22,11 +21,8 @@ class MediaLibraryPage extends GetView<MediaLibraryService> {
           title: 'Media Library'.tr,
           actions: <Widget>[
             IconButton(
-              onPressed: () async => Get.toNamed(
-                MPaxRoutes.search.replaceFirst(
-                  ':playlist_table_name',
-                  MediaLibraryService.allMediaTableName,
-                ),
+              onPressed: () async => throw UnimplementedError(
+                'Search page route need add playlist id',
               ),
               icon: const Icon(Icons.search),
             ),
