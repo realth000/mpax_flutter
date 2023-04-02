@@ -27,9 +27,9 @@ class MediaTableToolbar extends GetView<MediaTableController> {
         children: [
           Obx(
             () => TitleText(
-              title: controller.playlist.value.name == 'all_media'
+              title: controller.playlistName.value == 'all_media'
                   ? 'Library'.tr
-                  : controller.playlist.value.name,
+                  : controller.playlistName.value,
               level: 0,
             ),
           ),

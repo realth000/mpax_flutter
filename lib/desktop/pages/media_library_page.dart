@@ -8,6 +8,9 @@ class DesktopMediaLibraryPage extends GetView<MediaLibraryService> {
   @override
   Widget build(BuildContext context) => Padding(
         padding: const EdgeInsets.all(10),
-        child: Obx(() => MediaTable(controller.allMusic.value)),
+        child: Obx(() {
+          print('AAAA refresh library page');
+          return MediaTable(controller.allMusic.value);
+        }),
       );
 }

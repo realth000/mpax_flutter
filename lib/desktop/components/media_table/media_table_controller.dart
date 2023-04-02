@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:pluto_grid/pluto_grid.dart';
 
 import '../../../models/music_model.dart';
 import '../../../models/playlist_model.dart';
 import '../../../services/media_library_service.dart';
 import '../../../services/player_service.dart';
+import 'media_table_row.dart';
 
 /// Icons.play_arrow
 final playingIcon = String.fromCharCode(Icons.play_arrow.codePoint);
@@ -19,7 +19,14 @@ final playingIcon = String.fromCharCode(Icons.play_arrow.codePoint);
 class MediaTableController extends GetxController {
   /// Constructor.
   MediaTableController(Playlist playlist) {
-    this.playlist.value = playlist;
+    playlistId.value = playlist.id;
+    playlistName.value = playlist.name;
+    rows.value = List.generate(
+      playlist.musicList.length,
+      (index) => MediaRow(
+        playlist.musicList.elementAt(index),
+      ),
+    );
     print(
         'AAAA desktop MediaTableController init length = ${playlist.musicList.length}');
   }
@@ -34,16 +41,17 @@ class MediaTableController extends GetxController {
   /// content by this file path.
   final currentPlayingContent = ''.obs;
 
+  /// Current [Playlist] id.
+  final playlistId = 0.obs;
+
+  /// Current [Playlist] name;
+  final playlistName = ''.obs;
+
   /// Playlist in this table.
-  final playlist = Playlist().obs;
+  final rows = <MediaRow>[].obs;
 
   final _playerService = Get.find<PlayerService>();
   final _libraryService = Get.find<MediaLibraryService>();
-
-  /// Save table's [PlutoGridStateManager].
-  ///
-  /// Didn't want to do this but no other solutions.
-  late PlutoGridStateManager? tableStateManager;
 
   /// Return a sorted [Playlist] with [sort] order in [column].
   Future<Playlist> sort(
@@ -85,11 +93,6 @@ class MediaTableController extends GetxController {
     _playerService.currentContent.listen((content) {
       currentPlayingContent.value = content.filePath;
     });
-    ever(
-      playlist,
-      (_) => selectStateList.value =
-          List.generate(playlist.value.musicList.length, (index) => false),
-    );
     // When current playing audio changes, update the state icon in table.
     // This means:
     // The current playing audio (specified by audio file path, as named,
@@ -116,19 +119,4 @@ class MediaTableController extends GetxController {
 
   /// Whether the column filters in audio table is visible.
   final searchEnabled = false.obs;
-
-  /// Record all checked row's file path in table.
-  ///
-  /// When using [selectStateList], use with '.value', otherwise the UI table
-  /// can not update.
-  /// e.g. _controller.selectStateList.value
-  final selectStateList = <bool>[].obs;
-
-  /// Call table's [PlutoGridStateManager] to refresh table data.
-  void refreshTable() {
-    if (tableStateManager == null) {
-      return;
-    }
-    tableStateManager!.notifyListeners();
-  }
 }

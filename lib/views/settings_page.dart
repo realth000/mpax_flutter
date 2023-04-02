@@ -212,6 +212,10 @@ class _SettingsBodyWidget extends GetView<SettingsService> {
                               );
                               return;
                             case _MusicFolderMenuActions.delete:
+                              await Get.find<MediaLibraryService>()
+                                  .removeMusicFolder(
+                                _musicDirectoryList[index],
+                              );
                               _musicDirectoryList.removeAt(index);
                               await controller.saveStringList(
                                 'ScanTargetList',

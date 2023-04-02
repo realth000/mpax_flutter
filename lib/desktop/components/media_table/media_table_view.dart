@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:isar/isar.dart';
 
 import '../../../models/playlist_model.dart';
+import '../../../services/database_service.dart';
 import '../../../services/player_service.dart';
 import 'media_table_controller.dart';
 
@@ -9,9 +11,7 @@ import 'media_table_controller.dart';
 class MediaTable extends StatelessWidget {
   /// Constructor.
   MediaTable(Playlist playlist, {super.key}) {
-    _controller.playlist.value = playlist;
-    print(
-        'AAAA desktop MediaTable playlist length: = ${playlist.musicList.length}');
+    _controller = Get.put(MediaTableController(playlist));
   }
   final _playerService = Get.find<PlayerService>();
 
@@ -19,40 +19,45 @@ class MediaTable extends StatelessWidget {
   final _scrollController = ScrollController();
 
   /// Playlist controller.
-  final _controller = Get.put(MediaTableController(Playlist()));
+  late final MediaTableController _controller;
 
   /// If true, show select [Checkbox] in the first column.
   final _showSelect = false.obs;
 
   List<DataRow> _buildDataRows(bool showSelect) =>
-      List.generate(_controller.playlist.value.musicList.length, (index) {
-        final data = _controller.playlist.value.musicList.elementAt(index);
+      List.generate(_controller.rows.length, (index) {
+        final data = _controller.rows.elementAt(index);
         return DataRow.byIndex(
           index: index,
           cells: [
             DataCell(
-              Text(data.fileName),
+              Text(data.music.fileName),
               onDoubleTap: () async {
+                final p = await Get.find<DatabaseService>()
+                    .storage
+                    .playlists
+                    .where()
+                    .idEqualTo(_controller.playlistId.value)
+                    .findFirst();
                 await _playerService.setCurrentContent(
-                  data,
-                  _controller.playlist.value,
+                  data.music,
+                  p!,
                 );
                 await _playerService.play();
               },
             ),
             DataCell(
-              Text('${data.fileSize}'),
+              Text('${data.music.fileSize}'),
               onTap: () {},
             ),
           ],
-          selected: _controller.selectStateList[index],
+          selected: data.selected.value,
           onSelectChanged: _showSelect.value
               ? (value) {
                   if (value == null) {
                     return;
                   }
-                  _controller.selectStateList[index] = value;
-                  _controller.selectStateList.refresh();
+                  data.selected.value = value;
                 }
               : null,
         );

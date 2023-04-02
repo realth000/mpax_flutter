@@ -45,13 +45,13 @@ class MediaLibraryService extends GetxService {
   /// A special playlist contains all audio content as the library.
   final List<Playlist> allPlaylist = <Playlist>[].obs;
 
-  final _allMusic = Playlist().obs;
+  final allMusic = Playlist().obs;
 
   // Save all [AudioModel] from Android media store.
   var _allAudioModel = <aq.AudioModel>[];
 
   /// Return the library.
-  Rx<Playlist> get allMusic => _allMusic;
+  // Rx<Playlist> get allMusic => _allMusic;
 
   // Used for prevent same name playlist.
   String _lastTimeStamp = '';
@@ -69,25 +69,26 @@ class MediaLibraryService extends GetxService {
   /// Add audio content to library.
   ///
   /// If duplicate in content path, do nothing and return false.
-  bool addContent(Music playContent) {
-    for (final content in _allMusic.value.musicList) {
-      if (content.filePath == playContent.filePath) {
+  Future<bool> addContent(Music music) async {
+    for (final content in allMusic.value.musicList) {
+      if (content.filePath == music.filePath) {
         return false;
       }
     }
     // TODO: Fetch music and add to music library here.
     // _allContent.value.musicList.add(playContent);
+    await allMusic.value.addMusic(music);
     return true;
   }
 
   /// Add a list of audio content.
   ///
   /// Return counts of content added.
-  int addContentList(List<Music> playContentList) {
+  Future<int> addContentList(List<Music> playContentList) async {
     /// Count.
     var added = 0;
     for (final content in playContentList) {
-      if (addContent(content)) {
+      if (await addContent(content)) {
         added++;
       }
     }
@@ -168,9 +169,9 @@ class MediaLibraryService extends GetxService {
         .findFirst();
     if (allMusicFromDatabase != null) {
       await allMusicFromDatabase.musicList.load();
-      _allMusic.value = allMusicFromDatabase;
+      allMusic.value = allMusicFromDatabase;
       print(
-          'AAAA all music length = ${_allMusic.value.musicList.length} ${allMusicFromDatabase.musicList.length}');
+          'AAAA all music length = ${allMusic.value.musicList.length} ${allMusicFromDatabase.musicList.length}');
     }
     /*
     final db = await _database;
@@ -460,8 +461,20 @@ class MediaLibraryService extends GetxService {
     for (final d in allData) {
       final music =
           await Get.find<MetadataService>().fetchMusic(d.filePath, metadata: d);
+      // Save to database.
       await libraryPlaylist.addMusic(music);
+      // Add to playlist.
+      await allMusic.value.addMusic(music);
     }
+    print('AAAA !!!!!!!!! add finish len=${allMusic.value.musicList.length}');
+    allMusic.refresh();
     await storage.writeTxn(() async => storage.playlists.put(libraryPlaylist));
+  }
+
+  /// Remove [folderPath] from monitoring folders.
+  /// Also remove all music stored in [folderPath] from music library playlist.
+  Future<void> removeMusicFolder(String folderPath) async {
+    await allMusic.value.removeMusicByMusicFolder(folderPath);
+    allMusic.refresh();
   }
 }

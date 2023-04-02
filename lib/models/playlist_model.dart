@@ -120,7 +120,33 @@ class Playlist {
       musicIdSortList.add(music.id);
     }
     final storage = Get.find<DatabaseService>().storage;
-    await storage.writeTxn(() async => this.musicList.save());
+    await storage.writeTxn(() async {
+      await this.musicList.save();
+      await storage.playlists.put(this);
+    });
+  }
+
+  /// Remove all music under [folderPath].
+  ///
+  /// This does nothing to the folder monitoring list.
+  /// Only as a convenience method to delete all music under a folder.
+  Future<void> removeMusicByMusicFolder(String folderPath) async {
+    final idList = <int>[];
+    musicList.removeWhere((music) {
+      if (music.filePath.startsWith(folderPath)) {
+        idList.add(music.id);
+        return true;
+      }
+      return false;
+    });
+    for (final id in idList) {
+      final _ = musicIdSortList.remove(id);
+    }
+    final storage = Get.find<DatabaseService>().storage;
+    await storage.writeTxn(() async {
+      await musicList.save();
+      await storage.playlists.put(this);
+    });
   }
 
   /// Clear audio file list.
