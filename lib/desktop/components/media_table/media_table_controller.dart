@@ -18,18 +18,7 @@ final playingIcon = String.fromCharCode(Icons.play_arrow.codePoint);
 /// one, being a service and refresh different tables is not efficient.
 class MediaTableController extends GetxController {
   /// Constructor.
-  MediaTableController(Playlist playlist) {
-    playlistId.value = playlist.id;
-    playlistName.value = playlist.name;
-    rows.value = List.generate(
-      playlist.musicList.length,
-      (index) => MediaRow(
-        playlist.musicList.elementAt(index),
-      ),
-    );
-    print(
-        'AAAA desktop MediaTableController init length = ${playlist.musicList.length}');
-  }
+  MediaTableController();
 
   /// Whether to show filters.
   final showFiltersRow = false.obs;
@@ -52,6 +41,17 @@ class MediaTableController extends GetxController {
 
   final _playerService = Get.find<PlayerService>();
   final _libraryService = Get.find<MediaLibraryService>();
+
+  void updatePlaylist(Playlist playlist) {
+    playlistId.value = playlist.id;
+    playlistName.value = playlist.name;
+    rows.value = List.generate(
+      playlist.musicList.length,
+      (index) => MediaRow(
+        playlist.musicList.elementAt(index),
+      ),
+    );
+  }
 
   /// Return a sorted [Playlist] with [sort] order in [column].
   Future<Playlist> sort(

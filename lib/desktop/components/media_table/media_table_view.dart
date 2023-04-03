@@ -11,7 +11,7 @@ import 'media_table_controller.dart';
 class MediaTable extends StatelessWidget {
   /// Constructor.
   MediaTable(Playlist playlist, {super.key}) {
-    _controller = Get.put(MediaTableController(playlist));
+    _controller.updatePlaylist(playlist);
   }
   final _playerService = Get.find<PlayerService>();
 
@@ -19,7 +19,7 @@ class MediaTable extends StatelessWidget {
   final _scrollController = ScrollController();
 
   /// Playlist controller.
-  late final MediaTableController _controller;
+  final _controller = Get.put(MediaTableController());
 
   /// If true, show select [Checkbox] in the first column.
   final _showSelect = false.obs;
