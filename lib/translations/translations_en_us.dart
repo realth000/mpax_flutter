@@ -85,4 +85,5 @@ const Map<String, String> translationEnUs = <String, String>{
   'No lyrics': 'No lyrics',
   'Native title bar': 'Native title bar',
   'Use system native title bar': 'Use system native title bar',
+  'Select': 'Select',
 };

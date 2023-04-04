@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../models/music_model.dart';
+import '../../../models/playlist_model.dart';
 import '../../../widgets/add_playlist_widget.dart';
 import '../../../widgets/util_widgets.dart';
 import 'media_table_controller.dart';
 
 enum _MenuOption {
+  openOrCloseSelect,
   openOrCloseSearch,
   addToPlaylist,
   deleteFromPlaylist,
@@ -23,7 +25,7 @@ class MediaTableToolbar extends GetView<MediaTableController> {
         children: [
           Obx(
             () => TitleText(
-              title: controller.playlistName.value == 'all_media'
+              title: controller.playlistName.value == libraryPlaylistName
                   ? 'Library'.tr
                   : controller.playlistName.value,
               level: 0,
@@ -34,6 +36,19 @@ class MediaTableToolbar extends GetView<MediaTableController> {
               PopupMenuButton<_MenuOption>(
                 child: const Icon(Icons.menu),
                 itemBuilder: (context) => <PopupMenuItem<_MenuOption>>[
+                  PopupMenuItem<_MenuOption>(
+                    value: _MenuOption.openOrCloseSelect,
+                    child: Row(
+                      children: [
+                        Obx(
+                          () => controller.showSelect.value
+                              ? const Icon(Icons.check_box_outline_blank)
+                              : const Icon(Icons.check_box),
+                        ),
+                        Text('Select'.tr),
+                      ],
+                    ),
+                  ),
                   PopupMenuItem<_MenuOption>(
                     value: _MenuOption.openOrCloseSearch,
                     child: Row(
@@ -68,6 +83,10 @@ class MediaTableToolbar extends GetView<MediaTableController> {
                 ],
                 onSelected: (index) async {
                   switch (index) {
+                    case _MenuOption.openOrCloseSelect:
+                      final state = !controller.showSelect.value;
+                      controller.showSelect.value = state;
+                      break;
                     case _MenuOption.openOrCloseSearch:
                       final state = !controller.searchEnabled.value;
                       controller.searchEnabled.value = state;

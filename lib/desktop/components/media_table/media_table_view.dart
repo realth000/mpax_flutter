@@ -6,6 +6,7 @@ import '../../../models/playlist_model.dart';
 import '../../../services/database_service.dart';
 import '../../../services/player_service.dart';
 import 'media_table_controller.dart';
+import 'media_table_toolbar.dart';
 
 /// Table to show music.
 class MediaTable extends StatelessWidget {
@@ -20,9 +21,6 @@ class MediaTable extends StatelessWidget {
 
   /// Playlist controller.
   final _controller = Get.put(MediaTableController());
-
-  /// If true, show select [Checkbox] in the first column.
-  final _showSelect = false.obs;
 
   List<DataRow> _buildDataRows(bool showSelect) =>
       List.generate(_controller.rows.length, (index) {
@@ -52,7 +50,7 @@ class MediaTable extends StatelessWidget {
             ),
           ],
           selected: data.selected.value,
-          onSelectChanged: _showSelect.value
+          onSelectChanged: _controller.showSelect.value
               ? (value) {
                   if (value == null) {
                     return;
@@ -68,16 +66,17 @@ class MediaTable extends StatelessWidget {
     final a;
     return Column(
       children: [
-        Row(
-          children: [
-            ElevatedButton(
-              onPressed: () {
-                _showSelect.value = !_showSelect.value;
-              },
-              child: Text('Show Select'), // This should in toolbar.
-            ),
-          ],
-        ),
+        MediaTableToolbar(),
+        // Row(
+        //   children: [
+        //     ElevatedButton(
+        //       onPressed: () {
+        //         _controller.showSelect.value = !_controller.showSelect.value;
+        //       },
+        //       child: Text('Show Select'), // This should in toolbar.
+        //     ),
+        //   ],
+        // ),
         Expanded(
           child: Scrollbar(
             controller: _scrollController,
@@ -94,7 +93,7 @@ class MediaTable extends StatelessWidget {
                       numeric: true,
                     ),
                   ],
-                  rows: _buildDataRows(_showSelect.value),
+                  rows: _buildDataRows(_controller.showSelect.value),
                 ),
               ),
             ),

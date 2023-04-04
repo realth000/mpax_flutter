@@ -84,4 +84,5 @@ const Map<String, String> translationZhCn = <String, String>{
   'No lyrics': '没有歌词',
   'Native title bar': '原生标题栏',
   'Use system native title bar': '使用系统原生的标题栏',
+  'Select': '选择',
 };

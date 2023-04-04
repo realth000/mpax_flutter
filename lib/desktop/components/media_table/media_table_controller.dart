@@ -20,6 +20,9 @@ class MediaTableController extends GetxController {
   /// Constructor.
   MediaTableController();
 
+  /// If true, show select [Checkbox] in the first column.
+  final showSelect = false.obs;
+
   /// Whether to show filters.
   final showFiltersRow = false.obs;
 
