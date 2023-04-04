@@ -132,7 +132,7 @@ class PlayerService extends GetxService {
   Playlist currentPlaylist = Playlist();
 
   /// Current playing content.
-  final currentContent = Music().obs;
+  final currentMusic = Music().obs;
 
   /// Current play mode.
   String playMode = _repeatString;
@@ -205,9 +205,9 @@ class PlayerService extends GetxService {
     });
     _player.onPlayerComplete.listen((state) async {
       if (playMode == _repeatOneString) {
-        currentContent.value.lyrics =
-            await _metadataService.loadLyrics(currentContent.value);
-        await _player.setSourceDeviceFile(currentContent.value.filePath);
+        currentMusic.value.lyrics =
+            await _metadataService.loadLyrics(currentMusic.value);
+        await _player.setSourceDeviceFile(currentMusic.value.filePath);
         await _player.resume();
       } else {
         await seekToAnother(true);
@@ -299,12 +299,12 @@ class PlayerService extends GetxService {
     );
     music.lyrics = await _metadataService.loadLyrics(music) ?? '';
     await _player.setSourceDeviceFile(music.filePath);
-    currentContent.value = music;
+    currentMusic.value = music;
     currentPlaylist = playlist;
     if (GetPlatform.isMobile) {
       // Save scaled album cover in file for the just_audio_background service to
       // display on android control center.
-      final hasCoverImage = currentContent.value.artworkList.isNotEmpty;
+      final hasCoverImage = currentMusic.value.artworkList.isNotEmpty;
       await clearCoverImageCache();
       final coverFile = File(
         '${(await getTemporaryDirectory()).path}/cover.cache.${DateTime.now().microsecondsSinceEpoch.toString()}',
@@ -340,7 +340,7 @@ class PlayerService extends GetxService {
     }
     await _configService.saveString(
       'CurrentMedia',
-      currentContent.value.filePath,
+      currentMusic.value.filePath,
     );
     // TODO: Update current playlist here.
     // await _configService.saveString(
@@ -355,7 +355,7 @@ class PlayerService extends GetxService {
     // Use for debugging.
     // await _player.seek(Duration(seconds: (_player.duration!.inSeconds * 0.98)
     // .toInt()));
-    await _player.play(DeviceFileSource(currentContent.value.filePath));
+    await _player.play(DeviceFileSource(currentMusic.value.filePath));
   }
 
   /// Play when paused, pause when playing.
@@ -363,7 +363,7 @@ class PlayerService extends GetxService {
     if (_player.state == PlayerState.playing) {
       await _player.pause();
       return;
-    } else if (currentContent.value.filePath.isNotEmpty) {
+    } else if (currentMusic.value.filePath.isNotEmpty) {
       await _player.resume();
       return;
     } else {
@@ -455,7 +455,7 @@ class PlayerService extends GetxService {
         case _repeatString:
         case _repeatOneString:
         default:
-          final content = currentPlaylist.findNextContent(currentContent.value);
+          final content = currentPlaylist.findNextContent(currentMusic.value);
           // if (content.filePath.isEmpty) {
           //   return;
           // }
@@ -496,8 +496,7 @@ class PlayerService extends GetxService {
         case _repeatString:
         case _repeatOneString:
         default:
-          final content =
-              currentPlaylist.findPreviousMusic(currentContent.value);
+          final content = currentPlaylist.findPreviousMusic(currentMusic.value);
           // if (content.filePath.isEmpty) {
           //   return;
           // }

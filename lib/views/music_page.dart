@@ -121,7 +121,7 @@ class MusicPage extends GetView<PlayerService> {
           _buildSmallSpace(),
           ElevatedButton(
             onPressed: () async => Get.dialog(
-              MediaMetadataDialog(controller.currentContent.value),
+              MediaMetadataDialog(controller.currentMusic.value),
             ),
             child: const Icon(Icons.info_outlined),
           ),
@@ -160,7 +160,7 @@ class MusicPage extends GetView<PlayerService> {
             minLeadingWidth: 0,
             title: Obx(
               () => Text(
-                controller.currentContent.value.fileName,
+                controller.currentMusic.value.fileName,
                 // controller.currentContent.value.title.isEmpty
                 //     ? controller.currentContent.value.fileName
                 //     : controller.currentContent.value.title,
@@ -190,14 +190,13 @@ class MusicPage extends GetView<PlayerService> {
                       width: Get.width / 4 * 3,
                       height: Get.width / 4 * 3,
                       child: Obx(
-                        () =>
-                            controller.currentContent.value.artworkList.isEmpty
-                                ? const Icon(Icons.music_note)
-                                : Image.memory(
-                                    base64Decode(''
-                                        // controller.currentContent.value.artworkMap[''],
-                                        ),
-                                  ),
+                        () => controller.currentMusic.value.artworkList.isEmpty
+                            ? const Icon(Icons.music_note)
+                            : Image.memory(
+                                base64Decode(''
+                                    // controller.currentContent.value.artworkMap[''],
+                                    ),
+                              ),
                       ),
                     ),
                     Padding(

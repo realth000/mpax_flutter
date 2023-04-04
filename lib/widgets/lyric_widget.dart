@@ -102,7 +102,7 @@ class LyricWidget extends StatelessWidget {
   Widget build(BuildContext context) => Obx(
         () => LyricsReader(
           model: _lyricModelBuilder
-              .bindLyricToMain(_playerService.currentContent.value.lyrics ?? '')
+              .bindLyricToMain(_playerService.currentMusic.value.lyrics ?? '')
               .getModel(),
           position: _playerService.currentPosition.value.inMilliseconds,
           lyricUi: Theme.of(context).brightness == Brightness.dark

@@ -93,7 +93,7 @@ class MediaTableController extends GetxController {
     super.onInit();
     // When current playing audio changes, update currentPlayingContent to
     // notify UI to change state icon.
-    _playerService.currentContent.listen((content) {
+    _playerService.currentMusic.listen((content) {
       currentPlayingContent.value = content.filePath;
     });
     // When current playing audio changes, update the state icon in table.
