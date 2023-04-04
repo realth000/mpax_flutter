@@ -66,7 +66,13 @@ class Music {
     final storage = Get.find<DatabaseService>().storage;
 
     /// Apply [metadata], if it's null, use [MetadataService.readMetadata].
-    final m = metadata ?? await metadataService.readMetadata(this.filePath);
+    final m = metadata ??
+        await metadataService.readMetadata(
+          this.filePath,
+          loadImage: loadImage,
+          scaleImage: scaleImage,
+          fast: fast,
+        );
     if (m == null) {
       return false;
     }

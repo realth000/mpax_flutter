@@ -158,6 +158,9 @@ class MetadataService extends GetxService {
           loadImage: loadImage, scaleImage: scaleImage, fast: fast);
 
   /// Get a [Music] filled with metadata read from given [filePath].
+  ///
+  /// Make as a static wrapper function, because we want to use this in
+  /// another isolate and class member functions can not sent between isolates.
   static Future<Metadata?> _readMetadata(
     String filePath, {
     bool loadImage = false,
@@ -240,20 +243,21 @@ class MetadataService extends GetxService {
       return ret;
     }
 
+    ret.artworkMap ??= <ArtworkType, Artwork>{};
     if (scaleImage && GetPlatform.isMobile) {
       final tmpList = await FlutterImageCompress.compressWithList(
         metadata.picture!.data,
         minWidth: 120,
         minHeight: 120,
       );
-      ret.artworkMap?[ArtworkType.unknown] = Artwork(
+      ret.artworkMap![ArtworkType.unknown] = Artwork(
         format: metadata.picture!.mimeType.contains('png')
             ? ArtworkFormat.png
             : ArtworkFormat.jpeg,
         data: base64Encode(tmpList),
       );
     } else if (!scaleImage) {
-      ret.artworkMap?[ArtworkType.unknown] = Artwork(
+      ret.artworkMap![ArtworkType.unknown] = Artwork(
         format: metadata.picture!.mimeType.contains('png')
             ? ArtworkFormat.png
             : ArtworkFormat.jpeg,
@@ -298,19 +302,20 @@ class MetadataService extends GetxService {
     }
 
     if (metadata.albumCover != null && loadImage) {
+      ret.artworkMap ??= <ArtworkType, Artwork>{};
       if (scaleImage && GetPlatform.isMobile) {
         final tmpList = await FlutterImageCompress.compressWithList(
           metadata.albumCover!,
           minWidth: 120,
           minHeight: 120,
         );
-        ret.artworkMap?[ArtworkType.unknown] = Artwork(
+        ret.artworkMap![ArtworkType.unknown] = Artwork(
           /// FIXME: Add artwork format here.
           format: ArtworkFormat.jpeg,
           data: base64Encode(tmpList),
         );
       } else if (!scaleImage) {
-        ret.artworkMap?[ArtworkType.unknown] = Artwork(
+        ret.artworkMap![ArtworkType.unknown] = Artwork(
           /// FIXME: Add artwork format here.
           format: ArtworkFormat.jpeg,
           data: base64Encode(metadata.albumCover!),

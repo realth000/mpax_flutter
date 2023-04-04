@@ -63,8 +63,11 @@ class Artwork {
   /// Data hash.
   ///
   /// Use to specify artworks.
+  // FIXME: Seems unnecessary rebuild here.
+  // Used to have 'final' modifier but has error so removed:
+  // LateInitializationError: Field 'dataHash' has already been initialized.
   @Index(unique: true)
-  late final String dataHash;
+  late String dataHash;
 
   /// Data.
   String data;
