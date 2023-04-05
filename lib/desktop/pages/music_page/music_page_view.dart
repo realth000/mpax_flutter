@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -35,11 +36,14 @@ class DesktopMusicPage extends GetView<PlayerService> {
               () => controller.currentMusic.value.artworkList.isEmpty
                   ? const Icon(Icons.music_note)
                   : Image.memory(
-                      // FIXME: Decode artwork here.
-                      base64Decode(''
-                          // controller.currentContent.value.artworkMap[keys[0]]
-                          //     .value.data,
-                          ),
+                      base64Decode(
+                        controller.currentMusic.value.artworkList
+                                .elementAtOrNull(0)
+                                ?.artwork
+                                .value
+                                ?.data ??
+                            '',
+                      ),
                     ),
             ),
           ),
