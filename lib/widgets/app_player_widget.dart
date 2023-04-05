@@ -130,7 +130,13 @@ class MPaxPlayerWidget extends GetView<PlayerService> {
 
     final artistWidget = Obx(
       () => Text(
-        music.value.artists.isEmpty ? '' : music.value.artists.join(', '),
+        music.value.artists.isEmpty
+            ? ''
+            : music.value.artists
+                .toList()
+                .map((a) => a.name)
+                .toList()
+                .join(', '),
         style: TextStyle(
           color: Colors.grey[600],
         ),
