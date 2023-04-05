@@ -169,6 +169,7 @@ class MediaLibraryService extends GetxService {
 // }
 
   /// Return the playlist with the given [tableName].
+  @Deprecated('Use [findPlaylistById]')
   Playlist findPlaylistByTableName(String tableName) {
     // if (_allContent.value.tableName == tableName) {
     //   return _allContent.value;
@@ -180,6 +181,10 @@ class MediaLibraryService extends GetxService {
     // }
     return Playlist();
   }
+
+  /// Find the [Playlist] with given [id].
+  Future<Playlist?> findPlaylistById(int id) async =>
+      _databaseService.storage.playlists.where().idEqualTo(id).findFirst();
 
 // Music _fromDataMap(Map<String, dynamic> dataMap) =>
 //     Music.fromData(

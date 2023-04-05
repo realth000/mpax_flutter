@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:path/path.dart';
@@ -239,20 +240,20 @@ class PlayerService extends GetxService {
   /// running too early cause error in other services init.
   Future<void> loadInitMedia() async {
     final currentMedia = File(_configService.getString('CurrentMedia') ?? '');
-    if (currentMedia.existsSync()) {
-      // FIXME: Add current playlist config save and load.
-      final currentPlaylistString =
-          _configService.getString('CurrentPlaylist') ?? '';
-      final currentPlaylist =
-          _libraryService.findPlaylistByTableName(currentPlaylistString);
-      // _libraryService
-      // TODO: Load init media here.
-      // if (currentPlaylist.tableName.isNotEmpty) {
-      //   final content = _libraryService.findPlayContent(currentMedia.path);
-      //   if (content != null) {
-      //     await setCurrentContent(content, currentPlaylist);
-      //   }
-      // }
+    if (!currentMedia.existsSync()) {
+      return;
+    }
+    // FIXME: Add current playlist config save and load.
+    final currentPlaylistId = _configService.getInt('CurrentPlaylistId') ?? 0;
+    final currentPlaylist =
+        await _libraryService.findPlaylistById(currentPlaylistId);
+    if (currentPlaylist == null) {
+      return;
+    }
+    final content = currentPlaylist.musicList
+        .firstWhereOrNull((m) => m.filePath == currentMedia.path);
+    if (content != null) {
+      await setCurrentContent(content, currentPlaylist);
     }
   }
 
@@ -343,11 +344,10 @@ class PlayerService extends GetxService {
       currentMusic.value.filePath,
     );
     // TODO: Update current playlist here.
-    // await _configService.saveString(
-    //   'CurrentPlaylist',
-    //   currentPlaylist.tableName,
-    // );
-    // currentContent.value = p;
+    await _configService.saveInt(
+      'CurrentPlaylistId',
+      currentPlaylist.id,
+    );
   }
 
   /// Start play.
