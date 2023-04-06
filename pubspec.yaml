@@ -48,6 +48,7 @@ dependencies:
   taglib_ffi:
     path: ./lib/package/taglib_ffi
   url_launcher: ^6.1.10
+  watcher: ^1.0.2
   window_manager: ^0.3.1
 
 dev_dependencies:

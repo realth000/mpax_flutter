@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:isar/isar.dart';
 import 'package:on_audio_query/on_audio_query.dart' as aq;
 import 'package:path/path.dart' as path;
+import 'package:watcher/watcher.dart';
 
 import '../mobile/services/media_query_service.dart';
 import '../models/metadata_model.dart';
@@ -12,6 +13,7 @@ import '../models/playlist_model.dart';
 import '../utils/util.dart';
 import 'database_service.dart';
 import 'metadata_service.dart';
+import 'settings_service.dart';
 
 /// Media library service, globally.
 ///
@@ -43,6 +45,18 @@ class MediaLibraryService extends GetxService {
   /// media store.
   /// Use as an experimental option.
   final androidOnlyUseMediaStore = true;
+
+  /// List of [DirectoryWatcher] to watch music folders.
+  ///
+  /// When files in folder updates, filter music file changes and update to
+  /// media library.
+  final _watcherList = <DirectoryWatcher>[];
+
+  /// Storage instance.
+  final _storage = Get.find<DatabaseService>().storage;
+
+  /// Library playlist, update when monitor folders and files changes.
+  late final Playlist _libraryPlaylist;
 
   /// Add audio content to library.
   ///
@@ -117,6 +131,24 @@ class MediaLibraryService extends GetxService {
       allMusic.value = allMusicFromDatabase;
       print(
           'AAAA all music length = ${allMusic.value.musicList.length} ${allMusicFromDatabase.musicList.length}');
+    }
+
+    /// Start watching all music folders.
+    final musicFolderList =
+        Get.find<SettingsService>().getStringList('ScanTargetList') ??
+            <String>[];
+    for (final path in musicFolderList) {
+      _watcherList.add(_watchMusicFolder(path));
+    }
+
+    final p = await _storage.playlists
+        .where()
+        .nameEqualTo(libraryPlaylistName)
+        .findFirst();
+    if (p == null) {
+      _libraryPlaylist = Playlist()..name = libraryPlaylistName;
+    } else {
+      _libraryPlaylist = p;
     }
     return this;
   }
@@ -274,25 +306,16 @@ class MediaLibraryService extends GetxService {
     }
 
     // Save to music library playlist.
-    final storage = Get.find<DatabaseService>().storage;
-    final libraryPlaylist = await storage.playlists
-        .where()
-        .nameEqualTo(libraryPlaylistName)
-        .findFirst();
-    if (libraryPlaylist == null) {
-      return;
-    }
+    final musicList = <Music>[];
     for (final d in allData) {
       final music =
           await Get.find<MetadataService>().fetchMusic(d.filePath, metadata: d);
-      // Save to database.
-      await libraryPlaylist.addMusic(music);
       // Add to playlist.
-      await allMusic.value.addMusic(music);
+      musicList.add(music);
     }
-    print('AAAA !!!!!!!!! add finish len=${allMusic.value.musicList.length}');
-    allMusic.refresh();
-    await storage.writeTxn(() async => storage.playlists.put(libraryPlaylist));
+    // Save to database.
+    await _addMusicFromMonitorFolder(musicList);
+    _watcherList.add(_watchMusicFolder(folderPath));
   }
 
   /// Remove [folderPath] from monitoring folders.
@@ -300,5 +323,40 @@ class MediaLibraryService extends GetxService {
   Future<void> removeMusicFolder(String folderPath) async {
     await allMusic.value.removeMusicByMusicFolder(folderPath);
     allMusic.refresh();
+    _watcherList.removeWhere((watcher) {
+      if (watcher.path != folderPath) {
+        return false;
+      }
+      return true;
+    });
   }
+
+  Future<void> _addMusicFromMonitorFolder(List<Music> musicList) async {
+    await allMusic.value.addMusicList(musicList);
+    allMusic.refresh();
+    await _storage
+        .writeTxn(() async => _storage.playlists.put(_libraryPlaylist));
+  }
+
+  Future<void> _removeMusicFromMonitorFolder(Music music) async {
+    await allMusic.value.removeMusic(music);
+  }
+
+  /// Make a watcher watching [path].
+  DirectoryWatcher _watchMusicFolder(String path) => DirectoryWatcher(path)
+    ..events.listen((event) async {
+      if (_watcherList.where((e) => e.path == path).toList().isEmpty) {
+        return;
+      }
+
+      if (event.type == ChangeType.ADD) {
+        final data = await _metadataService.fetchMusic(event.path);
+        await _addMusicFromMonitorFolder([data]);
+        return;
+      } else if (event.type == ChangeType.REMOVE) {
+        await _removeMusicFromMonitorFolder(
+          await _metadataService.fetchMusic(event.path),
+        );
+      }
+    });
 }

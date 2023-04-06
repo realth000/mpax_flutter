@@ -126,6 +126,16 @@ class Playlist {
     });
   }
 
+  /// Remove [music] from current [Playlist].
+  Future<void> removeMusic(Music music) async {
+    musicIdSortList.removeWhere((id) => id == music.id);
+    musicList.removeWhere((m) => m.filePath == music.filePath);
+    final storage = Get.find<DatabaseService>().storage;
+    await storage.writeTxn(() async {
+      await musicList.save();
+    });
+  }
+
   /// Remove all music under [folderPath].
   ///
   /// This does nothing to the folder monitoring list.
