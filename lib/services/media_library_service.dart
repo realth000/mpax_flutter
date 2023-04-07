@@ -33,10 +33,6 @@ class MediaLibraryService extends GetxService {
   /// Return the library.
   // Rx<Playlist> get allMusic => _allMusic;
 
-  // Used for prevent same name playlist.
-  String _lastTimeStamp = '';
-  int _lastCount = 0;
-
   /// On use media store on Android, avoid to use tag readers for large mount of
   /// audios.
   /// If set to true, only use tag readers for extra information (e.g. bit rate)
@@ -118,7 +114,10 @@ class MediaLibraryService extends GetxService {
     if (GetPlatform.isMobile) {
       if (androidOnlyUseMediaStore) {
         final queryService = Get.find<MediaQueryService>();
-        _allAudioModel = queryService.audioList;
+        for (final audio in queryService.audioList) {
+          await allMusic.value.addMusic(Music.fromQueryModel(audio));
+        }
+        allMusic.refresh();
         return this;
       }
     }
@@ -185,21 +184,6 @@ class MediaLibraryService extends GetxService {
     // }
   }
 
-  /// Generate playlist table name.
-// String _regenerateTableName() {
-//   final timeStamp = DateTime
-//       .now()
-//       .microsecondsSinceEpoch
-//       .toString();
-//   if (timeStamp == _lastTimeStamp) {
-//     _lastCount++;
-//   } else {
-//     _lastTimeStamp = timeStamp;
-//     _lastCount = 0;
-//   }
-//   return 'playlist_${timeStamp}_${_lastCount}_table';
-// }
-
   /// Return the playlist with the given [tableName].
   @Deprecated('Use [findPlaylistById]')
   Playlist findPlaylistByTableName(String tableName) {
@@ -217,27 +201,6 @@ class MediaLibraryService extends GetxService {
   /// Find the [Playlist] with given [id].
   Future<Playlist?> findPlaylistById(int id) async =>
       _databaseService.storage.playlists.where().idEqualTo(id).findFirst();
-
-// Music _fromDataMap(Map<String, dynamic> dataMap) =>
-//     Music.fromData(
-//       dataMap['path'],
-//       dataMap['name'],
-//       dataMap['size'],
-//       dataMap['artist'],
-//       dataMap['title'],
-//       dataMap['track_number'],
-//       dataMap['bit_rate'],
-//       dataMap['album_artist'],
-//       dataMap['album_title'],
-//       dataMap['album_year'],
-//       dataMap['album_track_count'],
-//       dataMap['genre'],
-//       dataMap['comment'],
-//       dataMap['sample_rate'],
-//       dataMap['channels'],
-//       dataMap['length'],
-//       dataMap['album_cover'],
-//     );
 
   /// Find audio content from library (in memory) with specified file path.
   Music? findPlayContent(String contentPath) => null;

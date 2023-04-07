@@ -94,4 +94,18 @@ class MediaQueryService extends GetxService {
     }
     return coverBase64;
   }
+
+  /// Return [aq.AlbumModel] that has [aq.AlbumModel.id] equal to [albumId].
+  ///
+  /// Unlikely to be a null value.
+  /// Make this a synchronous function to use in constructor.
+  aq.AlbumModel? findAlbumById(int albumId) =>
+      albumList.firstWhereOrNull((album) => album.id == albumId);
+
+  /// Return [aq.ArtistModel] that has [aq.ArtistModel.id] equal to [artistId].
+  ///
+  /// Unlikely to be a null value.
+  /// Make this a synchronous function to use in constructor.
+  aq.ArtistModel? findArtistById(int artistId) =>
+      artistList.firstWhereOrNull((artist) => artist.id == artistId);
 }

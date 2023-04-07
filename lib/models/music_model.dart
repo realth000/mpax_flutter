@@ -2,8 +2,10 @@ import 'dart:io';
 
 import 'package:get/get.dart';
 import 'package:isar/isar.dart';
+import 'package:on_audio_query/on_audio_query.dart' as aq;
 import 'package:path/path.dart' as path;
 
+import '../mobile/services/media_query_service.dart';
 import '../services/database_service.dart';
 import '../services/metadata_service.dart';
 import 'album_model.dart';
@@ -43,6 +45,51 @@ class Music {
     filePath = f.path;
     fileName = path.basename(f.path);
     fileSize = f.lengthSync();
+  }
+
+  /// Construct from [aq.AudioModel].
+  ///
+  /// Only use on Android, data comes from Android MediaStore.
+  /// Do NOT call [refreshMetadata] because this is a quick build.
+  /// Should only load detail metadata when load to player, as always does.
+  Music.fromQueryModel(aq.AudioModel audioModel) {
+    // Should not be empty, maybe need a check before call this constructor.
+    final f = File(audioModel.uri!);
+    filePath = f.path;
+    fileName = path.basename(f.path);
+    fileSize = f.lengthSync();
+    title = audioModel.title;
+
+    final metadataService = Get.find<MetadataService>();
+    final mediaQueryService = Get.find<MediaQueryService>();
+    final storage = Get.find<DatabaseService>().storage;
+
+    // TODO: Do this with async.
+    if (audioModel.albumId != null) {
+      final album = mediaQueryService.findAlbumById(audioModel.id);
+      if (album != null) {
+        metadataService
+            .fetchAlbum(
+          album.album,
+          album.artist?.split(',').toList() ?? <String>[],
+        )
+            .then((album) {
+          this.album.value = album;
+        });
+      }
+    }
+    if (audioModel.artistId != null) {
+      // Why need bang after artistId?
+      final artist = mediaQueryService.findArtistById(audioModel.artistId!);
+      if (artist != null) {
+        metadataService.fetchArtist(artist.artist).then((artist) {
+          artists.add(artist);
+          storage.writeTxn(() async => artists.save());
+        });
+      }
+    }
+    // TODO: Load artwork here.
+    // if (audioModel.)
   }
 
   /// Read metadata from file.
