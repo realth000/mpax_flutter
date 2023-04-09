@@ -4,7 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:window_manager/window_manager.dart';
 
-import '../desktop/services/shortcut_service.dart';
 import '../mobile/components/mobile_underfoot.dart';
 import '../services/locale_service.dart';
 import '../services/media_library_service.dart';
@@ -64,16 +63,7 @@ class _ThemeGroup {
 }
 
 class _SettingsBodyWidget extends GetView<SettingsService> {
-  _SettingsBodyWidget() {
-    if (GetPlatform.isDesktop) {
-      _keymapPlayPause.value =
-          Get.find<ShortcutService>().getHotKeyStringByName('KeymapPlayPause');
-      _keymapPlayPrevious.value = Get.find<ShortcutService>()
-          .getHotKeyStringByName('KeymapPlayPrevious');
-      _keymapPlayNext.value =
-          Get.find<ShortcutService>().getHotKeyStringByName('KeymapPlayNext');
-    }
-  }
+  _SettingsBodyWidget();
 
   final _themeService = Get.find<ThemeService>();
   final _localeService = Get.find<LocaleService>();
@@ -85,11 +75,6 @@ class _SettingsBodyWidget extends GetView<SettingsService> {
       (Get.find<SettingsService>().getStringList('ScanTargetList') ??
               <String>[])
           .obs;
-
-  // Keymap configs only use on desktop platforms.
-  final _keymapPlayPause = ''.obs;
-  final _keymapPlayPrevious = ''.obs;
-  final _keymapPlayNext = ''.obs;
 
   // /// Current using theme icon.
   // final _themeIcon = autoModeIcon.obs;
@@ -360,115 +345,6 @@ class _SettingsBodyWidget extends GetView<SettingsService> {
         ),
       );
 
-  Widget _buildDesktopKeymapCard(BuildContext context) => Card(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(
-                left: 15,
-                top: 10,
-              ),
-              child: TitleText(
-                title: 'Keymap'.tr,
-                level: 0,
-              ),
-            ),
-            ListTile(
-              leading: const Icon(
-                Icons.play_arrow,
-              ),
-              title: Text('Play and Pause'.tr),
-              trailing: PopupMenuButton<String>(
-                child: Obx(() => Text(_keymapPlayPause.value)),
-                itemBuilder: (context) => const <PopupMenuItem<String>>[
-                  PopupMenuItem(
-                    value: 'Ctrl+Alt+B',
-                    child: Text('Ctrl+Alt+B'),
-                  ),
-                  PopupMenuItem(
-                    value: 'Ctrl+Shift+B',
-                    child: Text('Ctrl+Shift+B'),
-                  ),
-                  PopupMenuItem(
-                    value: 'Shift+Alt+B',
-                    child: Text('Shift+Alt+B'),
-                  ),
-                ],
-                onSelected: (value) async {
-                  if (await Get.find<ShortcutService>()
-                      .setHotKeyFromString('KeymapPlayPause', value)) {
-                    _keymapPlayPause.value = value;
-                  }
-                },
-              ),
-            ),
-            ListTile(
-              leading: const Icon(Icons.skip_previous),
-              title: Text('Play Previous'.tr),
-              trailing: PopupMenuButton<String>(
-                child: Obx(() => Text(_keymapPlayPrevious.value)),
-                itemBuilder: (context) => const <PopupMenuItem<String>>[
-                  PopupMenuItem(
-                    value: 'Ctrl+Alt+←',
-                    child: Text('Ctrl+Alt+←'),
-                  ),
-                  PopupMenuItem(
-                    value: 'Ctrl+Shift+←',
-                    child: Text('Ctrl+Shift+←'),
-                  ),
-                  PopupMenuItem(
-                    value: 'Shift+Alt+←',
-                    child: Text('Shift+Alt+←'),
-                  ),
-                  PopupMenuItem(
-                    value: 'Ctrl+Alt+V',
-                    child: Text('Ctrl+Alt+V'),
-                  ),
-                ],
-                onSelected: (value) async {
-                  if (await Get.find<ShortcutService>()
-                      .setHotKeyFromString('KeymapPlayPrevious', value)) {
-                    _keymapPlayPrevious.value = value;
-                  }
-                },
-              ),
-            ),
-            ListTile(
-              leading: const Icon(Icons.skip_previous),
-              title: Text('Play Next'.tr),
-              trailing: PopupMenuButton<String>(
-                child: Obx(() => Text(_keymapPlayNext.value)),
-                itemBuilder: (context) => const <PopupMenuItem<String>>[
-                  PopupMenuItem(
-                    value: 'Ctrl+Alt+→',
-                    child: Text('Ctrl+Alt+→'),
-                  ),
-                  PopupMenuItem(
-                    value: 'Ctrl+Shift+→',
-                    child: Text('Ctrl+Shift+→'),
-                  ),
-                  PopupMenuItem(
-                    value: 'Shift+Alt+→',
-                    child: Text('Shift+Alt+→'),
-                  ),
-                  PopupMenuItem(
-                    value: 'Ctrl+Alt+N',
-                    child: Text('Ctrl+Alt+N'),
-                  ),
-                ],
-                onSelected: (value) async {
-                  if (await Get.find<ShortcutService>()
-                      .setHotKeyFromString('KeymapPlayNext', value)) {
-                    _keymapPlayNext.value = value;
-                  }
-                },
-              ),
-            ),
-          ],
-        ),
-      );
-
   @override
   Widget build(BuildContext context) {
     if (_themeService.followSystemDarkMode) {
@@ -485,10 +361,6 @@ class _SettingsBodyWidget extends GetView<SettingsService> {
 
     // Always show appearance card.
     widgetList.add(_buildAppearanceCard(context));
-
-    if (GetPlatform.isDesktop) {
-      widgetList.add(_buildDesktopKeymapCard(context));
-    }
 
     return Scrollbar(
       controller: _scrollController,

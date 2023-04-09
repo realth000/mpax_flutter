@@ -14,9 +14,6 @@ const Map<String, Type> configMap = <String, Type>{
   'ScanSkipRecordedFile': bool,
   'ScanLoadImage': bool,
   'PlayerVolume': double,
-  'KeymapPlayPause': String,
-  'KeymapPlayPrevious': String,
-  'KeymapPlayNext': String,
   'AppBottomUnderfootHeight': double,
   'UseSystemNativeTitleBar': bool,
 };

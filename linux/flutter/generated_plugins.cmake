@@ -6,7 +6,6 @@ list(APPEND FLUTTER_PLUGIN_LIST
   audioplayers_linux
   bitsdojo_window_linux
   devicelocale
-  hotkey_manager
   isar_flutter_libs
   metadata_god
   screen_retriever
