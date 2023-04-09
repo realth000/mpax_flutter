@@ -9,6 +9,7 @@ environment:
 
 dependencies:
   # sudo apt install libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev
+  # sudo pacman gst-plugins-good
   audio_service: ^0.18.9
   audioplayers: ^3.0.1
   badges: ^3.0.2
@@ -18,6 +19,7 @@ dependencies:
   crypto: ^3.0.2
   devicelocale: ^0.5.5
   ffi: ^2.0.1
+# zenity
   file_picker: ^5.2.6
   flex_color_scheme: ^6.1.2
   flutter:
