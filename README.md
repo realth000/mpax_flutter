@@ -47,6 +47,7 @@ MPax is a simple and easy-to-use music player powered by flutter.
 * [ ] Global shortcut on Windows.
 * [ ] Global shortcut on Linux.
   * [ ] Hyprland.
+* [ ] MPRIS.
 
 ### UI:
 

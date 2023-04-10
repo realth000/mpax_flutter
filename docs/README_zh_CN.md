@@ -46,7 +46,8 @@ MPax是使用Flutter开发的简约易用的音乐播放器。
 * [ ] 歌词。
 * [ ] Windows 全局快捷键。
 * [ ] Linux 全局快捷键。
-    * [ ] Hyprland.
+    * [ ] Hyprland。
+* [ ] MPRIS。
 
 ### 界面:
 
