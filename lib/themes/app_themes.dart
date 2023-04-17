@@ -21,110 +21,107 @@ class MPaxTheme {
     border: OutlineInputBorder(),
   );
 
-  /// Main and original flex theme.
-  static const flexScheme = FlexScheme.deepPurple;
-
-  static final ThemeData _flexLightBase = FlexThemeData.light(
+  // Made for FlexColorScheme version 7.0.1. Make sure you
+  // use same or higher package version, but still same major version.
+  // If you use a lower version, some properties may not be supported.
+  // In that case remove them after copying this theme to your app.
+  static final _flexLightBase = FlexThemeData.light(
     fontFamily: GetPlatform.isWindows ? 'Microsoft YaHei' : null,
-    scheme: flexScheme,
-    // colors: const FlexSchemeColor(
-    //   primary: Color(0xff313196),
-    //   primaryContainer: Color(0xffd1c4e9),
-    //   secondary: Color(0xff0091ea),
-    //   secondaryContainer: Color(0xffcfe4ff),
-    //   tertiary: Color(0xff00b0ff),
-    //   tertiaryContainer: Color(0xff9fcbf1),
-    //   appBarColor: Color(0xffcfe4ff),
-    //   error: Color(0xffb00020),
-    // ),
-    surfaceMode: FlexSurfaceMode.highScaffoldLowSurface,
-    blendLevel: 10,
-    appBarOpacity: 0.95,
-    transparentStatusBar: true,
-    tabBarStyle: FlexTabBarStyle.forBackground,
-    tooltipsMatchBackground: true,
+    scheme: FlexScheme.deepPurple,
     subThemesData: const FlexSubThemesData(
-      defaultRadius: 26,
-      thickBorderWidth: 1.5,
-      elevatedButtonSecondarySchemeColor: SchemeColor.primaryContainer,
-      outlinedButtonOutlineSchemeColor: SchemeColor.primaryContainer,
-      switchSchemeColor: SchemeColor.primary,
-      checkboxSchemeColor: SchemeColor.primary,
-      radioSchemeColor: SchemeColor.primary,
-      unselectedToggleIsColored: true,
-      inputDecoratorRadius: 10,
+      interactionEffects: false,
+      tintedDisabledControls: false,
+      inputDecoratorBorderType: FlexInputBorderType.underline,
       inputDecoratorUnfocusedBorderIsColored: false,
-      fabUseShape: true,
-      popupMenuOpacity: 0.98,
-      popupMenuRadius: 8,
-      dialogBackgroundSchemeColor: SchemeColor.onInverseSurface,
-      navigationBarHeight: 65,
+      tooltipRadius: 4,
+      tooltipSchemeColor: SchemeColor.inverseSurface,
+      tooltipOpacity: 0.9,
+      snackBarElevation: 6,
+      snackBarBackgroundSchemeColor: SchemeColor.inverseSurface,
+      bottomNavigationBarMutedUnselectedLabel: false,
+      bottomNavigationBarMutedUnselectedIcon: false,
+      navigationBarSelectedLabelSchemeColor: SchemeColor.onSurface,
+      navigationBarUnselectedLabelSchemeColor: SchemeColor.onSurface,
+      navigationBarMutedUnselectedLabel: false,
+      navigationBarSelectedIconSchemeColor: SchemeColor.onSurface,
+      navigationBarUnselectedIconSchemeColor: SchemeColor.onSurface,
+      navigationBarMutedUnselectedIcon: false,
+      navigationBarIndicatorSchemeColor: SchemeColor.secondaryContainer,
+      navigationBarIndicatorOpacity: 1.00,
+      navigationRailSelectedLabelSchemeColor: SchemeColor.onSurface,
+      navigationRailUnselectedLabelSchemeColor: SchemeColor.onSurface,
+      navigationRailMutedUnselectedLabel: false,
+      navigationRailSelectedIconSchemeColor: SchemeColor.onSurface,
+      navigationRailUnselectedIconSchemeColor: SchemeColor.onSurface,
+      navigationRailMutedUnselectedIcon: false,
+      navigationRailIndicatorSchemeColor: SchemeColor.secondaryContainer,
+      navigationRailIndicatorOpacity: 1.00,
       navigationRailBackgroundSchemeColor: SchemeColor.surface,
+      navigationRailLabelType: NavigationRailLabelType.none,
     ),
     keyColors: const FlexKeyColors(
       useSecondary: true,
-      useTertiary: true,
     ),
     visualDensity: FlexColorScheme.comfortablePlatformDensity,
     useMaterial3: true,
+    swapLegacyOnMaterial3: true,
     // To use the playground font, add GoogleFonts package and uncomment
     // fontFamily: GoogleFonts.notoSans().fontFamily,
   );
+
+  static final _flexDarkBase = FlexThemeData.dark(
+    fontFamily: GetPlatform.isWindows ? 'Microsoft YaHei' : null,
+    scheme: FlexScheme.deepPurple,
+    subThemesData: const FlexSubThemesData(
+      interactionEffects: false,
+      tintedDisabledControls: false,
+      inputDecoratorBorderType: FlexInputBorderType.underline,
+      inputDecoratorUnfocusedBorderIsColored: false,
+      tooltipRadius: 4,
+      tooltipSchemeColor: SchemeColor.inverseSurface,
+      tooltipOpacity: 0.9,
+      snackBarElevation: 6,
+      snackBarBackgroundSchemeColor: SchemeColor.inverseSurface,
+      bottomNavigationBarMutedUnselectedLabel: false,
+      bottomNavigationBarMutedUnselectedIcon: false,
+      navigationBarSelectedLabelSchemeColor: SchemeColor.onSurface,
+      navigationBarUnselectedLabelSchemeColor: SchemeColor.onSurface,
+      navigationBarMutedUnselectedLabel: false,
+      navigationBarSelectedIconSchemeColor: SchemeColor.onSurface,
+      navigationBarUnselectedIconSchemeColor: SchemeColor.onSurface,
+      navigationBarMutedUnselectedIcon: false,
+      navigationBarIndicatorSchemeColor: SchemeColor.secondaryContainer,
+      navigationBarIndicatorOpacity: 1.00,
+      navigationRailSelectedLabelSchemeColor: SchemeColor.onSurface,
+      navigationRailUnselectedLabelSchemeColor: SchemeColor.onSurface,
+      navigationRailMutedUnselectedLabel: false,
+      navigationRailSelectedIconSchemeColor: SchemeColor.onSurface,
+      navigationRailUnselectedIconSchemeColor: SchemeColor.onSurface,
+      navigationRailMutedUnselectedIcon: false,
+      navigationRailIndicatorSchemeColor: SchemeColor.secondaryContainer,
+      navigationRailIndicatorOpacity: 1.00,
+      navigationRailBackgroundSchemeColor: SchemeColor.surface,
+      navigationRailLabelType: NavigationRailLabelType.none,
+    ),
+    keyColors: const FlexKeyColors(
+      useSecondary: true,
+    ),
+    visualDensity: FlexColorScheme.comfortablePlatformDensity,
+    useMaterial3: true,
+    swapLegacyOnMaterial3: true,
+    // To use the Playground font, add GoogleFonts package and uncomment
+    // fontFamily: GoogleFonts.notoSans().fontFamily,
+  );
+
+// If you do not have a themeMode switch, uncomment this line
+// to let the device system mode control the theme mode:
+// themeMode: ThemeMode.system,
 
   /// App light theme based on flex.
   static ThemeData flexLight = _flexLightBase.copyWith(
     // appBarTheme: AppBarTheme(),
     listTileTheme: listTileTheme,
     inputDecorationTheme: inputDecorationTheme,
-  );
-
-  static final ThemeData _flexDarkBase = FlexThemeData.dark(
-    fontFamily: GetPlatform.isWindows ? 'Microsoft YaHei' : null,
-    scheme: flexScheme,
-    // colors: const FlexSchemeColor(
-    //   primary: Color(0xff313196),
-    //   primaryContainer: Color(0xff7e57c2),
-    //   secondary: Color(0xff80d8ff),
-    //   secondaryContainer: Color(0xff00497b),
-    //   tertiary: Color(0xff40c4ff),
-    //   tertiaryContainer: Color(0xff0179b6),
-    //   appBarColor: Color(0xff00497b),
-    //   error: Color(0xffcf6679),
-    // ),
-    surfaceMode: FlexSurfaceMode.highScaffoldLevelSurface,
-    blendLevel: 10,
-    appBarOpacity: 0.95,
-    transparentStatusBar: true,
-    tabBarStyle: FlexTabBarStyle.forBackground,
-    // surfaceTint: const Color(0xff311b92),
-    tooltipsMatchBackground: true,
-    subThemesData: const FlexSubThemesData(
-      defaultRadius: 26,
-      thickBorderWidth: 1.5,
-      elevatedButtonSecondarySchemeColor: SchemeColor.primaryContainer,
-      outlinedButtonOutlineSchemeColor: SchemeColor.primaryContainer,
-      switchSchemeColor: SchemeColor.primary,
-      checkboxSchemeColor: SchemeColor.primary,
-      radioSchemeColor: SchemeColor.primary,
-      unselectedToggleIsColored: true,
-      inputDecoratorRadius: 10,
-      inputDecoratorUnfocusedBorderIsColored: false,
-      fabUseShape: true,
-      popupMenuOpacity: 0.98,
-      popupMenuRadius: 8,
-      dialogBackgroundSchemeColor: SchemeColor.onInverseSurface,
-      tabBarIndicatorSchemeColor: SchemeColor.inversePrimary,
-      navigationBarHeight: 65,
-      navigationRailBackgroundSchemeColor: SchemeColor.surface,
-    ),
-    keyColors: const FlexKeyColors(
-      useSecondary: true,
-      useTertiary: true,
-    ),
-    visualDensity: FlexColorScheme.comfortablePlatformDensity,
-    useMaterial3: true,
-    // To use the playground font, add GoogleFonts package and uncomment
-    // fontFamily: GoogleFonts.notoSans().fontFamily,
   );
 
 // If you do not have a themeMode switch, uncomment this line
