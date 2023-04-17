@@ -180,7 +180,7 @@ class MetadataService extends GetxService {
     if (fast) {
       late final mg.Metadata? metadata;
       try {
-        metadata = await mg.MetadataGod.getMetadata(filePath);
+        metadata = await mg.MetadataGod.readMetadata(file: filePath);
         if (metadata == null) {
           return null;
         }

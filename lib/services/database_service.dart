@@ -30,6 +30,7 @@ class DatabaseService extends GetxService {
         PlaylistSchema,
       ],
       name: 'mpax',
+      directory: '',
     );
     // Check where library playlist exists.
     // If not, create one.
