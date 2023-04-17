@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:isar/isar.dart';
+import 'package:path_provider/path_provider.dart' as path_provider;
 
 import '../models/album_model.dart';
 import '../models/artist_model.dart';
@@ -20,6 +21,11 @@ class DatabaseService extends GetxService {
 
   /// Init function, run before app start.
   Future<DatabaseService> init() async {
+    final databaseDirectory =
+        await path_provider.getApplicationSupportDirectory();
+    if (!databaseDirectory.existsSync()) {
+      await databaseDirectory.create();
+    }
     storage = await Isar.open(
       [
         AlbumSchema,
@@ -30,7 +36,7 @@ class DatabaseService extends GetxService {
         PlaylistSchema,
       ],
       name: 'mpax',
-      directory: '',
+      directory: databaseDirectory.path,
     );
     // Check where library playlist exists.
     // If not, create one.
