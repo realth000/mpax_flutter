@@ -1,7 +1,7 @@
-import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:metadata_god/metadata_god.dart';
+import 'package:simple_audio/simple_audio.dart';
 import 'package:window_manager/window_manager.dart';
 
 import '../routes/app_pages.dart';
@@ -21,6 +21,21 @@ import 'services/search_service.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   MetadataGod.initialize();
+  await SimpleAudio.init(
+    useMediaController: true,
+    shouldNormalizeVolume: false,
+    dbusName: 'kzs.th000.mpax_flutter',
+    actions: [
+      MediaControlAction.rewind,
+      MediaControlAction.skipPrev,
+      MediaControlAction.playPause,
+      MediaControlAction.skipNext,
+      MediaControlAction.fastForward,
+    ],
+    androidNotificationIconPath: 'mipmap/ic_launcher',
+    androidCompactActions: [1, 2, 3],
+    applePreferSkipButtons: true,
+  );
   if (GetPlatform.isDesktop) {
     // For hot restart.
     await windowManager.ensureInitialized();
@@ -80,17 +95,6 @@ Future<void> initServices() async {
     await Get.putAsync(() async => ScaffoldService().init());
   }
 
-  late final PlayerWrapper wrapper;
-  if (GetPlatform.isMobile) {
-    wrapper = await AudioService.init(
-      config: const AudioServiceConfig(
-        androidNotificationChannelId: 'com.ryanheise.bg_demo.channel.audio',
-        androidNotificationChannelName: 'Audio playback',
-        androidNotificationOngoing: true,
-      ),
-      builder: PlayerWrapper.new,
-    );
-  }
   // Use service.init() here to make sure service is init.
   await Get.putAsync(() async => SettingsService().init());
   await Get.putAsync(() async => DatabaseService().init());
@@ -103,7 +107,7 @@ Future<void> initServices() async {
   }
   await Get.putAsync(() async => MediaLibraryService().init());
   if (GetPlatform.isMobile) {
-    await Get.putAsync(() async => PlayerService(wrapper: wrapper).init());
+    await Get.putAsync(() async => PlayerService().init());
   } else {
     await Get.putAsync(() async => PlayerService().init());
   }

@@ -2,13 +2,12 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:audio_service/audio_service.dart';
-import 'package:audioplayers/audioplayers.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:simple_audio/simple_audio.dart';
 
 import '../models/music_model.dart';
 import '../models/playlist_model.dart';
@@ -16,55 +15,10 @@ import 'media_library_service.dart';
 import 'metadata_service.dart';
 import 'settings_service.dart';
 
-/// Wrapper for mobile
-class PlayerWrapper extends BaseAudioHandler with QueueHandler, SeekHandler {
-  // The most common callbacks:
-  @override
-  Future<void> play() async {
-    // All 'play' requests from all origins route to here. Implement this
-    // callback to start playing audio appropriate to your app. e.g. music.
-    await Get.find<PlayerService>().playOrPause();
-  }
-
-  @override
-  Future<void> pause() async {
-    await Get.find<PlayerService>().playOrPause();
-  }
-
-  @override
-  Future<void> stop() async {
-    await Get.find<PlayerService>().stop();
-  }
-
-  @override
-  Future<void> seek(Duration position) async {
-    await Get.find<PlayerService>().seekToDuration(position);
-  }
-
-  @override
-  Future<void> skipToPrevious() async {
-    await Get.find<PlayerService>().seekToAnother(false);
-  }
-
-  @override
-  Future<void> skipToNext() async {
-    await Get.find<PlayerService>().seekToAnother(true);
-  }
-
-  @override
-  Future<void> playMediaItem(MediaItem mediaItem) async {
-    this.mediaItem.add(mediaItem);
-  }
-
-  @override
-  Future<void> onTaskRemoved() async {
-    await stop();
-  }
-}
-
 /// In charge of playing audio file, globally.
 class PlayerService extends GetxService {
-  PlayerService({this.wrapper});
+  //PlayerService({this.wrapper});
+  PlayerService();
 
   // State
   static const IconData _playIcon = Icons.play_arrow;
@@ -79,10 +33,7 @@ class PlayerService extends GetxService {
   final _configService = Get.find<SettingsService>();
   final _libraryService = Get.find<MediaLibraryService>();
   final _metadataService = Get.find<MetadataService>();
-  final _player = AudioPlayer();
-
-  /// Only use on mobile platforms.
-  final PlayerWrapper? wrapper;
+  final _player = SimpleAudio();
 
   /// Play history, only uses in shuffle mode([playMode] == [_shuffleString]).
   /// Usage and behavior act like foobar2000's play history.
@@ -156,34 +107,6 @@ class PlayerService extends GetxService {
     await Get.find<SettingsService>().saveDouble('PlayerVolume', volume);
   }
 
-  Future<PlaybackState> _transformEvent(PlayerState event) async =>
-      PlaybackState(
-        controls: [
-          MediaControl.skipToPrevious,
-          if (event == PlayerState.playing)
-            MediaControl.pause
-          else
-            MediaControl.play,
-          MediaControl.skipToNext,
-        ],
-        systemActions: const {
-          MediaAction.seek,
-          MediaAction.skipToNext,
-          MediaAction.skipToPrevious,
-        },
-        androidCompactActionIndices: const [0, 1, 2],
-        processingState: const {
-          PlayerState.stopped: AudioProcessingState.idle,
-          PlayerState.playing: AudioProcessingState.ready,
-          PlayerState.paused: AudioProcessingState.ready,
-          PlayerState.completed: AudioProcessingState.completed,
-        }[_player.state]!,
-        playing: _player.state == PlayerState.playing,
-        updatePosition: await _player.getCurrentPosition() ?? Duration.zero,
-        bufferedPosition: await _player.getDuration() ?? Duration.zero,
-        queueIndex: 0,
-      );
-
   /// Init function, run before app start.
   Future<PlayerService> init() async {
     final v = Get.find<SettingsService>().getDouble('PlayerVolume');
@@ -192,41 +115,29 @@ class PlayerService extends GetxService {
       volumeBeforeMute = v;
       await _player.setVolume(volume.value);
     }
-    if (GetPlatform.isMobile) {
-      _player.onPlayerStateChanged.listen((state) async {
-        wrapper!.playbackState.add(await _transformEvent(state));
-      });
-    }
-    _player.onPlayerStateChanged.listen((state) {
-      if (state == PlayerState.playing) {
-        playButtonIcon.value = _pauseIcon;
-      } else {
-        playButtonIcon.value = _playIcon;
+    _player.playbackStateStream.listen((event) async {
+      switch (event) {
+        case PlaybackState.done:
+          if (playMode == _repeatOneString) {
+            currentMusic.value.lyrics =
+                await _metadataService.loadLyrics(currentMusic.value);
+            await _player.open(currentMusic.value.filePath);
+            await _player.play();
+          } else {
+            await seekToAnother(true);
+          }
+          break;
+        case PlaybackState.play:
+          playButtonIcon.value = _pauseIcon;
+          break;
+        case PlaybackState.pause:
+          playButtonIcon.value = _playIcon;
+          break;
       }
     });
-    _player.onPlayerComplete.listen((state) async {
-      if (playMode == _repeatOneString) {
-        currentMusic.value.lyrics =
-            await _metadataService.loadLyrics(currentMusic.value);
-        await _player.setSourceDeviceFile(currentMusic.value.filePath);
-        await _player.resume();
-      } else {
-        await seekToAnother(true);
-      }
-    });
-    _player.onPositionChanged.listen((position) {
-      if (position < Duration.zero) {
-        currentPosition.value = Duration.zero;
-      } else {
-        currentPosition.value = position;
-      }
-    });
-    _player.onDurationChanged.listen((duration) {
-      if (duration <= Duration.zero) {
-        currentDuration.value = currentPosition.value;
-      } else {
-        currentDuration.value = duration;
-      }
+    _player.progressStateStream.listen((event) {
+      currentPosition.value = event.position.seconds;
+      currentDuration.value = event.duration.seconds;
     });
     // Load configs.
     playMode = _configService.getString('PlayMode') ?? _repeatString;
@@ -299,24 +210,35 @@ class PlayerService extends GetxService {
       fast: false,
     );
     music.lyrics = await _metadataService.loadLyrics(music) ?? '';
-    await _player.setSourceDeviceFile(music.filePath);
+    final c = music.artworkList.first.artwork.value?.data;
+    //await _player.setSourceDeviceFile(music.filePath);
+    await _player.open(music.filePath);
+
+    // Save scaled album cover in file for the just_audio_background service to
+    // display on android control center.
+    final hasCoverImage = currentMusic.value.artworkList.isNotEmpty;
+    await clearCoverImageCache();
+    final coverFile = File(
+      '${(await getTemporaryDirectory()).path}/cover.cache.${DateTime.now().microsecondsSinceEpoch.toString()}',
+    );
+    if (hasCoverImage) {
+      await coverFile.writeAsBytes(
+        base64Decode(currentMusic.value.artworkList.first.artwork.value!.data),
+        flush: true,
+      );
+    }
+
+    await _player.setMetadata(
+      Metadata(
+        title: music.title ?? '',
+        artist: music.artists.isEmpty ? '' : music.artists.join(', '),
+        album: music.album.value?.title ?? '',
+        artUri: hasCoverImage ? coverFile.path : '',
+      ),
+    );
     currentMusic.value = music;
     currentPlaylist = playlist;
     if (GetPlatform.isMobile) {
-      // Save scaled album cover in file for the just_audio_background service to
-      // display on android control center.
-      final hasCoverImage = currentMusic.value.artworkList.isNotEmpty;
-      await clearCoverImageCache();
-      final coverFile = File(
-        '${(await getTemporaryDirectory()).path}/cover.cache.${DateTime.now().microsecondsSinceEpoch.toString()}',
-      );
-      if (hasCoverImage) {
-        await coverFile.writeAsBytes(
-          base64Decode(''),
-          flush: true,
-        );
-      }
-
       // FIXME: The stop and play action here is to fix notification art image
       // not update on some Android versions (e.g. MIUI).
       // I can not find the root cause but this action can fix the problem.
@@ -326,18 +248,6 @@ class PlayerService extends GetxService {
       //  await stop();
       //  await play();
       //}
-
-      // TODO: Add media item to wrapper here.
-      // await wrapper?.playMediaItem(
-      //   MediaItem(
-      //     id: p.filePath,
-      //     title: p.title.isEmpty ? p.fileName : p.title,
-      //     artist: p.artist,
-      //     album: p.albumTitle,
-      //     duration: Duration(seconds: p.length),
-      //     artUri: hasCoverImage ? coverFile.uri : null,
-      //   ),
-      // );
     }
     await _configService.saveString(
       'CurrentMedia',
@@ -355,16 +265,17 @@ class PlayerService extends GetxService {
     // Use for debugging.
     // await _player.seek(Duration(seconds: (_player.duration!.inSeconds * 0.98)
     // .toInt()));
-    await _player.play(DeviceFileSource(currentMusic.value.filePath));
+    //await _player.play(DeviceFileSource(currentMusic.value.filePath));
+    await _player.play();
   }
 
   /// Play when paused, pause when playing.
   Future<void> playOrPause() async {
-    if (_player.state == PlayerState.playing) {
+    if (await _player.isPlaying) {
       await _player.pause();
       return;
     } else if (currentMusic.value.filePath.isNotEmpty) {
-      await _player.resume();
+      await _player.play();
       return;
     } else {
       // Not a good state.
@@ -438,12 +349,12 @@ class PlayerService extends GetxService {
           // the tail of list.
           // Need to grow history list.
           final c = currentPlaylist.randomPlayContent();
-          // if (c.filePath.isEmpty) {
-          //   await play();
-          //   return;
-          // }
-          // await _setCurrentPathToPlayer(c, currentPlaylist);
-          // playHistoryList.add(c);
+          if (c == null) {
+            await play();
+            return;
+          }
+          await _setCurrentPathToPlayer(c, currentPlaylist);
+          playHistoryList.add(c);
           playHistoryPos = playHistoryList.length - 1;
           // For test
           // final d = await _player.load();
@@ -456,10 +367,10 @@ class PlayerService extends GetxService {
         case _repeatOneString:
         default:
           final content = currentPlaylist.findNextContent(currentMusic.value);
-          // if (content.filePath.isEmpty) {
-          //   return;
-          // }
-          // await setCurrentContent(content, currentPlaylist);
+          if (content == null) {
+            return;
+          }
+          await setCurrentContent(content, currentPlaylist);
           // For test
           // final d = await _player.load();
           // if (d != null) {
@@ -484,23 +395,23 @@ class PlayerService extends GetxService {
             }
           }
           final c = currentPlaylist.randomPlayContent();
-          // if (c.filePath.isEmpty) {
-          //   await play();
-          //   return;
-          // }
-          // await _setCurrentPathToPlayer(c, currentPlaylist);
-          // playHistoryList.insert(0, c);
-          // playHistoryPos = 0;
+          if (c == null) {
+            await play();
+            return;
+          }
+          await _setCurrentPathToPlayer(c, currentPlaylist);
+          playHistoryList.insert(0, c);
+          playHistoryPos = 0;
           await play();
           break;
         case _repeatString:
         case _repeatOneString:
         default:
           final content = currentPlaylist.findPreviousMusic(currentMusic.value);
-          // if (content.filePath.isEmpty) {
-          //   return;
-          // }
-          // await setCurrentContent(content, currentPlaylist);
+          if (content == null) {
+            return;
+          }
+          await setCurrentContent(content, currentPlaylist);
           await play();
       }
     }
@@ -508,11 +419,12 @@ class PlayerService extends GetxService {
 
   /// Jump to given [duration].
   Future<void> seekToDuration(Duration duration) async {
-    await _player.seek(duration);
+    //await _player.seek(duration);
+    await _player.seek(duration.inSeconds);
   }
 
   /// Return current curation.
-  Future<Duration?> playerDuration() => _player.getDuration();
+  // Future<Duration?> playerDuration() => _player.getDuration();
 
   /// Clear tmp cover image files.
   ///

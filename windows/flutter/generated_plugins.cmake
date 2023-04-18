@@ -3,10 +3,10 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
-  audioplayers_windows
   bitsdojo_window_windows
   isar_flutter_libs
   screen_retriever
+  simple_audio
   url_launcher_windows
   window_manager
 )

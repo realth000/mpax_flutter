@@ -15,3 +15,7 @@ extension WalkThrough on Directory {
     return es;
   }
 }
+
+String saveBase64Picture(String data) {
+  return '';
+}
