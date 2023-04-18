@@ -224,7 +224,7 @@ class MediaLibraryService extends GetxService {
   /// a long time and any update are invisible in first scan.
   Future<void> addMusicFolder(
     String folderPath, {
-    bool parallel = true,
+    bool parallel = false,
   }) async {
     late final List<Metadata> allData;
     if (!parallel) {

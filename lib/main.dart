@@ -1,6 +1,7 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:metadata_god/metadata_god.dart';
 import 'package:window_manager/window_manager.dart';
 
 import '../routes/app_pages.dart';
@@ -19,6 +20,7 @@ import 'services/search_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  MetadataGod.initialize();
   if (GetPlatform.isDesktop) {
     // For hot restart.
     await windowManager.ensureInitialized();

@@ -169,6 +169,7 @@ class MetadataService extends GetxService {
   }) async {
     final s = File(filePath).statSync();
     if (s.type != FileSystemEntityType.file) {
+      print(' file is not file type, return null');
       return null;
     }
 
@@ -182,6 +183,7 @@ class MetadataService extends GetxService {
       try {
         metadata = await mg.MetadataGod.readMetadata(file: filePath);
         if (metadata == null) {
+          print('metadata god return null');
           return null;
         }
         return _applyMetadataFromMG(
@@ -190,11 +192,12 @@ class MetadataService extends GetxService {
           loadImage,
           scaleImage,
         );
-      } catch (_) {
+      } catch (e) {
         // May have ffi exception.
         // Can not read metadata, maybe from m4a files.
         //   Only write basic info.
         //   TODO: Should print something here.
+        print('metadatagod exception $e');
         return null;
       }
     } else {
@@ -203,6 +206,7 @@ class MetadataService extends GetxService {
       try {
         metadata = await tl.TagLib(filePath: filePath).readMetadataEx();
         if (metadata == null) {
+          print('taglib_ffi return null');
           return null;
         }
         return await _applyMetadataFromTL(
