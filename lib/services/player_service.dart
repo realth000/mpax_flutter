@@ -210,7 +210,7 @@ class PlayerService extends GetxService {
       fast: false,
     );
     music.lyrics = await _metadataService.loadLyrics(music) ?? '';
-    final c = music.artworkList.first.artwork.value?.data;
+    //final c = music.artworkList.first.artwork.value?.data;
     //await _player.setSourceDeviceFile(music.filePath);
     await _player.open(music.filePath);
 

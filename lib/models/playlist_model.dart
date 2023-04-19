@@ -104,20 +104,23 @@ class Playlist {
     final storage = Get.find<DatabaseService>().storage;
     await storage.writeTxn(() async {
       await musicList.save();
+      await storage.playlists.put(this);
     });
   }
 
   /// Add a list of audio model to playlist, not duplicate with same path file.
   Future<void> addMusicList(List<Music> musicList) async {
     for (final music in musicList) {
-      print('AAAA check music id=${music.id}');
       // TODO: Maybe [IsarLink] is similar to [Set], which means we do not need to prevent repeat.
       if (contains(music)) {
         continue;
       }
-      print('AAAA add music id =${music.id}!!');
       this.musicList.add(music);
       musicIdSortList.add(music.id);
+      final storage = Get.find<DatabaseService>().storage;
+      await storage.writeTxn(() async {
+        await storage.playlists.put(this);
+      });
     }
     final storage = Get.find<DatabaseService>().storage;
     await storage.writeTxn(() async {
@@ -173,17 +176,17 @@ class Playlist {
     if (musicIdSortList.isEmpty) {
       return null;
     }
-    if (!musicIdSortList.contains(music.id)) {
+    // if (!musicIdSortList.contains(music.id)) {
+    //   return null;
+    // }
+    if (musicList.first == music) {
+      return musicList.last;
+    }
+    final pos = musicList.toList().indexOf(music);
+    if (pos == -1) {
       return null;
     }
-    if (musicIdSortList.first == music.id) {
-      return _findMusicById(musicIdSortList.last);
-    }
-    final pos = musicIdSortList.firstWhereOrNull((id) => id == music.id);
-    if (pos == null) {
-      return null;
-    }
-    return _findMusicById(musicIdSortList[pos - 1]);
+    return musicList.elementAt(pos + 1);
   }
 
   /// Find next audio content of the given playContent.
@@ -194,17 +197,17 @@ class Playlist {
     if (musicList.isEmpty) {
       return null;
     }
-    if (!musicIdSortList.contains(music.id)) {
+    // if (!musicIdSortList.contains(music.id)) {
+    //   return null;
+    // }
+    if (musicList.last == music) {
+      return musicList.first;
+    }
+    final pos = musicList.toList().indexOf(music);
+    if (pos == -1) {
       return null;
     }
-    if (musicIdSortList.last == music.id) {
-      return _findMusicById(musicIdSortList.first);
-    }
-    final pos = musicIdSortList.firstWhereOrNull((id) => id == music.id);
-    if (pos == null) {
-      return null;
-    }
-    return _findMusicById(musicIdSortList[pos + 1]);
+    return musicList.elementAt(pos + 1);
   }
 
   /// Return a random audio content in playlist.
@@ -212,9 +215,9 @@ class Playlist {
     if (musicList.isEmpty) {
       return null;
     }
-    return _findMusicById(
-      musicIdSortList[Random().nextInt(musicIdSortList.length)],
-    );
+    // FIXME: There should use [musicIdSortList], but Isar seems have bug saving
+    // List<?> types so use [musicList] instead.
+    return musicList.elementAt(Random().nextInt(musicList.length));
   }
 
   /// Remove same [Music] with same [filePathList].

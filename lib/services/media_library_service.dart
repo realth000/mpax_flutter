@@ -130,6 +130,8 @@ class MediaLibraryService extends GetxService {
       allMusic.value = allMusicFromDatabase;
       print(
           'AAAA all music length = ${allMusic.value.musicList.length} ${allMusicFromDatabase.musicList.length}');
+      print(
+          'AAAA all music length = ${allMusic.value.musicIdSortList.length} ${allMusicFromDatabase.musicIdSortList.length}');
     }
 
     /// Start watching all music folders.
