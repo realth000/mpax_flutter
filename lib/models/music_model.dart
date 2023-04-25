@@ -54,7 +54,7 @@ class Music {
   /// Should only load detail metadata when load to player, as always does.
   Music.fromQueryModel(aq.AudioModel audioModel) {
     // Should not be empty, maybe need a check before call this constructor.
-    final f = File(audioModel.uri!);
+    final f = File(audioModel.data);
     filePath = f.path;
     fileName = path.basename(f.path);
     fileSize = f.lengthSync();

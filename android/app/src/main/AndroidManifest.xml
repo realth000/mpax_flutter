@@ -11,7 +11,7 @@
             android:name="${applicationName}"
             android:icon="@mipmap/ic_launcher">
         <activity
-                android:name="com.ryanheise.audioservice.AudioServiceActivity"
+                android:name=".MainActivity"
                 android:exported="true"
                 android:launchMode="singleTop"
                 android:theme="@style/LaunchTheme"
@@ -33,20 +33,20 @@
         </activity>
 
         <service
-                android:name="com.ryanheise.audioservice.AudioService"
+                android:name="com.erikas.simple_audio.SimpleAudioService"
                 android:foregroundServiceType="mediaPlayback"
-                android:exported="true">
+                android:exported="false">
             <intent-filter>
                 <action android:name="android.media.browse.MediaBrowserService"/>
             </intent-filter>
         </service>
 
         <receiver
-                android:name="com.ryanheise.audioservice.MediaButtonReceiver"
+                android:name="com.erikas.simple_audio.SimpleAudioReceiver"
                 android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MEDIA_BUTTON"/>
-            </intent-filter>
+            <!--            <intent-filter>-->
+            <!--                <action android:name="android.intent.action.MEDIA_BUTTON"/>-->
+            <!--            </intent-filter>-->
         </receiver>
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
