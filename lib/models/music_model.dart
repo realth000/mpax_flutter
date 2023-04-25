@@ -84,12 +84,13 @@ class Music {
       if (artist != null) {
         metadataService.fetchArtist(artist.artist).then((artist) {
           artists.add(artist);
-          storage.writeTxn(() async => artists.save());
         });
       }
     }
     // TODO: Load artwork here.
     // if (audioModel.)
+
+    storage.writeTxnSync(artists.save);
   }
 
   /// Read metadata from file.

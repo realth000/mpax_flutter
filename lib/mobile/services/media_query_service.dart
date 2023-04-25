@@ -35,6 +35,7 @@ class MediaQueryService extends GetxService {
     artistList = await _audioQuery.queryArtists();
     // FIXME: Query albums should not throw exception "null is not sub type of int".
     // albumList = await _audioQuery.queryAlbums();
+    albumList = <aq.AlbumModel>[];
     playlistList = await _audioQuery.queryPlaylists();
   }
 

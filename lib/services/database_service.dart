@@ -61,17 +61,17 @@ class DatabaseService extends GetxService {
 
   /// Save [Music] to database.
   Future<void> saveMusic(Music music) async {
-    await storage.writeTxn(() async => storage.musics.put(music));
+    await storage.writeTxn(() async => storage.musics.putByFilePath(music));
   }
 
   /// Save [Artist] to database.
   Future<void> saveArtist(Artist artist) async {
-    await storage.writeTxn(() async => storage.artists.put(artist));
+    await storage.writeTxn(() async => storage.artists.putByName(artist));
   }
 
   /// Save [Artwork] to database.
   Future<void> saveArtwork(Artwork artwork) async {
-    await storage.writeTxn(() async => storage.artworks.put(artwork));
+    await storage.writeTxn(() async => storage.artworks.putByDataHash(artwork));
   }
 
   /// Save [ArtworkWithType] to database.

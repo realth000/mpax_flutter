@@ -114,8 +114,13 @@ class MediaLibraryService extends GetxService {
     if (GetPlatform.isMobile) {
       if (androidOnlyUseMediaStore) {
         final queryService = Get.find<MediaQueryService>();
+        final storage = Get.find<DatabaseService>();
+        await storage.writeTxn(
+            () async => storage.storage.playlists.put(allMusic.value));
         for (final audio in queryService.audioList) {
-          await allMusic.value.addMusic(Music.fromQueryModel(audio));
+          final music = Music.fromQueryModel(audio);
+          await storage.saveMusic(music);
+          await allMusic.value.addMusic(music);
         }
         allMusic.refresh();
         return this;
