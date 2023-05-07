@@ -116,12 +116,16 @@ class MediaLibraryService extends GetxService {
         final queryService = Get.find<MediaQueryService>();
         final storage = Get.find<DatabaseService>();
         await storage.writeTxn(
-            () async => storage.storage.playlists.put(allMusic.value));
-        for (final audio in queryService.audioList) {
-          final music = Music.fromQueryModel(audio);
-          await storage.saveMusic(music);
-          await allMusic.value.addMusic(music);
-        }
+          () async => storage.storage.playlists.put(allMusic.value),
+        );
+        final headerList = queryService.audioList.getRange(0, 30);
+        await allMusic.value.addMusicList(
+          headerList.map((model) {
+            final music = Music.fromQueryModel(model);
+            storage.saveMusic(music);
+            return music;
+          }).toList(),
+        );
         allMusic.refresh();
         return this;
       }
