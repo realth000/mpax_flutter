@@ -15,7 +15,7 @@
         <a href="https://github.com/realth000/mpax_flutter/releases">
             <img src="https://img.shields.io/badge/-Windows-313196?&logo=Windows&logoColor=f0f0f0"/></a>
         <a href="https://flutter.dev/">
-            <img src="https://img.shields.io/badge/Flutter-3.7-blue?logo=flutter"/></a>
+            <img src="https://img.shields.io/badge/Flutter-3.10-blue?logo=flutter"/></a>
         <a href="https://github.com/realth000/mpax_flutter/blob/master/LICENSE">
             <img src="https://img.shields.io/github/license/realth000/mpax_flutter"/></a>
         <a href="https://www.codacy.com/gh/realth000/mpax_flutter/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=realth000/mpax_flutter&amp;utm_campaign=Badge_Grade">
@@ -24,6 +24,10 @@
 </div>
 
 English|[简体中文](./docs/README_zh_CN.md)
+
+## Work In Progress
+
+Refactoring, not fully usable.
 
 ## Introduction
 
@@ -46,7 +50,7 @@ MPax is a simple and easy-to-use music player powered by flutter.
 * [ ] Lyric.
 * [ ] Global shortcut on Windows.
 * [ ] Global shortcut on Linux.
-  * [ ] Hyprland.
+    * [ ] Hyprland.
 * [ ] MPRIS.
 
 ### UI:
@@ -99,11 +103,11 @@ Build Android *.apk:
 ### Linux
 
 * Debian:
-  1. ``sudo apt install libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libtagc0-dev``
-  2. ``flutter build linux --release``
+    1. ``sudo apt install libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libtagc0-dev``
+    2. ``flutter build linux --release``
 * Arch:
-  1. ``sudo pacman -S gst-plugins-good``
-  2. ``flutter build linux --release``
+    1. ``sudo pacman -S gst-plugins-good``
+    2. ``flutter build linux --release``
 
 Build and install Linux libs:
 
