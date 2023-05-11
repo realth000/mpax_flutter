@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 /// App bar.
-class MPaxAppBar extends StatelessWidget with PreferredSizeWidget {
+class MPaxAppBar extends StatelessWidget implements PreferredSizeWidget {
   /// Constructor.
   MPaxAppBar({required this.title, this.actions = const <Widget>[], super.key});
 
