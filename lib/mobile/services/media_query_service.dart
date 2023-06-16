@@ -10,7 +10,7 @@ class MediaQueryService extends GetxService {
   final _audioQuery = aq.OnAudioQuery();
 
   /// Contains all audio info from Android media store.
-  late final List<aq.AudioModel> audioList;
+  late final List<aq.SongModel> audioList;
 
   /// Contains all artist info from Android media store.
   late final List<aq.ArtistModel> artistList;
@@ -31,7 +31,7 @@ class MediaQueryService extends GetxService {
   /// Reload all kinds of info from Android media store.
   Future<void> reloadAllMedia() async {
     await requestPermissions();
-    audioList = await _audioQuery.queryAudios();
+    audioList = await _audioQuery.querySongs();
     artistList = await _audioQuery.queryArtists();
     // FIXME: Query albums should not throw exception "null is not sub type of int".
     // albumList = await _audioQuery.queryAlbums();
@@ -86,12 +86,12 @@ class MediaQueryService extends GetxService {
     return this;
   }
 
-  Future<String> loadAlbumCover(aq.AudioModel audio) async {
+  Future<String> loadAlbumCover(aq.SongModel audio) async {
     var cover = await _audioQuery.queryArtwork(audio.id, aq.ArtworkType.AUDIO);
     cover ??= await _audioQuery.queryArtwork(audio.id, aq.ArtworkType.ALBUM);
     var coverBase64 = '';
-    if (cover != null && cover.artwork != null) {
-      coverBase64 = base64Encode(cover.artwork!);
+    if (cover != null) {
+      coverBase64 = base64Encode(cover);
     }
     return coverBase64;
   }

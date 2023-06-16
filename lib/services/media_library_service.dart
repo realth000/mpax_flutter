@@ -28,7 +28,7 @@ class MediaLibraryService extends GetxService {
   final allMusic = Playlist().obs;
 
   // Save all [AudioModel] from Android media store.
-  var _allAudioModel = <aq.AudioModel>[];
+  var _allAudioModel = <aq.SongModel>[];
 
   /// Return the library.
   // Rx<Playlist> get allMusic => _allMusic;

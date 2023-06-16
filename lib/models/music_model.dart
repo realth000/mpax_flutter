@@ -47,12 +47,12 @@ class Music {
     fileSize = f.lengthSync();
   }
 
-  /// Construct from [aq.AudioModel].
+  /// Construct from [aq.SongModel].
   ///
   /// Only use on Android, data comes from Android MediaStore.
   /// Do NOT call [refreshMetadata] because this is a quick build.
   /// Should only load detail metadata when load to player, as always does.
-  Music.fromQueryModel(aq.AudioModel audioModel) {
+  Music.fromQueryModel(aq.SongModel audioModel) {
     // Should not be empty, maybe need a check before call this constructor.
     final f = File(audioModel.data);
     filePath = f.path;
