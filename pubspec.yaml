@@ -19,35 +19,31 @@ dependencies:
   ffi: ^2.0.2
   # zenity
   file_picker: ^5.2.10
-  flex_color_scheme: ^7.0.5
+  flex_color_scheme: ^7.1.2
   flutter:
     sdk: flutter
-  flutter_image_compress: ^2.0.2
+  flutter_image_compress: ^2.0.3
   flutter_lyric:
     git:
       url: https://github.com/realth000/flutter_lyric.git
       ref: master
-  fluttertoast: ^8.2.1
+  fluttertoast: ^8.2.2
   get: ^4.6.5
   isar: ^3.1.0+1
   isar_flutter_libs: ^3.1.0+1
-  isolate_manager: ^2.2.0+5
-  just_audio: ^0.9.32
+  isolate_manager: ^3.0.0
+  just_audio: ^0.9.34
   metadata_god: ^0.4.1
-  on_audio_query:
-    git:
-      url: https://github.com/realth000/on_audio_query
-      path: on_audio_query
-      ref: 65eb581b19a27e97fec29c1349fe7ebf18d2c7ab
+  on_audio_query: ^2.9.0
   path: ^1.8.3
   path_provider: ^2.0.15
-  shared_preferences: ^2.1.1
-  simple_audio: ^1.5.3
+  shared_preferences: ^2.1.2
+  simple_audio: ^1.5.7
   taglib_ffi:
     path: ./lib/package/taglib_ffi
   url_launcher: ^6.1.11
-  watcher: ^1.0.2
-  window_manager: ^0.3.2
+  watcher: ^1.1.0
+  window_manager: ^0.3.4
 
 dev_dependencies:
   build_runner: ^2.4.2
@@ -56,7 +52,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   isar_generator: ^3.1.0+1
-  lint: ^2.1.1
+  lint: ^2.1.2
 
 flutter_icons:
   image: assets/images/mpax_flutter_192.png
