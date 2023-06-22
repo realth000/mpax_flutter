@@ -19,12 +19,12 @@ fi
 MPAX_VERSION=$(cat ${PUBSPEC_FILE} | sed -n 's/version: \([0-9\.\+]*\).*/\1/p')
 
 if [ "x$1" == "xrun" ];then
-	COMMAND="run"
+	COMMAND="flutter run"
 else
-	COMMAND="build"
+	COMMAND="flutter build linux --release"
 fi
 
-flutter "${COMMAND}" \
+${COMMAND} \
 	--dart-define=GIT_COMMIT_TIME="${GIT_COMMIT_TIME}" \
 	--dart-define=GIT_COMMIT_ID="${GIT_COMMIT_ID}" \
 	--dart-define=GIT_COMMIT_ID_LONG="${GIT_COMMIT_ID_LONG}" \
