@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -420,7 +419,6 @@ class MPaxPlayerWidget extends GetView<PlayerService> {
             : Stack(
                 children: [
                   _buildDesktop(context),
-                  MoveWindow(),
                 ],
               ),
       );

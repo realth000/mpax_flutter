@@ -1,4 +1,3 @@
-import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -6,7 +5,6 @@ import '../services/settings_service.dart';
 import '../themes/app_themes.dart';
 import '../widgets/app_player_widget.dart';
 import 'components/navigation_bar/navigation_bar_view.dart';
-import 'components/window_bar_buttons/window_bar_buttons.dart';
 import 'pages/scaffold_pages.dart';
 import 'services/scaffold_service.dart';
 
@@ -37,51 +35,24 @@ class MPaxScaffold extends GetView<ScaffoldService> {
             ),
             child: MPaxNavigationBar(),
           ),
-          Expanded(
-            child: ColoredBox(
-              color: _topBarColor(context),
-              child: MoveWindow(),
-            ),
-          ),
         ],
       ),
     );
 
-    if (useNative) {
-      return [
-        navigationColumn,
-        Expanded(
-          child: Column(
-            children: <Widget>[
-              Expanded(
-                child: Obx(
-                  () => ScaffoldPages.pages[controller.currentIndex.value],
-                ),
+    return [
+      navigationColumn,
+      Expanded(
+        child: Column(
+          children: <Widget>[
+            Expanded(
+              child: Obx(
+                () => ScaffoldPages.pages[controller.currentIndex.value],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
-      ];
-    } else {
-      return [
-        navigationColumn,
-        Expanded(
-          child: Column(
-            children: <Widget>[
-              ColoredBox(
-                color: _topBarColor(context),
-                child: DesktopWindowButtons(),
-              ),
-              Expanded(
-                child: Obx(
-                  () => ScaffoldPages.pages[controller.currentIndex.value],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ];
-    }
+      ),
+    ];
   }
 
   @override

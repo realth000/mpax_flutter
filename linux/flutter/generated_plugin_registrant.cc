@@ -6,7 +6,6 @@
 
 #include "generated_plugin_registrant.h"
 
-#include <bitsdojo_window_linux/bitsdojo_window_plugin.h>
 #include <devicelocale/devicelocale_plugin.h>
 #include <isar_flutter_libs/isar_flutter_libs_plugin.h>
 #include <screen_retriever/screen_retriever_plugin.h>
@@ -15,9 +14,6 @@
 #include <window_manager/window_manager_plugin.h>
 
 void fl_register_plugins(FlPluginRegistry* registry) {
-  g_autoptr(FlPluginRegistrar) bitsdojo_window_linux_registrar =
-      fl_plugin_registry_get_registrar_for_plugin(registry, "BitsdojoWindowPlugin");
-  bitsdojo_window_plugin_register_with_registrar(bitsdojo_window_linux_registrar);
   g_autoptr(FlPluginRegistrar) devicelocale_registrar =
       fl_plugin_registry_get_registrar_for_plugin(registry, "DevicelocalePlugin");
   devicelocale_plugin_register_with_registrar(devicelocale_registrar);
