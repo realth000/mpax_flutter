@@ -130,45 +130,46 @@ class _AboutPageBodyWidget extends StatelessWidget {
                     ListTile(
                       leading: const Icon(Icons.build),
                       title: Text('Build platform'.tr),
-                      trailing: Chip(
-                        avatar: platformIcon,
-                        label: Text(platformString),
-                        padding: EdgeInsets.zero,
-                        side: BorderSide.none,
-                        labelPadding: EdgeInsets.zero,
-                        backgroundColor: Colors.transparent,
-                      ),
+                      trailing: Text(platformString),
                     ),
                     ListTile(
                       leading: const Icon(Icons.construction),
                       title: Text('Build version'.tr),
-                      trailing: FutureBuilder(
-                        future: DefaultAssetBundle.of(context)
-                            .loadString('assets/data/version'),
-                        builder: (context, snapshot) {
-                          if (snapshot.hasError ||
-                              !snapshot.hasData ||
-                              snapshot.data == null) {
-                            return Text('Unknown'.tr);
-                          }
-                          return Text(snapshot.data!);
-                        },
+                      trailing: const Text(
+                        String.fromEnvironment(
+                          'MPAX_VERSION',
+                          defaultValue: 'unknown',
+                        ),
                       ),
                     ),
                     ListTile(
                       leading: const FlutterLogo(),
                       title: Text('Flutter version'.tr),
-                      trailing: FutureBuilder(
-                        future: DefaultAssetBundle.of(context)
-                            .loadString('assets/data/flutter_version'),
-                        builder: (context, snapshot) {
-                          if (snapshot.hasError ||
-                              !snapshot.hasData ||
-                              snapshot.data == null) {
-                            return Text('Unknown'.tr);
-                          }
-                          return Text(snapshot.data!);
-                        },
+                      trailing: const Text(
+                        String.fromEnvironment(
+                          'FLUTTER_VERSION',
+                          defaultValue: 'unknown',
+                        ),
+                      ),
+                    ),
+                    ListTile(
+                      leading: const Icon(Icons.commit),
+                      title: Text('Git commit ID'.tr),
+                      trailing: const Text(
+                        String.fromEnvironment(
+                          'GIT_COMMIT_ID',
+                          defaultValue: 'unknown',
+                        ),
+                      ),
+                    ),
+                    ListTile(
+                      leading: const Icon(Icons.commit),
+                      title: Text('Git commit time'.tr),
+                      trailing: const Text(
+                        String.fromEnvironment(
+                          'GIT_COMMIT_TIME',
+                          defaultValue: 'unknown',
+                        ),
                       ),
                     ),
                   ],

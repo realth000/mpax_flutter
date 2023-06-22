@@ -70,5 +70,3 @@ flutter:
   assets:
     - assets/images/mpax_flutter.svg
     - assets/images/mpax_flutter_192.png
-    - assets/data/version
-    - assets/data/flutter_version
