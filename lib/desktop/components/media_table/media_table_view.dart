@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:isar/isar.dart';
-
-import '../../../models/playlist_model.dart';
-import '../../../services/database_service.dart';
-import '../../../services/player_service.dart';
-import 'media_table_controller.dart';
-import 'media_table_toolbar.dart';
+import 'package:mpax_flutter/desktop/components/media_table/media_table_controller.dart';
+import 'package:mpax_flutter/desktop/components/media_table/media_table_toolbar.dart';
+import 'package:mpax_flutter/models/playlist_model.dart';
+import 'package:mpax_flutter/services/database_service.dart';
+import 'package:mpax_flutter/services/player_service.dart';
 
 /// Table to show music.
 class MediaTable extends StatelessWidget {
@@ -14,6 +13,7 @@ class MediaTable extends StatelessWidget {
   MediaTable(Playlist playlist, {super.key}) {
     _controller.updatePlaylist(playlist);
   }
+
   final _playerService = Get.find<PlayerService>();
 
   /// Scroll controller for playlist table.
@@ -63,10 +63,9 @@ class MediaTable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final a;
     return Column(
       children: [
-        MediaTableToolbar(),
+        const MediaTableToolbar(),
         // Row(
         //   children: [
         //     ElevatedButton(

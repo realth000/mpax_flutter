@@ -22,7 +22,7 @@ const Map<String, Type> configMap = <String, Type>{
 class SettingsService extends GetxService {
   late final SharedPreferences _config;
 
-  static final _configMap = Map.from(configMap);
+  static final _configMap = Map<String, dynamic>.from(configMap);
 
   /// Store app bottom height value (double) to let other widgets to use.
   late final appBottomHeight =

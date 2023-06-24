@@ -1,18 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:mpax_flutter/models/music_model.dart';
+import 'package:mpax_flutter/models/playlist_model.dart';
 
-import '../models/music_model.dart';
-import '../models/playlist_model.dart';
-
-/// Controller of [MediaList]
+/// Controller of MediaList
 /// Control load data.
 class MediaListController extends GetxController {
   /// Constructor.
   MediaListController(this.playlist) {
     it = playlist.musicList.iterator;
-    _fetchMediaData();
-    print(
-        'AAAA construct MediaListController: length = ${playlist.musicList.length}');
   }
 
   /// [Playlist] contains all data.

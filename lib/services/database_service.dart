@@ -1,13 +1,12 @@
 import 'package:get/get.dart';
 import 'package:isar/isar.dart';
+import 'package:mpax_flutter/models/album_model.dart';
+import 'package:mpax_flutter/models/artist_model.dart';
+import 'package:mpax_flutter/models/artwork_model.dart';
+import 'package:mpax_flutter/models/artwork_with_type_model.dart';
+import 'package:mpax_flutter/models/music_model.dart';
+import 'package:mpax_flutter/models/playlist_model.dart';
 import 'package:path_provider/path_provider.dart' as path_provider;
-
-import '../models/album_model.dart';
-import '../models/artist_model.dart';
-import '../models/artwork_model.dart';
-import '../models/artwork_with_type_model.dart';
-import '../models/music_model.dart';
-import '../models/playlist_model.dart';
 
 /// Database storage service.
 ///
@@ -56,7 +55,7 @@ class DatabaseService extends GetxService {
 
   /// Run a write transaction.
   Future<void> writeTxn(Future Function() callback) async {
-    await storage.writeTxn(callback);
+    await storage.writeTxn<void>(callback);
   }
 
   /// Save [Music] to database.

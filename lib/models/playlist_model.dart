@@ -2,9 +2,8 @@ import 'dart:math';
 
 import 'package:get/get.dart';
 import 'package:isar/isar.dart';
-
-import '../services/database_service.dart';
-import 'music_model.dart';
+import 'package:mpax_flutter/models/music_model.dart';
+import 'package:mpax_flutter/services/database_service.dart';
 
 part 'playlist_model.g.dart';
 

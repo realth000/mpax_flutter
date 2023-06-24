@@ -2,12 +2,11 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
-import '../models/music_model.dart';
-import '../models/playlist_model.dart';
-import '../services/player_service.dart';
-import '../widgets/media_menu.dart';
-import '../widgets/util_widgets.dart';
+import 'package:mpax_flutter/models/music_model.dart';
+import 'package:mpax_flutter/models/playlist_model.dart';
+import 'package:mpax_flutter/services/player_service.dart';
+import 'package:mpax_flutter/widgets/media_menu.dart';
+import 'package:mpax_flutter/widgets/util_widgets.dart';
 
 /// Controller widget.
 class MediaItemController extends GetxController {
@@ -70,23 +69,23 @@ class MediaItemTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) => ListTile(
         leading: ListTileLeading(child: _leadingIcon()),
-        title: Text(
+        title: const Text(
           '',
           // playContent.title.isEmpty
           //     ? path.basename(playContent.filePath)
           //     : playContent.title,
           maxLines: 2,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 15,
           ),
         ),
-        subtitle: Column(
+        subtitle: const Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(
               '',
               maxLines: 1,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 14,
               ),
             ),
@@ -97,7 +96,7 @@ class MediaItemTile extends StatelessWidget {
               //         .replaceFirst('/storage/emulated/0/', '')
               //     : playContent.albumTitle,
               maxLines: 1,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 14,
               ),
             ),
@@ -105,15 +104,15 @@ class MediaItemTile extends StatelessWidget {
         ),
         trailing: IconButton(
           onPressed: () async {
-            final result = await Get.dialog(
+            final result = await Get.dialog<MediaItemMenuActions>(
               MediaItemMenu(_controller.playContent, _controller.model),
             );
-            switch (result) {
+            switch (result!) {
               case MediaItemMenuActions.play:
                 await _controller.play();
                 break;
               case MediaItemMenuActions.viewMetadata:
-                await Get.dialog(MediaMetadataDialog(playContent));
+                await Get.dialog<void>(MediaMetadataDialog(playContent));
             }
           },
           icon: const Icon(Icons.more_horiz),

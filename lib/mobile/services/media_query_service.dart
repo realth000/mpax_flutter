@@ -1,9 +1,8 @@
 import 'dart:convert';
 
 import 'package:get/get.dart';
+import 'package:mpax_flutter/models/music_model.dart';
 import 'package:on_audio_query/on_audio_query.dart' as aq;
-
-import '../../models/music_model.dart';
 
 /// Use media store on Android, provide fast music library load.
 class MediaQueryService extends GetxService {

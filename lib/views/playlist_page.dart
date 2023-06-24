@@ -1,16 +1,15 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
-import '../controllers/scan_target_controller.dart';
-import '../mobile/components/mobile_underfoot.dart';
-import '../models/playlist_model.dart';
-import '../services/media_library_service.dart';
-import '../widgets/add_playlist_widget.dart';
-import '../widgets/app_app_bar.dart';
-import '../widgets/app_drawer.dart';
-import '../widgets/app_player_widget.dart';
-import '../widgets/util_widgets.dart';
+import 'package:mpax_flutter/controllers/scan_target_controller.dart';
+import 'package:mpax_flutter/mobile/components/mobile_underfoot.dart';
+import 'package:mpax_flutter/models/playlist_model.dart';
+import 'package:mpax_flutter/services/media_library_service.dart';
+import 'package:mpax_flutter/widgets/add_playlist_widget.dart';
+import 'package:mpax_flutter/widgets/app_app_bar.dart';
+import 'package:mpax_flutter/widgets/app_drawer.dart';
+import 'package:mpax_flutter/widgets/app_player_widget.dart';
+import 'package:mpax_flutter/widgets/util_widgets.dart';
 
 /// Playlist page, show all playlists.
 class PlaylistPage extends GetView<MediaLibraryService> {
@@ -39,7 +38,7 @@ class PlaylistPage extends GetView<MediaLibraryService> {
               title: Text('Add audio'.tr),
               onTap: () async {
                 await _addAudioByScanning(playlistModel);
-                Get.back();
+                Get.back<void>();
               },
             ),
             ListTile(
@@ -52,7 +51,7 @@ class PlaylistPage extends GetView<MediaLibraryService> {
               title: Text('Delete'.tr),
               onTap: () async {
                 await controller.removePlaylist(playlistModel);
-                Get.back();
+                Get.back<void>();
               },
             ),
           ],
@@ -60,11 +59,11 @@ class PlaylistPage extends GetView<MediaLibraryService> {
       );
 
   Future<void> _openPlaylistMenu(Playlist playlistModel) async {
-    await Get.dialog(_buildPlaylistMenu(playlistModel));
+    await Get.dialog<void>(_buildPlaylistMenu(playlistModel));
   }
 
   Future<void> _addPlaylist() async {
-    final name = await Get.dialog(AddPlaylistWidget());
+    final name = await Get.dialog<String>(AddPlaylistWidget());
     if (name == null) {
       return;
     }
@@ -79,7 +78,7 @@ class PlaylistPage extends GetView<MediaLibraryService> {
     // } else {
     //   return const Icon(Icons.featured_play_list);
     // }
-    return Placeholder();
+    return const Placeholder();
   }
 
   ListTile _buildPlaylistItem(Playlist model) => ListTile(

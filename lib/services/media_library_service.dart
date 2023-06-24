@@ -2,18 +2,17 @@ import 'dart:io';
 
 import 'package:get/get.dart';
 import 'package:isar/isar.dart';
+import 'package:mpax_flutter/mobile/services/media_query_service.dart';
+import 'package:mpax_flutter/models/metadata_model.dart';
+import 'package:mpax_flutter/models/music_model.dart';
+import 'package:mpax_flutter/models/playlist_model.dart';
+import 'package:mpax_flutter/services/database_service.dart';
+import 'package:mpax_flutter/services/metadata_service.dart';
+import 'package:mpax_flutter/services/settings_service.dart';
+import 'package:mpax_flutter/utils/util.dart';
 import 'package:on_audio_query/on_audio_query.dart' as aq;
 import 'package:path/path.dart' as path;
 import 'package:watcher/watcher.dart';
-
-import '../mobile/services/media_query_service.dart';
-import '../models/metadata_model.dart';
-import '../models/music_model.dart';
-import '../models/playlist_model.dart';
-import '../utils/util.dart';
-import 'database_service.dart';
-import 'metadata_service.dart';
-import 'settings_service.dart';
 
 /// Media library service, globally.
 ///
@@ -28,7 +27,7 @@ class MediaLibraryService extends GetxService {
   final allMusic = Playlist().obs;
 
   // Save all [AudioModel] from Android media store.
-  var _allAudioModel = <aq.SongModel>[];
+  final _allAudioModel = <aq.SongModel>[];
 
   /// Return the library.
   // Rx<Playlist> get allMusic => _allMusic;
@@ -137,10 +136,6 @@ class MediaLibraryService extends GetxService {
     if (allMusicFromDatabase != null) {
       await allMusicFromDatabase.musicList.load();
       allMusic.value = allMusicFromDatabase;
-      print(
-          'AAAA all music length = ${allMusic.value.musicList.length} ${allMusicFromDatabase.musicList.length}');
-      print(
-          'AAAA all music length = ${allMusic.value.musicIdSortList.length} ${allMusicFromDatabase.musicIdSortList.length}');
     }
 
     /// Start watching all music folders.
@@ -243,7 +238,6 @@ class MediaLibraryService extends GetxService {
       allData = <Metadata>[];
       //
       final d = await Directory(folderPath).listAll();
-      print('AAAA ${d.length}');
       for (final f in d) {
         if (f.statSync().type != FileSystemEntityType.file) {
           continue;
@@ -253,14 +247,10 @@ class MediaLibraryService extends GetxService {
         }
         final data = await _metadataService.readMetadata(f.path);
         if (data == null) {
-          print('AAAA null metadata for path ${f.path}');
           continue;
         }
         allData.add(data);
       }
-      print('AAAA addMusicFolder finish, count = ${allData.length}');
-      print(
-          'AAAA addMusicFolder finish, use ${watch.elapsed.inSeconds} seconds');
     } else {
       final watch = Stopwatch()..start();
       final d = await Directory(folderPath).listAll();
@@ -274,9 +264,6 @@ class MediaLibraryService extends GetxService {
             .map((entity) => entity.path)
             .toList(),
       );
-      print('AAAA addMusicFolder finish, count = ${allData.length}');
-      print(
-          'AAAA addMusicFolder finish, use ${watch.elapsed.inSeconds} seconds');
     }
 
     // Save to music library playlist.

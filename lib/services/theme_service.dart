@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import 'settings_service.dart';
+import 'package:mpax_flutter/services/settings_service.dart';
 
 /// All theme mode in app.
 enum MPaxThemeMode {

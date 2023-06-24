@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../models/music_model.dart';
-import '../models/playlist_model.dart';
-import '../widgets/util_widgets.dart';
+import 'package:mpax_flutter/models/music_model.dart';
+import 'package:mpax_flutter/models/playlist_model.dart';
+import 'package:mpax_flutter/widgets/util_widgets.dart';
 
 /// Media context menu action types
 enum MediaItemMenuActions {

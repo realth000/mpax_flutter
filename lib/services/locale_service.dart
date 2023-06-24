@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:devicelocale/devicelocale.dart' as deviceLocale;
 import 'package:get/get.dart';
 
-import 'settings_service.dart';
+import 'package:mpax_flutter/services/settings_service.dart';
 
 /// Locale (translation) service for app, globally.
 class LocaleService extends GetxService {

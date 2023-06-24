@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
-import '../../services/scaffold_service.dart';
-import 'navigation_bar_controller.dart';
+import 'package:mpax_flutter/desktop/components/navigation_bar/navigation_bar_controller.dart';
+import 'package:mpax_flutter/desktop/services/scaffold_service.dart';
 
 /// Navigation bar use for desktop.
 class MPaxNavigationBar extends StatelessWidget {

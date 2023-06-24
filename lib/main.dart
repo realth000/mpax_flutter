@@ -1,29 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:metadata_god/metadata_god.dart';
+import 'package:mpax_flutter/desktop/services/scaffold_service.dart';
+import 'package:mpax_flutter/mobile/services/media_query_service.dart';
+import 'package:mpax_flutter/routes/app_pages.dart';
+import 'package:mpax_flutter/services/database_service.dart';
+import 'package:mpax_flutter/services/locale_service.dart';
+import 'package:mpax_flutter/services/media_library_service.dart';
+import 'package:mpax_flutter/services/metadata_service.dart';
+import 'package:mpax_flutter/services/player_service.dart';
+import 'package:mpax_flutter/services/search_service.dart';
+import 'package:mpax_flutter/services/settings_service.dart';
+import 'package:mpax_flutter/services/theme_service.dart';
+import 'package:mpax_flutter/themes/app_themes.dart';
+import 'package:mpax_flutter/translations/translations.dart';
 import 'package:simple_audio/simple_audio.dart';
 import 'package:window_manager/window_manager.dart';
-
-import '../routes/app_pages.dart';
-import '../services/locale_service.dart';
-import '../services/media_library_service.dart';
-import '../services/metadata_service.dart';
-import '../services/player_service.dart';
-import '../services/settings_service.dart';
-import '../services/theme_service.dart';
-import '../themes/app_themes.dart';
-import '../translations/translations.dart';
-import 'desktop/services/scaffold_service.dart';
-import 'mobile/services/media_query_service.dart';
-import 'services/database_service.dart';
-import 'services/search_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   MetadataGod.initialize();
   await SimpleAudio.init(
-    useMediaController: true,
-    shouldNormalizeVolume: false,
     dbusName: 'kzs.th000.mpax_flutter',
     actions: [
       MediaControlAction.rewind,
@@ -32,9 +29,7 @@ void main() async {
       MediaControlAction.skipNext,
       MediaControlAction.fastForward,
     ],
-    androidNotificationIconPath: 'mipmap/ic_launcher',
     androidCompactActions: [1, 2, 3],
-    applePreferSkipButtons: true,
   );
   if (GetPlatform.isDesktop) {
     // For hot restart.

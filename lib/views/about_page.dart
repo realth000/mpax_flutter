@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mpax_flutter/mobile/components/mobile_underfoot.dart';
+import 'package:mpax_flutter/widgets/app_app_bar.dart';
+import 'package:mpax_flutter/widgets/app_drawer.dart';
+import 'package:mpax_flutter/widgets/app_player_widget.dart';
+import 'package:mpax_flutter/widgets/util_widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
-
-import '../mobile/components/mobile_underfoot.dart';
-import '../widgets/app_app_bar.dart';
-import '../widgets/app_drawer.dart';
-import '../widgets/app_player_widget.dart';
-import '../widgets/util_widgets.dart';
 
 /// About page in drawer.
 class AboutPage extends StatelessWidget {
@@ -14,7 +13,7 @@ class AboutPage extends StatelessWidget {
   const AboutPage({super.key});
 
   /// TODO: Migrate to desktop.
-  get body => _AboutPageBodyWidget();
+  _AboutPageBodyWidget get body => _AboutPageBodyWidget();
 
   @override
   Widget build(BuildContext context) => Scaffold(

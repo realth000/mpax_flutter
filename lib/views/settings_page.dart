@@ -2,17 +2,16 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:mpax_flutter/mobile/components/mobile_underfoot.dart';
+import 'package:mpax_flutter/services/locale_service.dart';
+import 'package:mpax_flutter/services/media_library_service.dart';
+import 'package:mpax_flutter/services/settings_service.dart';
+import 'package:mpax_flutter/services/theme_service.dart';
+import 'package:mpax_flutter/widgets/app_app_bar.dart';
+import 'package:mpax_flutter/widgets/app_drawer.dart';
+import 'package:mpax_flutter/widgets/app_player_widget.dart';
+import 'package:mpax_flutter/widgets/util_widgets.dart';
 import 'package:window_manager/window_manager.dart';
-
-import '../mobile/components/mobile_underfoot.dart';
-import '../services/locale_service.dart';
-import '../services/media_library_service.dart';
-import '../services/settings_service.dart';
-import '../services/theme_service.dart';
-import '../widgets/app_app_bar.dart';
-import '../widgets/app_drawer.dart';
-import '../widgets/app_player_widget.dart';
-import '../widgets/util_widgets.dart';
 
 /// Action types for [
 enum _MusicFolderMenuActions {
@@ -36,7 +35,7 @@ class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
 
   /// TODO: Migrate to desktop.
-  get body => _SettingsBodyWidget();
+  _SettingsBodyWidget get body => _SettingsBodyWidget();
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -49,7 +48,7 @@ class SettingsPage extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             const MPaxPlayerWidget(),
-            if (GetPlatform.isMobile) MobileUnderfoot(),
+            if (GetPlatform.isMobile) const MobileUnderfoot(),
           ],
         ),
       );
@@ -92,7 +91,7 @@ class _SettingsBodyWidget extends GetView<SettingsService> {
   final _selections = List.generate(3, (_) => false).obs;
 
   Future<void> _openLocaleMenu() async {
-    final locale = await Get.dialog(_LocaleMenu());
+    final locale = await Get.dialog<String>(_LocaleMenu());
     await _localeService.changeLocale(locale);
   }
 

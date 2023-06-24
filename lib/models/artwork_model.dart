@@ -42,10 +42,10 @@ enum ArtworkFormat {
 
 /// Cover image.
 ///
-/// For [Album], or [Music].
+/// For Album, or Music.
 /// Not have an [ArtworkType] field because the same [Artwork] may have
 /// different [ArtworkType]s in different stored objects.
-/// To directly store in [Album] and [Music], use [ArtworkWithType].
+/// To directly store in Album and Music, use ArtworkWithType.
 @Collection()
 class Artwork {
   /// Constructor.

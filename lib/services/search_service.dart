@@ -1,8 +1,8 @@
 import 'package:get/get.dart';
 
-import '../models/music_model.dart';
-import '../models/playlist_model.dart';
-import 'media_library_service.dart';
+import 'package:mpax_flutter/models/music_model.dart';
+import 'package:mpax_flutter/models/playlist_model.dart';
+import 'package:mpax_flutter/services/media_library_service.dart';
 
 /// Service for searching in playlist, globally.
 class SearchService extends GetxService {

@@ -3,11 +3,11 @@ import 'dart:io';
 
 import 'package:get/get.dart';
 
-import '../models/music_model.dart';
-import '../models/playlist_model.dart';
-import '../services/database_service.dart';
-import '../services/media_library_service.dart';
-import '../services/settings_service.dart';
+import 'package:mpax_flutter/models/music_model.dart';
+import 'package:mpax_flutter/models/playlist_model.dart';
+import 'package:mpax_flutter/services/database_service.dart';
+import 'package:mpax_flutter/services/media_library_service.dart';
+import 'package:mpax_flutter/services/settings_service.dart';
 
 /// Option used in scanning audio files.
 class AudioScanOptions {
@@ -67,7 +67,7 @@ class AudioScanner {
     }
 
     await _scan(d, scannedAudioList);
-    _mediaLibraryService.addContentList(scannedAudioList);
+    await _mediaLibraryService.addContentList(scannedAudioList);
     if (targetModel != null) {
       await targetModel!.addMusicList(scannedAudioList);
     }
@@ -88,7 +88,7 @@ class AudioScanner {
 
         /// Short return list to reduce memory use.
         if (list.length >= 200) {
-          _mediaLibraryService.addContentList(list);
+          await _mediaLibraryService.addContentList(list);
           if (targetModel != null) {
             await targetModel!.addMusicList(list);
           }
@@ -112,7 +112,7 @@ class AudioScanner {
 
             /// Short return list to reduce memory use.
             if (list.length >= 10) {
-              _mediaLibraryService.addContentList(list);
+              await _mediaLibraryService.addContentList(list);
               if (targetModel != null) {
                 await targetModel!.addMusicList(list);
               }

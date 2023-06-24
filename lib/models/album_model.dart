@@ -4,9 +4,9 @@ import 'package:collection/collection.dart';
 import 'package:crypto/crypto.dart';
 import 'package:isar/isar.dart';
 
-import 'artist_model.dart';
-import 'artwork_model.dart';
-import 'music_model.dart';
+import 'package:mpax_flutter/models/artist_model.dart';
+import 'package:mpax_flutter/models/artwork_model.dart';
+import 'package:mpax_flutter/models/music_model.dart';
 
 part 'album_model.g.dart';
 

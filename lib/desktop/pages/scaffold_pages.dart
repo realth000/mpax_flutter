@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-
-import '../../views/about_page.dart';
-import '../../views/settings_page.dart';
-import 'media_library_page.dart';
-import 'music_page/music_page_view.dart';
-import 'playlist_page/playlist_page_view.dart';
+import 'package:mpax_flutter/desktop/pages/media_library_page.dart';
+import 'package:mpax_flutter/desktop/pages/music_page/music_page_view.dart';
+import 'package:mpax_flutter/desktop/pages/playlist_page/playlist_page_view.dart';
+import 'package:mpax_flutter/views/about_page.dart';
+import 'package:mpax_flutter/views/settings_page.dart';
 
 /// Pages used in desktop main page (scaffold).
 class ScaffoldPages {
@@ -13,10 +12,10 @@ class ScaffoldPages {
 
   /// Pages.
   static final pages = <Widget>[
-    DesktopMediaLibraryPage(),
+    const DesktopMediaLibraryPage(),
     DesktopPlaylistPage(),
     const DesktopMusicPage(),
-    SettingsPage().body,
-    AboutPage().body,
+    const SettingsPage().body,
+    const AboutPage().body,
   ];
 }

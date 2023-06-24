@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
-import '../../../models/music_model.dart';
-import '../../../models/playlist_model.dart';
-import '../../../widgets/add_playlist_widget.dart';
-import '../../../widgets/util_widgets.dart';
-import 'media_table_controller.dart';
+import 'package:mpax_flutter/desktop/components/media_table/media_table_controller.dart';
+import 'package:mpax_flutter/models/music_model.dart';
+import 'package:mpax_flutter/models/playlist_model.dart';
+import 'package:mpax_flutter/widgets/add_playlist_widget.dart';
+import 'package:mpax_flutter/widgets/util_widgets.dart';
 
 enum _MenuOption {
   openOrCloseSelect,
@@ -92,7 +91,8 @@ class MediaTableToolbar extends GetView<MediaTableController> {
                       controller.searchEnabled.value = state;
                       break;
                     case _MenuOption.addToPlaylist:
-                      final name = await Get.dialog(AddPlaylistWidget());
+                      final name =
+                          await Get.dialog<String>(AddPlaylistWidget());
                       if (name == null) {
                         return;
                       }

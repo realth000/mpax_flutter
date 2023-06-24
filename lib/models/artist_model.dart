@@ -1,9 +1,8 @@
 import 'package:get/get.dart';
 import 'package:isar/isar.dart';
-
-import '../services/database_service.dart';
-import 'album_model.dart';
-import 'music_model.dart';
+import 'package:mpax_flutter/models/album_model.dart';
+import 'package:mpax_flutter/models/music_model.dart';
+import 'package:mpax_flutter/services/database_service.dart';
 
 part 'artist_model.g.dart';
 

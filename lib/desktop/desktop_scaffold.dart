@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
-import '../services/settings_service.dart';
-import '../themes/app_themes.dart';
-import '../widgets/app_player_widget.dart';
-import 'components/navigation_bar/navigation_bar_view.dart';
-import 'pages/scaffold_pages.dart';
-import 'services/scaffold_service.dart';
+import 'package:mpax_flutter/desktop/components/navigation_bar/navigation_bar_view.dart';
+import 'package:mpax_flutter/desktop/pages/scaffold_pages.dart';
+import 'package:mpax_flutter/desktop/services/scaffold_service.dart';
+import 'package:mpax_flutter/services/settings_service.dart';
+import 'package:mpax_flutter/themes/app_themes.dart';
+import 'package:mpax_flutter/widgets/app_player_widget.dart';
 
 /// Main scaffold use in desktop.
 class MPaxScaffold extends GetView<ScaffoldService> {
@@ -65,6 +64,6 @@ class MPaxScaffold extends GetView<ScaffoldService> {
             ),
           ),
         ),
-        bottomNavigationBar: MPaxPlayerWidget(),
+        bottomNavigationBar: const MPaxPlayerWidget(),
       );
 }

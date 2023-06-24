@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 
-import '../mobile/components/mobile_underfoot.dart';
-import '../services/search_service.dart';
-import '../utils/media_loader.dart';
-import '../widgets/media_list_item.dart';
-import '../widgets/util_widgets.dart';
+import 'package:mpax_flutter/mobile/components/mobile_underfoot.dart';
+import 'package:mpax_flutter/services/search_service.dart';
+import 'package:mpax_flutter/utils/media_loader.dart';
+import 'package:mpax_flutter/widgets/media_list_item.dart';
+import 'package:mpax_flutter/widgets/util_widgets.dart';
 
 /// Search page, search audio content in playlist.
 class SearchPage extends GetView<SearchService> {

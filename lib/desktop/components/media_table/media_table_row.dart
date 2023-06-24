@@ -1,8 +1,7 @@
 import 'package:get/get.dart';
+import 'package:mpax_flutter/models/music_model.dart';
 
-import '../../../models/music_model.dart';
-
-/// A row in [MediaTable]
+/// A row in MediaTable
 class MediaRow {
   /// Constructor.
   MediaRow(

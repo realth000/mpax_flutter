@@ -3,11 +3,10 @@ import 'dart:convert';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
-import '../desktop/services/scaffold_service.dart';
-import '../models/music_model.dart';
-import '../routes/app_pages.dart';
-import '../services/player_service.dart';
+import 'package:mpax_flutter/desktop/services/scaffold_service.dart';
+import 'package:mpax_flutter/models/music_model.dart';
+import 'package:mpax_flutter/routes/app_pages.dart';
+import 'package:mpax_flutter/services/player_service.dart';
 
 class _ProgressWidget extends GetView<PlayerService> {
   static const double height = 2;
@@ -28,7 +27,7 @@ class _DesktopProgressWidget extends GetView<PlayerService> {
   Widget build(BuildContext context) => Obx(
         () => Slider(
           value: controller.currentPosition.value.inSeconds.toDouble(),
-          max: (controller.currentDuration.value).inSeconds.toDouble(),
+          max: controller.currentDuration.value.inSeconds.toDouble(),
           onChanged: (value) async {
             await controller.seekToDuration(
               Duration(milliseconds: (value * 1000).toInt()),
@@ -51,7 +50,7 @@ class MPaxPlayerWidget extends GetView<PlayerService> {
 
   Future<void> _toMusicPage() async {
     if (GetPlatform.isMobile) {
-      await Get.toNamed(MPaxRoutes.music);
+      await Get.toNamed<void>(MPaxRoutes.music);
     } else {
       Get.find<ScaffoldService>().currentIndex.value = 2;
     }

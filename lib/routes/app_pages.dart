@@ -1,14 +1,13 @@
 import 'package:get/get.dart';
-
-import '../desktop/desktop_scaffold.dart';
-import '../views/about_page.dart';
-import '../views/current_playlist_page.dart';
-import '../views/home_page.dart';
-import '../views/media_library_page.dart';
-import '../views/music_page.dart';
-import '../views/playlist_page.dart';
-import '../views/search_page.dart';
-import '../views/settings_page.dart';
+import 'package:mpax_flutter/desktop/desktop_scaffold.dart';
+import 'package:mpax_flutter/views/about_page.dart';
+import 'package:mpax_flutter/views/current_playlist_page.dart';
+import 'package:mpax_flutter/views/home_page.dart';
+import 'package:mpax_flutter/views/media_library_page.dart';
+import 'package:mpax_flutter/views/music_page.dart';
+import 'package:mpax_flutter/views/playlist_page.dart';
+import 'package:mpax_flutter/views/search_page.dart';
+import 'package:mpax_flutter/views/settings_page.dart';
 
 part 'app_routes.dart';
 
@@ -21,19 +20,19 @@ class MPaxPages {
 
   /// List contains routing.
   static final List<GetPage> mobileRoutes = [
-    GetPage(
+    GetPage<dynamic>(
       name: MPaxRoutes.home,
       page: () => const HomePage(),
     ),
-    GetPage(
+    GetPage<dynamic>(
       name: MPaxRoutes.library,
       page: () => const MediaLibraryPage(),
     ),
-    GetPage(
+    GetPage<dynamic>(
       name: MPaxRoutes.playlist,
       page: PlaylistPage.new,
     ),
-    GetPage(
+    GetPage<dynamic>(
       name: MPaxRoutes.playlistContent,
       page: () {
         final playlistTableName = Get.parameters['playlist_table_name'];
@@ -43,19 +42,19 @@ class MPaxPages {
         return PlaylistContentPage();
       },
     ),
-    GetPage(
+    GetPage<dynamic>(
       name: MPaxRoutes.music,
       page: MusicPage.new,
     ),
-    GetPage(
+    GetPage<dynamic>(
       name: MPaxRoutes.settings,
       page: () => const SettingsPage(),
     ),
-    GetPage(
+    GetPage<dynamic>(
       name: MPaxRoutes.about,
       page: () => const AboutPage(),
     ),
-    GetPage(
+    GetPage<dynamic>(
       name: MPaxRoutes.search,
       page: () => SearchPage(
         playlistTableName: Get.parameters['playlist_table_name']!,
@@ -65,7 +64,7 @@ class MPaxPages {
 
   /// Routes use in desktop platforms.
   static final desktopRoutes = [
-    GetPage(
+    GetPage<dynamic>(
       name: '/',
       page: MPaxScaffold.new,
     ),

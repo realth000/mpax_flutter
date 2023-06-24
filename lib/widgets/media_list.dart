@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
-import '../controllers/media_list_controller.dart';
-import '../models/playlist_model.dart';
-import '../utils/media_loader.dart';
-import '../widgets/media_list_item.dart';
+import 'package:mpax_flutter/controllers/media_list_controller.dart';
+import 'package:mpax_flutter/models/playlist_model.dart';
+import 'package:mpax_flutter/utils/media_loader.dart';
+import 'package:mpax_flutter/widgets/media_list_item.dart';
 
 /// Media list widget, contains a list of audio content.
 class MediaList extends StatelessWidget {
   /// Constructor.
   MediaList(Playlist playlist, {super.key}) {
     Get.put(MediaListController(playlist));
-    print('AAAA put MediaListController length = ${playlist.musicList.length}');
   }
 
   @override

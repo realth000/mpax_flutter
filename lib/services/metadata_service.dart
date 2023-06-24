@@ -1,27 +1,28 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:get/get.dart';
 import 'package:isar/isar.dart';
 import 'package:isolate_manager/isolate_manager.dart';
 import 'package:metadata_god/metadata_god.dart' as mg;
+import 'package:mpax_flutter/models/album_model.dart';
+import 'package:mpax_flutter/models/artist_model.dart';
+import 'package:mpax_flutter/models/artwork_model.dart';
+import 'package:mpax_flutter/models/artwork_with_type_model.dart';
+import 'package:mpax_flutter/models/metadata_model.dart';
+import 'package:mpax_flutter/models/music_model.dart';
+import 'package:mpax_flutter/models/playlist_model.dart';
+import 'package:mpax_flutter/services/database_service.dart';
 import 'package:path/path.dart' as path;
 import 'package:taglib_ffi/taglib_ffi.dart' as tl;
 
-import '../models/album_model.dart';
-import '../models/artist_model.dart';
-import '../models/artwork_model.dart';
-import '../models/artwork_with_type_model.dart';
-import '../models/metadata_model.dart';
-import '../models/music_model.dart';
-import '../models/playlist_model.dart';
-import 'database_service.dart';
-
 /// Read metadata in isolates
 @pragma('vm:entry-point')
-Future<List> _readMetadataParallelWrapper(dynamic path) async =>
-    [path, await MetadataService._readMetadata(path)];
+FutureOr<List> _readMetadataParallelWrapper(dynamic path) async =>
+    <dynamic>[path, await MetadataService._readMetadata(path as String)];
 
 /// Manage audio metadata, globally.
 class MetadataService extends GetxService {
@@ -169,7 +170,9 @@ class MetadataService extends GetxService {
   }) async {
     final s = File(filePath).statSync();
     if (s.type != FileSystemEntityType.file) {
-      print(' file is not file type, return null');
+      if (kDebugMode) {
+        print(' file is not file type, return null');
+      }
       return null;
     }
 
@@ -183,7 +186,9 @@ class MetadataService extends GetxService {
       try {
         metadata = await mg.MetadataGod.readMetadata(file: filePath);
         if (metadata == null) {
-          print('metadata god return null');
+          if (kDebugMode) {
+            print('metadata god return null');
+          }
           return null;
         }
         return _applyMetadataFromMG(
@@ -197,7 +202,9 @@ class MetadataService extends GetxService {
         // Can not read metadata, maybe from m4a files.
         //   Only write basic info.
         //   TODO: Should print something here.
-        print('metadatagod exception $e');
+        if (kDebugMode) {
+          print('metadatagod exception $e');
+        }
         return null;
       }
     } else {
@@ -206,7 +213,9 @@ class MetadataService extends GetxService {
       try {
         metadata = await tl.TagLib(filePath: filePath).readMetadataEx();
         if (metadata == null) {
-          print('taglib_ffi return null');
+          if (kDebugMode) {
+            print('taglib_ffi return null');
+          }
           return null;
         }
         return await _applyMetadataFromTL(
@@ -217,7 +226,9 @@ class MetadataService extends GetxService {
         );
       } catch (e) {
         //   TODO: Do something here.
-        print('AAAA error: $e');
+        if (kDebugMode) {
+          print('AAAA error: $e');
+        }
         return null;
       }
     }
@@ -403,24 +414,22 @@ class MetadataService extends GetxService {
   }) async {
     final ret = <Metadata>[];
 
-    final isolateManager = IsolateManager.create(
+    final isolateManager = IsolateManager<List<dynamic>>.create(
       _readMetadataParallelWrapper,
       concurrent: concurrent,
     );
 
     await isolateManager.start();
-    isolateManager.stream.listen((result) {
+    isolateManager.stream.listen((List<dynamic> result) {
       if (result[1] == null) {
-        print('AAAA null metadata: ${result[0]}');
         return;
       }
-      ret.add(result[1]);
+      ret.add(result[1] as Metadata);
     });
     for (final p in pathList) {
       await isolateManager.compute(p);
     }
-    print('AAAA compute finish');
-    await isolateManager.stop;
+    await isolateManager.stop();
 
     return ret;
   }

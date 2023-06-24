@@ -1,8 +1,8 @@
-import 'artwork_model.dart';
+import 'package:mpax_flutter/models/artwork_model.dart';
 
 /// Temporary store audio metadata.
 ///
-/// Maybe only used by [MetadataService].
+/// Maybe only used by MetadataService.
 class Metadata {
   /// Default constructor.
   Metadata(this.filePath);
@@ -21,7 +21,7 @@ class Metadata {
 
   /// List of artist names.
   ///
-  /// Need to convert to [Artist] type later.
+  /// Need to convert to Artist type later.
   List<String>? albumArtist;
 
   /// Album year.

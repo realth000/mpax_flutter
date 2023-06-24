@@ -1,15 +1,14 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
-import '../../../controllers/scan_target_controller.dart';
-import '../../../models/playlist_model.dart';
-import '../../../services/media_library_service.dart';
-import '../../../widgets/add_playlist_widget.dart';
-import '../../../widgets/util_widgets.dart';
-import '../../components/media_table/media_table_controller.dart';
-import '../../components/media_table/media_table_view.dart';
-import 'playlist_page_controller.dart';
+import 'package:mpax_flutter/controllers/scan_target_controller.dart';
+import 'package:mpax_flutter/desktop/components/media_table/media_table_controller.dart';
+import 'package:mpax_flutter/desktop/components/media_table/media_table_view.dart';
+import 'package:mpax_flutter/desktop/pages/playlist_page/playlist_page_controller.dart';
+import 'package:mpax_flutter/models/playlist_model.dart';
+import 'package:mpax_flutter/services/media_library_service.dart';
+import 'package:mpax_flutter/widgets/add_playlist_widget.dart';
+import 'package:mpax_flutter/widgets/util_widgets.dart';
 
 /// Desktop playlist page, in main scaffold.
 class DesktopPlaylistPage extends StatelessWidget {
@@ -130,7 +129,7 @@ class DesktopPlaylistPage extends StatelessWidget {
                           IconButton(
                             onPressed: () async {
                               final name =
-                                  await Get.dialog(AddPlaylistWidget());
+                                  await Get.dialog<String>(AddPlaylistWidget());
                               if (name == null) {
                                 return;
                               }
@@ -145,7 +144,7 @@ class DesktopPlaylistPage extends StatelessWidget {
                     Expanded(
                       child: Scrollbar(
                         child: Obx(
-                          () => _buildPlaylistView(),
+                          _buildPlaylistView,
                         ),
                       ),
                     ),

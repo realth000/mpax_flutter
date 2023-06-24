@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../mobile/components/mobile_underfoot.dart';
-import '../widgets/app_app_bar.dart';
-import '../widgets/app_drawer.dart';
-import '../widgets/app_player_widget.dart';
+import 'package:mpax_flutter/mobile/components/mobile_underfoot.dart';
+import 'package:mpax_flutter/widgets/app_app_bar.dart';
+import 'package:mpax_flutter/widgets/app_drawer.dart';
+import 'package:mpax_flutter/widgets/app_player_widget.dart';
 
 /// Homepage, shows when first start or nothing in media library.
 class HomePage extends StatelessWidget {

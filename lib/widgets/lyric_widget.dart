@@ -5,7 +5,7 @@ import 'package:flutter_lyric/lyrics_model_builder.dart';
 import 'package:flutter_lyric/lyrics_reader_widget.dart';
 import 'package:get/get.dart';
 
-import '../services/player_service.dart';
+import 'package:mpax_flutter/services/player_service.dart';
 
 ///Sample Netease style
 ///should be extends LyricUI implementation your own UI.

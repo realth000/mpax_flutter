@@ -2,17 +2,16 @@ import 'dart:io';
 
 import 'package:get/get.dart';
 import 'package:isar/isar.dart';
+import 'package:mpax_flutter/mobile/services/media_query_service.dart';
+import 'package:mpax_flutter/models/album_model.dart';
+import 'package:mpax_flutter/models/artist_model.dart';
+import 'package:mpax_flutter/models/artwork_model.dart';
+import 'package:mpax_flutter/models/artwork_with_type_model.dart';
+import 'package:mpax_flutter/models/metadata_model.dart';
+import 'package:mpax_flutter/services/database_service.dart';
+import 'package:mpax_flutter/services/metadata_service.dart';
 import 'package:on_audio_query/on_audio_query.dart' as aq;
 import 'package:path/path.dart' as path;
-
-import '../mobile/services/media_query_service.dart';
-import '../services/database_service.dart';
-import '../services/metadata_service.dart';
-import 'album_model.dart';
-import 'artist_model.dart';
-import 'artwork_model.dart';
-import 'artwork_with_type_model.dart';
-import 'metadata_model.dart';
 
 part 'music_model.g.dart';
 
@@ -82,9 +81,7 @@ class Music {
       // Why need bang after artistId?
       final artist = mediaQueryService.findArtistById(audioModel.artistId!);
       if (artist != null) {
-        metadataService.fetchArtist(artist.artist).then((artist) {
-          artists.add(artist);
-        });
+        metadataService.fetchArtist(artist.artist).then(artists.add);
       }
     }
     // TODO: Load artwork here.

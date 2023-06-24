@@ -1,10 +1,9 @@
 import 'package:get/get.dart';
-
-import '../mobile/services/media_query_service.dart';
-import '../models/artwork_with_type_model.dart';
-import '../models/music_model.dart';
-import '../services/database_service.dart';
-import '../services/metadata_service.dart';
+import 'package:mpax_flutter/mobile/services/media_query_service.dart';
+import 'package:mpax_flutter/models/artwork_with_type_model.dart';
+import 'package:mpax_flutter/models/music_model.dart';
+import 'package:mpax_flutter/services/database_service.dart';
+import 'package:mpax_flutter/services/metadata_service.dart';
 
 final _metadataService = Get.find<MetadataService>();
 
@@ -12,7 +11,6 @@ final _mediaQueryService = Get.find<MediaQueryService>();
 
 /// Reload audio info;
 Future<Music> reloadContent(Music music) async {
-  print('AAAA reloadContent');
 // Load album cover from file.
 //   final metadata = await _metadataService.readMetadata(
   final metadata = await _metadataService.readMetadata(

@@ -1,14 +1,13 @@
 import 'package:get/get.dart';
 import 'package:isar/isar.dart';
-
-import '../services/database_service.dart';
-import 'artwork_model.dart';
+import 'package:mpax_flutter/models/artwork_model.dart';
+import 'package:mpax_flutter/services/database_service.dart';
 
 part 'artwork_with_type_model.g.dart';
 
 /// Typed Artwork.
 ///
-/// Use to save in [Album] and [Music].
+/// Use to save in Album and Music.
 /// Works like a wrapper because the same [Artwork] may have different
 /// [ArtworkType]s in different stored objects.
 @Collection()

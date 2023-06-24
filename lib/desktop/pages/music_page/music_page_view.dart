@@ -4,8 +4,8 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../services/player_service.dart';
-import '../../../widgets/lyric_widget.dart';
+import 'package:mpax_flutter/services/player_service.dart';
+import 'package:mpax_flutter/widgets/lyric_widget.dart';
 
 /// Music page for desktop platforms.
 ///

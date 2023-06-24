@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
-import '../../../models/music_model.dart';
-import '../../../models/playlist_model.dart';
-import '../../../services/media_library_service.dart';
-import '../../../services/player_service.dart';
-import 'media_table_row.dart';
+import 'package:mpax_flutter/desktop/components/media_table/media_table_row.dart';
+import 'package:mpax_flutter/models/music_model.dart';
+import 'package:mpax_flutter/models/playlist_model.dart';
+import 'package:mpax_flutter/services/media_library_service.dart';
+import 'package:mpax_flutter/services/player_service.dart';
 
 /// Icons.play_arrow
 final playingIcon = String.fromCharCode(Icons.play_arrow.codePoint);
@@ -28,7 +27,7 @@ class MediaTableController extends GetxController {
 
   /// Current playing audio's filePath.
   ///
-  /// If changed, set the same content row in [MediaTable] state to "playing".
+  /// If changed, set the same content row in MediaTable state to "playing".
   /// If required "scroll table to current playing content", also find that
   /// content by this file path.
   final currentPlayingContent = ''.obs;

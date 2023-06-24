@@ -3,10 +3,10 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../mobile/components/mobile_underfoot.dart';
-import '../services/player_service.dart';
-import '../widgets/lyric_widget.dart';
-import '../widgets/media_list_item.dart';
+import 'package:mpax_flutter/mobile/components/mobile_underfoot.dart';
+import 'package:mpax_flutter/services/player_service.dart';
+import 'package:mpax_flutter/widgets/lyric_widget.dart';
+import 'package:mpax_flutter/widgets/media_list_item.dart';
 
 /// Play content page, showing details about current playing audio.
 class MusicPage extends GetView<PlayerService> {
@@ -26,8 +26,7 @@ class MusicPage extends GetView<PlayerService> {
   static const spaceHeight = 40.0;
 
   final _bodyPageController = PageController(
-    initialPage: 0,
-    keepPage: true,
+    
   );
 
   String _durationToString(Duration duration) {
@@ -68,7 +67,7 @@ class MusicPage extends GetView<PlayerService> {
             child: Obx(
               () => Slider(
                 value: controller.currentPosition.value.inSeconds.toDouble(),
-                max: (controller.currentDuration.value).inSeconds.toDouble(),
+                max: controller.currentDuration.value.inSeconds.toDouble(),
                 onChanged: (value) async {
                   await controller.seekToDuration(
                     Duration(milliseconds: (value * 1000).toInt()),
@@ -168,7 +167,7 @@ class MusicPage extends GetView<PlayerService> {
               ),
             ),
             subtitle: Obx(
-              () => Text(
+              () => const Text(
                 '',
                 // controller.currentContent.value.artist.isEmpty
                 //     ? ''

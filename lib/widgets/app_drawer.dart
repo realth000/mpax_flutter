@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
-import '../routes/app_pages.dart';
+import 'package:mpax_flutter/routes/app_pages.dart';
 
 /// App drawer.
 class MPaxDrawer extends StatelessWidget {
@@ -25,13 +24,13 @@ class MPaxDrawer extends StatelessWidget {
               leading: const Icon(Icons.library_music),
               title: Text('Library'.tr),
               selected: Get.currentRoute == MPaxRoutes.library,
-              onTap: () async => Get.offAndToNamed(MPaxRoutes.library),
+              onTap: () async => Get.offAndToNamed<void>(MPaxRoutes.library),
             ),
             ListTile(
               leading: const Icon(Icons.queue_music),
               title: Text('Playlist'.tr),
               selected: Get.currentRoute == MPaxRoutes.playlist,
-              onTap: () async => Get.offAndToNamed(MPaxRoutes.playlist),
+              onTap: () async => Get.offAndToNamed<void>(MPaxRoutes.playlist),
             ),
             ListTile(
               leading: const Icon(Icons.playlist_play),
@@ -58,7 +57,7 @@ class MPaxDrawer extends StatelessWidget {
             ListTile(
               leading: const Icon(Icons.audiotrack),
               title: Text('Music'.tr),
-              onTap: () async => Get.offAndToNamed(MPaxRoutes.music),
+              onTap: () async => Get.offAndToNamed<void>(MPaxRoutes.music),
               style: ListTileStyle.drawer,
             ),
             // ListTile(
@@ -71,13 +70,13 @@ class MPaxDrawer extends StatelessWidget {
               leading: const Icon(Icons.settings),
               title: Text('Settings'.tr),
               selected: Get.currentRoute == MPaxRoutes.settings,
-              onTap: () async => Get.offAndToNamed(MPaxRoutes.settings),
+              onTap: () async => Get.offAndToNamed<void>(MPaxRoutes.settings),
             ),
             ListTile(
               leading: const Icon(Icons.info),
               title: Text('About'.tr),
               selected: Get.currentRoute == MPaxRoutes.about,
-              onTap: () async => Get.offAndToNamed(MPaxRoutes.about),
+              onTap: () async => Get.offAndToNamed<void>(MPaxRoutes.about),
             ),
           ],
         ),

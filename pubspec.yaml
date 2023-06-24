@@ -52,6 +52,7 @@ dev_dependencies:
     sdk: flutter
   isar_generator: ^3.1.0+1
   lint: ^2.1.2
+  surf_lint_rules: ^1.0.0
 
 flutter_icons:
   image: assets/images/mpax_flutter_192.png

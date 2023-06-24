@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import 'util_widgets.dart';
+import 'package:mpax_flutter/widgets/util_widgets.dart';
 
 /// Dialog used for adding playlist, show all need to set properties of playlist
 /// and ask user to setup.

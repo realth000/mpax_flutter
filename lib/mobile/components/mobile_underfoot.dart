@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../services/settings_service.dart';
+import 'package:mpax_flutter/services/settings_service.dart';
 
 /// Underfoot widget at the bottom of app on mobile platforms.
 ///
