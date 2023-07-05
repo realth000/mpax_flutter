@@ -2,11 +2,11 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mpax_flutter/models/music_model.dart';
 import 'package:mpax_flutter/models/playlist_model.dart';
+import 'package:mpax_flutter/services/database_service.dart';
 import 'package:mpax_flutter/services/media_library_service.dart';
 import 'package:mpax_flutter/services/metadata_service.dart';
 import 'package:mpax_flutter/services/settings_service.dart';
@@ -32,6 +32,7 @@ class PlayerService extends GetxService {
   final _configService = Get.find<SettingsService>();
   final _libraryService = Get.find<MediaLibraryService>();
   final _metadataService = Get.find<MetadataService>();
+  final _databaseService = Get.find<DatabaseService>();
   final _player = SimpleAudio();
 
   /// Play history, only uses in shuffle mode([playMode] == [_shuffleString]).
@@ -160,8 +161,8 @@ class PlayerService extends GetxService {
     if (currentPlaylist == null) {
       return;
     }
-    final content = currentPlaylist.musicList
-        .firstWhereOrNull((m) => m.filePath == currentMedia.path);
+    final content =
+        await _databaseService.findMusicByFilePath(currentMedia.path);
     if (content != null) {
       await setCurrentContent(content, currentPlaylist);
     }
@@ -222,7 +223,8 @@ class PlayerService extends GetxService {
     );
     if (hasCoverImage) {
       await coverFile.writeAsBytes(
-        base64Decode(currentMusic.value.artworkList.first.artwork.value!.data),
+        base64Decode(_databaseService.findArtworkDataByTypeIdSync(
+            currentMusic.value.artworkList.first)!),
         flush: true,
       );
     }
@@ -230,8 +232,9 @@ class PlayerService extends GetxService {
     await _player.setMetadata(
       Metadata(
         title: music.title ?? '',
-        artist: music.artists.isEmpty ? '' : music.artists.join(', '),
-        album: music.album.value?.title ?? '',
+        artist:
+            await _databaseService.findArtistNamesByIdList(music.artistList),
+        album: await _databaseService.findAlbumTitleById(music.album),
         artUri: hasCoverImage ? coverFile.path : '',
       ),
     );

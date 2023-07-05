@@ -1,11 +1,9 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:get/get.dart';
 import 'package:isar/isar.dart';
 import 'package:mpax_flutter/mobile/services/media_query_service.dart';
-import 'package:mpax_flutter/models/album_model.dart';
-import 'package:mpax_flutter/models/artist_model.dart';
-import 'package:mpax_flutter/models/artwork_model.dart';
 import 'package:mpax_flutter/models/artwork_with_type_model.dart';
 import 'package:mpax_flutter/models/metadata_model.dart';
 import 'package:mpax_flutter/services/database_service.dart';
@@ -67,13 +65,13 @@ class Music {
     if (audioModel.albumId != null) {
       final album = mediaQueryService.findAlbumById(audioModel.id);
       if (album != null) {
-        metadataService
-            .fetchAlbum(
+        metadataService.fetchAlbum(
           album.album,
-          album.artist?.split(',').toList() ?? <String>[],
-        )
-            .then((album) {
-          this.album.value = album;
+          // album.artist?.map ?? <Id>[],
+          // FIXME: Query by artist name.
+          <Id>[],
+        ).then((album) {
+          this.album = album.id;
         });
       }
     }
@@ -81,13 +79,13 @@ class Music {
       // Why need bang after artistId?
       final artist = mediaQueryService.findArtistById(audioModel.artistId!);
       if (artist != null) {
-        metadataService.fetchArtist(artist.artist).then(artists.add);
+        metadataService.fetchArtist(artist.artist).then<void>((v) async {
+          artistList.add(v.id);
+        });
       }
     }
     // TODO: Load artwork here.
     // if (audioModel.)
-
-    storage.writeTxnSync(artists.save);
   }
 
   /// Read metadata from file.
@@ -125,44 +123,30 @@ class Music {
     if (m.artist != null) {
       final artist = await metadataService.fetchArtist(m.artist!);
       await artist.addMusic(this);
-      artists.add(artist);
+      artistList
+        ..clear()
+        ..add(artist.id);
     }
     lyrics = m.lyrics;
     if (m.artworkMap != null) {
       m.artworkMap!.forEach((type, artwork) async {
-        // Check whether [type] already exists.
-        for (var i = 0; i < artworkList.length; i++) {
-          if (artworkList.elementAt(i).type == type) {
-            final tmpArtwork = await metadataService.fetchArtwork(
-              artwork.format,
-              artwork.data,
-            );
-            artworkList.elementAt(i).artwork.value = tmpArtwork;
-            return;
-          }
-        }
-        // Now [type] not exists in [artworkList], add a new one.
+        artworkList.clear();
         final tmpArtwork =
             await metadataService.fetchArtworkWithType(type, artwork);
-        artworkList.add(tmpArtwork);
+        artworkList.add(tmpArtwork.id);
       });
     }
     // Get.find<DatabaseService>().musicSchema.writeTxn((isar) async {
     // });
     if (m.title != null) {
-      album.value = await metadataService.fetchAlbum(
+      album = (await metadataService.fetchAlbum(
         m.title!,
-        artists.map((e) => e.name).toList(),
-      );
+        artistList,
+      ))
+          .id;
     }
     // All objects come from fetchXXX is already saved in storage.
     // So only need to save "link".
-    await storage.writeTxn(() async {
-      // await storage.musics.put(this);
-      await artists.save();
-      await artworkList.save();
-      await album.save();
-    });
     trackNumber = m.track;
     genre = m.genre;
     comment = m.comment;
@@ -194,25 +178,20 @@ class Music {
   String? title;
 
   /// Artist or singer of this audio.
-  final artists = IsarLinks<Artist>();
+  final artistList = <Id>[];
 
   /// Audio lyrics.
   String? lyrics;
 
   /// All artworks.
   ///
-  /// Isar does not support [Map].
-  /// Save [ArtworkWithType] because it records [Artwork] position info.
-  /// But each [ArtworkType] should be less than 2, so always check same type
-  /// exists or not before add/update values.
-  final artworkList = IsarLinks<ArtworkWithType>();
+  /// All [Id] of [ArtworkWithType] related to this music.
+  final artworkList = <Id>[];
 
   //////////////  Album Properties //////////////
 
-  /// Album of this audio.
-  ///
-  /// Have back link from [Album.albumMusic]
-  final album = IsarLink<Album>();
+  /// [Album] [Id] of this audio.
+  int? album;
 
   /// Track number in album of this audio.
   int? trackNumber = -1;

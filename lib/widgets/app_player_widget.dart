@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:mpax_flutter/desktop/services/scaffold_service.dart';
 import 'package:mpax_flutter/models/music_model.dart';
 import 'package:mpax_flutter/routes/app_pages.dart';
+import 'package:mpax_flutter/services/database_service.dart';
 import 'package:mpax_flutter/services/player_service.dart';
 
 class _ProgressWidget extends GetView<PlayerService> {
@@ -88,14 +89,11 @@ class MPaxPlayerWidget extends GetView<PlayerService> {
           width: albumCoverHeight,
           height: albumCoverHeight,
           child: Image.memory(
-            base64Decode(
-              controller.currentMusic.value.artworkList
-                      .elementAtOrNull(0)
-                      ?.artwork
-                      .value
-                      ?.data ??
-                  '',
-            ),
+            base64Decode(Get.find<DatabaseService>()
+                    .findArtworkDataByTypeIdSync(controller
+                        .currentMusic.value.artworkList
+                        .elementAtOrNull(0)) ??
+                ''),
           ),
         ),
       );
@@ -127,28 +125,14 @@ class MPaxPlayerWidget extends GetView<PlayerService> {
     );
 
     final artistWidget = Obx(
-      () => Text(
-        music.value.artists.isEmpty
-            ? ''
-            : music.value.artists
-                .toList()
-                .map((a) => a.name)
-                .toList()
-                .join(', '),
-        style: TextStyle(
-          color: Colors.grey[600],
-        ),
-        textAlign: TextAlign.left,
-        maxLines: 1,
-        overflow: TextOverflow.clip,
-      ),
+      () => Text(Get.find<DatabaseService>()
+          .findArtistNamesByIdListSync(music.value.artistList)),
     );
 
     final albumWidget = Obx(
       () => Text(
-        controller.currentMusic.value.album.value?.title ??
-            controller.currentMusic.value.filePath
-                .replaceFirst('/storage/emulated/0/', ''),
+        Get.find<DatabaseService>()
+            .findAlbumTitleByIdSync(controller.currentMusic.value.album),
         style: TextStyle(
           color: Colors.grey[600],
         ),

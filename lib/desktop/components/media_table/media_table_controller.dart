@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:isar/isar.dart';
 import 'package:mpax_flutter/desktop/components/media_table/media_table_row.dart';
 import 'package:mpax_flutter/models/music_model.dart';
 import 'package:mpax_flutter/models/playlist_model.dart';
-import 'package:mpax_flutter/services/media_library_service.dart';
+import 'package:mpax_flutter/services/database_service.dart';
 import 'package:mpax_flutter/services/player_service.dart';
 
 /// Icons.play_arrow
@@ -42,16 +43,18 @@ class MediaTableController extends GetxController {
   final rows = <MediaRow>[].obs;
 
   final _playerService = Get.find<PlayerService>();
-  final _libraryService = Get.find<MediaLibraryService>();
+  final _storage = Get.find<DatabaseService>().storage;
 
   void updatePlaylist(Playlist playlist) {
     playlistId.value = playlist.id;
     playlistName.value = playlist.name;
     rows.value = List.generate(
       playlist.musicList.length,
-      (index) => MediaRow(
-        playlist.musicList.elementAt(index),
-      ),
+      (index) => MediaRow(_storage.musics
+              .where()
+              .idEqualTo(playlist.musicList.elementAt(index))
+              .findFirstSync() ??
+          Music()),
     );
   }
 

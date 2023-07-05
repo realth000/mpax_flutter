@@ -1,5 +1,4 @@
 import 'package:get/get.dart';
-
 import 'package:mpax_flutter/models/music_model.dart';
 import 'package:mpax_flutter/models/playlist_model.dart';
 import 'package:mpax_flutter/services/media_library_service.dart';
@@ -109,6 +108,7 @@ class SearchService extends GetxService {
     return false;
   }
 
+  // FIXME: Fix search.
   /// Search in playlist by pattern.
   Future<void> search(
     String playlistTableName,
@@ -124,15 +124,15 @@ class SearchService extends GetxService {
     final resultList = <Music>[];
     if (this.excludeText.isEmpty) {
       for (final content in playlist.value.musicList) {
-        if (_filter(content)) {
-          resultList.add(content);
-        }
+        // if (_filter(content)) {
+        //   resultList.add(content);
+        // }
       }
     } else {
       for (final content in playlist.value.musicList) {
-        if (_filterWithExclude(content)) {
-          resultList.add(content);
-        }
+        // if (_filterWithExclude(content)) {
+        //   resultList.add(content);
+        // }
       }
     }
     this.resultList.value = resultList;

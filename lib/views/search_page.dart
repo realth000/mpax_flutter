@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
-
 import 'package:mpax_flutter/mobile/components/mobile_underfoot.dart';
 import 'package:mpax_flutter/services/search_service.dart';
 import 'package:mpax_flutter/utils/media_loader.dart';
@@ -213,7 +212,7 @@ class SearchPage extends GetView<SearchService> {
         () => ListView.builder(
           itemCount: controller.resultList.length,
           itemBuilder: (context, index) => FutureBuilder(
-            future: reloadContent(controller.resultList[index]),
+            future: reloadMusicContent(controller.resultList[index]),
             builder: (context, snapshot) {
               if (snapshot.hasError ||
                   !snapshot.hasData ||

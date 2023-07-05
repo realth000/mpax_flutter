@@ -40,9 +40,8 @@ class Playlist {
   /// All music.
   ///
   /// All [Music] link saved in must NOT be null.
-  /// TODO: Check whether deleting a [Music] will leave an empty [IsarLink].
   /// If so, we should check every time access them or keep observing.
-  final musicList = IsarLinks<Music>();
+  final musicList = <Id>[];
 
   /// Load all music to a playlist.
   static Future<Playlist> loadAllMusicSyncToPlaylist() async {
@@ -57,36 +56,30 @@ class Playlist {
   }
 
   /// Whether is an empty playlist.
-  bool get isEmpty => musicIdSortList.isEmpty;
-
-  /// Store [Music] sort in [musicList] by Music's [Id].
-  ///
-  /// Every time added or deleted [Music] in [musicList], update sort.
-  /// Every change on sort not need to update [musicList].
-  final musicIdSortList = <Id>[];
+  bool get isEmpty => musicList.isEmpty;
 
   /// Tell if the specified audio file already exists in playlist.
   ///
   /// Run by file path.
   // TODO: Maybe should implement this with database.
-  bool contains(Music music) => musicIdSortList.contains(music.id);
-
-  /// Find music in [musicList] by [Music.id].
-  Music? _findMusicById(Id id) {
-    for (final music in musicList) {
-      if (music.id == id) {
-        return music;
-      }
-    }
-    return null;
-  }
+  bool contains(Music music) => musicList.contains(music.id);
 
   /// Tell if the specified path file already exists in playlist.
   // TODO: Maybe should implement this with database.
+  // TODO: Check usage.
   Music? find(String contentPath) {
     for (final content in musicList) {
-      if (content.filePath == contentPath) {
-        return content;
+      final musicContent = Get.find<DatabaseService>()
+          .storage
+          .musics
+          .where()
+          .idEqualTo(content)
+          .findFirstSync();
+      if (musicContent == null) {
+        continue;
+      }
+      if (musicContent.filePath == contentPath) {
+        return musicContent;
       }
     }
     return null;
@@ -98,11 +91,9 @@ class Playlist {
     if (contains(music)) {
       return;
     }
-    musicList.add(music);
-    musicIdSortList.add(music.id);
+    musicList.add(music.id);
     final storage = Get.find<DatabaseService>().storage;
     await storage.writeTxn(() async {
-      await musicList.save();
       await storage.playlists.put(this);
     });
   }
@@ -110,12 +101,10 @@ class Playlist {
   /// Add a list of audio model to playlist, not duplicate with same path file.
   Future<void> addMusicList(List<Music> musicList) async {
     for (final music in musicList) {
-      // TODO: Maybe [IsarLink] is similar to [Set], which means we do not need to prevent repeat.
       if (contains(music)) {
         continue;
       }
-      this.musicList.add(music);
-      musicIdSortList.add(music.id);
+      this.musicList.add(music.id);
       final storage = Get.find<DatabaseService>().storage;
       await storage.writeTxn(() async {
         await storage.playlists.put(this);
@@ -123,18 +112,16 @@ class Playlist {
     }
     final storage = Get.find<DatabaseService>().storage;
     await storage.writeTxn(() async {
-      await this.musicList.save();
       await storage.playlists.put(this);
     });
   }
 
   /// Remove [music] from current [Playlist].
   Future<void> removeMusic(Music music) async {
-    musicIdSortList.removeWhere((id) => id == music.id);
-    musicList.removeWhere((m) => m.filePath == music.filePath);
+    musicList.removeWhere((m) => m == music.id);
     final storage = Get.find<DatabaseService>().storage;
-    await storage.writeTxn(() async {
-      await musicList.save();
+    await storage.writeTxn<void>(() async {
+      await storage.playlists.put(this);
     });
   }
 
@@ -143,20 +130,18 @@ class Playlist {
   /// This does nothing to the folder monitoring list.
   /// Only as a convenience method to delete all music under a folder.
   Future<void> removeMusicByMusicFolder(String folderPath) async {
-    final idList = <int>[];
-    musicList.removeWhere((music) {
-      if (music.filePath.startsWith(folderPath)) {
-        idList.add(music.id);
-        return true;
-      }
-      return false;
-    });
+    final idList = (await Get.find<DatabaseService>()
+            .storage
+            .musics
+            .filter()
+            .filePathStartsWith(folderPath)
+            .findAll())
+        .map((e) => e.id);
     for (final id in idList) {
-      final _ = musicIdSortList.remove(id);
+      musicList.remove(id);
     }
     final storage = Get.find<DatabaseService>().storage;
     await storage.writeTxn(() async {
-      await musicList.save();
       await storage.playlists.put(this);
     });
   }
@@ -164,7 +149,6 @@ class Playlist {
   /// Clear audio file list.
   void clearMusicList() {
     musicList.clear();
-    musicIdSortList.clear();
   }
 
   /// Find previous audio content of the given playContent.
@@ -172,20 +156,30 @@ class Playlist {
   /// If it's the first one, the last one will be returned.
   /// Find current playContent position by [contentList.last.contentPath].
   Music? findPreviousMusic(Music music) {
-    if (musicIdSortList.isEmpty) {
+    if (musicList.isEmpty) {
       return null;
     }
     // if (!musicIdSortList.contains(music.id)) {
     //   return null;
     // }
-    if (musicList.first == music) {
-      return musicList.last;
+    if (musicList.first == music.id) {
+      return Get.find<DatabaseService>()
+          .storage
+          .musics
+          .where()
+          .idEqualTo(musicList.last)
+          .findFirstSync();
     }
-    final pos = musicList.toList().indexOf(music);
+    final pos = musicList.indexOf(music.id);
     if (pos == -1) {
       return null;
     }
-    return musicList.elementAt(pos + 1);
+    return Get.find<DatabaseService>()
+        .storage
+        .musics
+        .where()
+        .idEqualTo(musicList.elementAt(pos + 1))
+        .findFirstSync();
   }
 
   /// Find next audio content of the given playContent.
@@ -196,17 +190,24 @@ class Playlist {
     if (musicList.isEmpty) {
       return null;
     }
-    // if (!musicIdSortList.contains(music.id)) {
-    //   return null;
-    // }
-    if (musicList.last == music) {
-      return musicList.first;
+    if (musicList.last == music.id) {
+      return Get.find<DatabaseService>()
+          .storage
+          .musics
+          .where()
+          .idEqualTo(musicList.first)
+          .findFirstSync();
     }
-    final pos = musicList.toList().indexOf(music);
+    final pos = musicList.indexOf(music.id);
     if (pos == -1) {
       return null;
     }
-    return musicList.elementAt(pos + 1);
+    return Get.find<DatabaseService>()
+        .storage
+        .musics
+        .where()
+        .idEqualTo(musicList.elementAt(pos - 1))
+        .findFirstSync();
   }
 
   /// Return a random audio content in playlist.
@@ -214,9 +215,12 @@ class Playlist {
     if (musicList.isEmpty) {
       return null;
     }
-    // FIXME: There should use [musicIdSortList], but Isar seems have bug saving
-    // List<?> types so use [musicList] instead.
-    return musicList.elementAt(Random().nextInt(musicList.length));
+    return Get.find<DatabaseService>()
+        .storage
+        .musics
+        .where()
+        .idEqualTo(musicList.elementAt(Random().nextInt(musicList.length)))
+        .findFirstSync();
   }
 
   /// Remove same [Music] with same [filePathList].

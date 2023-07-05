@@ -1,18 +1,11 @@
-import 'dart:convert';
-
-import 'package:collection/collection.dart';
-import 'package:crypto/crypto.dart';
 import 'package:isar/isar.dart';
-
-import 'package:mpax_flutter/models/artist_model.dart';
-import 'package:mpax_flutter/models/artwork_model.dart';
 import 'package:mpax_flutter/models/music_model.dart';
 
 part 'album_model.g.dart';
 
 /// Album model.
 ///
-/// [title] together with [artists] can specify a certain [Album].
+/// [title] together with Artist can specify a certain [Album].
 @Collection()
 class Album {
   /// Constructor
@@ -20,37 +13,34 @@ class Album {
     required this.title,
     this.year,
     this.trackCount,
-    List<String>? artistNames,
+    List<Id>? artistIds,
   }) {
-    if (artistNames == null || artistNames.isEmpty) {
-      artistNamesHash = calculateEmptyNamesHash();
-    } else {
-      artistNamesHash = calculateNamesHash(artistNames);
+    if (artistIds != null) {
+      /// [addAll] will automatically filter duplicate [Id].
+      artistList.addAll(artistIds);
     }
   }
 
   /// Id in database.
   Id id = Isar.autoIncrement;
 
-  /// Album artist.
-  final artists = IsarLinks<Artist>();
-
   /// Album artist hash.
   @Index(
     unique: true,
     composite: [CompositeIndex('title')],
   )
-  late String artistNamesHash;
+  final artistList = <Id>[];
 
   /// Album title
   @Index()
   String title;
 
-  /// Album cover data, base64 encoded.
+  /// All related artwork.
   ///
-  /// May change but currently we only use one at the same time.
-  /// User may choose from [Artwork]s in [albumMusic].
-  final artworkList = IsarLinks<Artwork>();
+  /// Use a [Set] of [Artwork] [Id].
+  /// Not have a artwork type because all artwork with type are only
+  /// related to [Music].
+  final artworkList = <Id>[];
 
   /// Album year.
   int? year;
@@ -59,22 +49,5 @@ class Album {
   int? trackCount;
 
   /// Contained music.
-  @Backlink(to: 'album')
-  final albumMusic = IsarLinks<Music>();
-
-  /// Calculate a hash from empty names.
-  static String calculateEmptyNamesHash() =>
-      md5.convert([DateTime.now().microsecondsSinceEpoch]).toString();
-
-  /// Calculate hash from names.
-  static String calculateNamesHash(List<String> names) => md5
-      .convert(
-        names
-            .sorted((s1, s2) => s1.toLowerCase().compareTo(s2.toLowerCase()))
-            .map((name) => utf8.encode(name))
-            .toList()
-            .expand((x) => x)
-            .toList(),
-      )
-      .toString();
+  final albumMusicList = <Id>[];
 }

@@ -2,13 +2,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:mpax_flutter/models/music_model.dart';
 import 'package:mpax_flutter/models/playlist_model.dart';
+import 'package:mpax_flutter/services/database_service.dart';
 
 /// Controller of MediaList
 /// Control load data.
 class MediaListController extends GetxController {
   /// Constructor.
   MediaListController(this.playlist) {
-    it = playlist.musicList.iterator;
+    final q = Get.find<DatabaseService>().storage.musics.buildQuery<Music>();
   }
 
   /// [Playlist] contains all data.

@@ -18,7 +18,7 @@ class MediaList extends StatelessWidget {
           controller: controller.scrollController,
           itemCount: controller.showList.length,
           itemBuilder: (context, i) => FutureBuilder(
-            future: reloadContent(controller.showList[i]),
+            future: reloadMusicContent(controller.showList[i]),
             builder: (context, snapshot) {
               if (snapshot.hasError ||
                   !snapshot.hasData ||

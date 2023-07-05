@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
+import 'package:mpax_flutter/services/database_service.dart';
 import 'package:mpax_flutter/services/player_service.dart';
 import 'package:mpax_flutter/widgets/lyric_widget.dart';
 
@@ -36,14 +36,11 @@ class DesktopMusicPage extends GetView<PlayerService> {
               () => controller.currentMusic.value.artworkList.isEmpty
                   ? const Icon(Icons.music_note)
                   : Image.memory(
-                      base64Decode(
-                        controller.currentMusic.value.artworkList
-                                .elementAtOrNull(0)
-                                ?.artwork
-                                .value
-                                ?.data ??
-                            '',
-                      ),
+                      base64Decode(Get.find<DatabaseService>()
+                              .findArtworkDataByTypeIdSync(controller
+                                  .currentMusic.value.artworkList
+                                  .elementAtOrNull(0)) ??
+                          ''),
                     ),
             ),
           ),

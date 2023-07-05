@@ -13,13 +13,12 @@ part 'artwork_with_type_model.g.dart';
 @Collection()
 class ArtworkWithType {
   /// Constructor.
-  ArtworkWithType(this.type);
+  ArtworkWithType(this.artwork, this.type);
 
   /// Save to database.
   Future<void> save() async {
     final storage = Get.find<DatabaseService>().storage;
     await storage.writeTxn(() async {
-      await artwork.save();
       await storage.artworkWithTypes.put(this);
     });
   }
@@ -28,7 +27,6 @@ class ArtworkWithType {
   void saveSync() {
     final storage = Get.find<DatabaseService>().storage;
     storage.writeTxnSync(() async {
-      await artwork.save();
       await storage.artworkWithTypes.put(this);
     });
   }
@@ -40,6 +38,6 @@ class ArtworkWithType {
   @Enumerated(EnumType.name)
   ArtworkType type = ArtworkType.unknown;
 
-  /// Artwork.
-  IsarLink<Artwork> artwork = IsarLink<Artwork>();
+  /// [Artwork] [Id].
+  int artwork;
 }

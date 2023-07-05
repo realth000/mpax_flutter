@@ -57,8 +57,8 @@ class MediaLibraryService extends GetxService {
   ///
   /// If duplicate in content path, do nothing and return false.
   Future<bool> addContent(Music music) async {
-    for (final content in allMusic.value.musicList) {
-      if (content.filePath == music.filePath) {
+    for (final contentId in allMusic.value.musicList) {
+      if (contentId == music.id) {
         return false;
       }
     }
@@ -134,7 +134,6 @@ class MediaLibraryService extends GetxService {
         .nameEqualTo(libraryPlaylistName)
         .findFirst();
     if (allMusicFromDatabase != null) {
-      await allMusicFromDatabase.musicList.load();
       allMusic.value = allMusicFromDatabase;
     }
 

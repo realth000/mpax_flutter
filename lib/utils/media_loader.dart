@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:isar/isar.dart';
 import 'package:mpax_flutter/mobile/services/media_query_service.dart';
 import 'package:mpax_flutter/models/artwork_with_type_model.dart';
 import 'package:mpax_flutter/models/music_model.dart';
@@ -10,7 +11,7 @@ final _metadataService = Get.find<MetadataService>();
 final _mediaQueryService = Get.find<MediaQueryService>();
 
 /// Reload audio info;
-Future<Music> reloadContent(Music music) async {
+Future<Music> reloadMusicContent(Music music) async {
 // Load album cover from file.
 //   final metadata = await _metadataService.readMetadata(
   final metadata = await _metadataService.readMetadata(
@@ -28,26 +29,32 @@ Future<Music> reloadContent(Music music) async {
     metadata.artworkMap!.forEach((type, artwork) async {
       // Check whether [type] already exists.
       for (var i = 0; i < music.artworkList.length; i++) {
-        if (music.artworkList.elementAt(i).type == type) {
-          final tmpArtwork = await metadataService.fetchArtwork(
-            artwork.format,
-            artwork.data,
-          );
-          music.artworkList.elementAt(i).artwork.value = tmpArtwork;
-          return;
+        final artworkWithType = await storage.artworkWithTypes
+            .where()
+            .idEqualTo(music.artistList.elementAt(i))
+            .findFirst();
+        if (artworkWithType == null || artworkWithType.type != type) {
+          continue;
         }
+        final tmpArtwork = await metadataService.fetchArtwork(
+          artwork.format,
+          artwork.data,
+        );
+        artworkWithType.id = tmpArtwork.id;
+        await storage.writeTxn(
+            () async => storage.artworkWithTypes.put(artworkWithType));
+        return;
       }
       // Now [type] not exists in [artworkList], add a new one.
-      final tmpArtwork = ArtworkWithType(type)
-        ..artwork.value =
-            await metadataService.fetchArtwork(artwork.format, artwork.data);
+      final tmpArtwork = ArtworkWithType(
+          (await metadataService.fetchArtwork(artwork.format, artwork.data)).id,
+          type);
+      music.artworkList.add(tmpArtwork.id);
       await storage.writeTxn(() async {
         await tmpArtwork.save();
         await storage.musics.put(music);
       });
-      music.artworkList.add(tmpArtwork);
     });
-    await storage.writeTxn(() async => music.artworkList.save());
   }
 // Load album cover from Android media store.
   final am = _mediaQueryService.audioList.firstWhereOrNull(

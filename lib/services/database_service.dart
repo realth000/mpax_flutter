@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:get/get.dart';
 import 'package:isar/isar.dart';
 import 'package:mpax_flutter/models/album_model.dart';
@@ -77,5 +79,79 @@ class DatabaseService extends GetxService {
   Future<void> saveArtworkWithType(ArtworkWithType artworkWithType) async {
     await storage
         .writeTxn(() async => storage.artworkWithTypes.put(artworkWithType));
+  }
+
+  String? findArtworkDataByTypeIdSync(Id? id) {
+    if (id == null) {
+      return null;
+    }
+    final awt = storage.artworkWithTypes.where().idEqualTo(id).findFirstSync();
+    if (awt == null) {
+      return null;
+    }
+    return storage.artworks.where().idEqualTo(awt.id).findFirstSync()?.data;
+  }
+
+  Future<Music?> findMusicById(Id? id) async {
+    if (id == null) {
+      return null;
+    }
+    return storage.musics.where().idEqualTo(id).findFirst();
+  }
+
+  Future<Music?> findMusicByFilePath(String filePath) async {
+    return storage.musics.where().filePathEqualTo(filePath).findFirst();
+  }
+
+  Future<String> findArtistNamesByIdList(List<Id> idList) async {
+    final artistList = idList
+        .map((e) async => storage.artists.where().idEqualTo(e).findFirst())
+        .join(' - ');
+    if (artistList.isEmpty) {
+      return '';
+    } else {
+      return artistList;
+    }
+  }
+
+  String findArtistNamesByIdListSync(List<Id> idList) {
+    final artistList = idList
+        .map((e) => storage.artists.where().idEqualTo(e).findFirstSync())
+        .join(' - ');
+    if (artistList.isEmpty) {
+      return '';
+    } else {
+      return artistList;
+    }
+  }
+
+  Future<Album?> findAlbumById(Id? id) async {
+    if (id == null) {
+      return null;
+    }
+    return storage.albums.where().idEqualTo(id).findFirst();
+  }
+
+  Album? findAlbumByIdSync(Id? id) {
+    if (id == null) {
+      return null;
+    }
+    return storage.albums.where().idEqualTo(id).findFirstSync();
+  }
+
+  Future<String> findAlbumTitleById(Id? id) async {
+    final album = await findAlbumById(id);
+    if (album == null) {
+      return '';
+    }
+    return album.title;
+  }
+
+  String findAlbumTitleByIdSync(Id? id) {
+    final album = findAlbumByIdSync(id);
+    if (album == null) {
+      return '';
+    }
+    return album.title;
   }
 }

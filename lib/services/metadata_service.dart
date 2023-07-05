@@ -70,19 +70,16 @@ class MetadataService extends GetxService {
   /// Otherwise make a new [Album].
   Future<Album> fetchAlbum(
     String title,
-    List<String> artists, {
+    List<Id> artists, {
     String? albumTitle,
     int? albumTrackCount,
     Map<ArtworkType, Artwork>? artworkList,
   }) async {
-    final a = await _storage.albums
-        .where()
-        .artistNamesHashEqualToAnyTitle(Album.calculateNamesHash(artists))
-        .findFirst();
+    final a = await _storage.albums.where().titleEqualTo(title).findFirst();
     if (a != null) {
       return a;
     }
-    final album = Album(title: title, artistNames: artists);
+    final album = Album(title: title, artistIds: artists);
     await _storage.writeTxn(() async => _storage.albums.put(album));
     return album;
   }
@@ -117,13 +114,13 @@ class MetadataService extends GetxService {
         .filter()
         .typeEqualTo(artworkType)
         .and()
-        .artwork((q) => q.dataHashEqualTo(artwork.dataHash))
+        .artworkEqualTo(artwork.id)
         .findFirst();
     if (awt != null) {
       return awt;
     }
     final a = await fetchArtwork(artwork.format, artwork.data);
-    final artworkWithType = ArtworkWithType(artworkType)..artwork.value = a;
+    final artworkWithType = ArtworkWithType(a.id, artworkType);
     await _storage
         .writeTxn(() async => _storage.artworkWithTypes.put(artworkWithType));
     await artworkWithType.save();
@@ -393,9 +390,10 @@ class MetadataService extends GetxService {
 
     /// 4. "<Artist> - <Title>.lrc" file in same folder.
     if (music.title != null && music.title!.isNotEmpty) {
-      lyricsFilePath = music.artists.isEmpty
+      lyricsFilePath = music.artistList.isEmpty
           ? '${path.dirname(music.filePath)}/${music.title}.lrc'
-          : '${path.dirname(music.filePath)}/${music.artists.join()} - ${music.title}.lrc';
+          // FIXME: Fix lyric file path with artist name.
+          : '${path.dirname(music.filePath)}/${music.artistList.join()} - ${music.title}.lrc';
       lyricsFile = File(lyricsFilePath);
       if (lyricsFile.existsSync()) {
         final s = await lyricsFile.readAsString();
