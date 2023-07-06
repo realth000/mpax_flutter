@@ -39,7 +39,7 @@ class MetadataService extends GetxService {
     final storedMusic =
         await _storage.musics.where().filePathEqualTo(filePath).findFirst();
     if (storedMusic != null) {
-      return storedMusic;
+      return storedMusic.makeGrowable();
     }
     final music = Music.fromPath(filePath);
     await _storage.writeTxn(() async => _storage.musics.put(music));
@@ -57,7 +57,7 @@ class MetadataService extends GetxService {
     final storedArtist =
         await _storage.artists.where().nameEqualTo(name).findFirst();
     if (storedArtist != null) {
-      return storedArtist;
+      return storedArtist.makeGrowable();
     }
     final artist = Artist(name: name);
     await _storage.writeTxn(() async => _storage.artists.put(artist));
@@ -75,9 +75,10 @@ class MetadataService extends GetxService {
     int? albumTrackCount,
     Map<ArtworkType, Artwork>? artworkList,
   }) async {
-    final a = await _storage.albums.where().titleEqualTo(title).findFirst();
-    if (a != null) {
-      return a;
+    final storedAlbum =
+        await _storage.albums.where().titleEqualTo(title).findFirst();
+    if (storedAlbum != null) {
+      return storedAlbum.makeGrowable();
     }
     final album = Album(title: title, artistIds: artists);
     await _storage.writeTxn(() async => _storage.albums.put(album));
@@ -90,12 +91,12 @@ class MetadataService extends GetxService {
   /// return it.
   /// Otherwise make a new [Artwork].
   Future<Artwork> fetchArtwork(ArtworkFormat format, String data) async {
-    final a = await _storage.artworks
+    final storedArtwork = await _storage.artworks
         .where()
         .dataHashEqualTo(Artwork.calculateDataHash(data))
         .findFirst();
-    if (a != null) {
-      return a;
+    if (storedArtwork != null) {
+      return storedArtwork;
     }
     final artwork = Artwork(format: format, data: data);
     await _storage.writeTxn(() async => _storage.artworks.put(artwork));
@@ -135,10 +136,13 @@ class MetadataService extends GetxService {
   Future<List<Playlist>> fetchPlaylist(
     String playlistName,
   ) async {
-    final p =
+    final storedPlaylistList =
         await _storage.playlists.where().nameEqualTo(playlistName).findAll();
-    if (p.isNotEmpty) {
-      return p;
+    if (storedPlaylistList.isNotEmpty) {
+      for (var element in storedPlaylistList) {
+        element = element.makeGrowable();
+      }
+      return storedPlaylistList;
     }
     final playlist = Playlist()..name = playlistName;
     await _storage.writeTxn(() async => _storage.playlists.put(playlist));

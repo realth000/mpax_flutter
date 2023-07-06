@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:get/get.dart';
-import 'package:isar/isar.dart';
 import 'package:mpax_flutter/mobile/services/media_query_service.dart';
 import 'package:mpax_flutter/models/metadata_model.dart';
 import 'package:mpax_flutter/models/music_model.dart';
@@ -47,9 +46,6 @@ class MediaLibraryService extends GetxService {
   /// media library.
   final _watcherList = <DirectoryWatcher>[];
 
-  /// Storage instance.
-  final _storage = Get.find<DatabaseService>().storage;
-
   /// Library playlist, update when monitor folders and files changes.
   late final Playlist _libraryPlaylist;
 
@@ -84,7 +80,6 @@ class MediaLibraryService extends GetxService {
 
   /// Add a playlist in library.
   Future<void> addPlaylist(Playlist playlistModel) async {
-    return;
     allPlaylist.add(playlistModel);
     await _savePlaylist(playlistModel);
   }
@@ -129,10 +124,8 @@ class MediaLibraryService extends GetxService {
         return this;
       }
     }
-    final allMusicFromDatabase = await _databaseService.storage.playlists
-        .where()
-        .nameEqualTo(libraryPlaylistName)
-        .findFirst();
+    final allMusicFromDatabase =
+        await _databaseService.findPlaylistByName(libraryPlaylistName);
     if (allMusicFromDatabase != null) {
       allMusic.value = allMusicFromDatabase;
     }
@@ -145,10 +138,7 @@ class MediaLibraryService extends GetxService {
       _watcherList.add(_watchMusicFolder(path));
     }
 
-    final p = await _storage.playlists
-        .where()
-        .nameEqualTo(libraryPlaylistName)
-        .findFirst();
+    final p = await _databaseService.findPlaylistByName(libraryPlaylistName);
     if (p == null) {
       _libraryPlaylist = Playlist()..name = libraryPlaylistName;
     } else {
@@ -205,7 +195,7 @@ class MediaLibraryService extends GetxService {
 
   /// Find the [Playlist] with given [id].
   Future<Playlist?> findPlaylistById(int id) async =>
-      _databaseService.storage.playlists.where().idEqualTo(id).findFirst();
+      _databaseService.findPlaylistById(id);
 
   /// Find audio content from library (in memory) with specified file path.
   Music? findPlayContent(String contentPath) => null;
@@ -275,6 +265,7 @@ class MediaLibraryService extends GetxService {
     }
     // Save to database.
     await _addMusicFromMonitorFolder(musicList);
+    await allMusic.value.addMusicList(musicList);
     _watcherList.add(_watchMusicFolder(folderPath));
   }
 
@@ -294,8 +285,7 @@ class MediaLibraryService extends GetxService {
   Future<void> _addMusicFromMonitorFolder(List<Music> musicList) async {
     await allMusic.value.addMusicList(musicList);
     allMusic.refresh();
-    await _storage
-        .writeTxn(() async => _storage.playlists.put(_libraryPlaylist));
+    await _databaseService.savePlaylist(_libraryPlaylist);
   }
 
   Future<void> _removeMusicFromMonitorFolder(Music music) async {

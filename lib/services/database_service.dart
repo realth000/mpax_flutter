@@ -60,6 +60,10 @@ class DatabaseService extends GetxService {
     await storage.writeTxn<void>(callback);
   }
 
+  Future<void> savePlaylist(Playlist playlist) async {
+    await storage.writeTxn(() async => storage.playlists.put(playlist));
+  }
+
   /// Save [Music] to database.
   Future<void> saveMusic(Music music) async {
     await storage.writeTxn(() async => storage.musics.putByFilePath(music));
@@ -81,6 +85,27 @@ class DatabaseService extends GetxService {
         .writeTxn(() async => storage.artworkWithTypes.put(artworkWithType));
   }
 
+  Future<Playlist?> findPlaylistById(Id? id) async {
+    if (id == null) {
+      return null;
+    }
+    return (await storage.playlists.where().idEqualTo(id).findFirst())
+        ?.makeGrowable();
+  }
+
+  Future<Playlist?> findPlaylistByName(String name) async {
+    return (await storage.playlists.where().nameEqualTo(name).findFirst())
+        ?.makeGrowable();
+  }
+
+  Playlist? findPlaylistByNameSync(String name) {
+    return storage.playlists
+        .where()
+        .nameEqualTo(name)
+        .findFirstSync()
+        ?.makeGrowable();
+  }
+
   String? findArtworkDataByTypeIdSync(Id? id) {
     if (id == null) {
       return null;
@@ -96,11 +121,13 @@ class DatabaseService extends GetxService {
     if (id == null) {
       return null;
     }
-    return storage.musics.where().idEqualTo(id).findFirst();
+    return (await storage.musics.where().idEqualTo(id).findFirst())
+        ?.makeGrowable();
   }
 
   Future<Music?> findMusicByFilePath(String filePath) async {
-    return storage.musics.where().filePathEqualTo(filePath).findFirst();
+    return (await storage.musics.where().filePathEqualTo(filePath).findFirst())
+        ?.makeGrowable();
   }
 
   Future<String> findArtistNamesByIdList(List<Id> idList) async {
@@ -129,14 +156,15 @@ class DatabaseService extends GetxService {
     if (id == null) {
       return null;
     }
-    return storage.albums.where().idEqualTo(id).findFirst();
+    return (await storage.albums.where().idEqualTo(id).findFirst())
+        ?.makeGrowable();
   }
 
   Album? findAlbumByIdSync(Id? id) {
     if (id == null) {
       return null;
     }
-    return storage.albums.where().idEqualTo(id).findFirstSync();
+    return storage.albums.where().idEqualTo(id).findFirstSync()?.makeGrowable();
   }
 
   Future<String> findAlbumTitleById(Id? id) async {

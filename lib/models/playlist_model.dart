@@ -41,7 +41,11 @@ class Playlist {
   ///
   /// All [Music] link saved in must NOT be null.
   /// If so, we should check every time access them or keep observing.
-  final musicList = <Id>[];
+  late List<Id> musicList;
+
+  Playlist makeGrowable() {
+    return this..musicList = musicList.toList();
+  }
 
   /// Load all music to a playlist.
   static Future<Playlist> loadAllMusicSyncToPlaylist() async {
@@ -92,10 +96,7 @@ class Playlist {
       return;
     }
     musicList.add(music.id);
-    final storage = Get.find<DatabaseService>().storage;
-    await storage.writeTxn(() async {
-      await storage.playlists.put(this);
-    });
+    await Get.find<DatabaseService>().savePlaylist(this);
   }
 
   /// Add a list of audio model to playlist, not duplicate with same path file.
@@ -105,24 +106,14 @@ class Playlist {
         continue;
       }
       this.musicList.add(music.id);
-      final storage = Get.find<DatabaseService>().storage;
-      await storage.writeTxn(() async {
-        await storage.playlists.put(this);
-      });
     }
-    final storage = Get.find<DatabaseService>().storage;
-    await storage.writeTxn(() async {
-      await storage.playlists.put(this);
-    });
+    await Get.find<DatabaseService>().savePlaylist(this);
   }
 
   /// Remove [music] from current [Playlist].
   Future<void> removeMusic(Music music) async {
     musicList.removeWhere((m) => m == music.id);
-    final storage = Get.find<DatabaseService>().storage;
-    await storage.writeTxn<void>(() async {
-      await storage.playlists.put(this);
-    });
+    await Get.find<DatabaseService>().savePlaylist(this);
   }
 
   /// Remove all music under [folderPath].
@@ -140,10 +131,7 @@ class Playlist {
     for (final id in idList) {
       musicList.remove(id);
     }
-    final storage = Get.find<DatabaseService>().storage;
-    await storage.writeTxn(() async {
-      await storage.playlists.put(this);
-    });
+    await Get.find<DatabaseService>().savePlaylist(this);
   }
 
   /// Clear audio file list.

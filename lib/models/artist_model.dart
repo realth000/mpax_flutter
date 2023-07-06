@@ -28,8 +28,14 @@ class Artist {
   String name;
 
   /// All music performed by this artist.
-  final musicList = <Id>[];
+  List<Id> musicList = <Id>[];
 
   /// All albums related.
-  final albumList = <Id>[];
+  List<Id> albumList = <Id>[];
+
+  Artist makeGrowable() {
+    return this
+      ..musicList = musicList.toList()
+      ..albumList = albumList.toList();
+  }
 }

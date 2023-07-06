@@ -29,7 +29,7 @@ class Album {
     unique: true,
     composite: [CompositeIndex('title')],
   )
-  final artistList = <Id>[];
+  late List<Id> artistList;
 
   /// Album title
   @Index()
@@ -40,7 +40,7 @@ class Album {
   /// Use a [Set] of [Artwork] [Id].
   /// Not have a artwork type because all artwork with type are only
   /// related to [Music].
-  final artworkList = <Id>[];
+  late List<Id> artworkList;
 
   /// Album year.
   int? year;
@@ -49,5 +49,12 @@ class Album {
   int? trackCount;
 
   /// Contained music.
-  final albumMusicList = <Id>[];
+  late List<Id> albumMusicList;
+
+  Album makeGrowable() {
+    return this
+      ..artistList = artistList.toList()
+      ..artworkList = artworkList.toList()
+      ..albumMusicList = albumMusicList.toList();
+  }
 }

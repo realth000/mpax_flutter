@@ -157,6 +157,12 @@ class Music {
     return true;
   }
 
+  Music makeGrowable() {
+    return this
+      ..artistList = artistList.toList()
+      ..artworkList = artworkList.toList();
+  }
+
   /// Id in database.
   Id id = Isar.autoIncrement;
 
@@ -178,7 +184,7 @@ class Music {
   String? title;
 
   /// Artist or singer of this audio.
-  final artistList = <Id>[];
+  List<Id> artistList = <Id>[];
 
   /// Audio lyrics.
   String? lyrics;
@@ -186,7 +192,7 @@ class Music {
   /// All artworks.
   ///
   /// All [Id] of [ArtworkWithType] related to this music.
-  final artworkList = <Id>[];
+  List<Id> artworkList = <Id>[];
 
   //////////////  Album Properties //////////////
 
