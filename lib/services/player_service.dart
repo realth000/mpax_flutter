@@ -221,7 +221,8 @@ class PlayerService extends GetxService {
     final coverFile = File(
       '${(await getTemporaryDirectory()).path}/cover.cache.${DateTime.now().microsecondsSinceEpoch.toString()}',
     );
-    if (hasCoverImage) {
+    // TODO: Fix cover image loading.
+    if (hasCoverImage && false) {
       await coverFile.writeAsBytes(
         base64Decode(_databaseService.findArtworkDataByTypeIdSync(
             currentMusic.value.artworkList.first)!),

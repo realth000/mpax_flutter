@@ -53,7 +53,8 @@ class MediaTableController extends GetxController {
       (index) => MediaRow(_storage.musics
               .where()
               .idEqualTo(playlist.musicList.elementAt(index))
-              .findFirstSync() ??
+              .findFirstSync()
+              ?.makeGrowable() ??
           Music()),
     );
   }

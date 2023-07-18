@@ -1,6 +1,3 @@
-import 'dart:convert';
-
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mpax_flutter/desktop/services/scaffold_service.dart';
@@ -88,13 +85,15 @@ class MPaxPlayerWidget extends GetView<PlayerService> {
         child: SizedBox(
           width: albumCoverHeight,
           height: albumCoverHeight,
-          child: Image.memory(
-            base64Decode(Get.find<DatabaseService>()
-                    .findArtworkDataByTypeIdSync(controller
-                        .currentMusic.value.artworkList
-                        .elementAtOrNull(0)) ??
-                ''),
-          ),
+          // TODO: Fix artwork loading
+          // child: Image.memory(
+          //   base64Decode(Get.find<DatabaseService>()
+          //           .findArtworkDataByTypeIdSync(controller
+          //               .currentMusic.value.artworkList
+          //               .elementAtOrNull(0)) ??
+          //       ''),
+          // ),
+          child: const Placeholder(),
         ),
       );
     }
