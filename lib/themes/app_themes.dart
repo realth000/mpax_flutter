@@ -1,9 +1,9 @@
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:mpax_flutter/utils/platform.dart';
 
 /// All app themes.
-class MPaxTheme {
+class AppTheme {
   /// Disable some style lints.
   final themeCount = 2;
 
@@ -26,7 +26,7 @@ class MPaxTheme {
   // If you use a lower version, some properties may not be supported.
   // In that case remove them after copying this theme to your app.
   static final _flexLightBase = FlexThemeData.light(
-    fontFamily: GetPlatform.isWindows ? 'Microsoft YaHei' : null,
+    fontFamily: isWindows ? 'Microsoft YaHei' : null,
     scheme: FlexScheme.deepPurple,
     subThemesData: const FlexSubThemesData(
       interactionEffects: false,
@@ -70,7 +70,7 @@ class MPaxTheme {
   );
 
   static final _flexDarkBase = FlexThemeData.dark(
-    fontFamily: GetPlatform.isWindows ? 'Microsoft YaHei' : null,
+    fontFamily: isWindows ? 'Microsoft YaHei' : null,
     scheme: FlexScheme.deepPurple,
     subThemesData: const FlexSubThemesData(
       interactionEffects: false,
