@@ -39,6 +39,7 @@ dependencies:
   on_audio_query: ^2.9.0
   path: ^1.8.3
   path_provider: ^2.0.15
+  responsive_framework: ^1.1.0
   riverpod: ^2.3.6
   shared_preferences: ^2.2.0
   simple_audio: ^1.5.7

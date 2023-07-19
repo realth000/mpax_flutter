@@ -5,6 +5,8 @@ import 'package:mpax_flutter/provider/settings_provider.dart';
 import 'package:mpax_flutter/router.dart';
 import 'package:mpax_flutter/themes/app_themes.dart';
 import 'package:mpax_flutter/utils/platform.dart';
+import 'package:responsive_framework/breakpoint.dart';
+import 'package:responsive_framework/responsive_breakpoints.dart';
 import 'package:simple_audio/simple_audio.dart';
 import 'package:window_manager/window_manager.dart';
 
@@ -40,12 +42,19 @@ class MPaxApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => ProviderScope(
-        child: MaterialApp.router(
-          title: 'MPax',
-          theme: AppTheme.flexLight,
-          darkTheme: AppTheme.flexDark,
-          routerConfig: appRouter,
-          builder: (context, child) => Scaffold(body: child),
-        ),
+        child: ResponsiveBreakpoints.builder(
+            child: MaterialApp.router(
+              title: 'MPax',
+              theme: AppTheme.flexLight,
+              darkTheme: AppTheme.flexDark,
+              routerConfig: appRouter,
+              builder: (context, child) => Scaffold(body: child),
+            ),
+            breakpoints: [
+              const Breakpoint(start: 0, end: 450, name: MOBILE),
+              const Breakpoint(start: 451, end: 800, name: TABLET),
+              const Breakpoint(start: 801, end: 1920, name: DESKTOP),
+              const Breakpoint(start: 1921, end: double.infinity, name: '4k'),
+            ]),
       );
 }
