@@ -1,7 +1,5 @@
-import 'package:get/get.dart';
 import 'package:isar/isar.dart';
 import 'package:mpax_flutter/models/music_model.dart';
-import 'package:mpax_flutter/services/database_service.dart';
 
 part 'artist_model.g.dart';
 
@@ -17,7 +15,7 @@ class Artist {
     if (music.album != null) {
       albumList.add(music.album!);
     }
-    await Get.find<DatabaseService>().saveArtist(this);
+    // await Get.find<DatabaseService>().saveArtist(this);
   }
 
   /// Id in database.

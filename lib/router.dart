@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mpax_flutter/app_scaffold.dart';
 import 'package:mpax_flutter/screens/welcome.dart';
+import 'package:mpax_flutter/widgets/app_scaffold.dart';
 
 class AppRoute {
   static const String welcome = '/';

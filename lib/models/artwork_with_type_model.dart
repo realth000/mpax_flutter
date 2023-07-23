@@ -1,7 +1,5 @@
-import 'package:get/get.dart';
 import 'package:isar/isar.dart';
 import 'package:mpax_flutter/models/artwork_model.dart';
-import 'package:mpax_flutter/services/database_service.dart';
 
 part 'artwork_with_type_model.g.dart';
 
@@ -17,18 +15,18 @@ class ArtworkWithType {
 
   /// Save to database.
   Future<void> save() async {
-    final storage = Get.find<DatabaseService>().storage;
-    await storage.writeTxn(() async {
-      await storage.artworkWithTypes.put(this);
-    });
+    // final storage = Get.find<DatabaseService>().storage;
+    // await storage.writeTxn(() async {
+    //   await storage.artworkWithTypes.put(this);
+    // });
   }
 
   /// Save to database synchronously.
   void saveSync() {
-    final storage = Get.find<DatabaseService>().storage;
-    storage.writeTxnSync(() async {
-      await storage.artworkWithTypes.put(this);
-    });
+    // final storage = Get.find<DatabaseService>().storage;
+    // storage.writeTxnSync(() async {
+    //   await storage.artworkWithTypes.put(this);
+    // });
   }
 
   /// Id in database.
