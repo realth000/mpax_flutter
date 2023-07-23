@@ -42,12 +42,16 @@ class AppRouter extends GoRoute {
     if (state.extra != null && state.extra is Map<String, String>) {
       final extra = state.extra as Map<String, String>;
       return AppScaffold(
-        body: builder(state),
+        body: SafeArea(
+          child: builder(state),
+        ),
         appBarTitle: extra['appBarTitle'] ?? appBarTitle,
       );
     } else {
       return AppScaffold(
-        body: builder(state),
+        body: SafeArea(
+          child: builder(state),
+        ),
         appBarTitle: appBarTitle,
       );
     }

@@ -19,22 +19,25 @@ class AppScaffold extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) => Scaffold(
-      appBar: AppBar(
-        title: Text(appBarTitle ?? _defaultAppBarTitle),
-      ),
-      body: Row(
-        children: [
-          if (ResponsiveBreakpoints.of(context).largerOrEqualTo(DESKTOP))
-            const AppNavigationRail(),
-          body,
-        ],
-      ),
-      bottomNavigationBar: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (ResponsiveBreakpoints.of(context).smallerThan(DESKTOP))
-            AppMobilePlayer(),
-          AppNavigationBar(),
-        ],
-      ));
+        appBar: AppBar(
+          title: Text(appBarTitle ?? _defaultAppBarTitle),
+        ),
+        body: Row(
+          children: [
+            if (ResponsiveBreakpoints.of(context).largerOrEqualTo(DESKTOP))
+              const AppNavigationRail(),
+            Expanded(child: body),
+          ],
+        ),
+        bottomNavigationBar:
+            (ResponsiveBreakpoints.of(context).smallerThan(DESKTOP))
+                ? Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      AppMobilePlayer(),
+                      AppNavigationBar(),
+                    ],
+                  )
+                : AppDesktopPlayer(),
+      );
 }

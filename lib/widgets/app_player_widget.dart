@@ -3,16 +3,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mpax_flutter/provider/app_state_provider.dart';
 import 'package:mpax_flutter/widgets/play_state.dart';
 
+const _albumCoverOffset = 5.0;
+
 class AppMobilePlayer extends ConsumerStatefulWidget {
   const AppMobilePlayer({super.key});
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => AppMobilePlayerState();
+  ConsumerState<AppMobilePlayer> createState() => AppMobilePlayerState();
 }
 
 class AppMobilePlayerState extends ConsumerState<AppMobilePlayer> {
   static const playerHeight = 70.0;
-  static const albumCoverOffset = 5.0;
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +61,7 @@ class AppMobilePlayerState extends ConsumerState<AppMobilePlayer> {
                 padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
                 child: ClipRRect(
                   borderRadius: const BorderRadius.all(
-                    Radius.circular(albumCoverOffset * 2),
+                    Radius.circular(_albumCoverOffset * 2),
                   ),
                   // child: Container(
                   //   color: ElevationOverlay.applySurfaceTint(
@@ -78,14 +79,14 @@ class AppMobilePlayerState extends ConsumerState<AppMobilePlayer> {
                       child: Row(
                         children: [
                           const SizedBox(
-                            width: albumCoverOffset,
+                            width: _albumCoverOffset,
                           ),
                           SizedBox(
-                            width: playerHeight - 2 * albumCoverOffset,
-                            height: playerHeight - 2 * albumCoverOffset,
+                            width: playerHeight - 2 * _albumCoverOffset,
+                            height: playerHeight - 2 * _albumCoverOffset,
                             child: ClipRRect(
                               borderRadius: const BorderRadius.all(
-                                Radius.circular(albumCoverOffset * 2),
+                                Radius.circular(_albumCoverOffset * 2),
                               ),
                               child: Container(
                                 color: Colors.red,
@@ -93,7 +94,7 @@ class AppMobilePlayerState extends ConsumerState<AppMobilePlayer> {
                             ),
                           ),
                           const SizedBox(
-                            width: albumCoverOffset,
+                            width: _albumCoverOffset,
                           ),
                           Expanded(
                             child: Column(
@@ -102,7 +103,7 @@ class AppMobilePlayerState extends ConsumerState<AppMobilePlayer> {
                               children: [
                                 Text(
                                   ref.watch(appStateProvider).currentMediaTitle,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     fontSize: 17,
                                   ),
                                 ),
@@ -110,7 +111,7 @@ class AppMobilePlayerState extends ConsumerState<AppMobilePlayer> {
                                   ref
                                       .watch(appStateProvider)
                                       .currentMediaArtist,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     fontSize: 15,
                                   ),
                                 ),
@@ -136,6 +137,112 @@ class AppMobilePlayerState extends ConsumerState<AppMobilePlayer> {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class AppDesktopPlayer extends ConsumerStatefulWidget {
+  const AppDesktopPlayer({super.key});
+
+  @override
+  ConsumerState<AppDesktopPlayer> createState() => AppDesktopPlayerState();
+}
+
+class AppDesktopPlayerState extends ConsumerState<AppDesktopPlayer> {
+  @override
+  Widget build(BuildContext context) {
+    return ConstrainedBox(
+      constraints: const BoxConstraints(
+        maxHeight: 150,
+      ),
+      child: Card(
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  ClipRRect(
+                    borderRadius: const BorderRadius.all(
+                      Radius.circular(
+                        _albumCoverOffset,
+                      ),
+                    ),
+                    child: Container(
+                      width: 60,
+                      height: 60,
+                      color: Colors.red,
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 5,
+                  ),
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          ref.watch(appStateProvider).currentMediaTitle,
+                          style: const TextStyle(
+                            fontSize: 17,
+                          ),
+                        ),
+                        Text(
+                          ref.watch(appStateProvider).currentMediaArtist,
+                          style: const TextStyle(
+                            fontSize: 15,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 5,
+              ),
+              Row(
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      // TODO: Skip to previous.
+                    },
+                    icon: const Icon(Icons.skip_previous),
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      // TODO: Play or pause.
+                    },
+                    icon: playerStateIconMap[
+                        ref.watch(appStateProvider).playerState]!,
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      // TODO: Skip to next.
+                    },
+                    icon: const Icon(Icons.skip_next),
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      // TODO: Stop.
+                    },
+                    icon: const Icon(Icons.stop),
+                  ),
+                  Expanded(
+                    child: Slider(
+                      value: 0.0,
+                      onChanged: (value) {
+                        // TODO: Change current position.
+                      },
+                    ),
+                  ),
+                ],
+              )
+            ],
+          ),
+        ),
       ),
     );
   }

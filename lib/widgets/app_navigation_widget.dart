@@ -24,10 +24,10 @@ final _barItems = <NavigationBarItem>[
     icon: const Icon(Icons.queue_music),
     label: 'Playlist',
   ),
-  NavigationBarItem(
-    icon: const Icon(Icons.audiotrack),
-    label: 'Music',
-  ),
+  // NavigationBarItem(
+  //   icon: const Icon(Icons.audiotrack),
+  //   label: 'Music',
+  // ),
   NavigationBarItem(
     icon: const Icon(Icons.settings),
     label: 'Settings',

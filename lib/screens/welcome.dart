@@ -15,12 +15,29 @@ class WelcomePage extends ConsumerWidget {
     } else {
       color = Colors.yellow;
     }
-    return Padding(
-      padding: const EdgeInsets.all(10),
-      child: Center(
-        child: Text(
-          'Welcome!',
-          style: TextStyle(color: color),
+    return Center(
+      child: SizedBox(
+        width: 200,
+        height: 100,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            Text(
+              'Welcome to MPax',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 22),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                // await Get.toNamed(MPaxRoutes.scan);
+              },
+              child: Text('Scan music'),
+            ),
+          ],
         ),
       ),
     );
