@@ -47,7 +47,7 @@ class MPaxApp extends StatelessWidget {
               title: 'MPax',
               theme: AppTheme.flexLight,
               darkTheme: AppTheme.flexDark,
-              routerConfig: appRouter,
+              routerConfig: appRoute,
               builder: (context, child) => Scaffold(body: child),
             ),
             breakpoints: [

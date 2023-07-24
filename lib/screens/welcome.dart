@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:mpax_flutter/router.dart';
 import 'package:responsive_framework/responsive_breakpoints.dart';
 
 class WelcomePage extends ConsumerWidget {
@@ -33,7 +35,7 @@ class WelcomePage extends ConsumerWidget {
             ),
             ElevatedButton(
               onPressed: () async {
-                // await Get.toNamed(MPaxRoutes.scan);
+                context.goNamed(ScreenPaths.scan);
               },
               child: Text('Scan music'),
             ),
