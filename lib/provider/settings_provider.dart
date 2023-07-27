@@ -94,7 +94,10 @@ class SettingsNotifier extends StateNotifier<Settings> {
                 _settings.getBool(settingsUseDarkTheme) ?? _defaultUseDarkMode,
             followSystemTheme: _settings.getBool(settingsFollowSystemTheme) ??
                 _defaultFollowSystemTheme,
-            volume: _settings.getInt(settingsVolume) ?? _defaultVolume));
+            volume: _settings.getInt(settingsVolume) ?? _defaultVolume,
+            scanDirectoryList:
+                _settings.getStringList(settingsScanDirectoryList) ??
+                    _defaultScanDirectoryList));
 
   final Ref ref;
   static const _defaultCurrentMediaPath = '';
@@ -103,6 +106,7 @@ class SettingsNotifier extends StateNotifier<Settings> {
   static const _defaultUseDarkMode = false;
   static const _defaultFollowSystemTheme = true;
   static const _defaultVolume = 30;
+  static const _defaultScanDirectoryList = <String>[];
 
   Future<void> setCurrentMediaPath(String currentMediaPath) async {
     state = state.copyWith(currentMediaPath: currentMediaPath);
@@ -132,5 +136,17 @@ class SettingsNotifier extends StateNotifier<Settings> {
   Future<void> setVolume(int volume) async {
     state = state.copyWith(volume: volume);
     await _settings.saveInt(settingsVolume, volume);
+  }
+
+  Future<void> addScanDirectory(String directory) async {
+    final list = state.scanDirectoryList.toList()..add(directory);
+    state = state.copyWith(scanDirectoryList: list);
+    await _settings.saveStringList(settingsScanDirectoryList, list);
+  }
+
+  Future<void> removeScanDirectory(String directory) async {
+    final list = state.scanDirectoryList.toList()..remove(directory);
+    state = state.copyWith(scanDirectoryList: list);
+    await _settings.saveStringList(settingsScanDirectoryList, list);
   }
 }

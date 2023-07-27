@@ -35,7 +35,10 @@ class WelcomePage extends ConsumerWidget {
             ),
             ElevatedButton(
               onPressed: () async {
-                context.goNamed(ScreenPaths.scan);
+                context.goNamed(
+                  ScreenPaths.scan,
+                  extra: <String, String>{'appBarTitle': 'Scan'},
+                );
               },
               child: Text('Scan music'),
             ),

@@ -13,6 +13,7 @@ class Settings with _$Settings {
     required bool useDarkTheme,
     required bool followSystemTheme,
     required int volume,
+    required List<String> scanDirectoryList,
   }) = _Settings;
 }
 
@@ -22,6 +23,7 @@ const settingsPlayMode = 'playMode';
 const settingsUseDarkTheme = 'useDarkTheme';
 const settingsFollowSystemTheme = 'followSystemTheme';
 const settingsVolume = 'volume';
+const settingsScanDirectoryList = 'scanDirectoryList';
 
 /// All settings and value types.
 const Map<String, Type> settingsMap = <String, Type>{
@@ -31,4 +33,5 @@ const Map<String, Type> settingsMap = <String, Type>{
   settingsUseDarkTheme: bool,
   settingsFollowSystemTheme: bool,
   settingsVolume: int,
+  settingsScanDirectoryList: List<String>,
 };
