@@ -37,6 +37,7 @@ dependencies:
   just_audio: ^0.9.34
   metadata_god: ^0.4.1
   on_audio_query: ^2.9.0
+  open_filex: ^4.3.2
   path: ^1.8.3
   path_provider: ^2.0.15
   responsive_framework: ^1.1.0

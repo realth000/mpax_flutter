@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mpax_flutter/provider/settings_provider.dart';
+import 'package:mpax_flutter/utils/open_folder.dart';
 import 'package:mpax_flutter/widgets/section_card.dart';
 
 enum _FolderMenuActions {
@@ -61,7 +62,7 @@ class _ScanPageState extends ConsumerState<ScanPage> {
           onSelected: (value) async {
             switch (value) {
               case _FolderMenuActions.openFolder:
-                // TODO: Open folder here.
+                await openFolder(dir);
                 return;
               case _FolderMenuActions.copyPath:
                 await Clipboard.setData(
