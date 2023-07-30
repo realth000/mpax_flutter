@@ -2,6 +2,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mpax_flutter/provider/scanner_provider.dart';
 import 'package:mpax_flutter/provider/settings_provider.dart';
 import 'package:mpax_flutter/utils/open_folder.dart';
 import 'package:mpax_flutter/widgets/section_card.dart';
@@ -22,7 +23,7 @@ class ScanPage extends ConsumerStatefulWidget {
 class _ScanPageState extends ConsumerState<ScanPage> {
   @override
   Widget build(BuildContext context) {
-    final list = ref.watch(settingsProvider).scanDirectoryList;
+    final list = ref.watch(appSettingsProvider).scanDirectoryList;
 
     final scanTargets = <Widget>[];
     for (final dir in list) {
@@ -73,7 +74,7 @@ class _ScanPageState extends ConsumerState<ScanPage> {
                 return;
               case _FolderMenuActions.delete:
                 await ref
-                    .read(settingsProvider.notifier)
+                    .read(appSettingsProvider.notifier)
                     .removeScanDirectory(dir);
                 return;
             }
@@ -124,18 +125,33 @@ class _ScanPageState extends ConsumerState<ScanPage> {
               final directory = await FilePicker.platform.getDirectoryPath();
               if (directory == null ||
                   ref
-                      .read(settingsProvider)
+                      .read(appSettingsProvider)
                       .scanDirectoryList
                       .contains(directory)) {
                 return;
               }
               await ref
-                  .read(settingsProvider.notifier)
+                  .read(appSettingsProvider.notifier)
                   .addScanDirectory(directory);
             },
             icon: const Icon(Icons.add),
           ),
         ),
+        Row(
+          children: [
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ElevatedButton(
+                  onPressed: () async {
+                    await ref.read(scannerProvider.notifier).scan();
+                  },
+                  child: Text('START SCAN'),
+                ),
+              ),
+            ),
+          ],
+        )
       ],
     );
   }

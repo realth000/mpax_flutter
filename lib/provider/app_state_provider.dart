@@ -16,6 +16,7 @@ class State with _$State {
     required String currentMediaArtwork,
     required PlayerState playerState,
     required PlayMode playMode,
+    required bool isScanning,
   }) = _State;
 }
 
@@ -32,10 +33,15 @@ class AppState extends _$AppState {
       currentMediaArtwork: '',
       playerState: PlayerState.Stop,
       playMode: PlayMode.Repeat,
+      isScanning: false,
     );
   }
 
   void setScreenIndex(int index) {
     state = state.copyWith(screenIndex: index);
+  }
+
+  void setScanning(bool scanning) {
+    state = state.copyWith(isScanning: scanning);
   }
 }
