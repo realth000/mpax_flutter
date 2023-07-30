@@ -1,5 +1,4 @@
 import 'package:isar/isar.dart';
-import 'package:mpax_flutter/models/music_model.dart';
 
 part 'album_model.g.dart';
 
@@ -29,18 +28,14 @@ class Album {
     unique: true,
     composite: [CompositeIndex('title')],
   )
-  late List<Id> artistList;
+  List<int> artistList = <int>[];
 
   /// Album title
   @Index()
   String title;
 
-  /// All related artwork.
-  ///
-  /// Use a [Set] of [Artwork] [Id].
-  /// Not have a artwork type because all artwork with type are only
-  /// related to [Music].
-  late List<Id> artworkList;
+  /// Artwork cover id.
+  int? artwork;
 
   /// Album year.
   int? year;
@@ -49,12 +44,11 @@ class Album {
   int? trackCount;
 
   /// Contained music.
-  late List<Id> albumMusicList;
+  List<int> albumMusicList = <int>[];
 
   Album makeGrowable() {
     return this
       ..artistList = artistList.toList()
-      ..artworkList = artworkList.toList()
       ..albumMusicList = albumMusicList.toList();
   }
 }

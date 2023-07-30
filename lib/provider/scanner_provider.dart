@@ -1,12 +1,19 @@
+import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:mpax_flutter/models/artist_model.dart';
+import 'package:mpax_flutter/models/artwork_model.dart';
 import 'package:mpax_flutter/models/metadata_model.dart';
 import 'package:mpax_flutter/provider/app_state_provider.dart';
+import 'package:mpax_flutter/provider/database_provider.dart';
 import 'package:mpax_flutter/provider/settings_provider.dart';
 import 'package:mpax_flutter/utils/debug.dart';
+import 'package:mpax_flutter/utils/platform.dart';
 import 'package:path/path.dart' as path;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:taglib_ffi/taglib_ffi.dart' as taglib;
 
 part 'scanner_provider.freezed.dart';
 part 'scanner_provider.g.dart';
@@ -15,6 +22,8 @@ part 'scanner_provider.g.dart';
 class ScanOptions with _$ScanOptions {
   const factory ScanOptions({
     required List<String> allowedExtensions,
+    required bool loadImage,
+    required bool scaleImage,
   }) = _ScanOptions;
 }
 
@@ -24,7 +33,17 @@ class Scanner extends _$Scanner {
   ScanOptions build() {
     return const ScanOptions(
       allowedExtensions: <String>['.mp3', '.flac', '.m4a'],
+      loadImage: false,
+      scaleImage: true,
     );
+  }
+
+  void setLoadImage(bool loadImage) {
+    state = state.copyWith(loadImage: loadImage);
+  }
+
+  void setScaleImage(bool scaleImage) {
+    state = state.copyWith(scaleImage: scaleImage);
   }
 
   void addAllowedExtension(String extension) {
@@ -62,6 +81,10 @@ class Scanner extends _$Scanner {
     }
 
     final allowedExtensions = state.allowedExtensions;
+    final loadImage = state.loadImage;
+    final scaleImage = state.scaleImage;
+
+    final db = ref.read(databaseProvider.notifier);
 
     await for (final entity in dir.list(recursive: true, followLinks: false)) {
       if (entity is! File) {
@@ -75,8 +98,109 @@ class Scanner extends _$Scanner {
       }
 
       debug('reading metadata: ${entity.path}');
-      await Metadata(entity.path).fetch();
+      final metadata = await _fetchMetadata(entity.path);
+      if (metadata == null) {
+        continue;
+      }
+
+      // Save models.
+      final music = await db.fetchMusic(metadata.filePath);
+      music
+        ..fileName = path.basename(music.filePath)
+        ..fileSize = File(music.filePath).lengthSync()
+        ..title = metadata.title
+        ..trackNumber = metadata.track
+        ..bitRate = metadata.bitrate
+        ..sampleRate = metadata.sampleRate
+        ..channels = metadata.channels
+        ..genre = metadata.genre
+        ..length = metadata.length
+        ..lyrics = metadata.lyrics
+        ..comment = metadata.comment;
+
+      // Save [Artist].
+      Artist? _artist;
+      if (metadata.artist != null) {
+        final artist = await db.fetchArtist(metadata.artist!);
+        music.id = artist.id;
+        _artist = artist;
+      }
+
+      // Save [Artwork].
+      // TODO: Save all cover images.
+      if (loadImage && metadata.artworkUnknown != null) {
+        if (scaleImage && isMobile) {
+          final data = await FlutterImageCompress.compressWithList(
+            metadata.artworkUnknown!,
+            minWidth: 120,
+            minHeight: 120,
+          );
+          final artwork =
+              await db.fetchArtwork(ArtworkFormat.jpeg, base64Encode(data));
+          music.artworkUnknown = artwork.id;
+        } else {
+          final artwork = await db.fetchArtwork(
+              ArtworkFormat.jpeg, base64Encode(metadata.artworkUnknown!));
+          music.artworkUnknown = artwork.id;
+        }
+      }
+
+      // Save [Album].
+      if (metadata.albumTitle != null) {
+        final albumArtistList = <int>[];
+        for (final aa in metadata.albumArtist) {
+          final artist = await db.fetchArtist(aa);
+          albumArtistList.add(artist.id);
+        }
+        final album = await db.fetchAlbum(
+          metadata.albumTitle!,
+          albumArtistList,
+          albumTitle: metadata.albumTitle,
+          albumTrackCount: metadata.albumTrackCount,
+          albumYear: metadata.albumYear,
+          artworkId: music.artworkUnknown,
+        );
+        music.album = album.id;
+      }
+
+      await db.saveMusic(music);
+      if (_artist != null) {
+        await _artist.addMusic(music);
+        await db.saveArtist(_artist);
+      }
     }
     return <String>[];
+  }
+
+  Future<Metadata?> _fetchMetadata(String filePath) async {
+    final Metadata ret = Metadata(filePath);
+    final taglibMetadata =
+        await taglib.TagLib(filePath: filePath).readMetadataEx();
+    if (taglibMetadata == null) {
+      return null;
+    }
+    debug('get metadata: ${taglibMetadata.title}, ${taglibMetadata.artist}');
+    ret
+      ..title = taglibMetadata.title
+      ..artist = taglibMetadata.artist
+      ..albumTitle = taglibMetadata.album;
+    if (taglibMetadata.albumArtist != null) {
+      ret.albumArtist
+        ..clear()
+        ..add(taglibMetadata.albumArtist!);
+    }
+    ret
+      ..track = taglibMetadata.track
+      ..albumTrackCount = taglibMetadata.albumTotalTrack
+      ..albumYear = taglibMetadata.year
+      ..genre = taglibMetadata.genre
+      ..comment = taglibMetadata.comment
+      ..sampleRate = taglibMetadata.sampleRate
+      ..bitrate = taglibMetadata.bitrate
+      ..channels = taglibMetadata.channels
+      ..length = taglibMetadata.length
+      ..lyrics = taglibMetadata.lyrics
+      ..artworkUnknown = taglibMetadata.albumCover;
+    return ret;
   }
 }

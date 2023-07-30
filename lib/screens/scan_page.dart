@@ -144,6 +144,7 @@ class _ScanPageState extends ConsumerState<ScanPage> {
                 padding: const EdgeInsets.all(8.0),
                 child: ElevatedButton(
                   onPressed: () async {
+                    ref.read(scannerProvider.notifier).setLoadImage(true);
                     await ref.read(scannerProvider.notifier).scan();
                   },
                   child: Text('START SCAN'),

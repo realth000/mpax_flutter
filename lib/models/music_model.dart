@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:isar/isar.dart';
-import 'package:mpax_flutter/models/artwork_with_type_model.dart';
 import 'package:mpax_flutter/models/metadata_model.dart';
 import 'package:on_audio_query/on_audio_query.dart' as aq;
 import 'package:path/path.dart' as path;
@@ -154,9 +153,7 @@ class Music {
   }
 
   Music makeGrowable() {
-    return this
-      ..artistList = artistList.toList()
-      ..artworkList = artworkList.toList();
+    return this..artistList = artistList.toList();
   }
 
   /// Id in database.
@@ -185,10 +182,27 @@ class Music {
   /// Audio lyrics.
   String? lyrics;
 
-  /// All artworks.
+  /// Front cover artwork id.
+  int? artworkFrontCover;
+
+  /// Back cover artwork id.
+  int? artworkBackCover;
+
+  /// Artist cover artwork id.
+  int? artworkArtist;
+
+  /// Disc cover artwork id.
   ///
-  /// All [Id] of [ArtworkWithType] related to this music.
-  List<Id> artworkList = <Id>[];
+  /// Most used.
+  int? artworkDisc;
+
+  /// Icon cover artwork id.
+  int? artworkIcon;
+
+  /// Artwork id at unknown position.
+  ///
+  /// Use as a default fallback image.
+  int? artworkUnknown;
 
   //////////////  Album Properties //////////////
 

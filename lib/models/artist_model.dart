@@ -11,11 +11,13 @@ class Artist {
 
   /// Add music.
   Future<void> addMusic(Music music) async {
+    if (musicList.contains(music.id)) {
+      return;
+    }
     musicList.add(music.id);
-    if (music.album != null) {
+    if (music.album != null && albumList.contains(music.album!)) {
       albumList.add(music.album!);
     }
-    // await Get.find<DatabaseService>().saveArtist(this);
   }
 
   /// Id in database.
