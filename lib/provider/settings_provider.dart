@@ -1,14 +1,18 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mpax_flutter/models/settings_model.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-late final _SettingsService _settings;
+part 'settings_provider.g.dart';
 
-final settingsProvider =
-    StateNotifierProvider<SettingsNotifier, Settings>(SettingsNotifier.new);
+late final _SettingsService _settings;
+bool _initialized = false;
 
 Future<void> initSettings() async {
+  if (_initialized) {
+    return;
+  }
   _settings = await _SettingsService().init();
+  _initialized = true;
 }
 
 class _SettingsService {
@@ -82,24 +86,27 @@ class _SettingsService {
   }
 }
 
-class SettingsNotifier extends StateNotifier<Settings> {
-  SettingsNotifier(this.ref)
-      : super(Settings(
-            currentMediaPath: _settings.getString(settingsCurrentMediaPath) ??
-                _defaultCurrentMediaPath,
-            currentPlaylistId: _settings.getInt(settingsCurrentPlaylistId) ??
-                _defaultCurrentPlaylistId,
-            playMode: _settings.getString(settingsPlayMode) ?? _defaultPlayMode,
-            useDarkTheme:
-                _settings.getBool(settingsUseDarkTheme) ?? _defaultUseDarkMode,
-            followSystemTheme: _settings.getBool(settingsFollowSystemTheme) ??
-                _defaultFollowSystemTheme,
-            volume: _settings.getInt(settingsVolume) ?? _defaultVolume,
-            scanDirectoryList:
-                _settings.getStringList(settingsScanDirectoryList) ??
-                    _defaultScanDirectoryList));
+@riverpod
+class AppSettings extends _$AppSettings {
+  @override
+  Settings build() {
+    initSettings();
 
-  final Ref ref;
+    return Settings(
+        currentMediaPath: _settings.getString(settingsCurrentMediaPath) ??
+            _defaultCurrentMediaPath,
+        currentPlaylistId: _settings.getInt(settingsCurrentPlaylistId) ??
+            _defaultCurrentPlaylistId,
+        playMode: _settings.getString(settingsPlayMode) ?? _defaultPlayMode,
+        useDarkTheme:
+            _settings.getBool(settingsUseDarkTheme) ?? _defaultUseDarkMode,
+        followSystemTheme: _settings.getBool(settingsFollowSystemTheme) ??
+            _defaultFollowSystemTheme,
+        volume: _settings.getInt(settingsVolume) ?? _defaultVolume,
+        scanDirectoryList: _settings.getStringList(settingsScanDirectoryList) ??
+            _defaultScanDirectoryList);
+  }
+
   static const _defaultCurrentMediaPath = '';
   static const _defaultCurrentPlaylistId = 0;
   static const _defaultPlayMode = '';
