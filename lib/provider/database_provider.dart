@@ -13,7 +13,7 @@ part 'database_provider.g.dart';
 late final Isar _storage;
 bool _initialized = false;
 
-Future<void> _initialize() async {
+Future<void> initializeDatabase() async {
   if (_initialized) {
     return;
   }
@@ -53,7 +53,7 @@ class Database extends _$Database {
     if (_initialized) {
       return;
     }
-    _initialize();
+    await initializeDatabase();
   }
 
   /// Run a write transaction.

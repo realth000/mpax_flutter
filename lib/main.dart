@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:metadata_god/metadata_god.dart';
+import 'package:mpax_flutter/provider/database_provider.dart';
 import 'package:mpax_flutter/provider/settings_provider.dart';
 import 'package:mpax_flutter/router.dart';
 import 'package:mpax_flutter/themes/app_themes.dart';
@@ -13,6 +14,7 @@ import 'package:window_manager/window_manager.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   MetadataGod.initialize();
+  await initializeDatabase();
   await SimpleAudio.init(
     dbusName: 'kzs.th000.mpax_flutter',
     actions: [

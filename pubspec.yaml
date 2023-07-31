@@ -15,6 +15,7 @@ dependencies:
   collection: ^1.17.1
   crypto: ^3.0.3
   devicelocale: ^0.6.0
+  easy_refresh: ^3.3.2+1
   ffi: ^2.0.2
   # zenity
   file_picker: ^5.2.10
