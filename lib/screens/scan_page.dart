@@ -83,77 +83,83 @@ class _ScanPageState extends ConsumerState<ScanPage> {
       ));
     }
 
-    return Column(
-      children: [
-        SectionCard(
-          'System Media Store',
-          [
-            Section(
-              'Use system media store',
-              subtitle: 'Use system media store (global and fast)',
-              trailing: Checkbox(
-                value: true,
-                onChanged: (value) {},
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: [
+            SectionCard(
+              'System Media Store',
+              [
+                Section(
+                  'Use system media store',
+                  subtitle: 'Use system media store (global and fast)',
+                  trailing: Checkbox(
+                    value: true,
+                    onChanged: (value) {},
+                  ),
+                ),
+                Section(
+                  'Update when restart',
+                  subtitle: 'Fetch data from media store every startup',
+                  trailing: Checkbox(
+                    value: true,
+                    onChanged: (value) {},
+                  ),
+                )
+              ],
+            ),
+            SectionCard(
+              'Directories',
+              scanTargets.isEmpty
+                  ? [
+                      Center(
+                        child: Text(
+                          'Empty',
+                          style: TextStyle(
+                              fontSize: 16,
+                              color: Theme.of(context).colorScheme.outline),
+                        ),
+                      )
+                    ]
+                  : scanTargets,
+              trailing: IconButton(
+                onPressed: () async {
+                  final directory =
+                      await FilePicker.platform.getDirectoryPath();
+                  if (directory == null ||
+                      ref
+                          .read(appSettingsProvider)
+                          .scanDirectoryList
+                          .contains(directory)) {
+                    return;
+                  }
+                  await ref
+                      .read(appSettingsProvider.notifier)
+                      .addScanDirectory(directory);
+                },
+                icon: const Icon(Icons.add),
               ),
             ),
-            Section(
-              'Update when restart',
-              subtitle: 'Fetch data from media store every startup',
-              trailing: Checkbox(
-                value: true,
-                onChanged: (value) {},
-              ),
+            Row(
+              children: [
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        ref.read(scannerProvider.notifier).setLoadImage(true);
+                        await ref.read(scannerProvider.notifier).scan();
+                      },
+                      child: Text('START SCAN'),
+                    ),
+                  ),
+                ),
+              ],
             )
           ],
         ),
-        SectionCard(
-          'Directories',
-          scanTargets.isEmpty
-              ? [
-                  Center(
-                    child: Text(
-                      'Empty',
-                      style: TextStyle(
-                          fontSize: 16,
-                          color: Theme.of(context).colorScheme.outline),
-                    ),
-                  )
-                ]
-              : scanTargets,
-          trailing: IconButton(
-            onPressed: () async {
-              final directory = await FilePicker.platform.getDirectoryPath();
-              if (directory == null ||
-                  ref
-                      .read(appSettingsProvider)
-                      .scanDirectoryList
-                      .contains(directory)) {
-                return;
-              }
-              await ref
-                  .read(appSettingsProvider.notifier)
-                  .addScanDirectory(directory);
-            },
-            icon: const Icon(Icons.add),
-          ),
-        ),
-        Row(
-          children: [
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: ElevatedButton(
-                  onPressed: () async {
-                    ref.read(scannerProvider.notifier).setLoadImage(true);
-                    await ref.read(scannerProvider.notifier).scan();
-                  },
-                  child: Text('START SCAN'),
-                ),
-              ),
-            ),
-          ],
-        )
-      ],
+      ),
     );
   }
 }

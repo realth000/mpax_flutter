@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mpax_flutter/provider/app_state_provider.dart';
+import 'package:mpax_flutter/router.dart';
 import 'package:responsive_framework/responsive_breakpoints.dart';
 
 /// Bar items in navigation bar.
@@ -34,6 +36,26 @@ final _barItems = <NavigationBarItem>[
   ),
 ];
 
+void gotoTabIndex(BuildContext context, int index) {
+  switch (index) {
+    case 0:
+      context.go(
+        ScreenPaths.mediaLibrary,
+        extra: <String, String>{'appBarTitle': 'Library'},
+      );
+    case 1:
+      context.go(
+        ScreenPaths.playlist,
+        extra: <String, String>{'appBarTitle': 'Playlist'},
+      );
+    case 2:
+      context.go(
+        ScreenPaths.settings,
+        extra: <String, String>{'appBarTitle': 'Settings'},
+      );
+  }
+}
+
 class AppNavigationRail extends ConsumerWidget {
   const AppNavigationRail({super.key});
 
@@ -53,6 +75,7 @@ class AppNavigationRail extends ConsumerWidget {
       selectedIndex: ref.watch(appStateProvider).screenIndex,
       onDestinationSelected: (index) {
         ref.read(appStateProvider.notifier).setScreenIndex(index);
+        gotoTabIndex(context, index);
       },
       labelType: NavigationRailLabelType.none,
     );
@@ -70,6 +93,7 @@ class AppNavigationBar extends ConsumerWidget {
         selectedIndex: ref.watch(appStateProvider).screenIndex,
         onDestinationSelected: (index) {
           ref.read(appStateProvider.notifier).setScreenIndex(index);
+          gotoTabIndex(context, index);
         },
       );
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mpax_flutter/screens/media_library_page.dart';
+import 'package:mpax_flutter/screens/playlist.dart';
 import 'package:mpax_flutter/screens/scan_page.dart';
 import 'package:mpax_flutter/screens/settings_page.dart';
 import 'package:mpax_flutter/screens/welcome.dart';
@@ -9,6 +10,7 @@ import 'package:mpax_flutter/widgets/app_scaffold.dart';
 class ScreenPaths {
   static const String welcome = '/';
   static const String mediaLibrary = '/library';
+  static const String playlist = '/playlist';
   static const String settings = '/settings';
   static const String scan = '/settings/scan';
 }
@@ -19,8 +21,11 @@ final appRoute = GoRouter(routes: [
     builder: (state) => const WelcomePage(),
   ),
   AppRoute(
-      path: ScreenPaths.mediaLibrary,
-      builder: (state) => const MediaLibraryPage()),
+    path: ScreenPaths.mediaLibrary,
+    builder: (state) => const MediaLibraryPage(),
+  ),
+  AppRoute(
+      path: ScreenPaths.playlist, builder: (state) => const PlaylistPage()),
   AppRoute(
     path: ScreenPaths.settings,
     builder: (state) => const SettingsPage(),

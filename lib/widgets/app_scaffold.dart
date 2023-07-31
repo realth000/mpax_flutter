@@ -23,6 +23,7 @@ class AppScaffold extends ConsumerWidget {
           title: Text(appBarTitle ?? _defaultAppBarTitle),
         ),
         body: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (ResponsiveBreakpoints.of(context).largerOrEqualTo(DESKTOP))
               const AppNavigationRail(),

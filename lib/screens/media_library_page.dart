@@ -12,6 +12,8 @@ class MediaLibraryPage extends ConsumerStatefulWidget {
 class _MediaLibraryPageState extends ConsumerState<MediaLibraryPage> {
   @override
   Widget build(BuildContext context) {
-    return Placeholder();
+    return Center(
+      child: Text('library'),
+    );
   }
 }
