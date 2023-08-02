@@ -152,6 +152,15 @@ class Music {
     return true;
   }
 
+  int? firstArtwork() {
+    return artworkFrontCover ??
+        artworkDisc ??
+        artworkBackCover ??
+        artworkArtist ??
+        artworkIcon ??
+        artworkUnknown;
+  }
+
   Music makeGrowable() {
     return this..artistList = artistList.toList();
   }

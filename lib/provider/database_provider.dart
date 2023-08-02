@@ -158,6 +158,13 @@ class Database extends _$Database {
     return album.title;
   }
 
+  Future<Artwork?> findArtworkById(Id? id) async {
+    if (id == null) {
+      return null;
+    }
+    return _storage.artworks.get(id);
+  }
+
   //////////////// fetch ////////////////
 
   /// Return a [Music].

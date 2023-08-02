@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -78,10 +80,10 @@ class _AudioListState extends ConsumerState<AudioList> {
         child: ListView.builder(
           controller: _scrollController,
           itemCount: _count,
-          itemExtent: 30,
+          itemExtent: 60,
           itemBuilder: (context, index) {
             debug('>>>> build list $index ${musicList[index].fileName}');
-            return Text(musicList[index].fileName);
+            return AudioItem(musicList[index]);
           },
         ),
         onRefresh: () async {
@@ -95,5 +97,115 @@ class _AudioListState extends ConsumerState<AudioList> {
           await loadData();
           _refreshController.finishLoad();
         },
+      );
+}
+
+class AudioItem extends ConsumerWidget {
+  const AudioItem(this.music, {super.key});
+
+  final Music music;
+
+  Future<String?> _leadingIcon(WidgetRef ref) async {
+    final artworkId = music.firstArtwork();
+    if (artworkId == null) {
+      return null;
+    }
+    final artworkData =
+        await ref.read(databaseProvider.notifier).findArtworkById(artworkId);
+    if (artworkData == null) {
+      return null;
+    }
+    return artworkData.data;
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    const spaceBox = SizedBox(
+      width: 56,
+      height: 56,
+      child: Icon(Icons.music_note),
+    );
+    return ListTile(
+      leading: FutureBuilder(
+        future: _leadingIcon(ref),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return spaceBox;
+          } else if (snapshot.connectionState != ConnectionState.done) {
+            return spaceBox;
+          } else {
+            final artwork = snapshot.data;
+            if (artwork == null) {
+              return spaceBox;
+            }
+            return Image.memory(
+              base64Decode(artwork),
+              width: 56,
+              height: 56,
+              isAntiAlias: true,
+            );
+          }
+        },
+      ),
+      title: const Text(
+        '',
+        // playContent.title.isEmpty
+        //     ? path.basename(playContent.filePath)
+        //     : playContent.title,
+        maxLines: 2,
+        style: TextStyle(
+          fontSize: 15,
+        ),
+      ),
+      subtitle: const Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            '',
+            maxLines: 1,
+            style: TextStyle(
+              fontSize: 14,
+            ),
+          ),
+          Text(
+            '',
+            // playContent.albumTitle.isEmpty
+            //     ? playContent.filePath
+            //         .replaceFirst('/storage/emulated/0/', '')
+            //     : playContent.albumTitle,
+            maxLines: 1,
+            style: TextStyle(
+              fontSize: 14,
+            ),
+          ),
+        ],
+      ),
+      trailing: IconButton(
+        onPressed: () async {
+          // TODO: Menu
+        },
+        icon: const Icon(Icons.more_horiz),
+      ),
+      onTap: () async {
+        // TODO: Play.
+      },
+      // This important.
+      isThreeLine: true,
+    );
+  }
+}
+
+/// Center placed item for [ListTile].
+class ListTileLeading extends StatelessWidget {
+  /// Constructor.
+  const ListTileLeading({required this.child, super.key});
+
+  /// Widget tot show.
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => Column(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [child],
       );
 }
