@@ -37,7 +37,7 @@ class Playlist {
   ///
   /// All [Music] link saved in must NOT be null.
   /// If so, we should check every time access them or keep observing.
-  late List<Id> musicList;
+  List<Id> musicList = <Id>[];
 
   Playlist makeGrowable() {
     return this..musicList = musicList.toList();
