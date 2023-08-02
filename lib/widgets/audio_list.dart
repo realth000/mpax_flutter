@@ -29,13 +29,15 @@ class _AudioListState extends ConsumerState<AudioList> {
   @override
   void initState() {
     super.initState();
-    final playlist = ref
-        .read(databaseProvider.notifier)
-        .findPlaylistByNameSync(widget.playlistName);
-    if (playlist != null) {
-      musicIdList = playlist.musicList;
+    if (musicIdList.isEmpty) {
+      final playlist = ref
+          .read(databaseProvider.notifier)
+          .findPlaylistByNameSync(widget.playlistName);
+      if (playlist != null) {
+        musicIdList = playlist.musicList;
+      }
+      debug('>>>> length: ${musicIdList.length}');
     }
-    debug('>>>> ${musicIdList.length}');
   }
 
   int _count = 0;
@@ -53,17 +55,19 @@ class _AudioListState extends ConsumerState<AudioList> {
 
   Future<void> loadData() async {
     int loadCount = 0;
-    while (musicIdList.length > _count && loadCount < widget.loadStep) {
-      debug('>>>> load $_count');
+    while (musicIdList.length > _count + loadCount &&
+        loadCount < widget.loadStep) {
       final music = await ref
           .read(databaseProvider.notifier)
-          .findMusicById(musicIdList[_count]);
+          .findMusicById(musicIdList[_count + loadCount]);
       if (music != null) {
         musicList.add(music);
       }
       loadCount++;
-      _count++;
     }
+    setState(() {
+      _count += loadCount;
+    });
   }
 
   @override
