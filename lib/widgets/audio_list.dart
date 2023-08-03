@@ -1,10 +1,12 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mpax_flutter/models/music_model.dart';
 import 'package:mpax_flutter/provider/database_provider.dart';
+import 'package:mpax_flutter/provider/player_provider.dart';
 import 'package:mpax_flutter/utils/debug.dart';
 import 'package:path/path.dart' as path;
 
@@ -222,7 +224,23 @@ class AudioItem extends ConsumerWidget {
         icon: const Icon(Icons.more_horiz),
       ),
       onTap: () async {
-        // TODO: Play.
+        final title = music.title ?? path.basename(music.filePath);
+        final artist = await _fetchArtist(ref);
+        final album = await _fetchAlbum(ref);
+        final artworkRaw = await _fetchArtwork(ref);
+        final Uint8List artwork;
+        if (artworkRaw == null) {
+          artwork = Uint8List(0);
+        } else {
+          artwork = base64Decode(artworkRaw);
+        }
+        await ref.read(playerProvider).play(
+              music.filePath,
+              title: title,
+              artist: artist,
+              album: album,
+              artwork: artwork,
+            );
       },
       isThreeLine: true,
       titleAlignment: ListTileTitleAlignment.top,
