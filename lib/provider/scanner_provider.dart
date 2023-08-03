@@ -122,7 +122,7 @@ class Scanner extends _$Scanner {
       Artist? _artist;
       if (metadata.artist != null) {
         final artist = await db.fetchArtist(metadata.artist!);
-        music.id = artist.id;
+        music.artistList.add(artist.id);
         _artist = artist;
       }
 

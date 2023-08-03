@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mpax_flutter/models/music_model.dart';
 import 'package:mpax_flutter/provider/database_provider.dart';
 import 'package:mpax_flutter/utils/debug.dart';
+import 'package:path/path.dart' as path;
 
 class AudioList extends ConsumerStatefulWidget {
   const AudioList(this.playlistName, {this.loadStep = 20, super.key});
@@ -80,7 +81,7 @@ class _AudioListState extends ConsumerState<AudioList> {
         child: ListView.builder(
           controller: _scrollController,
           itemCount: _count,
-          itemExtent: 60,
+          itemExtent: 65,
           itemBuilder: (context, index) {
             debug('>>>> build list $index ${musicList[index].fileName}');
             return AudioItem(musicList[index]);
@@ -105,7 +106,7 @@ class AudioItem extends ConsumerWidget {
 
   final Music music;
 
-  Future<String?> _leadingIcon(WidgetRef ref) async {
+  Future<String?> _fetchArtwork(WidgetRef ref) async {
     final artworkId = music.firstArtwork();
     if (artworkId == null) {
       return null;
@@ -118,16 +119,30 @@ class AudioItem extends ConsumerWidget {
     return artworkData.data;
   }
 
+  Future<String> _fetchArtist(WidgetRef ref) async {
+    final artistIdList = music.artistList;
+    final artistString = await ref
+        .read(databaseProvider.notifier)
+        .findArtistNamesByIdList(artistIdList);
+    return artistString;
+  }
+
+  Future<String> _fetchAlbum(WidgetRef ref) async {
+    final albumId = music.album;
+    return ref.read(databaseProvider.notifier).findAlbumTitleById(albumId);
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     const spaceBox = SizedBox(
-      width: 56,
-      height: 56,
+      width: 50,
+      height: 50,
       child: Icon(Icons.music_note),
     );
+
     return ListTile(
       leading: FutureBuilder(
-        future: _leadingIcon(ref),
+        future: _fetchArtwork(ref),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return spaceBox;
@@ -138,46 +153,66 @@ class AudioItem extends ConsumerWidget {
             if (artwork == null) {
               return spaceBox;
             }
-            return Image.memory(
-              base64Decode(artwork),
-              width: 56,
-              height: 56,
-              isAntiAlias: true,
+            return ListTileLeading(
+              child: Image.memory(
+                base64Decode(artwork),
+                width: 50,
+                height: 50,
+                isAntiAlias: true,
+              ),
             );
           }
         },
       ),
-      title: const Text(
-        '',
-        // playContent.title.isEmpty
-        //     ? path.basename(playContent.filePath)
-        //     : playContent.title,
-        maxLines: 2,
-        style: TextStyle(
-          fontSize: 15,
+      title: Text(
+        music.title ?? path.basename(music.filePath),
+        maxLines: 1,
+        style: const TextStyle(
+          fontSize: 14,
         ),
       ),
-      subtitle: const Column(
+      subtitle: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Text(
-            '',
-            maxLines: 1,
-            style: TextStyle(
-              fontSize: 14,
-            ),
+          FutureBuilder(
+            future: _fetchArtist(ref),
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return const Text('');
+              } else if (snapshot.connectionState != ConnectionState.done) {
+                return const Text('');
+              } else {
+                final artistString = snapshot.data;
+                return Text(
+                  artistString!,
+                  maxLines: 1,
+                  style: const TextStyle(
+                    fontSize: 12,
+                  ),
+                );
+              }
+            },
           ),
-          Text(
-            '',
-            // playContent.albumTitle.isEmpty
-            //     ? playContent.filePath
-            //         .replaceFirst('/storage/emulated/0/', '')
-            //     : playContent.albumTitle,
-            maxLines: 1,
-            style: TextStyle(
-              fontSize: 14,
-            ),
-          ),
+          if (true)
+            FutureBuilder(
+              future: _fetchAlbum(ref),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return const Text('');
+                } else if (snapshot.connectionState != ConnectionState.done) {
+                  return const Text('');
+                } else {
+                  final albumString = snapshot.data;
+                  return Text(
+                    albumString!,
+                    maxLines: 1,
+                    style: const TextStyle(
+                      fontSize: 12,
+                    ),
+                  );
+                }
+              },
+            )
         ],
       ),
       trailing: IconButton(
@@ -189,8 +224,8 @@ class AudioItem extends ConsumerWidget {
       onTap: () async {
         // TODO: Play.
       },
-      // This important.
       isThreeLine: true,
+      titleAlignment: ListTileTitleAlignment.top,
     );
   }
 }
@@ -205,7 +240,7 @@ class ListTileLeading extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Column(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [child],
       );
 }

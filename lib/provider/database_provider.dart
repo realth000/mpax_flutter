@@ -65,10 +65,15 @@ class Database extends _$Database {
     await _storage.writeTxn<void>(() async => _storage.playlists.put(playlist));
   }
 
+  // TODO: Better performance.
   /// Save [Music] to database.
   Future<void> saveMusic(Music music) async {
-    await _storage
-        .writeTxn<void>(() async => _storage.musics.putByFilePath(music));
+    await _storage.writeTxn<void>(() async {
+      await _storage.musics.putByFilePath(music);
+      final library = (await _storage.playlists.get(1))!.makeGrowable();
+      await library.addMusic(music);
+      await _storage.playlists.put(library);
+    });
   }
 
   /// Save [Artist] to database.
@@ -121,14 +126,15 @@ class Database extends _$Database {
   }
 
   Future<String> findArtistNamesByIdList(List<Id> idList) async {
-    final artistList = idList
-        .map((e) async => _storage.artists.where().idEqualTo(e).findFirst())
-        .join(' - ');
-    if (artistList.isEmpty) {
-      return '';
-    } else {
-      return artistList;
+    final artistList = <String>[];
+    for (final id in idList) {
+      final artist = await _storage.artists.get(id);
+      if (artist == null) {
+        continue;
+      }
+      artistList.add(artist.name);
     }
+    return artistList.join(' - ');
   }
 
   String findArtistNamesByIdListSync(List<Id> idList) {
