@@ -1,4 +1,4 @@
-import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:easy_refresh/easy_refresh.dart';
@@ -115,7 +115,7 @@ class AudioItem extends ConsumerWidget {
 
   final Music music;
 
-  Future<String?> _fetchArtwork(WidgetRef ref) async {
+  Future<Uint8List?> _fetchArtwork(WidgetRef ref) async {
     final artworkId = music.firstArtwork();
     if (artworkId == null) {
       return null;
@@ -125,7 +125,13 @@ class AudioItem extends ConsumerWidget {
     if (artworkData == null) {
       return null;
     }
-    return artworkData.data;
+    final file = File(artworkData.filePath);
+    if (!file.existsSync()) {
+      await ref
+          .read(databaseProvider.notifier)
+          .reloadArtwork(music.filePath, artworkId);
+    }
+    return file.readAsBytes();
   }
 
   Future<String> _fetchArtist(WidgetRef ref) async {
@@ -166,7 +172,7 @@ class AudioItem extends ConsumerWidget {
                       child: Icon(Icons.music_note),
                     )
                   : Image.memory(
-                      base64Decode(artwork),
+                      artwork as Uint8List,
                       width: 50,
                       height: 50,
                       isAntiAlias: true,
@@ -182,16 +188,21 @@ class AudioItem extends ConsumerWidget {
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Text(
-                  artist ?? '',
-                  maxLines: 1,
-                  style: const TextStyle(
-                    fontSize: 12,
-                  ),
-                ),
-                if (true)
+                if (artist == null)
+                  const Text('')
+                else
                   Text(
-                    album ?? '',
+                    artist as String,
+                    maxLines: 1,
+                    style: const TextStyle(
+                      fontSize: 12,
+                    ),
+                  ),
+                if (album == null)
+                  const Text('')
+                else
+                  Text(
+                    album as String,
                     maxLines: 1,
                     style: const TextStyle(
                       fontSize: 12,
@@ -209,11 +220,7 @@ class AudioItem extends ConsumerWidget {
               final title = music.title ?? path.basename(music.filePath);
               final artist = await _fetchArtist(ref);
               final album = await _fetchAlbum(ref);
-              final artworkRaw = await _fetchArtwork(ref);
-              Uint8List? artwork;
-              if (artworkRaw != null) {
-                artwork = base64Decode(artworkRaw);
-              }
+              final artwork = await _fetchArtwork(ref);
               await ref.read(playerProvider).play(
                     music.filePath,
                     title: title,

@@ -1,7 +1,5 @@
-import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:mpax_flutter/models/artist_model.dart';
 import 'package:mpax_flutter/models/artwork_model.dart';
@@ -9,8 +7,8 @@ import 'package:mpax_flutter/models/metadata_model.dart';
 import 'package:mpax_flutter/provider/app_state_provider.dart';
 import 'package:mpax_flutter/provider/database_provider.dart';
 import 'package:mpax_flutter/provider/settings_provider.dart';
+import 'package:mpax_flutter/utils/compress.dart';
 import 'package:mpax_flutter/utils/debug.dart';
-import 'package:mpax_flutter/utils/platform.dart';
 import 'package:path/path.dart' as path;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:taglib_ffi/taglib_ffi.dart' as taglib;
@@ -98,7 +96,7 @@ class Scanner extends _$Scanner {
       }
 
       debug('reading metadata: ${entity.path}');
-      final metadata = await _fetchMetadata(entity.path);
+      final metadata = await fetchMetadata(entity.path);
       if (metadata == null) {
         continue;
       }
@@ -129,18 +127,16 @@ class Scanner extends _$Scanner {
       // Save [Artwork].
       // TODO: Save all cover images.
       if (loadImage && metadata.artworkUnknown != null) {
-        if (scaleImage && isMobile) {
-          final data = await FlutterImageCompress.compressWithList(
-            metadata.artworkUnknown!,
-            minWidth: 120,
-            minHeight: 120,
-          );
-          final artwork =
-              await db.fetchArtwork(ArtworkFormat.jpeg, base64Encode(data));
+        if (scaleImage) {
+          final data = await compressImage(metadata.artworkUnknown!);
+          final artwork = await db.fetchArtwork(ArtworkFormat.jpeg, data);
           music.artworkUnknown = artwork.id;
         } else {
           final artwork = await db.fetchArtwork(
-              ArtworkFormat.jpeg, base64Encode(metadata.artworkUnknown!));
+            ArtworkFormat.jpeg,
+            metadata.artworkUnknown!,
+            scaleImage: scaleImage,
+          );
           music.artworkUnknown = artwork.id;
         }
       }
@@ -172,7 +168,7 @@ class Scanner extends _$Scanner {
     return <String>[];
   }
 
-  Future<Metadata?> _fetchMetadata(String filePath) async {
+  Future<Metadata?> fetchMetadata(String filePath) async {
     final Metadata ret = Metadata(filePath);
     final taglibMetadata =
         await taglib.TagLib(filePath: filePath).readMetadataEx();

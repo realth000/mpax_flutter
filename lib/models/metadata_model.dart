@@ -7,6 +7,15 @@ class Metadata {
   /// Default constructor.
   Metadata(this.filePath);
 
+  Uint8List? firstImage() {
+    return artworkFrontCover ??
+        artworkDisc ??
+        artworkBackCover ??
+        artworkArtist ??
+        artworkIcon ??
+        artworkUnknown;
+  }
+
   /// Music file path.
   String filePath;
 

@@ -1,4 +1,4 @@
-import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:crypto/crypto.dart';
 import 'package:isar/isar.dart';
@@ -49,8 +49,26 @@ enum ArtworkFormat {
 @Collection()
 class Artwork {
   /// Constructor.
-  Artwork({required this.format, required this.data}) {
-    dataHash = calculateDataHash(data);
+  /// [skipHash] indicates that this [Artwork] only use in memory and not store
+  /// to database.
+  /// Till now only use in not scaled album artwork.
+  ///
+  /// Unfortunately, [data] here should be a *required* argument but if we do
+  /// so isar reports 'Constructor parameter does not match a property' error
+  /// when generating code. And Uint8List is not supported by isar so the only
+  /// way to pass compile is make [data] an "optional argument" which make cause
+  /// weird behavior when forgot to add data.
+  Artwork(this.format, this.filePath,
+      {Uint8List? data, bool skipHash = false}) {
+    if (skipHash) {
+      dataHash = '';
+    } else {
+      // if (data == null) {
+      //   throw Exception(
+      //       'Please use not null or empty "data" here, when constructing artwork $filePath');
+      // }
+      dataHash = calculateDataHash(data ?? Uint8List(0));
+    }
   }
 
   /// Id in database.
@@ -69,10 +87,9 @@ class Artwork {
   @Index(unique: true)
   late String dataHash;
 
-  /// Data.
-  String data;
+  String filePath;
 
   /// Calculate data hash.
-  static String calculateDataHash(String data) =>
-      md5.convert(utf8.encode(data)).toString();
+  static String calculateDataHash(Uint8List data) =>
+      md5.convert(data).toString();
 }

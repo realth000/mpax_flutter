@@ -1,3 +1,6 @@
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:isar/isar.dart';
 import 'package:mpax_flutter/models/album_model.dart';
 import 'package:mpax_flutter/models/artist_model.dart';
@@ -5,6 +8,8 @@ import 'package:mpax_flutter/models/artwork_model.dart';
 import 'package:mpax_flutter/models/metadata_model.dart';
 import 'package:mpax_flutter/models/music_model.dart';
 import 'package:mpax_flutter/models/playlist_model.dart';
+import 'package:mpax_flutter/provider/scanner_provider.dart';
+import 'package:mpax_flutter/utils/compress.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -256,17 +261,34 @@ class Database extends _$Database {
   /// If exists an artwork with [Artwork.dataHash] equals to hashed [data],
   /// return it.
   /// Otherwise make a new [Artwork].
-  Future<Artwork> fetchArtwork(ArtworkFormat format, String data) async {
-    final storedArtwork = await _storage.artworks
-        .where()
-        .dataHashEqualTo(Artwork.calculateDataHash(data))
-        .findFirst();
-    if (storedArtwork != null) {
-      return storedArtwork;
+  Future<Artwork> fetchArtwork(
+    ArtworkFormat format,
+    Uint8List data, {
+    bool scaleImage = true,
+  }) async {
+    if (scaleImage) {
+      final storedArtwork = await _storage.artworks
+          .where()
+          .dataHashEqualTo(Artwork.calculateDataHash(data))
+          .findFirst();
+      if (storedArtwork != null) {
+        return storedArtwork;
+      }
+      // Save thumb image to temporary directory.
+      final coverFile = File(
+        '${(await getApplicationSupportDirectory()).path}/cover_cache_${DateTime.now().microsecondsSinceEpoch}',
+      );
+      await coverFile.writeAsBytes(data);
+      final artwork = Artwork(format, coverFile.path, data: data);
+      await _storage.writeTxn(() async => _storage.artworks.put(artwork));
+      return artwork;
+    } else {
+      final coverFile = File(
+        '${(await getTemporaryDirectory()).path}/cover_${DateTime.now().microsecondsSinceEpoch}',
+      );
+      await coverFile.writeAsBytes(data);
+      return Artwork(format, coverFile.path, data: data);
     }
-    final artwork = Artwork(format: format, data: data);
-    await _storage.writeTxn(() async => _storage.artworks.put(artwork));
-    return artwork;
   }
 
   /// Return a list of [Playlist]. Returning a list because playlist allowed to
@@ -288,5 +310,51 @@ class Database extends _$Database {
     final playlist = Playlist()..name = playlistName;
     await _storage.writeTxn(() async => _storage.playlists.put(playlist));
     return [playlist];
+  }
+
+  Future<Artwork?> reloadArtwork(
+    String musicFilePath,
+    int id, {
+    bool scaleImage = true,
+  }) async {
+    final metadata =
+        await ref.read(scannerProvider.notifier).fetchMetadata(musicFilePath);
+
+    if (metadata == null) {
+      return null;
+    }
+    final artworkData = metadata.firstImage();
+    if (artworkData == null) {
+      return null;
+    }
+
+    if (scaleImage) {
+      // When reloading a scaled image, it's a thumb image, cached with timestamp.
+      // Need to load the exact save path from database.
+      final artwork = await _storage.artworks.get(id);
+      if (artwork == null) {
+        return null;
+      }
+      final filePath = artwork.filePath;
+      final compressedData = await compressImage(artworkData);
+      // Save thumb image to temporary directory.
+      final coverFile = File(filePath);
+      await coverFile.writeAsBytes(compressedData);
+      final refreshedArtwork =
+          Artwork(artwork.format, coverFile.path, data: compressedData);
+      await _storage
+          .writeTxn(() async => _storage.artworks.put(refreshedArtwork));
+      return refreshedArtwork;
+    } else {
+      // When it's not a scaled image, it's the only one full cover to show.
+      // That artwork not stored in database, only used once.
+      // Save path without timestamp.
+      final coverFile = File(
+        '${(await getApplicationSupportDirectory()).path}/cover_${DateTime.now().microsecondsSinceEpoch}',
+      );
+      await coverFile.writeAsBytes(artworkData);
+      // Till now the format here is not used, so set with [Artwork.unknown].
+      return Artwork(ArtworkFormat.unknown, coverFile.path, data: artworkData);
+    }
   }
 }

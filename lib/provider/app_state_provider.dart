@@ -1,4 +1,4 @@
-import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -52,7 +52,8 @@ class AppState extends _$AppState {
         .findArtworkByIdSync(settingsProvider.lastPlayedArtworkId);
     Uint8List? artworkData;
     if (artwork != null) {
-      artworkData = base64Decode(artwork.data);
+      final file = File(artwork.filePath);
+      artworkData = file.readAsBytesSync();
     }
 
     return State(
