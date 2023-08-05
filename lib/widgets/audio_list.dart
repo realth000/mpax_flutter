@@ -55,12 +55,13 @@ class _AudioListState extends ConsumerState<AudioList> {
   }
 
   void clearData() {
+    musicList.clear();
     _count = 0;
   }
 
-  Future<void> loadData() async {
-    int loadCount = 0;
-    while (musicIdList.length > _count + loadCount &&
+  Future<bool> loadData() async {
+    var loadCount = 0;
+    while (musicIdList.length >= _count + loadCount &&
         loadCount < widget.loadStep) {
       final music = await ref
           .read(databaseProvider.notifier)
@@ -70,9 +71,13 @@ class _AudioListState extends ConsumerState<AudioList> {
       }
       loadCount++;
     }
+    if (loadCount == 0) {
+      return false;
+    }
     setState(() {
       _count += loadCount;
     });
+    return true;
   }
 
   @override
@@ -97,8 +102,10 @@ class _AudioListState extends ConsumerState<AudioList> {
             ..resetFooter();
         },
         onLoad: () async {
-          await loadData();
-          _refreshController.finishLoad();
+          final allLoaded = await loadData();
+          _refreshController.finishLoad(
+            allLoaded ? IndicatorResult.noMore : IndicatorResult.success,
+          );
         },
       );
 }
@@ -136,113 +143,91 @@ class AudioItem extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    const spaceBox = SizedBox(
-      width: 50,
-      height: 50,
-      child: Icon(Icons.music_note),
-    );
+    return FutureBuilder(
+      future: Future.wait(
+          [_fetchArtwork(ref), _fetchArtist(ref), _fetchAlbum(ref)]),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return AudioPlaceholder(message: snapshot.error.toString());
+        } else if (snapshot.connectionState != ConnectionState.done ||
+            snapshot.data == null) {
+          return const AudioPlaceholder();
+        } else {
+          final artwork = snapshot.data![0];
+          final artist = snapshot.data![1];
+          final album = snapshot.data![2];
 
-    return ListTile(
-      leading: FutureBuilder(
-        future: _fetchArtwork(ref),
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return spaceBox;
-          } else if (snapshot.connectionState != ConnectionState.done) {
-            return spaceBox;
-          } else {
-            final artwork = snapshot.data;
-            if (artwork == null) {
-              return spaceBox;
-            }
-            return ListTileLeading(
-              child: Image.memory(
-                base64Decode(artwork),
-                width: 50,
-                height: 50,
-                isAntiAlias: true,
+          return ListTile(
+            leading: ListTileLeading(
+              child: artwork == null
+                  ? const SizedBox(
+                      width: 50,
+                      height: 50,
+                      child: Icon(Icons.music_note),
+                    )
+                  : Image.memory(
+                      base64Decode(artwork),
+                      width: 50,
+                      height: 50,
+                      isAntiAlias: true,
+                    ),
+            ),
+            title: Text(
+              music.title ?? path.basename(music.filePath),
+              maxLines: 1,
+              style: const TextStyle(
+                fontSize: 14,
               ),
-            );
-          }
-        },
-      ),
-      title: Text(
-        music.title ?? path.basename(music.filePath),
-        maxLines: 1,
-        style: const TextStyle(
-          fontSize: 14,
-        ),
-      ),
-      subtitle: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          FutureBuilder(
-            future: _fetchArtist(ref),
-            builder: (context, snapshot) {
-              if (snapshot.hasError) {
-                return const Text('');
-              } else if (snapshot.connectionState != ConnectionState.done) {
-                return const Text('');
-              } else {
-                final artistString = snapshot.data;
-                return Text(
-                  artistString!,
+            ),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  artist ?? '',
                   maxLines: 1,
                   style: const TextStyle(
                     fontSize: 12,
                   ),
-                );
-              }
-            },
-          ),
-          if (true)
-            FutureBuilder(
-              future: _fetchAlbum(ref),
-              builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  return const Text('');
-                } else if (snapshot.connectionState != ConnectionState.done) {
-                  return const Text('');
-                } else {
-                  final albumString = snapshot.data;
-                  return Text(
-                    albumString!,
+                ),
+                if (true)
+                  Text(
+                    album ?? '',
                     maxLines: 1,
                     style: const TextStyle(
                       fontSize: 12,
                     ),
-                  );
-                }
+                  ),
+              ],
+            ),
+            trailing: IconButton(
+              onPressed: () async {
+                // TODO: Menu
               },
-            )
-        ],
-      ),
-      trailing: IconButton(
-        onPressed: () async {
-          // TODO: Menu
-        },
-        icon: const Icon(Icons.more_horiz),
-      ),
-      onTap: () async {
-        final title = music.title ?? path.basename(music.filePath);
-        final artist = await _fetchArtist(ref);
-        final album = await _fetchAlbum(ref);
-        final artworkRaw = await _fetchArtwork(ref);
-        Uint8List? artwork;
-        if (artworkRaw != null) {
-          artwork = base64Decode(artworkRaw);
+              icon: const Icon(Icons.more_horiz),
+            ),
+            onTap: () async {
+              final title = music.title ?? path.basename(music.filePath);
+              final artist = await _fetchArtist(ref);
+              final album = await _fetchAlbum(ref);
+              final artworkRaw = await _fetchArtwork(ref);
+              Uint8List? artwork;
+              if (artworkRaw != null) {
+                artwork = base64Decode(artworkRaw);
+              }
+              await ref.read(playerProvider).play(
+                    music.filePath,
+                    title: title,
+                    artist: artist,
+                    album: album,
+                    artwork: artwork,
+                    artworkId: music.firstArtwork(),
+                  );
+            },
+            isThreeLine: true,
+            titleAlignment: ListTileTitleAlignment.top,
+          );
         }
-        await ref.read(playerProvider).play(
-              music.filePath,
-              title: title,
-              artist: artist,
-              album: album,
-              artwork: artwork,
-              artworkId: music.firstArtwork(),
-            );
       },
-      isThreeLine: true,
-      titleAlignment: ListTileTitleAlignment.top,
     );
   }
 }
@@ -259,5 +244,21 @@ class ListTileLeading extends StatelessWidget {
   Widget build(BuildContext context) => Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [child],
+      );
+}
+
+class AudioPlaceholder extends StatelessWidget {
+  const AudioPlaceholder({this.message, super.key});
+
+  final String? message;
+
+  @override
+  Widget build(BuildContext context) => ListTile(
+        leading: const SizedBox(
+          width: 50,
+          height: 50,
+          child: Icon(Icons.music_note),
+        ),
+        title: Text(message ?? ''),
       );
 }

@@ -17,6 +17,7 @@ Future<void> initializeDatabase() async {
   if (_initialized) {
     return;
   }
+  _initialized = true;
   final databaseDirectory = await getApplicationSupportDirectory();
   if (!databaseDirectory.existsSync()) {
     await databaseDirectory.create();
@@ -46,13 +47,10 @@ Future<void> initializeDatabase() async {
   }
 }
 
-@riverpod
+@Riverpod(keepAlive: true)
 class Database extends _$Database {
   @override
   Future<void> build() async {
-    if (_initialized) {
-      return;
-    }
     await initializeDatabase();
   }
 

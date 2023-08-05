@@ -50,10 +50,8 @@ class AppState extends _$AppState {
     final artwork = ref
         .read(databaseProvider.notifier)
         .findArtworkByIdSync(settingsProvider.lastPlayedArtworkId);
-    final Uint8List artworkData;
-    if (artwork == null) {
-      artworkData = Uint8List(0);
-    } else {
+    Uint8List? artworkData;
+    if (artwork != null) {
       artworkData = base64Decode(artwork.data);
     }
 
