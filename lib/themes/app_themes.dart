@@ -21,6 +21,12 @@ class AppTheme {
     border: OutlineInputBorder(),
   );
 
+  static final sliderTheme = SliderThemeData(
+    overlayColor: Colors.transparent,
+    // Disable slider overlay on desktop platforms.
+    overlayShape: isMobile ? null : SliderComponentShape.noOverlay,
+  );
+
   // Made for FlexColorScheme version 7.0.1. Make sure you
   // use same or higher package version, but still same major version.
   // If you use a lower version, some properties may not be supported.
@@ -122,6 +128,7 @@ class AppTheme {
     // appBarTheme: AppBarTheme(),
     listTileTheme: listTileTheme,
     inputDecorationTheme: inputDecorationTheme,
+    sliderTheme: sliderTheme,
   );
 
 // If you do not have a themeMode switch, uncomment this line
@@ -132,5 +139,6 @@ class AppTheme {
   static ThemeData flexDark = _flexDarkBase.copyWith(
     listTileTheme: listTileTheme,
     inputDecorationTheme: inputDecorationTheme,
+    sliderTheme: sliderTheme,
   );
 }

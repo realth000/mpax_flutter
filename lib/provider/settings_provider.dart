@@ -93,18 +93,29 @@ class AppSettings extends _$AppSettings {
     initSettings();
 
     return Settings(
-        currentMediaPath: _settings.getString(settingsCurrentMediaPath) ??
-            _defaultCurrentMediaPath,
-        currentPlaylistId: _settings.getInt(settingsCurrentPlaylistId) ??
-            _defaultCurrentPlaylistId,
-        playMode: _settings.getString(settingsPlayMode) ?? _defaultPlayMode,
-        useDarkTheme:
-            _settings.getBool(settingsUseDarkTheme) ?? _defaultUseDarkMode,
-        followSystemTheme: _settings.getBool(settingsFollowSystemTheme) ??
-            _defaultFollowSystemTheme,
-        volume: _settings.getInt(settingsVolume) ?? _defaultVolume,
-        scanDirectoryList: _settings.getStringList(settingsScanDirectoryList) ??
-            _defaultScanDirectoryList);
+      currentMediaPath: _settings.getString(settingsCurrentMediaPath) ??
+          _defaultCurrentMediaPath,
+      currentPlaylistId: _settings.getInt(settingsCurrentPlaylistId) ??
+          _defaultCurrentPlaylistId,
+      playMode: _settings.getString(settingsPlayMode) ?? _defaultPlayMode,
+      useDarkTheme:
+          _settings.getBool(settingsUseDarkTheme) ?? _defaultUseDarkMode,
+      followSystemTheme: _settings.getBool(settingsFollowSystemTheme) ??
+          _defaultFollowSystemTheme,
+      volume: _settings.getInt(settingsVolume) ?? _defaultVolume,
+      scanDirectoryList: _settings.getStringList(settingsScanDirectoryList) ??
+          _defaultScanDirectoryList,
+      lastPlayedFilePath: _settings.getString(settingsLastPlayedFilePath) ??
+          _defaultLastPlayedFilePath,
+      lastPlayedTitle: _settings.getString(settingsLastPlayedTitle) ??
+          _defaultLastPlayedTitle,
+      lastPlayedArtist: _settings.getString(settingsLastPlayedArtist) ??
+          _defaultLastPlayedArtist,
+      lastPlayedAlbum: _settings.getString(settingsLastPlayedAlbum) ??
+          _defaultLastPlayedAlbum,
+      lastPlayedArtworkId: _settings.getInt(settingsLastPlayedArtworkId) ??
+          _defaultLastPlayedArtworkId,
+    );
   }
 
   static const _defaultCurrentMediaPath = '';
@@ -114,6 +125,11 @@ class AppSettings extends _$AppSettings {
   static const _defaultFollowSystemTheme = true;
   static const _defaultVolume = 30;
   static const _defaultScanDirectoryList = <String>[];
+  static const _defaultLastPlayedFilePath = '';
+  static const _defaultLastPlayedTitle = '';
+  static const _defaultLastPlayedArtist = '';
+  static const _defaultLastPlayedAlbum = '';
+  static const _defaultLastPlayedArtworkId = -1;
 
   Future<void> setCurrentMediaPath(String currentMediaPath) async {
     state = state.copyWith(currentMediaPath: currentMediaPath);
@@ -155,5 +171,22 @@ class AppSettings extends _$AppSettings {
     final list = state.scanDirectoryList.toList()..remove(directory);
     state = state.copyWith(scanDirectoryList: list);
     await _settings.saveStringList(settingsScanDirectoryList, list);
+  }
+
+  Future<void> setLastPlayed(
+      String filePath, String title, String artist, String album,
+      {int? artworkId}) async {
+    state = state.copyWith(
+      lastPlayedFilePath: filePath,
+      lastPlayedTitle: title,
+      lastPlayedArtist: artist,
+      lastPlayedAlbum: album,
+      lastPlayedArtworkId: artworkId ?? -1,
+    );
+    await _settings.saveString(settingsLastPlayedFilePath, filePath);
+    await _settings.saveString(settingsLastPlayedTitle, title);
+    await _settings.saveString(settingsLastPlayedArtist, artist);
+    await _settings.saveString(settingsLastPlayedAlbum, album);
+    await _settings.saveInt(settingsLastPlayedArtworkId, artworkId ?? -1);
   }
 }

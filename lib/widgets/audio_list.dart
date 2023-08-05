@@ -228,10 +228,8 @@ class AudioItem extends ConsumerWidget {
         final artist = await _fetchArtist(ref);
         final album = await _fetchAlbum(ref);
         final artworkRaw = await _fetchArtwork(ref);
-        final Uint8List artwork;
-        if (artworkRaw == null) {
-          artwork = Uint8List(0);
-        } else {
+        Uint8List? artwork;
+        if (artworkRaw != null) {
           artwork = base64Decode(artworkRaw);
         }
         await ref.read(playerProvider).play(
@@ -240,6 +238,7 @@ class AudioItem extends ConsumerWidget {
               artist: artist,
               album: album,
               artwork: artwork,
+              artworkId: music.firstArtwork(),
             );
       },
       isThreeLine: true,

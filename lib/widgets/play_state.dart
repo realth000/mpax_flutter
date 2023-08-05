@@ -1,25 +1,25 @@
 import 'package:flutter/material.dart';
 
 enum PlayerState {
-  Playing,
-  Stop,
-  Pause,
+  playing,
+  stop,
+  pause,
 }
 
 enum PlayMode {
-  Repeat,
-  RepeatOne,
-  Shuffle,
+  repeat,
+  repeatOne,
+  shuffle,
 }
 
 const playerStateIconMap = <PlayerState, Icon>{
-  PlayerState.Playing: Icon(Icons.pause),
-  PlayerState.Stop: Icon(Icons.play_arrow),
-  PlayerState.Pause: Icon(Icons.play_arrow),
+  PlayerState.playing: Icon(Icons.pause),
+  PlayerState.stop: Icon(Icons.play_arrow),
+  PlayerState.pause: Icon(Icons.play_arrow),
 };
 
 const playModeIconMap = <PlayMode, Icon>{
-  PlayMode.Repeat: Icon(Icons.repeat),
-  PlayMode.RepeatOne: Icon(Icons.repeat_one),
-  PlayMode.Shuffle: Icon(Icons.shuffle),
+  PlayMode.repeat: Icon(Icons.repeat),
+  PlayMode.repeatOne: Icon(Icons.repeat_one),
+  PlayMode.shuffle: Icon(Icons.shuffle),
 };

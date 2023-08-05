@@ -32,13 +32,13 @@ class AppScaffold extends ConsumerWidget {
         ),
         bottomNavigationBar:
             (ResponsiveBreakpoints.of(context).smallerThan(DESKTOP))
-                ? Column(
+                ? const Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       AppMobilePlayer(),
                       AppNavigationBar(),
                     ],
                   )
-                : AppDesktopPlayer(),
+                : const AppDesktopPlayer(),
       );
 }

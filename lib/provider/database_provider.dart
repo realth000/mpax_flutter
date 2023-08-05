@@ -125,6 +125,14 @@ class Database extends _$Database {
         ?.makeGrowable();
   }
 
+  Music? findMusicByFilePathSync(String filePath) {
+    return _storage.musics
+        .where()
+        .filePathEqualTo(filePath)
+        .findFirstSync()
+        ?.makeGrowable();
+  }
+
   Future<String> findArtistNamesByIdList(List<Id> idList) async {
     final artistList = <String>[];
     for (final id in idList) {
@@ -169,6 +177,16 @@ class Database extends _$Database {
       return null;
     }
     return _storage.artworks.get(id);
+  }
+
+  Artwork? findArtworkByIdSync(Id? id) {
+    if (id == null) {
+      return null;
+    }
+    if (id < 0) {
+      return null;
+    }
+    return _storage.artworks.getSync(id);
   }
 
   //////////////// fetch ////////////////
