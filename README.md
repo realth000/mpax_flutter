@@ -40,37 +40,36 @@ MPax is a simple and easy-to-use music player powered by flutter.
 
 ## Features
 
-### Audio:
+### Audio
 
-* [x] Music playing.
-* [x] Read metadata (now is part of).
+* [x] Format (*.mp3).
+* [x] Read metadata.
 * [ ] Modify metadata.
-* [ ] Playlist (partly).
-* [x] Search.
+* [ ] Playlist.
+* [ ] Search.
 * [ ] Lyric.
-* [ ] Global shortcut on Windows.
-* [ ] Global shortcut on Linux.
-    * [ ] Hyprland.
-* [ ] MPRIS.
+* [ ] Global shortcut.
+  * [ ] Windows.
+  * [ ] Linux with X11.
+  * [ ] Wayland.
+* [x] MPRIS.
 
-### UI:
+### UI
 
 * [x] Dark mode.
 * [ ] Duration to auto stop.
 * [ ] Multiple views (In album, artist, folder...).
 * [ ] Shortcut.
 
-### Platforms:
+### Platforms
 
 * [x] Android.
 * [x] Linux.
 * [x] Windows.
 
-## Keymap (Desktop platforms)
+## Keymap
 
-* ~~Play Previous: ``Ctrl + Alt + <-``~~
-* ~~Play Next: ``Ctrl + Alt + ->``~~
-* ~~Play/Pause: ``Ctrl + Alt + B``~~
+Comming soon
 
 ## Install
 
@@ -88,16 +87,6 @@ Prepare source code:
 
 ### Android
 
-Build Android libs:
-
-``` shell
-cd lib/package/taglib_ffi/Meipuru
-./script/build_android.sh libs
-cp -r libs ../../../../android/app/
-```
-
-Build Android *.apk:
-
 ``flutter build android --release``
 
 ### Linux
@@ -106,19 +95,8 @@ Build Android *.apk:
     1. ``sudo apt install libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libtagc0-dev``
     2. ``flutter build linux --release``
 * Arch:
-    1. ``sudo pacman -S gst-plugins-good``
+    1. ``sudo pacman -S gst-plugins-good zinity``
     2. ``flutter build linux --release``
-
-Build and install Linux libs:
-
-``` shell
-cd lib/package/taglib_ffi/Meipuru
-mkdir build
-cd build
-cmake ../ && cmake --build -j8
-strip *.so
-cp *.so ../../../../../build/linux/x64/debug/realease/lib
-```
 
 ### Windows
 

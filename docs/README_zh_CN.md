@@ -40,37 +40,36 @@ MPax是使用Flutter开发的简约易用的音乐播放器。
 
 ## 特性
 
-### 音频:
+### 音频
 
-* [x] 播放音乐。
-* [x] 读取音频元数据标签（部分支持）。
-* [ ] 修改音频元数据标签。
-* [ ] 播放列表（初步支持）。
-* [x] 搜索。
+* [x] 格式 (*.mp3)。
+* [x] 读取音频标签。
+* [ ] 修改音频标签。
+* [ ] 播放列表。
+* [ ] 搜索。
 * [ ] 歌词。
-* [ ] Windows 全局快捷键。
-* [ ] Linux 全局快捷键。
-    * [ ] Hyprland。
-* [ ] MPRIS。
+* [ ] 全局快捷键。
+  * [ ] Windows。
+  * [ ] Linux(X11)。
+  * [ ] Linux(Wayland)。
+* [x] MPRIS。
 
-### 界面:
+### 界面
 
 * [x] 深色模式。
 * [ ] 定时停止。
 * [ ] 多视图（专辑，艺术家，文件夹...）。
 * [ ] 快捷键。
 
-### 平台：
+### 平台
 
 * [x] 安卓。
 * [x] Linux。
 * [x] Windows。
 
-## 快捷键 (桌面平台)
+## 快捷键
 
-* ~~上一首: ``Ctrl + Alt + V``~~
-* ~~下一首: ``Ctrl + Alt + N``~~
-* ~~播放/暂停: ``Ctrl + Alt + B``~~
+在做了在做了。
 
 ## 安装
 
@@ -88,16 +87,6 @@ MPax是使用Flutter开发的简约易用的音乐播放器。
 
 ### Android
 
-准备Android的libs:
-
-``` shell
-cd lib/package/taglib_ffi/Meipuru
-./script/build_android.sh libs
-cp -r libs ../../../../android/app/
-```
-
-编译Android *.apk:
-
 ``flutter build android --release``
 
 ### Linux
@@ -109,20 +98,6 @@ cp -r libs ../../../../android/app/
     1. ``sudo pacman -S gst-plugins-good``
     2. ``flutter build linux --release``
 
-编译和安装Linux libs:
-
-``` shell
-cd lib/package/taglib_ffi/Meipuru
-mkdir build
-cd build
-cmake ../ && cmake --build -j8
-strip *.so
-cp *.so ../../../../../build/linux/x64/debug/realease/lib
-```
-
 ### Windows
 
 ``flutter build windows --release``
-
-编译和编译Windows libs的步骤和Linux相似。
-
