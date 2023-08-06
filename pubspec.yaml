@@ -45,7 +45,7 @@ dependencies:
   shared_preferences: ^2.2.0
   simple_audio: ^1.6.2
   taglib_ffi:
-    path: ./lib/package/taglib_ffi
+    path: ./package/taglib_ffi
   url_launcher: ^6.1.12
   uuid: ^3.0.7
   watcher: ^1.1.0

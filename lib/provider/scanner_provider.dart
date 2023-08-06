@@ -171,7 +171,7 @@ class Scanner extends _$Scanner {
   Future<Metadata?> fetchMetadata(String filePath) async {
     final Metadata ret = Metadata(filePath);
     final taglibMetadata =
-        await taglib.TagLib(filePath: filePath).readMetadataEx();
+        await taglib.TagLib(filePath: filePath).readMetadata();
     if (taglibMetadata == null) {
       return null;
     }
