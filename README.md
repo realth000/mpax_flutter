@@ -87,7 +87,14 @@ Prepare source code:
 
 ### Android
 
-``flutter build android --release``
+``` bash
+
+# Only need execute once.
+./package/taglib_ffi/scripts/build_android.sh
+
+flutter build android --release
+
+```
 
 ### Linux
 
