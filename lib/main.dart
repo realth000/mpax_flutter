@@ -9,11 +9,15 @@ import 'package:mpax_flutter/utils/platform.dart';
 import 'package:responsive_framework/breakpoint.dart';
 import 'package:responsive_framework/responsive_breakpoints.dart';
 import 'package:simple_audio/simple_audio.dart';
+import 'package:taglib_ffi/taglib_ffi.dart' as taglib;
 import 'package:window_manager/window_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   MetadataGod.initialize();
+
+  await taglib.initialize(isolateCount: 8);
+
   await initializeDatabase();
   await SimpleAudio.init(
     dbusName: 'kzs.th000.mpax_flutter',

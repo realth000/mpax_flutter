@@ -84,6 +84,8 @@ class Scanner extends _$Scanner {
 
     final db = ref.read(databaseProvider.notifier);
 
+    final futures = <Future<Metadata?>>[];
+
     await for (final entity in dir.list(recursive: true, followLinks: false)) {
       if (entity is! File) {
         debug('scan skip not a file: ${entity.path}');
@@ -96,7 +98,18 @@ class Scanner extends _$Scanner {
       }
 
       debug('reading metadata: ${entity.path}');
-      final metadata = await fetchMetadata(entity.path);
+      // final metadata = await fetchMetadata(entity.path);
+      // if (metadata == null) {
+      //   continue;
+      // }
+      futures.add(fetchMetadata(entity.path));
+    }
+
+    debug('>>> futures count: ${futures.length}');
+
+    final metadataList = await Future.wait<Metadata?>(futures);
+
+    for (final metadata in metadataList) {
       if (metadata == null) {
         continue;
       }
@@ -165,13 +178,13 @@ class Scanner extends _$Scanner {
         await db.saveArtist(_artist);
       }
     }
+
     return <String>[];
   }
 
   Future<Metadata?> fetchMetadata(String filePath) async {
     final Metadata ret = Metadata(filePath);
-    final taglibMetadata =
-        await taglib.TagLib(filePath: filePath).readMetadata();
+    final taglibMetadata = await taglib.readMetadata(filePath);
     if (taglibMetadata == null) {
       return null;
     }
