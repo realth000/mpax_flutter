@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:crypto/crypto.dart';
 import 'package:isar/isar.dart';
 import 'package:mpax_flutter/models/album_model.dart';
 import 'package:mpax_flutter/models/artist_model.dart';
@@ -256,21 +257,37 @@ class Database extends _$Database {
     return album;
   }
 
-  /// Return a [Artwork].
+  /// Return a [Artwork] with original [data].
   ///
-  /// If exists an artwork with [Artwork.dataHash] equals to hashed [data],
-  /// return it.
-  /// Otherwise make a new [Artwork].
+  /// Because image data saved in cache are compressed, use this function to
+  /// find that cached file with original image data came from metadata.
+  /// Without this function, it's impossible to know whether the original
+  /// metadata is already cached or not.
+  ///
+  /// Because compressing image data is much slower than calculating hash, use
+  /// this original hash to reduce image compression.
+  /// Though the image library works well on mobile platforms, there CPU is
+  /// worse than desktop's, while desktop platforms only have slow compressing
+  /// algorithm.
+  ///
+  /// If [scaleImage] is ture, calculate hash from original image data, save
+  /// that hash and to database, then compress image and save to cache file.
+  ///
+  /// If [scaleImage] is false, means this is the only not scaled image to show
+  /// in ui specially, for example in the music page where needs a large image.
+  /// Only save to a certain cache file for later reading, will not save to
+  /// database.
+  ///
   Future<Artwork> fetchArtwork(
     ArtworkFormat format,
     Uint8List data, {
     bool scaleImage = true,
   }) async {
     if (scaleImage) {
-      final storedArtwork = await _storage.artworks
-          .where()
-          .dataHashEqualTo(Artwork.calculateDataHash(data))
-          .findFirst();
+      // Scaled images are saved in cache and also hash in database.
+      final hash = md5.convert(data).toString();
+      final storedArtwork =
+          await _storage.artworks.where().dataHashEqualTo(hash).findFirst();
       if (storedArtwork != null) {
         return storedArtwork;
       }
@@ -278,8 +295,14 @@ class Database extends _$Database {
       final coverFile = File(
         '${(await getApplicationSupportDirectory()).path}/cover_cache_${DateTime.now().microsecondsSinceEpoch}',
       );
-      await coverFile.writeAsBytes(data);
-      final artwork = Artwork(format, coverFile.path, data: data);
+      final compressedImage = await compressImage(data);
+      await coverFile.writeAsBytes(compressedImage);
+      final artwork = Artwork(
+        format,
+        coverFile.path,
+        data: compressedImage,
+        hash: hash,
+      );
       await _storage.writeTxn(() async => _storage.artworks.put(artwork));
       return artwork;
     } else {
@@ -287,7 +310,7 @@ class Database extends _$Database {
         '${(await getTemporaryDirectory()).path}/cover_${DateTime.now().microsecondsSinceEpoch}',
       );
       await coverFile.writeAsBytes(data);
-      return Artwork(format, coverFile.path, data: data);
+      return Artwork(format, coverFile.path, data: data, skipHash: true);
     }
   }
 
@@ -336,12 +359,17 @@ class Database extends _$Database {
         return null;
       }
       final filePath = artwork.filePath;
+      final hash = md5.convert(artworkData).toString();
       final compressedData = await compressImage(artworkData);
       // Save thumb image to temporary directory.
       final coverFile = File(filePath);
       await coverFile.writeAsBytes(compressedData);
-      final refreshedArtwork =
-          Artwork(artwork.format, coverFile.path, data: compressedData);
+      final refreshedArtwork = Artwork(
+        artwork.format,
+        coverFile.path,
+        data: compressedData,
+        hash: hash,
+      );
       await _storage
           .writeTxn(() async => _storage.artworks.put(refreshedArtwork));
       return refreshedArtwork;

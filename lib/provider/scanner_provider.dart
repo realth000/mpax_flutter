@@ -1,5 +1,7 @@
+import 'dart:core';
 import 'dart:io';
 
+import 'package:collection/collection.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:mpax_flutter/models/artist_model.dart';
 import 'package:mpax_flutter/models/artwork_model.dart';
@@ -7,7 +9,6 @@ import 'package:mpax_flutter/models/metadata_model.dart';
 import 'package:mpax_flutter/provider/app_state_provider.dart';
 import 'package:mpax_flutter/provider/database_provider.dart';
 import 'package:mpax_flutter/provider/settings_provider.dart';
-import 'package:mpax_flutter/utils/compress.dart';
 import 'package:mpax_flutter/utils/debug.dart';
 import 'package:path/path.dart' as path;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -84,7 +85,9 @@ class Scanner extends _$Scanner {
 
     final db = ref.read(databaseProvider.notifier);
 
-    final futures = <Future<Metadata?>>[];
+    final futures = <Future<taglib.Metadata?>>[];
+    final pathList = <String>[];
+    final metadataList = <Metadata>[];
 
     await for (final entity in dir.list(recursive: true, followLinks: false)) {
       if (entity is! File) {
@@ -102,18 +105,48 @@ class Scanner extends _$Scanner {
       // if (metadata == null) {
       //   continue;
       // }
-      futures.add(fetchMetadata(entity.path));
+      futures.add(fetchTagLibMetadata(entity.path));
+      pathList.add(entity.path);
     }
 
     debug('>>> futures count: ${futures.length}');
 
-    final metadataList = await Future.wait<Metadata?>(futures);
+    debug('>>> start generating metadata');
 
-    for (final metadata in metadataList) {
-      if (metadata == null) {
-        continue;
+    (await Future.wait<taglib.Metadata?>(futures))
+        .forEachIndexed((index, taglibMetadata) {
+      if (taglibMetadata == null) {
+        return;
       }
 
+      final ret = Metadata(pathList[index]);
+
+      debug('get metadata: ${taglibMetadata.title}, ${taglibMetadata.artist}');
+      ret
+        ..title = taglibMetadata.title
+        ..artist = taglibMetadata.artist
+        ..albumTitle = taglibMetadata.album;
+      if (taglibMetadata.albumArtist != null) {
+        ret.albumArtist
+          ..clear()
+          ..add(taglibMetadata.albumArtist!);
+      }
+      ret
+        ..track = taglibMetadata.track
+        ..albumTrackCount = taglibMetadata.albumTotalTrack
+        ..albumYear = taglibMetadata.year
+        ..genre = taglibMetadata.genre
+        ..comment = taglibMetadata.comment
+        ..sampleRate = taglibMetadata.sampleRate
+        ..bitrate = taglibMetadata.bitrate
+        ..channels = taglibMetadata.channels
+        ..length = taglibMetadata.length
+        ..lyrics = taglibMetadata.lyrics
+        ..artworkUnknown = taglibMetadata.albumCover;
+      metadataList.add(ret);
+    });
+
+    for (final metadata in metadataList) {
       // Save models.
       final music = await db.fetchMusic(metadata.filePath);
       music
@@ -141,8 +174,10 @@ class Scanner extends _$Scanner {
       // TODO: Save all cover images.
       if (loadImage && metadata.artworkUnknown != null) {
         if (scaleImage) {
-          final data = await compressImage(metadata.artworkUnknown!);
-          final artwork = await db.fetchArtwork(ArtworkFormat.jpeg, data);
+          final artwork = await db.fetchArtwork(
+            ArtworkFormat.jpeg,
+            metadata.artworkUnknown!,
+          );
           music.artworkUnknown = artwork.id;
         } else {
           final artwork = await db.fetchArtwork(
@@ -211,5 +246,9 @@ class Scanner extends _$Scanner {
       ..lyrics = taglibMetadata.lyrics
       ..artworkUnknown = taglibMetadata.albumCover;
     return ret;
+  }
+
+  Future<taglib.Metadata?> fetchTagLibMetadata(String filePath) async {
+    return taglib.readMetadata(filePath);
   }
 }

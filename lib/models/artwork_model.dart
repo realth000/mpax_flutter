@@ -59,9 +59,11 @@ class Artwork {
   /// way to pass compile is make [data] an "optional argument" which make cause
   /// weird behavior when forgot to add data.
   Artwork(this.format, this.filePath,
-      {Uint8List? data, bool skipHash = false}) {
+      {Uint8List? data, bool skipHash = false, String? hash}) {
     if (skipHash) {
       dataHash = '';
+    } else if (hash != null) {
+      dataHash = hash;
     } else {
       // if (data == null) {
       //   throw Exception(

@@ -34,6 +34,7 @@ dependencies:
   image_compression: ^1.0.4
   isar: ^3.1.0+1
   isar_flutter_libs: ^3.1.0+1
+  isolate_pool_2: ^1.0.4
   metadata_god: ^0.5.0
   on_audio_query: ^2.9.0
   open_filex: ^4.3.2
