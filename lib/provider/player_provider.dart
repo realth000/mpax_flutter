@@ -157,8 +157,15 @@ class Player {
   /// Do nothing if current media not in current playlist, if error occurred.
   /// Skip to the last media if current one is the first one.
   Future<void> playPrevious() async {
-    final id = ref.read(appStateProvider).currentMediaId;
-    final music = await ref.read(playlistProvider).findPrevious(id);
+    final playMode = ref.read(appStateProvider).playMode;
+    late final Music? music;
+    switch (playMode) {
+      case PlayMode.shuffle:
+        music = await ref.read(playlistProvider).randomPrevious();
+      default:
+        final id = ref.read(appStateProvider).currentMediaId;
+        music = await ref.read(playlistProvider).findPrevious(id);
+    }
     if (music == null) {
       return;
     }
@@ -170,8 +177,15 @@ class Player {
   /// Do nothing if current media not in current playlist, if error occurred.
   /// Skip to the first media if current one is the last one.
   Future<void> playNext() async {
-    final id = ref.read(appStateProvider).currentMediaId;
-    final music = await ref.read(playlistProvider).findNext(id);
+    final playMode = ref.read(appStateProvider).playMode;
+    late final Music? music;
+    switch (playMode) {
+      case PlayMode.shuffle:
+        music = await ref.read(playlistProvider).randomNext();
+      default:
+        final id = ref.read(appStateProvider).currentMediaId;
+        music = await ref.read(playlistProvider).findNext(id);
+    }
     if (music == null) {
       return;
     }
@@ -191,7 +205,8 @@ class Player {
       case PlayMode.repeatOne:
         await _replayCurrent();
       case PlayMode.shuffle:
-        final music = await ref.read(playlistProvider).random();
+        final playlist = ref.read(playlistProvider);
+        final music = await playlist.randomNext();
         if (music == null) {
           return;
         }

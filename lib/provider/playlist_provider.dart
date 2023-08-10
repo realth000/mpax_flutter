@@ -17,6 +17,13 @@ class Playlist {
 
   model.Playlist? _playlist;
 
+  /// Store play history in random mode, when requested to play previous media,
+  /// find it here.
+  final _randomHistory = <Music>[];
+
+  /// Current pos if play back in [_randomHistory].
+  int _randomHistoryPos = -1;
+
   Future<void> setPlaylist(model.Playlist playlist) async {
     _playlist = playlist;
     ref.read(appStateProvider.notifier).setCurrentPlaylistInfo(playlist.id);
@@ -51,7 +58,19 @@ class Playlist {
       targetId = pos - 1;
     }
 
-    return ref.read(databaseProvider.notifier).findMusicById(targetId);
+    final music =
+        await ref.read(databaseProvider.notifier).findMusicById(targetId);
+
+    if (music == null) {
+      return null;
+    }
+
+    _randomHistory
+      ..clear()
+      ..add(music);
+    _randomHistoryPos = 0;
+
+    return music;
   }
 
   Future<Music?> findNext(int id) async {
@@ -71,16 +90,60 @@ class Playlist {
       targetId = pos + 1;
     }
 
-    return ref.read(databaseProvider.notifier).findMusicById(targetId);
+    final music =
+        await ref.read(databaseProvider.notifier).findMusicById(targetId);
+    if (music == null) {
+      return null;
+    }
+
+    _randomHistory
+      ..clear()
+      ..add(music);
+    _randomHistoryPos = 0;
+
+    return music;
   }
 
-  Future<Music?> random() async {
+  Future<Music?> randomPrevious() async {
     if (_playlist == null) {
       return null;
     }
+    if (_randomHistoryPos <= _randomHistory.length - 1 &&
+        _randomHistoryPos > 0) {
+      _randomHistoryPos -= 1;
+      return _randomHistory[_randomHistoryPos];
+    }
     final targetId =
         _playlist!.musicList[Random().nextInt(_playlist!.musicList.length - 1)];
-    return ref.read(databaseProvider.notifier).findMusicById(targetId);
+    final music =
+        await ref.read(databaseProvider.notifier).findMusicById(targetId);
+    if (music == null) {
+      return null;
+    }
+    _randomHistory.insert(0, music);
+    _randomHistoryPos = 0;
+    return music;
+  }
+
+  Future<Music?> randomNext() async {
+    if (_playlist == null) {
+      return null;
+    }
+    if (_randomHistoryPos >= 0 &&
+        _randomHistoryPos < _randomHistory.length - 1) {
+      _randomHistoryPos += 1;
+      return _randomHistory[_randomHistoryPos];
+    }
+    final targetId =
+        _playlist!.musicList[Random().nextInt(_playlist!.musicList.length - 1)];
+    final music =
+        await ref.read(databaseProvider.notifier).findMusicById(targetId);
+    if (music == null) {
+      return null;
+    }
+    _randomHistory.add(music);
+    _randomHistoryPos = _randomHistory.length - 1;
+    return music;
   }
 }
 
