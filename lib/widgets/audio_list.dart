@@ -61,7 +61,7 @@ class _AudioListState extends ConsumerState<AudioList> {
 
   Future<bool> loadData() async {
     var loadCount = 0;
-    while (musicIdList.length >= _count + loadCount &&
+    while (musicIdList.length > _count + loadCount &&
         loadCount < widget.loadStep) {
       final music = await ref
           .read(databaseProvider.notifier)
