@@ -14,11 +14,13 @@ class Settings with _$Settings {
     required bool followSystemTheme,
     required int volume,
     required List<String> scanDirectoryList,
+    required int lastPlayedId,
     required String lastPlayedFilePath,
     required String lastPlayedTitle,
     required String lastPlayedArtist,
     required String lastPlayedAlbum,
     required int lastPlayedArtworkId,
+    required int lastPlaylistId,
   }) = _Settings;
 }
 
@@ -29,11 +31,13 @@ const settingsUseDarkTheme = 'useDarkTheme';
 const settingsFollowSystemTheme = 'followSystemTheme';
 const settingsVolume = 'volume';
 const settingsScanDirectoryList = 'scanDirectoryList';
+const settingsLastPlayedId = 'lastPlayedId';
 const settingsLastPlayedFilePath = 'lastPlayedFilePath';
 const settingsLastPlayedTitle = 'lastPlayedTitle';
 const settingsLastPlayedArtist = 'lastPlayedArtist';
 const settingsLastPlayedAlbum = 'lastPlayedAlbum';
 const settingsLastPlayedArtworkId = 'lastPlayedArtworkId';
+const settingsLastPlaylistId = 'lastPlaylistId';
 
 /// All settings and value types.
 const Map<String, Type> settingsMap = <String, Type>{
@@ -44,9 +48,11 @@ const Map<String, Type> settingsMap = <String, Type>{
   settingsFollowSystemTheme: bool,
   settingsVolume: int,
   settingsScanDirectoryList: List<String>,
+  settingsLastPlayedId: int,
   settingsLastPlayedFilePath: String,
   settingsLastPlayedTitle: String,
   settingsLastPlayedArtist: String,
   settingsLastPlayedAlbum: String,
   settingsLastPlayedArtworkId: int,
+  settingsLastPlaylistId: int,
 };

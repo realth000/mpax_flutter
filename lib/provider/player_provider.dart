@@ -1,7 +1,11 @@
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mpax_flutter/models/music_model.dart';
 import 'package:mpax_flutter/provider/app_state_provider.dart';
+import 'package:mpax_flutter/provider/database_provider.dart';
+import 'package:mpax_flutter/provider/playlist_provider.dart';
 import 'package:mpax_flutter/provider/settings_provider.dart';
 import 'package:mpax_flutter/widgets/play_state.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -16,7 +20,7 @@ class Player {
           event.position.toDouble(), event.duration.toDouble());
     });
 
-    _player.playbackStateStream.listen((event) {
+    _player.playbackStateStream.listen((event) async {
       switch (event) {
         case PlaybackState.play:
           ref
@@ -25,21 +29,7 @@ class Player {
         case PlaybackState.pause:
           ref.read(appStateProvider.notifier).setPlayerState(PlayerState.pause);
         case PlaybackState.done:
-          final playMode = ref.read(appStateProvider).playMode;
-          switch (playMode) {
-            case PlayMode.repeat:
-              // TODO: Playlist next item.
-              ref
-                  .read(appStateProvider.notifier)
-                  .setPlayerState(PlayerState.stop);
-            case PlayMode.repeatOne:
-              _replayCurrent();
-            case PlayMode.shuffle:
-              // TODO: Playlist shuffle item.
-              ref
-                  .read(appStateProvider.notifier)
-                  .setPlayerState(PlayerState.stop);
-          }
+          await playNextFromMode();
       }
     });
   }
@@ -51,13 +41,43 @@ class Player {
   // to run "play or pause".
   bool _stopped = true;
 
+  Future<void> playMusic(Music music) async {
+    final artist = await ref
+        .read(databaseProvider.notifier)
+        .findArtistNamesByIdList(music.artistList);
+    final album = await ref
+        .read(databaseProvider.notifier)
+        .findAlbumTitleById(music.album);
+    final artworkId = music.firstArtwork();
+    final artworkData =
+        await ref.read(databaseProvider.notifier).findArtworkById(artworkId);
+    late final Uint8List artwork;
+    if (artworkData == null) {
+      artwork = Uint8List(0);
+    } else {
+      final file = File(artworkData.filePath);
+      artwork = await file.readAsBytes();
+    }
+    await play(
+      music.id,
+      music.filePath,
+      title: music.title,
+      artist: artist,
+      album: album,
+      artwork: artwork,
+      artworkId: artworkId,
+    );
+  }
+
   Future<void> play(
+    int id,
     String filePath, {
     String? title,
     String? artist,
     String? album,
     Uint8List? artwork,
     int? artworkId,
+    int? playlistId,
   }) async {
     await _player.stop();
     await _player.setMetadata(Metadata(
@@ -68,13 +88,16 @@ class Player {
     ));
     await _player.open(filePath);
     await ref.read(appSettingsProvider.notifier).setLastPlayed(
+          id,
           filePath,
           title ?? '',
           artist ?? '',
           album ?? '',
           artworkId: artworkId,
+          playlistId: playlistId,
         );
     ref.read(appStateProvider.notifier).setCurrentMediaInfo(
+          id,
           title ?? '',
           artist ?? '',
           album ?? '',
@@ -126,6 +149,53 @@ class Player {
             .read(appSettingsProvider.notifier)
             .setPlayMode(PlayMode.repeat.toString());
         ref.read(appStateProvider.notifier).setPlayMode(PlayMode.repeat);
+    }
+  }
+
+  /// Skip to previous media in current [Playlist].
+  ///
+  /// Do nothing if current media not in current playlist, if error occurred.
+  /// Skip to the last media if current one is the first one.
+  Future<void> playPrevious() async {
+    final id = ref.read(appStateProvider).currentMediaId;
+    final music = await ref.read(playlistProvider).findPrevious(id);
+    if (music == null) {
+      return;
+    }
+    await playMusic(music);
+  }
+
+  /// Skip to next media in current [Playlist].
+  ///
+  /// Do nothing if current media not in current playlist, if error occurred.
+  /// Skip to the first media if current one is the last one.
+  Future<void> playNext() async {
+    final id = ref.read(appStateProvider).currentMediaId;
+    final music = await ref.read(playlistProvider).findNext(id);
+    if (music == null) {
+      return;
+    }
+    await playMusic(music);
+  }
+
+  /// Skip to next media according current [PlayMode].
+  ///
+  /// If [PlayMode.repeat], skip to next one in current [Playlist].
+  /// If [PlayMode.repeatOne], play from beginning of current media.
+  /// If [PlayMode.shuffle], skip to random media in current [Playlist].
+  Future<void> playNextFromMode() async {
+    final playMode = ref.read(appStateProvider).playMode;
+    switch (playMode) {
+      case PlayMode.repeat:
+        await playNext();
+      case PlayMode.repeatOne:
+        await _replayCurrent();
+      case PlayMode.shuffle:
+        final music = await ref.read(playlistProvider).random();
+        if (music == null) {
+          return;
+        }
+        await playMusic(music);
     }
   }
 

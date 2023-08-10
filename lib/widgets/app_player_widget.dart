@@ -235,8 +235,8 @@ class AppDesktopPlayerState extends ConsumerState<AppDesktopPlayer> {
               Row(
                 children: [
                   IconButton(
-                    onPressed: () {
-                      // TODO: Skip to previous.
+                    onPressed: () async {
+                      await ref.read(playerProvider).playPrevious();
                     },
                     icon: const Icon(Icons.skip_previous),
                   ),
@@ -248,8 +248,8 @@ class AppDesktopPlayerState extends ConsumerState<AppDesktopPlayer> {
                         ref.watch(appStateProvider).playerState]!,
                   ),
                   IconButton(
-                    onPressed: () {
-                      // TODO: Skip to next.
+                    onPressed: () async {
+                      await ref.read(playerProvider).playNext();
                     },
                     icon: const Icon(Icons.skip_next),
                   ),

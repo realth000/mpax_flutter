@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:mpax_flutter/provider/database_provider.dart';
+import 'package:mpax_flutter/provider/playlist_provider.dart';
 import 'package:mpax_flutter/provider/settings_provider.dart';
 import 'package:mpax_flutter/widgets/play_state.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -15,10 +16,12 @@ class State with _$State {
   const factory State({
     required int screenIndex,
     required double horizontalPadding,
+    required int currentMediaId,
     required String currentMediaTitle,
     required String currentMediaArtist,
     required String currentMediaAlbum,
     required Uint8List? currentMediaArtwork,
+    required int currentPlaylistId,
     required PlayerState playerState,
     required double playerPosition,
     required double playerDuration,
@@ -56,13 +59,17 @@ class AppState extends _$AppState {
       artworkData = file.readAsBytesSync();
     }
 
+    ref.read(playlistProvider).setPlaylistById(settingsProvider.lastPlaylistId);
+
     return State(
       screenIndex: 0,
       horizontalPadding: 15.0,
+      currentMediaId: settingsProvider.lastPlayedId,
       currentMediaTitle: settingsProvider.lastPlayedTitle,
       currentMediaArtist: settingsProvider.lastPlayedArtist,
       currentMediaAlbum: settingsProvider.lastPlayedAlbum,
       currentMediaArtwork: artworkData,
+      currentPlaylistId: settingsProvider.lastPlaylistId,
       playerState: PlayerState.stop,
       playerPosition: 0,
       playerDuration: 0,
@@ -80,9 +87,14 @@ class AppState extends _$AppState {
     state = state.copyWith(playerState: playerState);
   }
 
-  void setCurrentMediaInfo(String title, String artist, String album,
+  void setCurrentPlaylistInfo(int id) {
+    state = state.copyWith(currentPlaylistId: id);
+  }
+
+  void setCurrentMediaInfo(int id, String title, String artist, String album,
       {Uint8List? artwork}) {
     state = state.copyWith(
+      currentMediaId: id,
       currentMediaTitle: title,
       currentMediaArtist: artist,
       currentMediaAlbum: album,

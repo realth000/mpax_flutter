@@ -53,6 +53,7 @@ Future<void> initializeDatabase() async {
   }
 }
 
+// TODO: DatabaseProvider seems stateless, change to a stateless one.
 @Riverpod(keepAlive: true)
 class Database extends _$Database {
   @override

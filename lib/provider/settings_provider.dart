@@ -105,6 +105,8 @@ class AppSettings extends _$AppSettings {
       volume: _settings.getInt(settingsVolume) ?? _defaultVolume,
       scanDirectoryList: _settings.getStringList(settingsScanDirectoryList) ??
           _defaultScanDirectoryList,
+      lastPlayedId:
+          _settings.getInt(settingsLastPlayedId) ?? _defaultLastPlayedId,
       lastPlayedFilePath: _settings.getString(settingsLastPlayedFilePath) ??
           _defaultLastPlayedFilePath,
       lastPlayedTitle: _settings.getString(settingsLastPlayedTitle) ??
@@ -115,6 +117,8 @@ class AppSettings extends _$AppSettings {
           _defaultLastPlayedAlbum,
       lastPlayedArtworkId: _settings.getInt(settingsLastPlayedArtworkId) ??
           _defaultLastPlayedArtworkId,
+      lastPlaylistId:
+          _settings.getInt(settingsLastPlaylistId) ?? _defaultLastPlaylistId,
     );
   }
 
@@ -126,10 +130,12 @@ class AppSettings extends _$AppSettings {
   static const _defaultVolume = 30;
   static const _defaultScanDirectoryList = <String>[];
   static const _defaultLastPlayedFilePath = '';
+  static const _defaultLastPlayedId = -1;
   static const _defaultLastPlayedTitle = '';
   static const _defaultLastPlayedArtist = '';
   static const _defaultLastPlayedAlbum = '';
   static const _defaultLastPlayedArtworkId = -1;
+  static const _defaultLastPlaylistId = -1;
 
   Future<void> setCurrentMediaPath(String currentMediaPath) async {
     state = state.copyWith(currentMediaPath: currentMediaPath);
@@ -174,19 +180,30 @@ class AppSettings extends _$AppSettings {
   }
 
   Future<void> setLastPlayed(
-      String filePath, String title, String artist, String album,
-      {int? artworkId}) async {
+      int id, String filePath, String title, String artist, String album,
+      {int? artworkId, int? playlistId}) async {
+    final oldPlaylistId = state.lastPlaylistId;
     state = state.copyWith(
+      lastPlayedId: id,
       lastPlayedFilePath: filePath,
       lastPlayedTitle: title,
       lastPlayedArtist: artist,
       lastPlayedAlbum: album,
       lastPlayedArtworkId: artworkId ?? -1,
+      lastPlaylistId: playlistId ?? oldPlaylistId,
     );
+    await _settings.saveInt(settingsLastPlayedId, id);
     await _settings.saveString(settingsLastPlayedFilePath, filePath);
     await _settings.saveString(settingsLastPlayedTitle, title);
     await _settings.saveString(settingsLastPlayedArtist, artist);
     await _settings.saveString(settingsLastPlayedAlbum, album);
     await _settings.saveInt(settingsLastPlayedArtworkId, artworkId ?? -1);
+    await _settings.saveInt(
+        settingsLastPlaylistId, playlistId ?? oldPlaylistId);
+  }
+
+  Future<void> setLastPlaylist(int id) async {
+    state = state.copyWith(lastPlaylistId: id);
+    await _settings.saveInt(settingsLastPlaylistId, id);
   }
 }

@@ -43,47 +43,13 @@ class Playlist {
     return this..musicList = musicList.toList();
   }
 
-  /// Load all music to a playlist.
-  static Future<Playlist> loadAllMusicSyncToPlaylist() async {
-    final playlist = Playlist();
-    // final allMusic =
-    //     await Get.find<DatabaseService>().storage.musics.where().findAll();
-    // playlist
-    //   ..name = 'all_media'
-    //   ..clearMusicList()
-    //   ..addMusicList(allMusic);
-    return playlist;
-  }
-
   /// Whether is an empty playlist.
   bool get isEmpty => musicList.isEmpty;
 
   /// Tell if the specified audio file already exists in playlist.
   ///
   /// Run by file path.
-  // TODO: Maybe should implement this with database.
   bool contains(Music music) => musicList.contains(music.id);
-
-  /// Tell if the specified path file already exists in playlist.
-  // TODO: Maybe should implement this with database.
-  // TODO: Check usage.
-  Music? find(String contentPath) {
-    for (final content in musicList) {
-      // final musicContent = Get.find<DatabaseService>()
-      //     .storage
-      //     .musics
-      //     .where()
-      //     .idEqualTo(content)
-      //     .findFirstSync();
-      // if (musicContent == null) {
-      //   continue;
-      // }
-      // if (musicContent.filePath == contentPath) {
-      //   return musicContent;
-      // }
-    }
-    return null;
-  }
 
   /// Add music to current playlist.
   /// No duplicate file path.
@@ -92,7 +58,6 @@ class Playlist {
       return;
     }
     musicList.add(music.id);
-    // await Get.find<DatabaseService>().savePlaylist(this);
   }
 
   /// Add a list of audio model to playlist, not duplicate with same path file.
@@ -103,117 +68,15 @@ class Playlist {
       }
       this.musicList.add(music.id);
     }
-    // await Get.find<DatabaseService>().savePlaylist(this);
   }
 
   /// Remove [music] from current [Playlist].
   Future<void> removeMusic(Music music) async {
     musicList.removeWhere((m) => m == music.id);
-    // await Get.find<DatabaseService>().savePlaylist(this);
-  }
-
-  /// Remove all music under [folderPath].
-  ///
-  /// This does nothing to the folder monitoring list.
-  /// Only as a convenience method to delete all music under a folder.
-  Future<void> removeMusicByMusicFolder(String folderPath) async {
-    // final idList = (await Get.find<DatabaseService>()
-    //         .storage
-    //         .musics
-    //         .filter()
-    //         .filePathStartsWith(folderPath)
-    //         .findAll())
-    //     .map((e) => e.id);
-    // for (final id in idList) {
-    //   musicList.remove(id);
-    // }
-    // await Get.find<DatabaseService>().savePlaylist(this);
   }
 
   /// Clear audio file list.
   void clearMusicList() {
     musicList.clear();
   }
-
-  /// Find previous audio content of the given playContent.
-  ///
-  /// If it's the first one, the last one will be returned.
-  /// Find current playContent position by [contentList.last.contentPath].
-  Music? findPreviousMusic(Music music) {
-    if (musicList.isEmpty) {
-      return null;
-    }
-    // if (!musicIdSortList.contains(music.id)) {
-    //   return null;
-    // }
-    if (musicList.first == music.id) {
-      // return Get.find<DatabaseService>()
-      //     .storage
-      //     .musics
-      //     .where()
-      //     .idEqualTo(musicList.last)
-      //     .findFirstSync();
-    }
-    final pos = musicList.indexOf(music.id);
-    if (pos == -1) {
-      return null;
-    }
-    // return Get.find<DatabaseService>()
-    //     .storage
-    //     .musics
-    //     .where()
-    //     .idEqualTo(musicList.elementAt(pos + 1))
-    //     .findFirstSync();
-    return null;
-  }
-
-  /// Find next audio content of the given playContent.
-  ///
-  /// If it's the last one, the first one will be returned.
-  /// Find current playContent position by [contentList.last.contentPath].
-  Music? findNextContent(Music music) {
-    if (musicList.isEmpty) {
-      return null;
-    }
-    if (musicList.last == music.id) {
-      // return Get.find<DatabaseService>()
-      //     .storage
-      //     .musics
-      //     .where()
-      //     .idEqualTo(musicList.first)
-      //     .findFirstSync();
-    }
-    // final pos = musicList.indexOf(music.id);
-    // if (pos == -1) {
-    //   return null;
-    // }
-    // return Get.find<DatabaseService>()
-    //     .storage
-    //     .musics
-    //     .where()
-    //     .idEqualTo(musicList.elementAt(pos - 1))
-    //     .findFirstSync();
-    return null;
-  }
-
-  /// Return a random audio content in playlist.
-  Music? randomPlayContent() {
-    if (musicList.isEmpty) {
-      return null;
-    }
-    // return Get.find<DatabaseService>()
-    //     .storage
-    //     .musics
-    //     .where()
-    //     .idEqualTo(musicList.elementAt(Random().nextInt(musicList.length)))
-    //     .findFirstSync();
-    return null;
-  }
-
-  /// Remove same [Music] with same [filePathList].
-// Future<void> removeByPathList(List<String> filePathList) async {
-//   musicList.removeWhere(
-//     (content) => filePathList.contains(content.value!.filePath),
-//   );
-// }
 }

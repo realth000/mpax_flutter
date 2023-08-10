@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mpax_flutter/models/music_model.dart';
 import 'package:mpax_flutter/provider/database_provider.dart';
 import 'package:mpax_flutter/provider/player_provider.dart';
+import 'package:mpax_flutter/provider/playlist_provider.dart';
 import 'package:mpax_flutter/utils/debug.dart';
 import 'package:path/path.dart' as path;
 
@@ -30,6 +31,7 @@ class _AudioListState extends ConsumerState<AudioList> {
 
   List<int> musicIdList = <int>[];
   List<Music> musicList = <Music>[];
+  int playlistId = -1;
 
   @override
   void initState() {
@@ -40,6 +42,7 @@ class _AudioListState extends ConsumerState<AudioList> {
           .findPlaylistByNameSync(widget.playlistName);
       if (playlist != null) {
         musicIdList = playlist.musicList;
+        playlistId = playlist.id;
       }
       debug('>>>> length: ${musicIdList.length}');
     }
@@ -91,7 +94,7 @@ class _AudioListState extends ConsumerState<AudioList> {
           itemExtent: 65,
           itemBuilder: (context, index) {
             debug('>>>> build list $index ${musicList[index].fileName}');
-            return AudioItem(musicList[index]);
+            return AudioItem(musicList[index], playlistId);
           },
         ),
         onRefresh: () async {
@@ -111,9 +114,10 @@ class _AudioListState extends ConsumerState<AudioList> {
 }
 
 class AudioItem extends ConsumerWidget {
-  const AudioItem(this.music, {super.key});
+  const AudioItem(this.music, this.playlistId, {super.key});
 
   final Music music;
+  final int playlistId;
 
   Future<Uint8List?> _fetchArtwork(WidgetRef ref) async {
     final artworkId = music.firstArtwork();
@@ -222,13 +226,18 @@ class AudioItem extends ConsumerWidget {
               final album = await _fetchAlbum(ref);
               final artwork = await _fetchArtwork(ref);
               await ref.read(playerProvider).play(
+                    music.id,
                     music.filePath,
                     title: title,
                     artist: artist,
                     album: album,
                     artwork: artwork,
                     artworkId: music.firstArtwork(),
+                    playlistId: playlistId,
                   );
+              if (playlistId > 0) {
+                await ref.read(playlistProvider).setPlaylistById(playlistId);
+              }
             },
             isThreeLine: true,
             titleAlignment: ListTileTitleAlignment.top,
