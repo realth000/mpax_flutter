@@ -16,7 +16,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   MetadataGod.initialize();
 
-  await taglib.initialize(isolateCount: 8);
+  await taglib.initialize();
 
   await initializeDatabase();
   await SimpleAudio.init(
