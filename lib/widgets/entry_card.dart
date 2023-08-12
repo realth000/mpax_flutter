@@ -32,13 +32,13 @@ class EntryCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return InkWell(
-      onTap: onTap,
-      onLongPress: onLongPress,
-      onSecondaryTap: onSecondaryTap,
-      borderRadius: BorderRadius.circular(12),
-      child: SizedBox(
-        child: Card(
+    return SizedBox(
+      child: Card(
+        child: InkWell(
+          onTap: onTap,
+          onLongPress: onLongPress,
+          onSecondaryTap: onSecondaryTap,
+          borderRadius: BorderRadius.circular(12),
           child: Padding(
             padding: const EdgeInsets.only(bottom: 5),
             child: Column(

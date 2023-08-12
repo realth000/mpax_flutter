@@ -41,17 +41,17 @@ void gotoTabIndex(BuildContext context, int index) {
     case 0:
       context.go(
         ScreenPaths.mediaLibrary,
-        extra: <String, String>{'appBarTitle': 'Library'},
+        extra: <String, dynamic>{'appBarTitle': 'Library'},
       );
     case 1:
       context.go(
         ScreenPaths.playlist,
-        extra: <String, String>{'appBarTitle': 'Playlist'},
+        extra: <String, dynamic>{'appBarTitle': 'Playlist'},
       );
     case 2:
       context.go(
         ScreenPaths.settings,
-        extra: <String, String>{'appBarTitle': 'Settings'},
+        extra: <String, dynamic>{'appBarTitle': 'Settings'},
       );
   }
 }

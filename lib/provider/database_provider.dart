@@ -62,7 +62,8 @@ class Database extends _$Database {
   }
 
   Future<List<Playlist>> allPlaylist() async {
-    return _storage.playlists.where().findAll();
+    // Remove media library playlist which has id 1 at index 0.
+    return (await _storage.playlists.where().findAll())..removeAt(0);
   }
 
   /// Run a write transaction.
@@ -317,6 +318,25 @@ class Database extends _$Database {
       await coverFile.writeAsBytes(data);
       return Artwork(format, coverFile.path, data: data, skipHash: true);
     }
+  }
+
+  Future<Artwork?> fetchArtworkById(int? id) async {
+    if (id == null) {
+      return null;
+    }
+    return _storage.artworks.get(id);
+  }
+
+  Future<Uint8List?> fetchArtworkDataById(int? id) async {
+    if (id == null) {
+      return null;
+    }
+    final artwork = await _storage.artworks.get(id);
+    if (artwork == null) {
+      return null;
+    }
+    final file = File(artwork.filePath);
+    return file.readAsBytes();
   }
 
   /// Return a list of [Playlist]. Returning a list because playlist allowed to
