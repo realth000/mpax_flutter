@@ -168,7 +168,21 @@ class AppSettings extends _$AppSettings {
   }
 
   Future<void> addScanDirectory(String directory) async {
-    final list = state.scanDirectoryList.toList()..add(directory);
+    // Use toSet() to remove duplicate directories.
+    final list = state.scanDirectoryList.toList()
+      ..add(directory)
+      ..toSet()
+      ..toList();
+    state = state.copyWith(scanDirectoryList: list);
+    await _settings.saveStringList(settingsScanDirectoryList, list);
+  }
+
+  Future<void> addScanDirectories(List<String> directories) async {
+    // Use toSet() to remove duplicate directories.
+    final list = state.scanDirectoryList.toList()
+      ..addAll(directories)
+      ..toSet()
+      ..toList();
     state = state.copyWith(scanDirectoryList: list);
     await _settings.saveStringList(settingsScanDirectoryList, list);
   }

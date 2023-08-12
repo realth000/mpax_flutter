@@ -6,6 +6,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:mpax_flutter/models/artist_model.dart';
 import 'package:mpax_flutter/models/artwork_model.dart';
 import 'package:mpax_flutter/models/metadata_model.dart';
+import 'package:mpax_flutter/models/playlist_model.dart';
 import 'package:mpax_flutter/provider/app_state_provider.dart';
 import 'package:mpax_flutter/provider/database_provider.dart';
 import 'package:mpax_flutter/provider/settings_provider.dart';
@@ -50,29 +51,60 @@ class Scanner extends _$Scanner {
     state = state.copyWith(allowedExtensions: extensionList);
   }
 
-  Future<List<String>> scan() async {
+  Future<List<String>> scan({
+    int? playlistId,
+    List<String>? paths,
+  }) async {
+    assert((playlistId == null && paths == null) ||
+        (playlistId != null && paths != null));
+
     if (ref.read(appStateProvider).isScanning) {
       debug('already scanning, exit');
       return <String>[];
     }
+
+    if (paths != null) {
+      await ref.read(appSettingsProvider.notifier).addScanDirectories(paths);
+    }
+
     debug('start scan');
     ref.read(appStateProvider.notifier).setScanning(true);
-    return _scanMusic();
+    return _scanMusic(
+      playlistId: playlistId,
+      overridePaths: paths,
+    );
   }
 
-  Future<List<String>> _scanMusic() async {
-    final targets = ref.read(appSettingsProvider).scanDirectoryList;
+  Future<List<String>> _scanMusic(
+      {int? playlistId, List<String>? overridePaths}) async {
+    final targets =
+        overridePaths ?? ref.read(appSettingsProvider).scanDirectoryList;
     final ret = <String>[];
+
+    final Playlist? targetPlaylist;
+    if (playlistId != null) {
+      targetPlaylist = await ref
+          .read(databaseProvider.notifier)
+          .fetchPlaylistById(playlistId);
+      if (targetPlaylist == null) {
+        // This should not happen
+        debug('error: try to scan for a playlist that not exists');
+        return [];
+      }
+    } else {
+      targetPlaylist = null;
+    }
+
     for (final directory in targets) {
       debug('scanning $directory');
-      ret.addAll(await _scanDir(directory));
+      ret.addAll(await _scanDir(directory, playlist: targetPlaylist));
     }
     debug('finish scan');
     ref.read(appStateProvider.notifier).setScanning(false);
     return ret;
   }
 
-  Future<List<String>> _scanDir(String directory) async {
+  Future<List<String>> _scanDir(String directory, {Playlist? playlist}) async {
     final dir = Directory(directory);
     if (!dir.existsSync()) {
       debug('scan dir not exists: ${dir.path}');
@@ -146,6 +178,11 @@ class Scanner extends _$Scanner {
       metadataList.add(ret);
     });
 
+    // Use to record cover image id of playlist.
+    // This should me the first image scanned in music metadata.
+    // Do nothing if playlist is null.
+    var playlistCoverId = -1;
+
     for (final metadata in metadataList) {
       // Save models.
       final music = await db.fetchMusic(metadata.filePath);
@@ -187,6 +224,10 @@ class Scanner extends _$Scanner {
           );
           music.artworkUnknown = artwork.id;
         }
+
+        if (playlist != null && playlistCoverId < 0) {
+          playlistCoverId = music.artworkUnknown ?? -1;
+        }
       }
 
       // Save [Album].
@@ -212,6 +253,15 @@ class Scanner extends _$Scanner {
         await _artist.addMusic(music);
         await db.saveArtist(_artist);
       }
+
+      if (playlist != null) {
+        await playlist.addMusic(music);
+      }
+    }
+
+    if (playlist != null) {
+      playlist.coverArtworkId = playlistCoverId > 0 ? playlistCoverId : null;
+      await db.savePlaylist(playlist);
     }
 
     return <String>[];

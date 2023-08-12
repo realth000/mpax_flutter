@@ -61,6 +61,10 @@ class Database extends _$Database {
     await initializeDatabase();
   }
 
+  Future<List<Playlist>> allPlaylist() async {
+    return _storage.playlists.where().findAll();
+  }
+
   /// Run a write transaction.
   Future<void> writeTxn(Future Function() callback) async {
     await _storage.writeTxn<void>(callback);
@@ -334,6 +338,13 @@ class Database extends _$Database {
     final playlist = Playlist()..name = playlistName;
     await _storage.writeTxn(() async => _storage.playlists.put(playlist));
     return [playlist];
+  }
+
+  Future<Playlist?> fetchPlaylistById(int? id) async {
+    if (id == null) {
+      return null;
+    }
+    return _storage.playlists.get(id);
   }
 
   Future<Artwork?> reloadArtwork(

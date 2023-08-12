@@ -39,6 +39,8 @@ class Playlist {
   /// If so, we should check every time access them or keep observing.
   List<Id> musicList = <Id>[];
 
+  int? coverArtworkId;
+
   Playlist makeGrowable() {
     return this..musicList = musicList.toList();
   }
