@@ -1,11 +1,21 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mpax_flutter/models/playlist_model.dart';
 import 'package:mpax_flutter/provider/database_provider.dart';
+import 'package:mpax_flutter/provider/scanner_provider.dart';
 import 'package:mpax_flutter/router.dart';
+import 'package:mpax_flutter/utils/debug.dart';
 import 'package:mpax_flutter/utils/shimmer_widget.dart';
 import 'package:mpax_flutter/widgets/entry_card.dart';
+
+enum PlaylistMenuAction {
+  addMusic,
+  delete,
+  rename,
+  detail,
+}
 
 class PlaylistPage extends ConsumerStatefulWidget {
   const PlaylistPage({super.key});
@@ -50,6 +60,9 @@ class _PlaylistPageState extends ConsumerState<PlaylistPage> {
                     ),
                   );
                 }
+
+                final playlist = allPlaylist[index];
+
                 return EntryCard(
                   cover: snapshot.data != null
                       ? Image.memory(snapshot.data!)
@@ -58,14 +71,55 @@ class _PlaylistPageState extends ConsumerState<PlaylistPage> {
                   description: allPlaylist[index].name,
                   onTap: () {
                     context.push(
-                      '${ScreenPaths.playlist}/${allPlaylist[index].id}',
+                      '${ScreenPaths.playlist}/${playlist.id}',
                       extra: <String, dynamic>{
-                        'appBarTitle': allPlaylist[index].name,
-                        'playlistId': allPlaylist[index].id,
-                        'playlistName': allPlaylist[index].name,
-                        'playlistMusicList': allPlaylist[index].musicList,
+                        'appBarTitle': playlist.name,
+                        'playlistId': playlist.id,
+                        'playlistName': playlist.name,
+                        'playlistMusicList': playlist.musicList,
                       },
                     );
+                  },
+                  popupMenuItemBuilder: (context) =>
+                      const <PopupMenuItem<PlaylistMenuAction>>[
+                    PopupMenuItem(
+                      child: Text('Add Music'),
+                      value: PlaylistMenuAction.addMusic,
+                    ),
+                    PopupMenuItem(
+                      child: Text('Rename'),
+                      value: PlaylistMenuAction.rename,
+                    ),
+                    PopupMenuItem(
+                      child: Text('Delete'),
+                      value: PlaylistMenuAction.delete,
+                    ),
+                    PopupMenuItem(
+                      child: Text('Detail'),
+                      value: PlaylistMenuAction.detail,
+                    ),
+                  ],
+                  popupMenuOnSelected: (v) async {
+                    switch (v) {
+                      case PlaylistMenuAction.addMusic:
+                        final targetPath =
+                            await FilePicker.platform.getDirectoryPath();
+                        if (targetPath == null) {
+                          return;
+                        }
+                        final ret =
+                            await ref.read(scannerProvider.notifier).scan(
+                          playlistId: playlist.id,
+                          paths: [targetPath],
+                        );
+                        debug('add success');
+                      case PlaylistMenuAction.rename:
+                      // TODO: rename
+                      case PlaylistMenuAction.delete:
+                      // TODO: delete
+                      case PlaylistMenuAction.detail:
+                      // TODO: detail
+                    }
                   },
                 );
               },

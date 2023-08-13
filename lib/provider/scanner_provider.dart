@@ -255,6 +255,7 @@ class Scanner extends _$Scanner {
       }
 
       if (playlist != null) {
+        playlist = playlist.makeGrowable();
         await playlist.addMusic(music);
       }
     }
