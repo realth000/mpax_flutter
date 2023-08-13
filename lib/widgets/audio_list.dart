@@ -85,6 +85,8 @@ class _AudioListState extends ConsumerState<AudioList> {
 
   @override
   Widget build(BuildContext context) => EasyRefresh(
+        header: const MaterialHeader(),
+        footer: const MaterialFooter(),
         controller: _refreshController,
         scrollController: _scrollController,
         refreshOnStart: true,

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mpax_flutter/models/playlist_model.dart';
 import 'package:mpax_flutter/provider/database_provider.dart';
 import 'package:mpax_flutter/router.dart';
+import 'package:mpax_flutter/utils/shimmer_widget.dart';
 import 'package:mpax_flutter/widgets/entry_card.dart';
 
 class PlaylistPage extends ConsumerStatefulWidget {
@@ -41,7 +42,13 @@ class _PlaylistPageState extends ConsumerState<PlaylistPage> {
                 if (snapshot.hasError) {
                   return Text('${snapshot.error}');
                 } else if (snapshot.connectionState != ConnectionState.done) {
-                  return const CircularProgressIndicator();
+                  return Shimmer(
+                    linearGradient: ShimmerGradiant.of(context),
+                    child: const ShimmerLoading(
+                      isLoading: true,
+                      child: Card(),
+                    ),
+                  );
                 }
                 return EntryCard(
                   cover: snapshot.data != null
