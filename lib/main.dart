@@ -17,6 +17,7 @@ void main() async {
   MetadataGod.initialize();
 
   await taglib.initialize();
+  MetadataGod.initialize();
 
   await initializeDatabase();
   await SimpleAudio.init(

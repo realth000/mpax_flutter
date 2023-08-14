@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:collection/collection.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:metadata_god/metadata_god.dart' as metadata_god;
 import 'package:mpax_flutter/models/artist_model.dart';
 import 'package:mpax_flutter/models/artwork_model.dart';
 import 'package:mpax_flutter/models/metadata_model.dart';
@@ -117,13 +118,14 @@ class Scanner extends _$Scanner {
 
     final db = ref.read(databaseProvider.notifier);
 
-    final futures = <Future<taglib.Metadata?>>[];
+    final futures = <Future<metadata_god.Metadata?>>[];
     final pathList = <String>[];
     final metadataList = <Metadata>[];
 
     await for (final entity in dir.list(recursive: true, followLinks: false)) {
-      if (entity is! File) {
-        debug('scan skip not a file: ${entity.path}');
+      if (entity is Directory) {
+        debug('!!! check subdirectory: ${entity.path}');
+        final result = await _scanDir(entity.path, playlist: playlist);
         continue;
       }
 
@@ -137,7 +139,8 @@ class Scanner extends _$Scanner {
       // if (metadata == null) {
       //   continue;
       // }
-      futures.add(fetchTagLibMetadata(entity.path));
+      debug('!!! check: ${entity.path}');
+      futures.add(fetchMetadataGodMetadata(entity.path));
       pathList.add(entity.path);
     }
 
@@ -145,36 +148,73 @@ class Scanner extends _$Scanner {
 
     debug('>>> start generating metadata');
 
-    (await Future.wait<taglib.Metadata?>(futures))
-        .forEachIndexed((index, taglibMetadata) {
-      if (taglibMetadata == null) {
+    // (await Future.wait<taglib.Metadata?>(futures))
+    //     .forEachIndexed((index, taglibMetadata) {
+    //   if (taglibMetadata == null) {
+    //     return;
+    //   }
+    //
+    //   final ret = Metadata(pathList[index]);
+    //
+    //   debug('get metadata: ${taglibMetadata.title}, ${taglibMetadata.artist}');
+    //   ret
+    //     ..title = taglibMetadata.title
+    //     ..artist = taglibMetadata.artist
+    //     ..albumTitle = taglibMetadata.album;
+    //   if (taglibMetadata.albumArtist != null) {
+    //     ret.albumArtist
+    //       ..clear()
+    //       ..add(taglibMetadata.albumArtist!);
+    //   }
+    //   ret
+    //     ..track = taglibMetadata.track
+    //     ..albumTrackCount = taglibMetadata.albumTotalTrack
+    //     ..albumYear = taglibMetadata.year
+    //     ..genre = taglibMetadata.genre
+    //     ..comment = taglibMetadata.comment
+    //     ..sampleRate = taglibMetadata.sampleRate
+    //     ..bitrate = taglibMetadata.bitrate
+    //     ..channels = taglibMetadata.channels
+    //     ..length = taglibMetadata.length
+    //     ..lyrics = taglibMetadata.lyrics
+    //     ..artworkUnknown = taglibMetadata.albumCover;
+    //   metadataList.add(ret);
+    // });
+
+    (await Future.wait<metadata_god.Metadata?>(futures))
+        .forEachIndexed((index, metadata) {
+      if (metadata == null) {
         return;
       }
 
       final ret = Metadata(pathList[index]);
-
-      debug('get metadata: ${taglibMetadata.title}, ${taglibMetadata.artist}');
+      debug('get metadata: ${metadata.title}, ${metadata.artist}');
       ret
-        ..title = taglibMetadata.title
-        ..artist = taglibMetadata.artist
-        ..albumTitle = taglibMetadata.album;
-      if (taglibMetadata.albumArtist != null) {
+        ..title = metadata.title
+        ..artist = metadata.artist
+        ..albumTitle = metadata.album;
+
+      if (metadata.albumArtist != null) {
         ret.albumArtist
           ..clear()
-          ..add(taglibMetadata.albumArtist!);
+          ..add(metadata.albumArtist!);
       }
+
       ret
-        ..track = taglibMetadata.track
-        ..albumTrackCount = taglibMetadata.albumTotalTrack
-        ..albumYear = taglibMetadata.year
-        ..genre = taglibMetadata.genre
-        ..comment = taglibMetadata.comment
-        ..sampleRate = taglibMetadata.sampleRate
-        ..bitrate = taglibMetadata.bitrate
-        ..channels = taglibMetadata.channels
-        ..length = taglibMetadata.length
-        ..lyrics = taglibMetadata.lyrics
-        ..artworkUnknown = taglibMetadata.albumCover;
+        ..track = metadata.trackNumber
+        ..albumTrackCount = metadata.trackTotal
+        ..albumYear = metadata.year
+        ..genre = metadata.genre
+        ..comment = null
+        ..sampleRate = null
+        ..bitrate = null
+        ..channels = null
+        ..length = metadata.duration?.inSeconds
+        ..lyrics = null;
+
+      if (metadata.picture != null) {
+        ret.artworkUnknown = metadata.picture!.data;
+      }
       metadataList.add(ret);
     });
 
@@ -301,5 +341,10 @@ class Scanner extends _$Scanner {
 
   Future<taglib.Metadata?> fetchTagLibMetadata(String filePath) async {
     return taglib.readMetadata(filePath);
+  }
+
+  Future<metadata_god.Metadata?> fetchMetadataGodMetadata(
+      String filePath) async {
+    return metadata_god.MetadataGod.readMetadata(file: filePath);
   }
 }
