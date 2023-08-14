@@ -43,14 +43,13 @@ class Player {
 
   Future<void> playMusic(Music music) async {
     final artist = await ref
-        .read(databaseProvider.notifier)
+        .read(databaseProvider)
         .findArtistNamesByIdList(music.artistList);
-    final album = await ref
-        .read(databaseProvider.notifier)
-        .findAlbumTitleById(music.album);
+    final album =
+        await ref.read(databaseProvider).findAlbumTitleById(music.album);
     final artworkId = music.firstArtwork();
     final artworkData =
-        await ref.read(databaseProvider.notifier).findArtworkById(artworkId);
+        await ref.read(databaseProvider).findArtworkById(artworkId);
     late final Uint8List artwork;
     if (artworkData == null) {
       artwork = Uint8List(0);

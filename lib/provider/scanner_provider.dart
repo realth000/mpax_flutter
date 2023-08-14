@@ -84,9 +84,8 @@ class Scanner extends _$Scanner {
 
     final Playlist? targetPlaylist;
     if (playlistId != null) {
-      targetPlaylist = await ref
-          .read(databaseProvider.notifier)
-          .fetchPlaylistById(playlistId);
+      targetPlaylist =
+          await ref.read(databaseProvider).fetchPlaylistById(playlistId);
       if (targetPlaylist == null) {
         // This should not happen
         debug('error: try to scan for a playlist that not exists');
@@ -116,7 +115,7 @@ class Scanner extends _$Scanner {
     final loadImage = state.loadImage;
     final scaleImage = state.scaleImage;
 
-    final db = ref.read(databaseProvider.notifier);
+    final db = ref.read(databaseProvider);
 
     final futures = <Future<metadata_god.Metadata?>>[];
     final pathList = <String>[];

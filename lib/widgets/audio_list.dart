@@ -38,7 +38,7 @@ class _AudioListState extends ConsumerState<AudioList> {
     super.initState();
     if (musicIdList.isEmpty) {
       final playlist = ref
-          .read(databaseProvider.notifier)
+          .read(databaseProvider)
           .findPlaylistByNameSync(widget.playlistName);
       if (playlist != null) {
         musicIdList = playlist.musicList;
@@ -67,7 +67,7 @@ class _AudioListState extends ConsumerState<AudioList> {
     while (musicIdList.length > _count + loadCount &&
         loadCount < widget.loadStep) {
       final music = await ref
-          .read(databaseProvider.notifier)
+          .read(databaseProvider)
           .findMusicById(musicIdList[_count + loadCount]);
       if (music != null) {
         musicList.add(music);
@@ -127,30 +127,27 @@ class AudioItem extends ConsumerWidget {
       return null;
     }
     final artworkData =
-        await ref.read(databaseProvider.notifier).findArtworkById(artworkId);
+        await ref.read(databaseProvider).findArtworkById(artworkId);
     if (artworkData == null) {
       return null;
     }
     final file = File(artworkData.filePath);
     if (!file.existsSync()) {
-      await ref
-          .read(databaseProvider.notifier)
-          .reloadArtwork(music.filePath, artworkId);
+      await ref.read(databaseProvider).reloadArtwork(music.filePath, artworkId);
     }
     return file.readAsBytes();
   }
 
   Future<String> _fetchArtist(WidgetRef ref) async {
     final artistIdList = music.artistList;
-    final artistString = await ref
-        .read(databaseProvider.notifier)
-        .findArtistNamesByIdList(artistIdList);
+    final artistString =
+        await ref.read(databaseProvider).findArtistNamesByIdList(artistIdList);
     return artistString;
   }
 
   Future<String> _fetchAlbum(WidgetRef ref) async {
     final albumId = music.album;
-    return ref.read(databaseProvider.notifier).findAlbumTitleById(albumId);
+    return ref.read(databaseProvider).findAlbumTitleById(albumId);
   }
 
   @override

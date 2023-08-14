@@ -31,8 +31,7 @@ class Playlist {
   }
 
   Future<void> setPlaylistById(int id) async {
-    final playlist =
-        await ref.read(databaseProvider.notifier).findPlaylistById(id);
+    final playlist = await ref.read(databaseProvider).findPlaylistById(id);
     if (playlist == null) {
       return;
     }
@@ -58,8 +57,7 @@ class Playlist {
       targetId = pos - 1;
     }
 
-    final music =
-        await ref.read(databaseProvider.notifier).findMusicById(targetId);
+    final music = await ref.read(databaseProvider).findMusicById(targetId);
 
     if (music == null) {
       return null;
@@ -90,8 +88,7 @@ class Playlist {
       targetId = pos + 1;
     }
 
-    final music =
-        await ref.read(databaseProvider.notifier).findMusicById(targetId);
+    final music = await ref.read(databaseProvider).findMusicById(targetId);
     if (music == null) {
       return null;
     }
@@ -115,8 +112,7 @@ class Playlist {
     }
     final targetId =
         _playlist!.musicList[Random().nextInt(_playlist!.musicList.length - 1)];
-    final music =
-        await ref.read(databaseProvider.notifier).findMusicById(targetId);
+    final music = await ref.read(databaseProvider).findMusicById(targetId);
     if (music == null) {
       return null;
     }
@@ -136,8 +132,7 @@ class Playlist {
     }
     final targetId =
         _playlist!.musicList[Random().nextInt(_playlist!.musicList.length - 1)];
-    final music =
-        await ref.read(databaseProvider.notifier).findMusicById(targetId);
+    final music = await ref.read(databaseProvider).findMusicById(targetId);
     if (music == null) {
       return null;
     }

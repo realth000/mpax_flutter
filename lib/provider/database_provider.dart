@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:crypto/crypto.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar/isar.dart';
 import 'package:mpax_flutter/models/album_model.dart';
 import 'package:mpax_flutter/models/artist_model.dart';
@@ -53,13 +54,10 @@ Future<void> initializeDatabase() async {
   }
 }
 
-// TODO: DatabaseProvider seems stateless, change to a stateless one.
-@Riverpod(keepAlive: true)
-class Database extends _$Database {
-  @override
-  Future<void> build() async {
-    await initializeDatabase();
-  }
+class Database {
+  Database(this.ref);
+
+  Ref ref;
 
   Future<List<Playlist>> allPlaylist() async {
     // Remove media library playlist which has id 1 at index 0.
@@ -418,3 +416,6 @@ class Database extends _$Database {
     }
   }
 }
+
+@Riverpod(keepAlive: true)
+Database database(DatabaseRef ref) => Database(ref);

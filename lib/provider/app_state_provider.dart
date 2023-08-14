@@ -51,7 +51,7 @@ class AppState extends _$AppState {
     // TODO: Fetch metadata from file.
     // Here is a thumb from database.
     final artwork = ref
-        .read(databaseProvider.notifier)
+        .read(databaseProvider)
         .findArtworkByIdSync(settingsProvider.lastPlayedArtworkId);
     Uint8List? artworkData;
     if (artwork != null) {

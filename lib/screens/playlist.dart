@@ -30,7 +30,7 @@ class _PlaylistPageState extends ConsumerState<PlaylistPage> {
     return Padding(
       padding: const EdgeInsets.all(8),
       child: FutureBuilder(
-        future: ref.read(databaseProvider.notifier).allPlaylist(),
+        future: ref.read(databaseProvider).allPlaylist(),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return Text('${snapshot.error}');
@@ -46,7 +46,7 @@ class _PlaylistPageState extends ConsumerState<PlaylistPage> {
             ),
             itemBuilder: (context, index) => FutureBuilder(
               future: ref
-                  .read(databaseProvider.notifier)
+                  .read(databaseProvider)
                   .fetchArtworkDataById(allPlaylist[index].coverArtworkId),
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
@@ -194,9 +194,7 @@ AppBarActionsBuilder playlistPageActionsBuilder = (context, ref) {
         }
 
         final name = result.$2;
-        await ref
-            .read(databaseProvider.notifier)
-            .savePlaylist(Playlist()..name = name!);
+        await ref.read(databaseProvider).savePlaylist(Playlist()..name = name!);
       },
       icon: const Icon(Icons.playlist_add),
     ),
