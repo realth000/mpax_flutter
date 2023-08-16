@@ -179,7 +179,7 @@ class AppDesktopPlayerState extends ConsumerState<AppDesktopPlayer> {
       ),
       child: Card(
         child: Padding(
-          padding: const EdgeInsets.all(10.0),
+          padding: const EdgeInsets.symmetric(horizontal: 10.0),
           child: Column(
             children: [
               Row(

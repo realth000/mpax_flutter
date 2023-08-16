@@ -1,7 +1,7 @@
 import 'dart:io';
+import 'dart:math';
 import 'dart:typed_data';
 
-import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mpax_flutter/models/music_model.dart';
@@ -24,94 +24,77 @@ class AudioList extends ConsumerStatefulWidget {
 
 class _AudioListState extends ConsumerState<AudioList> {
   final _scrollController = ScrollController();
-  final _refreshController = EasyRefreshController(
-    controlFinishLoad: true,
-    controlFinishRefresh: true,
-  );
 
+  List<int> musicIdFullList = <int>[];
   List<int> musicIdList = <int>[];
-  List<Music> musicList = <Music>[];
   int playlistId = -1;
+
+  Future<void> loadListener() async {
+    if (_scrollController.position.pixels ==
+        _scrollController.position.maxScrollExtent) {
+      await loadData();
+    }
+  }
 
   @override
   void initState() {
     super.initState();
-    if (musicIdList.isEmpty) {
+    if (musicIdFullList.isEmpty) {
       final playlist = ref
           .read(databaseProvider)
           .findPlaylistByNameSync(widget.playlistName);
       if (playlist != null) {
-        musicIdList = playlist.musicList;
+        musicIdFullList = playlist.musicList;
         playlistId = playlist.id;
       }
-      debug('>>>> length: ${musicIdList.length}');
+      debug('>>>> total length: ${musicIdFullList.length}');
     }
+    loadData(loadSize: 10);
+    _scrollController.addListener(loadListener);
   }
-
-  int _count = 0;
 
   @override
   void dispose() {
-    _scrollController.dispose();
-    _refreshController.dispose();
+    _scrollController
+      ..removeListener(loadListener)
+      ..dispose();
     super.dispose();
   }
 
   void clearData() {
-    musicList.clear();
-    _count = 0;
+    musicIdList.clear();
   }
 
-  Future<bool> loadData() async {
-    var loadCount = 0;
-    while (musicIdList.length > _count + loadCount &&
-        loadCount < widget.loadStep) {
-      final music = await ref
-          .read(databaseProvider)
-          .findMusicById(musicIdList[_count + loadCount]);
-      if (music != null) {
-        musicList.add(music);
-      }
-      loadCount++;
-    }
-    if (loadCount == 0) {
+  Future<bool> loadData({int? loadSize}) async {
+    if (musicIdList.length >= musicIdFullList.length) {
       return false;
     }
-    setState(() {
-      _count += loadCount;
-    });
+    musicIdList.addAll(musicIdFullList.getRange(
+        musicIdList.length,
+        max(musicIdList.length + (loadSize ?? widget.loadStep),
+            musicIdFullList.length)));
     return true;
   }
 
   @override
-  Widget build(BuildContext context) => EasyRefresh(
-        header: const MaterialHeader(),
-        footer: const MaterialFooter(),
-        controller: _refreshController,
-        scrollController: _scrollController,
-        refreshOnStart: true,
+  Widget build(BuildContext context) => Scrollbar(
+        controller: _scrollController,
         child: ListView.builder(
           controller: _scrollController,
-          itemCount: _count,
+          itemCount: musicIdList.length,
           itemExtent: 65,
+          cacheExtent: 5,
           itemBuilder: (context, index) {
-            debug('>>>> build list $index ${musicList[index].fileName}');
-            return AudioItem(musicList[index], playlistId);
+            debug('>>>> build list $index');
+            final music = ref
+                .read(databaseProvider)
+                .fetchMusicByIdSync(musicIdList[index]);
+            if (music == null) {
+              return Text('Music id ${musicIdList[index]} not found');
+            }
+            return AudioItem(music, playlistId);
           },
         ),
-        onRefresh: () async {
-          clearData();
-          await loadData();
-          _refreshController
-            ..finishRefresh()
-            ..resetFooter();
-        },
-        onLoad: () async {
-          final allLoaded = await loadData();
-          _refreshController.finishLoad(
-            allLoaded ? IndicatorResult.noMore : IndicatorResult.success,
-          );
-        },
       );
 }
 

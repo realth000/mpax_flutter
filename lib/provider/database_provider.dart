@@ -218,6 +218,10 @@ class Database {
     return music;
   }
 
+  Music? fetchMusicByIdSync(int id) {
+    return _storage.musics.getSync(id);
+  }
+
   /// Return a [Artist].
   ///
   /// If exists an artist with [name], return it.
