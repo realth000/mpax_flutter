@@ -16,7 +16,7 @@ dependencies:
   ffi: ^2.0.2
   # zenity
   file_picker: ^5.3.3
-  flex_color_scheme: ^7.2.0
+  flex_color_scheme: ^7.3.1
   flutter:
     sdk: flutter
   flutter_image_compress: ^2.0.4
@@ -24,12 +24,12 @@ dependencies:
     git:
       url: https://github.com/realth000/flutter_lyric.git
       ref: master
-  flutter_riverpod: ^2.3.6
+  flutter_riverpod: ^2.3.7
   fluttertoast: ^8.2.2
   freezed: ^2.4.1
   freezed_annotation: ^2.4.1
-  go_router: ^10.0.0
-  hooks_riverpod: ^2.3.7
+  go_router: ^10.1.0
+  hooks_riverpod: ^2.3.8
   image_compression: ^1.0.4
   isar: ^3.1.0+1
   isar_flutter_libs: ^3.1.0+1
@@ -38,10 +38,10 @@ dependencies:
   on_audio_query: ^2.9.0
   open_filex: ^4.3.2
   path: ^1.8.3
-  path_provider: ^2.0.15
+  path_provider: ^2.1.0
   responsive_framework: ^1.1.0
-  riverpod: ^2.3.6
-  riverpod_annotation: ^2.1.1
+  riverpod: ^2.3.7
+  riverpod_annotation: ^2.1.2
   shared_preferences: ^2.2.0
   simple_audio: ^1.6.2
   taglib_ffi:
@@ -59,8 +59,8 @@ dev_dependencies:
     sdk: flutter
   isar_generator: ^3.1.0+1
   lint: ^2.1.2
-  riverpod_generator: ^2.2.3
-  riverpod_lint: ^1.3.2
+  riverpod_generator: ^2.2.6
+  riverpod_lint: ^2.0.1
   surf_lint_rules: ^3.0.0
 
 flutter_icons:
