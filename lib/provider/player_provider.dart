@@ -79,7 +79,8 @@ class Player {
     int? playlistId,
   }) async {
     await _player.stop();
-    await _player.setMetadata(Metadata(
+    // FIXME: Calling with `await` will stuck on Android, not await for now.
+    _player.setMetadata(Metadata(
       title: title,
       artist: artist,
       album: album,
