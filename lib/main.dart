@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:metadata_god/metadata_god.dart';
 import 'package:mpax_flutter/provider/database_provider.dart';
 import 'package:mpax_flutter/provider/settings_provider.dart';
 import 'package:mpax_flutter/router.dart';
 import 'package:mpax_flutter/themes/app_themes.dart';
 import 'package:mpax_flutter/utils/platform.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:responsive_framework/breakpoint.dart';
 import 'package:responsive_framework/responsive_breakpoints.dart';
 import 'package:simple_audio/simple_audio.dart';
@@ -14,7 +16,10 @@ import 'package:window_manager/window_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  MetadataGod.initialize();
+
+  if (isMobile) {
+    await checkPermissions();
+  }
 
   await taglib.initialize();
   MetadataGod.initialize();
@@ -65,4 +70,12 @@ class MPaxApp extends StatelessWidget {
               const Breakpoint(start: 1921, end: double.infinity, name: '4k'),
             ]),
       );
+}
+
+Future<void> checkPermissions() async {
+  if (!await Permission.audio.isGranted &&
+      !await Permission.audio.request().isGranted) {
+    await Fluttertoast.showToast(
+        msg: 'Permissions not granted, some features may not work');
+  }
 }

@@ -4,6 +4,7 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   isar_flutter_libs
+  permission_handler_windows
   screen_retriever
   simple_audio
   url_launcher_windows

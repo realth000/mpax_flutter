@@ -39,6 +39,7 @@ dependencies:
   open_filex: ^4.3.2
   path: ^1.8.3
   path_provider: ^2.1.0
+  permission_handler: ^10.4.3
   responsive_framework: ^1.1.0
   riverpod: ^2.3.7
   riverpod_annotation: ^2.1.2
