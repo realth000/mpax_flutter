@@ -15,7 +15,7 @@
         <a href="https://github.com/realth000/mpax_flutter/releases">
             <img src="https://img.shields.io/badge/-Windows-313196?&logo=Windows&logoColor=f0f0f0"/></a>
         <a href="https://flutter.dev/">
-            <img src="https://img.shields.io/badge/Flutter-3.10-blue?logo=flutter"/></a>
+            <img src="https://img.shields.io/badge/Flutter-3.13-blue?logo=flutter"/></a>
         <a href="https://github.com/realth000/mpax_flutter/blob/master/LICENSE">
             <img src="https://img.shields.io/github/license/realth000/mpax_flutter"/></a>
         <a href="https://www.codacy.com/gh/realth000/mpax_flutter/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=realth000/mpax_flutter&amp;utm_campaign=Badge_Grade">
@@ -42,9 +42,11 @@ MPax is a simple and easy-to-use music player powered by flutter.
 
 ### Audio
 
-* [x] Format (*.mp3).
+* [x] Format (\*.mp3).
+* [ ] More format (\*.flac, \*.acc, \*.ogg, \*.cue).
+* [ ] Sections (For \*.cue or manually marked list).
 * [x] Read metadata.
-* [ ] Modify metadata.
+* [ ] Write metadata.
 * [ ] Playlist.
 * [ ] Search.
 * [ ] Lyric.
@@ -64,8 +66,12 @@ MPax is a simple and easy-to-use music player powered by flutter.
 ### Platforms
 
 * [x] Android.
+* [ ] IOS.
 * [x] Linux.
+* [ ] MacOS.
 * [x] Windows.
+
+> May not be hard to migrate to IOS and MacOS but I don't have apple device.
 
 ## Keymap
 
@@ -92,7 +98,7 @@ Prepare source code:
 # Only need execute once.
 ./package/taglib_ffi/scripts/build_android.sh
 
-flutter build android --release
+flutter build apk --release
 
 ```
 

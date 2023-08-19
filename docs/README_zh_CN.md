@@ -15,7 +15,7 @@
         <a href="https://github.com/realth000/mpax_flutter/releases">
             <img src="https://img.shields.io/badge/-Windows-313196?&logo=Windows&logoColor=f0f0f0"/></a>
         <a href="https://flutter.dev/">
-            <img src="https://img.shields.io/badge/Flutter-3.10-blue?logo=flutter"/></a>
+            <img src="https://img.shields.io/badge/Flutter-3.13-blue?logo=flutter"/></a>
         <a href="https://github.com/realth000/mpax_flutter/blob/master/LICENSE">
             <img src="https://img.shields.io/github/license/realth000/mpax_flutter"/></a>
         <a href="https://www.codacy.com/gh/realth000/mpax_flutter/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=realth000/mpax_flutter&amp;utm_campaign=Badge_Grade">
@@ -42,9 +42,11 @@ MPax是使用Flutter开发的简约易用的音乐播放器。
 
 ### 音频
 
-* [x] 格式 (*.mp3)。
+* [x] 格式 (\*.mp3)。
+* [ ] 更多格式 (\*.flac, \*.acc, \*.ogg, \*.cue)。
+* [ ] 章节 (\*.cue或者手动标记的章节)。
 * [x] 读取音频标签。
-* [ ] 修改音频标签。
+* [ ] 写入音频标签。
 * [ ] 播放列表。
 * [ ] 搜索。
 * [ ] 歌词。
@@ -63,9 +65,13 @@ MPax是使用Flutter开发的简约易用的音乐播放器。
 
 ### 平台
 
-* [x] 安卓。
+* [x] Android。
+* [ ] IOS。
 * [x] Linux。
+* [ ] MacOS。
 * [x] Windows。
+
+> 往IOS和MacOS移植应该不难，但是我没有苹果的设备。
 
 ## 快捷键
 
@@ -87,7 +93,7 @@ MPax是使用Flutter开发的简约易用的音乐播放器。
 
 ### Android
 
-``flutter build android --release``
+``flutter build apk --release``
 
 ### Linux
 
