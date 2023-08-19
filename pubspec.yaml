@@ -43,7 +43,7 @@ dependencies:
   riverpod: ^2.3.7
   riverpod_annotation: ^2.1.2
   shared_preferences: ^2.2.0
-  simple_audio: ^1.6.2
+  simple_audio: ^1.6.3
   taglib_ffi:
     path: ./package/taglib_ffi
   url_launcher: ^6.1.12
