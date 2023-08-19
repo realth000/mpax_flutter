@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -16,8 +17,12 @@ part 'player_provider.g.dart';
 class Player {
   Player(this.ref) {
     _player.progressStateStream.listen((event) {
+      if (_progressDebounceTimer.isActive) {
+        return;
+      }
       ref.read(appStateProvider.notifier).setPlayerPositionAndDuration(
           event.position.toDouble(), event.duration.toDouble());
+      _progressDebounceTimer = _buildProgressDebounceTimer();
     });
 
     _player.playbackStateStream.listen((event) async {
@@ -37,9 +42,17 @@ class Player {
   final SimpleAudio _player = SimpleAudio();
   final Ref ref;
 
+  /// Use to debounce progress update, this will greatly reduce widget rebuild.
+  Timer _progressDebounceTimer = _buildProgressDebounceTimer();
+
   // Mark if stopped, because extra "open file" action is needed
   // to run "play or pause".
   bool _stopped = true;
+
+  /// Build a timer to debounce progress update.
+  /// Default debounce time set to 1 second.
+  static Timer _buildProgressDebounceTimer() =>
+      Timer(const Duration(seconds: 1), () {});
 
   Future<void> playMusic(Music music) async {
     final artist = await ref
