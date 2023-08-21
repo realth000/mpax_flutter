@@ -26,7 +26,7 @@ class RedirectCard extends ConsumerWidget {
           ),
           trailing: const Icon(Icons.chevron_right),
           onTap: () {
-            context.go(destination, extra: extraObject);
+            context.pushNamed(destination, extra: extraObject);
           },
           shape: const BorderDirectional(),
         ),
