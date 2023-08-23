@@ -15,10 +15,22 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
   Widget build(BuildContext context) {
     return const SingleChildScrollView(
       child: Padding(
-        padding: EdgeInsets.all(8.0),
+        padding: EdgeInsets.all(8),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            RedirectCard(Icon(Icons.search), 'Scan Music', ScreenPaths.scan),
+            RedirectCard(
+              Icon(Icons.app_registration),
+              'Appearance',
+              ScreenPaths.appearance,
+              extraObject: <String, String>{'appBarTitle': 'Appearance'},
+            ),
+            RedirectCard(
+              Icon(Icons.search),
+              'Scan Music',
+              ScreenPaths.scan,
+              extraObject: <String, String>{'appBarTitle': 'Scan Music'},
+            ),
           ],
         ),
       ),

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:metadata_god/metadata_god.dart';
+import 'package:mpax_flutter/models/settings_model.dart';
+import 'package:mpax_flutter/provider/app_state_provider.dart';
 import 'package:mpax_flutter/provider/database_provider.dart';
 import 'package:mpax_flutter/provider/settings_provider.dart';
 import 'package:mpax_flutter/router.dart';
@@ -44,31 +46,38 @@ void main() async {
   // Load init data when start.
   await initSettings();
 
-  runApp(const MPaxApp());
+  runApp(ProviderScope(
+      child: ResponsiveBreakpoints.builder(
+    child: const MPaxApp(),
+    breakpoints: const [
+      Breakpoint(start: 0, end: 450, name: MOBILE),
+      Breakpoint(start: 451, end: 800, name: TABLET),
+      Breakpoint(start: 801, end: 1920, name: DESKTOP),
+      Breakpoint(start: 900, end: 900, name: 'EXPAND_SIDE_PANEL'),
+      Breakpoint(start: 1921, end: double.infinity, name: '4k'),
+    ],
+  )));
 }
 
 /// App class.
-class MPaxApp extends StatelessWidget {
+class MPaxApp extends ConsumerWidget {
   /// Constructor.
   const MPaxApp({super.key});
 
+  static const _themeList = <String, ThemeMode>{
+    appThemeLight: ThemeMode.light,
+    appThemeSystem: ThemeMode.system,
+    appThemeDark: ThemeMode.dark
+  };
+
   @override
-  Widget build(BuildContext context) => ProviderScope(
-        child: ResponsiveBreakpoints.builder(
-            child: MaterialApp.router(
-              title: 'MPax',
-              theme: AppTheme.flexLight,
-              darkTheme: AppTheme.flexDark,
-              routerConfig: appRoute,
-              builder: (context, child) => Scaffold(body: child),
-            ),
-            breakpoints: [
-              const Breakpoint(start: 0, end: 450, name: MOBILE),
-              const Breakpoint(start: 451, end: 800, name: TABLET),
-              const Breakpoint(start: 801, end: 1920, name: DESKTOP),
-              const Breakpoint(start: 900, end: 900, name: 'EXPAND_SIDE_PANEL'),
-              const Breakpoint(start: 1921, end: double.infinity, name: '4k'),
-            ]),
+  Widget build(BuildContext context, WidgetRef ref) => MaterialApp.router(
+        title: 'MPax',
+        theme: AppTheme.flexLight,
+        darkTheme: AppTheme.flexDark,
+        themeMode: _themeList[ref.watch(appStateProvider).appTheme],
+        routerConfig: appRoute,
+        builder: (context, child) => Scaffold(body: child),
       );
 }
 

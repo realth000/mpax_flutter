@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:mpax_flutter/models/settings_model.dart';
 import 'package:mpax_flutter/provider/database_provider.dart';
 import 'package:mpax_flutter/provider/playlist_provider.dart';
 import 'package:mpax_flutter/provider/settings_provider.dart';
@@ -28,6 +29,7 @@ class State with _$State {
     required double playerVolume,
     required PlayMode playMode,
     required bool isScanning,
+    required String appTheme,
   }) = _State;
 }
 
@@ -76,6 +78,7 @@ class AppState extends _$AppState {
       playerVolume: 30,
       playMode: playMode,
       isScanning: false,
+      appTheme: settingsProvider.appTheme,
     );
   }
 
@@ -115,5 +118,13 @@ class AppState extends _$AppState {
 
   void setScanning(bool scanning) {
     state = state.copyWith(isScanning: scanning);
+  }
+
+  void setAppTheme(String theme) {
+    switch (theme) {
+      case appThemeLight || appThemeSystem || appThemeDark:
+        state = state.copyWith(appTheme: theme);
+      default:
+    }
   }
 }

@@ -119,6 +119,7 @@ class AppSettings extends _$AppSettings {
           _defaultLastPlayedArtworkId,
       lastPlaylistId:
           _settings.getInt(settingsLastPlaylistId) ?? _defaultLastPlaylistId,
+      appTheme: _settings.getString(appTheme) ?? _defaultAppTheme,
     );
   }
 
@@ -136,6 +137,7 @@ class AppSettings extends _$AppSettings {
   static const _defaultLastPlayedAlbum = '';
   static const _defaultLastPlayedArtworkId = -1;
   static const _defaultLastPlaylistId = -1;
+  static const _defaultAppTheme = appThemeSystem;
 
   Future<void> setCurrentMediaPath(String currentMediaPath) async {
     state = state.copyWith(currentMediaPath: currentMediaPath);
@@ -219,5 +221,14 @@ class AppSettings extends _$AppSettings {
   Future<void> setLastPlaylist(int id) async {
     state = state.copyWith(lastPlaylistId: id);
     await _settings.saveInt(settingsLastPlaylistId, id);
+  }
+
+  Future<void> setAppTheme(String theme) async {
+    switch (theme) {
+      case appThemeLight || appThemeSystem || appThemeDark:
+        state = state.copyWith(appTheme: theme);
+        await _settings.saveString(appTheme, theme);
+      default:
+    }
   }
 }

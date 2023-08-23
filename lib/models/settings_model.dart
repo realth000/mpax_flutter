@@ -21,6 +21,7 @@ class Settings with _$Settings {
     required String lastPlayedAlbum,
     required int lastPlayedArtworkId,
     required int lastPlaylistId,
+    required String appTheme,
   }) = _Settings;
 }
 
@@ -38,6 +39,7 @@ const settingsLastPlayedArtist = 'lastPlayedArtist';
 const settingsLastPlayedAlbum = 'lastPlayedAlbum';
 const settingsLastPlayedArtworkId = 'lastPlayedArtworkId';
 const settingsLastPlaylistId = 'lastPlaylistId';
+const appTheme = 'appTheme';
 
 /// All settings and value types.
 const Map<String, Type> settingsMap = <String, Type>{
@@ -55,4 +57,9 @@ const Map<String, Type> settingsMap = <String, Type>{
   settingsLastPlayedAlbum: String,
   settingsLastPlayedArtworkId: int,
   settingsLastPlaylistId: int,
+  appTheme: String,
 };
+
+const appThemeLight = 'light';
+const appThemeSystem = 'system';
+const appThemeDark = 'dark';
