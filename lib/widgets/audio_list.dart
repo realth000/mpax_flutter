@@ -71,7 +71,7 @@ class _AudioListState extends ConsumerState<AudioList> {
     }
     musicIdList.addAll(musicIdFullList.getRange(
         musicIdList.length,
-        max(musicIdList.length + (loadSize ?? widget.loadStep),
+        min(musicIdList.length + (loadSize ?? widget.loadStep),
             musicIdFullList.length)));
     return true;
   }
