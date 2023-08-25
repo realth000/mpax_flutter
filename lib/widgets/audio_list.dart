@@ -47,9 +47,12 @@ class _AudioListState extends ConsumerState<AudioList> {
         musicIdFullList = playlist.musicList;
         playlistId = playlist.id;
       }
-      debug('>>>> total length: ${musicIdFullList.length}');
     }
-    loadData(loadSize: 10);
+    // FIXME: Decide first load size to ensure loaded data can fill the whole list
+    // Or use something else to trigger loading more data.
+    //
+    // Here load 40 items at first load to cover most situation.
+    loadData(loadSize: 40);
     _scrollController.addListener(loadListener);
   }
 

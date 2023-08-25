@@ -138,14 +138,14 @@ class Scanner extends _$Scanner {
       // if (metadata == null) {
       //   continue;
       // }
-      debug('!!! check: ${entity.path}');
+      debug('check: ${entity.path}');
       futures.add(fetchMetadataGodMetadata(entity.path));
       pathList.add(entity.path);
     }
 
-    debug('>>> futures count: ${futures.length}');
+    debug('futures count: ${futures.length}');
 
-    debug('>>> start generating metadata');
+    debug('start generating metadata');
 
     // (await Future.wait<taglib.Metadata?>(futures))
     //     .forEachIndexed((index, taglibMetadata) {
