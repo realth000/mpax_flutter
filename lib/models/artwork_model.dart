@@ -3,7 +3,7 @@ import 'dart:typed_data';
 import 'package:crypto/crypto.dart';
 import 'package:isar/isar.dart';
 
-part 'artwork_model.g.dart';
+part '../generated/models/artwork_model.g.dart';
 
 /// All cover image types.
 ///

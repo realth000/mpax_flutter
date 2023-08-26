@@ -9,8 +9,8 @@ import 'package:mpax_flutter/provider/settings_provider.dart';
 import 'package:mpax_flutter/widgets/play_state.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-part 'app_state_provider.freezed.dart';
-part 'app_state_provider.g.dart';
+part '../generated/provider/app_state_provider.freezed.dart';
+part '../generated/provider/app_state_provider.g.dart';
 
 @freezed
 class State with _$State {

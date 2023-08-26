@@ -1,7 +1,7 @@
 import 'package:isar/isar.dart';
 import 'package:mpax_flutter/models/music_model.dart';
 
-part 'playlist_model.g.dart';
+part '../generated/models/playlist_model.g.dart';
 
 /// Const name for the special [Playlist] contains all music.
 /// There should be only one playlist using this name and always be.

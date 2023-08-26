@@ -1,6 +1,6 @@
 import 'package:isar/isar.dart';
 
-part 'album_model.g.dart';
+part '../generated/models/album_model.g.dart';
 
 /// Album model.
 ///

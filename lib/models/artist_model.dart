@@ -1,7 +1,7 @@
 import 'package:isar/isar.dart';
 import 'package:mpax_flutter/models/music_model.dart';
 
-part 'artist_model.g.dart';
+part '../generated/models/artist_model.g.dart';
 
 /// Artist model.
 @Collection()

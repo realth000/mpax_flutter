@@ -6,7 +6,7 @@ import 'package:mpax_flutter/models/metadata_model.dart';
 import 'package:on_audio_query/on_audio_query.dart' as aq;
 import 'package:path/path.dart' as path;
 
-part 'music_model.g.dart';
+part '../generated/models/music_model.g.dart';
 
 /// Model class for audio content.
 ///

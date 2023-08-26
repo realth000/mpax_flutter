@@ -2,7 +2,7 @@ import 'package:mpax_flutter/models/settings_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-part 'settings_provider.g.dart';
+part '../generated/provider/settings_provider.g.dart';
 
 late final _SettingsService _settings;
 bool _initialized = false;

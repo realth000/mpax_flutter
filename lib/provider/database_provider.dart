@@ -15,7 +15,7 @@ import 'package:mpax_flutter/utils/compress.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-part 'database_provider.g.dart';
+part '../generated/provider/database_provider.g.dart';
 
 late final Isar _storage;
 bool _initialized = false;

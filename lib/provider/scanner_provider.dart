@@ -16,8 +16,8 @@ import 'package:path/path.dart' as path;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:taglib_ffi/taglib_ffi.dart' as taglib;
 
-part 'scanner_provider.freezed.dart';
-part 'scanner_provider.g.dart';
+part '../generated/provider/scanner_provider.freezed.dart';
+part '../generated/provider/scanner_provider.g.dart';
 
 @freezed
 class ScanOptions with _$ScanOptions {

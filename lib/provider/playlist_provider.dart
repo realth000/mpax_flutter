@@ -8,7 +8,7 @@ import 'package:mpax_flutter/provider/settings_provider.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-part 'playlist_provider.g.dart';
+part '../generated/provider/playlist_provider.g.dart';
 
 class Playlist {
   Playlist(this.ref);

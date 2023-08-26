@@ -1,6 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-part 'settings_model.freezed.dart';
+part '../generated/models/settings_model.freezed.dart';
 
 /// Settings model for app and used in storage.
 @freezed

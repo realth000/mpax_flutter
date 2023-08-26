@@ -12,7 +12,7 @@ import 'package:mpax_flutter/widgets/play_state.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:simple_audio/simple_audio.dart';
 
-part 'player_provider.g.dart';
+part '../generated/provider/player_provider.g.dart';
 
 class Player {
   Player(this.ref) {
