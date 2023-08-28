@@ -15,7 +15,9 @@ class RootScaffold extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (ResponsiveBreakpoints.of(context).largerOrEqualTo(DESKTOP))
-            const AppNavigationRail(),
+            ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 150),
+                child: const AppNavigationRail()),
           Expanded(child: child),
         ],
       ),
