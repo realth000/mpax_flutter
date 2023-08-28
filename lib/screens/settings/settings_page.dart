@@ -31,6 +31,12 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
               ScreenPaths.scan,
               extraObject: <String, String>{'appBarTitle': 'Scan Music'},
             ),
+            RedirectCard(
+              Icon(Icons.info),
+              'About',
+              ScreenPaths.about,
+              extraObject: <String, String>{'appBarTitle': 'About'},
+            ),
           ],
         ),
       ),
