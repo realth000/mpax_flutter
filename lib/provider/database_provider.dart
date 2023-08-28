@@ -141,6 +141,14 @@ class Database {
         ?.makeGrowable();
   }
 
+  Future<Artist?> findArtistByName(String? name) async {
+    if (name == null) {
+      return null;
+    }
+
+    return _storage.artists.where().nameEqualTo(name).findFirst();
+  }
+
   Future<String> findArtistNamesByIdList(List<Id> idList) async {
     final artistList = <String>[];
     for (final id in idList) {
@@ -180,6 +188,10 @@ class Database {
     return album.title;
   }
 
+  Future<Album?> findAlbumByTitle(String title) async {
+    return _storage.albums.where().titleEqualTo(title).findFirst();
+  }
+
   Future<Artwork?> findArtworkById(Id? id) async {
     if (id == null) {
       return null;
@@ -214,7 +226,6 @@ class Database {
     }
     final music = Music.fromPath(filePath);
     await _storage.writeTxn(() async => _storage.musics.put(music));
-    await music.refreshMetadata(metadata: metadata);
     return music;
   }
 

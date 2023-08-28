@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mpax_flutter/provider/media_query_provider.dart';
 import 'package:mpax_flutter/router.dart';
+import 'package:mpax_flutter/utils/platform.dart';
 import 'package:responsive_framework/responsive_breakpoints.dart';
 
 class WelcomePage extends ConsumerWidget {
@@ -25,7 +27,7 @@ class WelcomePage extends ConsumerWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            Text(
+            const Text(
               'Welcome to MPax',
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 22),
@@ -35,10 +37,14 @@ class WelcomePage extends ConsumerWidget {
             ),
             ElevatedButton(
               onPressed: () async {
-                context.goNamed(
-                  ScreenPaths.scan,
-                  extra: <String, String>{'appBarTitle': 'Scan'},
-                );
+                if (isMobile) {
+                  await ref.read(mediaQueryProvider).reloadAllMedia();
+                } else {
+                  context.goNamed(
+                    ScreenPaths.scan,
+                    extra: <String, String>{'appBarTitle': 'Scan'},
+                  );
+                }
               },
               child: Text('Scan music'),
             ),
