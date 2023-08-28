@@ -18,11 +18,7 @@ elif [ -f pubspec.yaml ];then
 fi
 MPAX_VERSION=$(cat ${PUBSPEC_FILE} | sed -n 's/version: \([0-9\.\+]*\).*/\1/p')
 
-if [ "x$1" == "xrun" ];then
-	COMMAND="flutter run"
-else
-	COMMAND="flutter build linux --release"
-fi
+COMMAND="flutter $*"
 
 ${COMMAND} \
 	--dart-define=GIT_COMMIT_TIME="${GIT_COMMIT_TIME}" \
