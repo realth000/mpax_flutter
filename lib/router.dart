@@ -10,57 +10,71 @@ import 'package:mpax_flutter/screens/settings/scan_page.dart';
 import 'package:mpax_flutter/screens/settings/settings_page.dart';
 import 'package:mpax_flutter/screens/welcome.dart';
 import 'package:mpax_flutter/widgets/app_scaffold.dart';
+import 'package:mpax_flutter/widgets/root_scaffold.dart';
 
 typedef AppBarActionsBuilder = List<Widget>? Function(
     BuildContext context, WidgetRef ref)?;
+
+final shellRouteNavigatorKey = GlobalKey<NavigatorState>();
 
 class ScreenPaths {
   static const String welcome = '/';
   static const String mediaLibrary = '/library';
   static const String playlist = '/playlist';
+
   static const String settings = '/settings';
-  static const String scan = '/settings/scan';
-  static const String appearance = '/settings/appearance';
-  static const String about = '/settings/about';
+  static const String scan = 'scan';
+  static const String appearance = 'appearance';
+  static const String about = 'about';
 }
 
-final appRoute = GoRouter(routes: [
-  AppRoute(
-    path: ScreenPaths.welcome,
-    builder: (state) => const WelcomePage(),
-  ),
-  AppRoute(
-    path: ScreenPaths.mediaLibrary,
-    builder: (state) => const MediaLibraryPage(),
-  ),
-  AppRoute(
-    path: ScreenPaths.playlist,
-    builder: (state) => const PlaylistPage(),
-    appBarActionsBuilder: playlistPageActionsBuilder,
-  ),
-  AppRoute(
-    path: '${ScreenPaths.playlist}/:playlistId',
-    builder: (state) => PlaylistDetailPage(
-      routerState: state,
+final appRoute = GoRouter(
+  routes: [
+    ShellRoute(
+      navigatorKey: shellRouteNavigatorKey,
+      builder: (context, router, navigator) => RootScaffold(child: navigator),
+      routes: [
+        AppRoute(
+          path: ScreenPaths.welcome,
+          builder: (_) => const WelcomePage(),
+        ),
+        AppRoute(
+          path: ScreenPaths.mediaLibrary,
+          builder: (_) => const MediaLibraryPage(),
+        ),
+        AppRoute(
+          path: ScreenPaths.playlist,
+          builder: (_) => const PlaylistPage(),
+          appBarActionsBuilder: playlistPageActionsBuilder,
+        ),
+        AppRoute(
+          path: '${ScreenPaths.playlist}/:playlistId',
+          builder: (state) => PlaylistDetailPage(
+            routerState: state,
+          ),
+        ),
+        AppRoute(
+          path: ScreenPaths.settings,
+          builder: (_) => const SettingsPage(),
+          routes: [
+            AppRoute(
+              path: ScreenPaths.scan,
+              builder: (_) => const ScanPage(),
+            ),
+            AppRoute(
+              path: ScreenPaths.appearance,
+              builder: (_) => const AppearancePage(),
+            ),
+            AppRoute(
+              path: ScreenPaths.about,
+              builder: (_) => const AboutPage(),
+            ),
+          ],
+        ),
+      ],
     ),
-  ),
-  AppRoute(
-    path: ScreenPaths.settings,
-    builder: (state) => const SettingsPage(),
-  ),
-  AppRoute(
-    path: ScreenPaths.scan,
-    builder: (state) => const ScanPage(),
-  ),
-  AppRoute(
-    path: ScreenPaths.appearance,
-    builder: (state) => const AppearancePage(),
-  ),
-  AppRoute(
-    path: ScreenPaths.about,
-    builder: (state) => const AboutPage(),
-  ),
-]);
+  ],
+);
 
 class AppRoute extends GoRoute {
   AppRoute({
