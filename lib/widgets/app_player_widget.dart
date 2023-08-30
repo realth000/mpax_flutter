@@ -21,6 +21,8 @@ class AppMobilePlayerState extends ConsumerState<AppMobilePlayer> {
   Widget build(BuildContext context) {
     final horizontalPadding = ref.watch(appStateProvider).horizontalPadding;
     final artwork = ref.watch(appStateProvider).currentMediaArtwork;
+    final position = ref.watch(appStateProvider).playerPosition;
+    final duration = ref.watch(appStateProvider).playerDuration;
 
     return ConstrainedBox(
       constraints: const BoxConstraints(maxHeight: playerHeight),
@@ -133,12 +135,27 @@ class AppMobilePlayerState extends ConsumerState<AppMobilePlayer> {
                               ],
                             ),
                           ),
-                          IconButton(
-                            onPressed: () async {
-                              await ref.read(playerProvider).playOrPause();
-                            },
-                            icon: playerStateIconMap[
-                                ref.watch(appStateProvider).playerState]!,
+                          Stack(
+                            children: [
+                              if (duration != 0)
+                                Positioned.fill(
+                                  child: CircularProgressIndicator(
+                                    color: Theme.of(context)
+                                        .buttonTheme
+                                        .colorScheme
+                                        ?.onBackground,
+                                    strokeWidth: 2,
+                                    value: position / duration,
+                                  ),
+                                ),
+                              IconButton(
+                                onPressed: () async {
+                                  await ref.read(playerProvider).playOrPause();
+                                },
+                                icon: playerStateIconMap[
+                                    ref.watch(appStateProvider).playerState]!,
+                              ),
+                            ],
                           ),
                           IconButton(
                             onPressed: () async {
