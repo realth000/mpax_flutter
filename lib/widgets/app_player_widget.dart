@@ -173,6 +173,16 @@ class AppDesktopPlayerState extends ConsumerState<AppDesktopPlayer> {
   Widget build(BuildContext context) {
     final artwork = ref.watch(appStateProvider).currentMediaArtwork;
 
+    final Icon volumeIcon;
+    final volume = ref.read(appStateProvider).playerVolume;
+    if (volume == 0) {
+      volumeIcon = const Icon(Icons.volume_mute);
+    } else if (volume < 0.1) {
+      volumeIcon = const Icon(Icons.volume_down);
+    } else {
+      volumeIcon = const Icon(Icons.volume_up);
+    }
+
     return ConstrainedBox(
       constraints: const BoxConstraints(
         maxHeight: 135,
@@ -286,6 +296,30 @@ class AppDesktopPlayerState extends ConsumerState<AppDesktopPlayer> {
                         await ref.read(playerProvider).seekToPosition(value);
                       },
                     ),
+                  ),
+                  const SizedBox(
+                    width: 10,
+                    height: 10,
+                  ),
+                  IconButton(
+                    onPressed: () async {
+                      final currentVolume =
+                          ref.read(appStateProvider).playerVolume;
+                      if (currentVolume != 0) {
+                        await ref.read(playerProvider).setVolume(0);
+                      } else {
+                        final lastVolume =
+                            ref.read(appStateProvider).playerLastNotMuteVolume;
+                        await ref.read(playerProvider).setVolume(lastVolume);
+                      }
+                    },
+                    icon: volumeIcon,
+                  ),
+                  Slider(
+                    value: ref.watch(appStateProvider).playerVolume,
+                    onChanged: (value) async {
+                      await ref.read(playerProvider).setVolume(value);
+                    },
                   ),
                   const SizedBox(
                     width: 10,

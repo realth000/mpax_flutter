@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:mpax_flutter/models/settings_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -119,7 +121,12 @@ class AppSettings extends _$AppSettings {
           _defaultLastPlayedArtworkId,
       lastPlaylistId:
           _settings.getInt(settingsLastPlaylistId) ?? _defaultLastPlaylistId,
-      appTheme: _settings.getString(appTheme) ?? _defaultAppTheme,
+      appTheme: _settings.getString(settingsAppTheme) ?? _defaultAppTheme,
+      playerVolume:
+          _settings.getDouble(settingsPlayerVolume) ?? _defaultPlayerVolume,
+      playerLastNotMuteVolume:
+          _settings.getDouble(settingsPlayerLastNotMuteVolume) ??
+              _defaultPlayerLastNotMuteVolume,
     );
   }
 
@@ -138,6 +145,8 @@ class AppSettings extends _$AppSettings {
   static const _defaultLastPlayedArtworkId = -1;
   static const _defaultLastPlaylistId = -1;
   static const _defaultAppTheme = appThemeSystem;
+  static const _defaultPlayerVolume = 0.3;
+  static const _defaultPlayerLastNotMuteVolume = _defaultPlayerVolume;
 
   Future<void> setCurrentMediaPath(String currentMediaPath) async {
     state = state.copyWith(currentMediaPath: currentMediaPath);
@@ -227,8 +236,19 @@ class AppSettings extends _$AppSettings {
     switch (theme) {
       case appThemeLight || appThemeSystem || appThemeDark:
         state = state.copyWith(appTheme: theme);
-        await _settings.saveString(appTheme, theme);
+        await _settings.saveString(settingsAppTheme, theme);
       default:
     }
+  }
+
+  Future<void> setPlayerVolume(double volume) async {
+    final double v = min(volume, 1);
+    if (v != 0) {
+      state = state.copyWith(playerVolume: v, playerLastNotMuteVolume: v);
+      await _settings.saveDouble(settingsPlayerLastNotMuteVolume, v);
+    } else {
+      state = state.copyWith(playerVolume: v);
+    }
+    await _settings.saveDouble(settingsPlayerVolume, v);
   }
 }

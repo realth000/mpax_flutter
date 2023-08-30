@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -92,6 +93,7 @@ class Player {
     int? playlistId,
   }) async {
     await _player.stop();
+    await _player.setVolume(ref.read(appStateProvider).playerVolume);
     await _player.setMetadata(Metadata(
       title: title,
       artist: artist,
@@ -123,6 +125,7 @@ class Player {
     if (await _player.isPlaying) {
       await _player.pause();
     } else {
+      await _player.setVolume(ref.read(appStateProvider).playerVolume);
       // If stopped, load the file first.
       if (_stopped) {
         final filePath = ref.read(appSettingsProvider).lastPlayedFilePath;
@@ -238,6 +241,13 @@ class Player {
 
   Future<void> seekToPosition(double position) async {
     await _player.seek(position.toInt());
+  }
+
+  Future<void> setVolume(double volume) async {
+    final double v = min(volume, 1);
+    await _player.setVolume(v);
+    ref.read(appStateProvider.notifier).setPlayerVolume(v);
+    await ref.read(appSettingsProvider.notifier).setPlayerVolume(v);
   }
 }
 

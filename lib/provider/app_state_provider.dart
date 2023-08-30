@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -27,6 +28,7 @@ class State with _$State {
     required double playerPosition,
     required double playerDuration,
     required double playerVolume,
+    required double playerLastNotMuteVolume,
     required PlayMode playMode,
     required bool isScanning,
     required String appTheme,
@@ -75,7 +77,8 @@ class AppState extends _$AppState {
       playerState: PlayerState.stop,
       playerPosition: 0,
       playerDuration: 0,
-      playerVolume: 30,
+      playerVolume: settingsProvider.playerVolume,
+      playerLastNotMuteVolume: settingsProvider.playerLastNotMuteVolume,
       playMode: playMode,
       isScanning: false,
       appTheme: settingsProvider.appTheme,
@@ -125,6 +128,15 @@ class AppState extends _$AppState {
       case appThemeLight || appThemeSystem || appThemeDark:
         state = state.copyWith(appTheme: theme);
       default:
+    }
+  }
+
+  void setPlayerVolume(double volume) {
+    final double v = min(volume, 1);
+    if (v != 0) {
+      state = state.copyWith(playerVolume: v, playerLastNotMuteVolume: v);
+    } else {
+      state = state.copyWith(playerVolume: v);
     }
   }
 }
