@@ -17,7 +17,6 @@ Future<Uint8List> compressImage(Uint8List data) async {
         input: ImageFile(
           filePath: '',
           rawBytes: data,
-          contentType: 'image/jpeg',
           width: 120,
           height: 120,
         ),

@@ -2,6 +2,7 @@ import 'dart:core';
 import 'dart:io';
 
 import 'package:collection/collection.dart';
+import 'package:flutter_rust_bridge/flutter_rust_bridge.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:metadata_god/metadata_god.dart' as metadata_god;
 import 'package:mpax_flutter/models/artist_model.dart';
@@ -180,8 +181,12 @@ class Scanner extends _$Scanner {
     //   metadataList.add(ret);
     // });
 
-    (await Future.wait<metadata_god.Metadata?>(futures))
-        .forEachIndexed((index, metadata) {
+    final futureList =
+        await Future.wait<metadata_god.Metadata?>(futures).catchError((e, v) {
+      debug('error when reading metadata: $e');
+      return <metadata_god.Metadata>[];
+    });
+    futureList.forEachIndexed((index, metadata) {
       if (metadata == null) {
         return;
       }
@@ -344,6 +349,12 @@ class Scanner extends _$Scanner {
 
   Future<metadata_god.Metadata?> fetchMetadataGodMetadata(
       String filePath) async {
-    return metadata_god.MetadataGod.readMetadata(file: filePath);
+    try {
+      final data = await metadata_god.MetadataGod.readMetadata(file: filePath);
+      return data;
+    } on FfiException catch (e, st) {
+      debug('FfiException in fetching metadata: $e $st');
+      return null;
+    }
   }
 }
