@@ -4,7 +4,6 @@ import 'package:mpax_flutter/models/music_model.dart';
 import 'package:mpax_flutter/models/playlist_model.dart' as model;
 import 'package:mpax_flutter/provider/app_state_provider.dart';
 import 'package:mpax_flutter/provider/database_provider.dart';
-import 'package:mpax_flutter/provider/settings_provider.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -26,8 +25,9 @@ class Playlist {
 
   Future<void> setPlaylist(model.Playlist playlist) async {
     _playlist = playlist;
-    ref.read(appStateProvider.notifier).setCurrentPlaylistInfo(playlist.id);
-    await ref.read(appSettingsProvider.notifier).setLastPlaylist(playlist.id);
+    await ref
+        .read(appStateProvider.notifier)
+        .setCurrentPlaylistInfo(playlist.id);
   }
 
   Future<void> setPlaylistById(int id) async {
@@ -36,8 +36,9 @@ class Playlist {
       return;
     }
     _playlist = playlist;
-    ref.read(appStateProvider.notifier).setCurrentPlaylistInfo(playlist.id);
-    await ref.read(appSettingsProvider.notifier).setLastPlaylist(id);
+    await ref
+        .read(appStateProvider.notifier)
+        .setCurrentPlaylistInfo(playlist.id);
   }
 
   Future<Music?> findPrevious(int id) async {

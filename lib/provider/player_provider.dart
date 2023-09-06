@@ -148,21 +148,15 @@ class Player extends _$Player {
       artBytes: artwork,
     ));
     await _player.open(filePath);
-    await ref.read(appSettingsProvider.notifier).setLastPlayed(
+    await ref.read(appStateProvider.notifier).setCurrentMediaInfo(
           id,
           filePath,
           title ?? '',
           artist ?? '',
           album ?? '',
-          artworkId: artworkId,
-          playlistId: playlistId,
-        );
-    ref.read(appStateProvider.notifier).setCurrentMediaInfo(
-          id,
-          title ?? '',
-          artist ?? '',
-          album ?? '',
           artwork: artwork,
+          artworkId,
+          playlistId,
         );
     await _player.play();
     _stopped = false;
@@ -198,19 +192,12 @@ class Player extends _$Player {
     switch (currentPlayMode) {
       case PlayMode.repeat:
         await ref
-            .read(appSettingsProvider.notifier)
-            .setPlayMode(PlayMode.repeatOne.toString());
-        ref.read(appStateProvider.notifier).setPlayMode(PlayMode.repeatOne);
+            .read(appStateProvider.notifier)
+            .setPlayMode(PlayMode.repeatOne);
       case PlayMode.repeatOne:
-        await ref
-            .read(appSettingsProvider.notifier)
-            .setPlayMode(PlayMode.shuffle.toString());
-        ref.read(appStateProvider.notifier).setPlayMode(PlayMode.shuffle);
+        await ref.read(appStateProvider.notifier).setPlayMode(PlayMode.shuffle);
       case PlayMode.shuffle:
-        await ref
-            .read(appSettingsProvider.notifier)
-            .setPlayMode(PlayMode.repeat.toString());
-        ref.read(appStateProvider.notifier).setPlayMode(PlayMode.repeat);
+        await ref.read(appStateProvider.notifier).setPlayMode(PlayMode.repeat);
     }
   }
 
@@ -293,7 +280,6 @@ class Player extends _$Player {
   Future<void> setVolume(double volume) async {
     final double v = min(volume, 1);
     await _player.setVolume(v);
-    ref.read(appStateProvider.notifier).setPlayerVolume(v);
-    await ref.read(appSettingsProvider.notifier).setPlayerVolume(v);
+    await ref.read(appStateProvider.notifier).setPlayerVolume(v);
   }
 }

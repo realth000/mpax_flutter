@@ -89,12 +89,14 @@ class AppState extends _$AppState {
     state = state.copyWith(playerState: playerState);
   }
 
-  void setCurrentPlaylistInfo(int id) {
+  Future<void> setCurrentPlaylistInfo(int id) async {
     state = state.copyWith(currentPlaylistId: id);
+    await ref.read(appSettingsProvider.notifier).setLastPlaylist(id);
   }
 
-  void setCurrentMediaInfo(int id, String title, String artist, String album,
-      {Uint8List? artwork}) {
+  Future<void> setCurrentMediaInfo(int id, String filePath, String title,
+      String artist, String album, int? artworkId, int? playlistId,
+      {Uint8List? artwork}) async {
     state = state.copyWith(
       currentMediaId: id,
       currentMediaTitle: title,
@@ -102,30 +104,46 @@ class AppState extends _$AppState {
       currentMediaAlbum: album,
       currentMediaArtwork: artwork,
     );
+
+    await ref.read(appSettingsProvider.notifier).setLastPlayed(
+          id,
+          filePath,
+          title,
+          artist,
+          album,
+          artworkId: artworkId,
+          playlistId: playlistId,
+        );
   }
 
-  void setPlayMode(PlayMode playMode) {
+  Future<void> setPlayMode(PlayMode playMode) async {
     state = state.copyWith(playMode: playMode);
+    await ref
+        .read(appSettingsProvider.notifier)
+        .setPlayMode(PlayMode.repeatOne.toString());
   }
 
   void setScanning(bool scanning) {
     state = state.copyWith(isScanning: scanning);
   }
 
-  void setAppTheme(String theme) {
+  Future<void> setAppTheme(String theme) async {
     switch (theme) {
       case appThemeLight || appThemeSystem || appThemeDark:
         state = state.copyWith(appTheme: theme);
+        await ref.read(appSettingsProvider.notifier).setAppTheme(theme);
       default:
     }
   }
 
-  void setPlayerVolume(double volume) {
+  Future<void> setPlayerVolume(double volume) async {
     final double v = min(volume, 1);
     if (v != 0) {
       state = state.copyWith(playerVolume: v, playerLastNotMuteVolume: v);
     } else {
       state = state.copyWith(playerVolume: v);
     }
+
+    await ref.read(appSettingsProvider.notifier).setPlayerVolume(v);
   }
 }

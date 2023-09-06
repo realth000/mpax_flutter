@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mpax_flutter/models/settings_model.dart';
 import 'package:mpax_flutter/provider/app_state_provider.dart';
-import 'package:mpax_flutter/provider/settings_provider.dart';
 
 class AppearancePage extends ConsumerStatefulWidget {
   const AppearancePage({super.key});
@@ -41,11 +40,8 @@ class _AppearancePageState extends ConsumerState<AppearancePage> {
                   Icon(Icons.dark_mode),
                 ],
                 onPressed: (index) async {
-                  ref
-                      .read(appStateProvider.notifier)
-                      .setAppTheme(AppearancePage.appThemeList[index]);
                   await ref
-                      .read(appSettingsProvider.notifier)
+                      .read(appStateProvider.notifier)
                       .setAppTheme(AppearancePage.appThemeList[index]);
                 },
               ),
