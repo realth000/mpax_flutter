@@ -210,7 +210,7 @@ class AudioItem extends ConsumerWidget {
               final artist = await _fetchArtist(ref);
               final album = await _fetchAlbum(ref);
               final artwork = await _fetchArtwork(ref);
-              await ref.read(playerProvider).play(
+              await ref.read(playerProvider.notifier).play(
                     music.id,
                     music.filePath,
                     title: title,

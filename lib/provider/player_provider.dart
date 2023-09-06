@@ -3,26 +3,72 @@ import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/material.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:mpax_flutter/models/music_model.dart';
 import 'package:mpax_flutter/provider/app_state_provider.dart';
 import 'package:mpax_flutter/provider/database_provider.dart';
 import 'package:mpax_flutter/provider/playlist_provider.dart';
 import 'package:mpax_flutter/provider/settings_provider.dart';
-import 'package:mpax_flutter/widgets/play_state.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:simple_audio/simple_audio.dart';
 
+part '../generated/provider/player_provider.freezed.dart';
 part '../generated/provider/player_provider.g.dart';
 
-class Player {
-  Player(this.ref) {
+enum PlayerPlayState {
+  playing,
+  stop,
+  pause,
+}
+
+enum PlayMode {
+  repeat,
+  repeatOne,
+  shuffle,
+}
+
+const playerStateIconMap = <PlayerPlayState, Icon>{
+  PlayerPlayState.playing: Icon(Icons.pause),
+  PlayerPlayState.stop: Icon(Icons.play_arrow),
+  PlayerPlayState.pause: Icon(Icons.play_arrow),
+};
+
+const playModeIconMap = <PlayMode, Icon>{
+  PlayMode.repeat: Icon(Icons.repeat),
+  PlayMode.repeatOne: Icon(Icons.repeat_one),
+  PlayMode.shuffle: Icon(Icons.shuffle),
+};
+
+/// PlayerState contains frequently updated state in [Player].
+/// Separate those state from [AppState] to reduce rebuild.
+@freezed
+class PlayerState with _$PlayerState {
+  const factory PlayerState({
+    required double position,
+    required double duration,
+  }) = _PlayerState;
+}
+
+@Riverpod(keepAlive: true)
+class Player extends _$Player {
+  @override
+  PlayerState build() {
+    return const PlayerState(
+      position: 0,
+      duration: 0,
+    );
+  }
+
+  Player() {
     _player.progressStateStream.listen((event) {
       if (_progressDebounceTimer.isActive) {
         return;
       }
-      ref.read(appStateProvider.notifier).setPlayerPositionAndDuration(
-          event.position.toDouble(), event.duration.toDouble());
+      state = state.copyWith(
+        position: event.position.toDouble(),
+        duration: event.duration.toDouble(),
+      );
       _progressDebounceTimer = _buildProgressDebounceTimer();
     });
 
@@ -31,9 +77,11 @@ class Player {
         case PlaybackState.play:
           ref
               .read(appStateProvider.notifier)
-              .setPlayerState(PlayerState.playing);
+              .setPlayerState(PlayerPlayState.playing);
         case PlaybackState.pause:
-          ref.read(appStateProvider.notifier).setPlayerState(PlayerState.pause);
+          ref
+              .read(appStateProvider.notifier)
+              .setPlayerState(PlayerPlayState.pause);
         case PlaybackState.done:
           await playNextFromMode();
       }
@@ -41,7 +89,6 @@ class Player {
   }
 
   final SimpleAudio _player = SimpleAudio();
-  final Ref ref;
 
   /// Use to debounce progress update, this will greatly reduce widget rebuild.
   Timer _progressDebounceTimer = _buildProgressDebounceTimer();
@@ -250,6 +297,3 @@ class Player {
     await ref.read(appSettingsProvider.notifier).setPlayerVolume(v);
   }
 }
-
-@Riverpod(keepAlive: true)
-Player player(PlayerRef ref) => Player(ref);

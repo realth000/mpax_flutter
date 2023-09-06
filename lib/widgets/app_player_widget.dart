@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mpax_flutter/provider/app_state_provider.dart';
 import 'package:mpax_flutter/provider/player_provider.dart';
 import 'package:mpax_flutter/utils/time.dart';
-import 'package:mpax_flutter/widgets/play_state.dart';
 
 const _albumCoverOffset = 5.0;
 
@@ -21,8 +20,8 @@ class AppMobilePlayerState extends ConsumerState<AppMobilePlayer> {
   Widget build(BuildContext context) {
     final horizontalPadding = ref.watch(appStateProvider).horizontalPadding;
     final artwork = ref.watch(appStateProvider).currentMediaArtwork;
-    final position = ref.watch(appStateProvider).playerPosition;
-    final duration = ref.watch(appStateProvider).playerDuration;
+    final position = ref.watch(playerProvider).position;
+    final duration = ref.watch(playerProvider).duration;
 
     return ConstrainedBox(
       constraints: const BoxConstraints(maxHeight: playerHeight),
@@ -150,7 +149,9 @@ class AppMobilePlayerState extends ConsumerState<AppMobilePlayer> {
                                 ),
                               IconButton(
                                 onPressed: () async {
-                                  await ref.read(playerProvider).playOrPause();
+                                  await ref
+                                      .read(playerProvider.notifier)
+                                      .playOrPause();
                                 },
                                 icon: playerStateIconMap[
                                     ref.watch(appStateProvider).playerState]!,
@@ -159,7 +160,9 @@ class AppMobilePlayerState extends ConsumerState<AppMobilePlayer> {
                           ),
                           IconButton(
                             onPressed: () async {
-                              await ref.read(playerProvider).switchPlayMode();
+                              await ref
+                                  .read(playerProvider.notifier)
+                                  .switchPlayMode();
                             },
                             icon: playModeIconMap[
                                 ref.watch(appStateProvider).playMode]!,
@@ -263,32 +266,32 @@ class AppDesktopPlayerState extends ConsumerState<AppDesktopPlayer> {
                 children: [
                   IconButton(
                     onPressed: () async {
-                      await ref.read(playerProvider).playPrevious();
+                      await ref.read(playerProvider.notifier).playPrevious();
                     },
                     icon: const Icon(Icons.skip_previous),
                   ),
                   IconButton(
                     onPressed: () async {
-                      await ref.read(playerProvider).playOrPause();
+                      await ref.read(playerProvider.notifier).playOrPause();
                     },
                     icon: playerStateIconMap[
                         ref.watch(appStateProvider).playerState]!,
                   ),
                   IconButton(
                     onPressed: () async {
-                      await ref.read(playerProvider).playNext();
+                      await ref.read(playerProvider.notifier).playNext();
                     },
                     icon: const Icon(Icons.skip_next),
                   ),
                   IconButton(
                     onPressed: () async {
-                      await ref.read(playerProvider).stop();
+                      await ref.read(playerProvider.notifier).stop();
                     },
                     icon: const Icon(Icons.stop),
                   ),
                   IconButton(
                     onPressed: () async {
-                      await ref.read(playerProvider).switchPlayMode();
+                      await ref.read(playerProvider.notifier).switchPlayMode();
                     },
                     icon:
                         playModeIconMap[ref.watch(appStateProvider).playMode]!,
@@ -299,7 +302,7 @@ class AppDesktopPlayerState extends ConsumerState<AppDesktopPlayer> {
                   ),
                   Text(
                     secondsToFormatString(
-                        ref.watch(appStateProvider).playerPosition.toInt()),
+                        ref.watch(playerProvider).position.toInt()),
                   ),
                   const SizedBox(
                     width: 10,
@@ -307,10 +310,12 @@ class AppDesktopPlayerState extends ConsumerState<AppDesktopPlayer> {
                   ),
                   Expanded(
                     child: Slider(
-                      value: ref.watch(appStateProvider).playerPosition,
-                      max: ref.watch(appStateProvider).playerDuration,
+                      value: ref.watch(playerProvider).position,
+                      max: ref.watch(playerProvider).duration,
                       onChanged: (value) async {
-                        await ref.read(playerProvider).seekToPosition(value);
+                        await ref
+                            .read(playerProvider.notifier)
+                            .seekToPosition(value);
                       },
                     ),
                   ),
@@ -323,11 +328,13 @@ class AppDesktopPlayerState extends ConsumerState<AppDesktopPlayer> {
                       final currentVolume =
                           ref.read(appStateProvider).playerVolume;
                       if (currentVolume != 0) {
-                        await ref.read(playerProvider).setVolume(0);
+                        await ref.read(playerProvider.notifier).setVolume(0);
                       } else {
                         final lastVolume =
                             ref.read(appStateProvider).playerLastNotMuteVolume;
-                        await ref.read(playerProvider).setVolume(lastVolume);
+                        await ref
+                            .read(playerProvider.notifier)
+                            .setVolume(lastVolume);
                       }
                     },
                     icon: volumeIcon,
@@ -335,7 +342,7 @@ class AppDesktopPlayerState extends ConsumerState<AppDesktopPlayer> {
                   Slider(
                     value: ref.watch(appStateProvider).playerVolume,
                     onChanged: (value) async {
-                      await ref.read(playerProvider).setVolume(value);
+                      await ref.read(playerProvider.notifier).setVolume(value);
                     },
                   ),
                   const SizedBox(
@@ -344,7 +351,7 @@ class AppDesktopPlayerState extends ConsumerState<AppDesktopPlayer> {
                   ),
                   Text(
                     secondsToFormatString(
-                        ref.watch(appStateProvider).playerDuration.toInt()),
+                        ref.watch(playerProvider).duration.toInt()),
                   ),
                 ],
               ),

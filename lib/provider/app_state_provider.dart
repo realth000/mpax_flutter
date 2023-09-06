@@ -5,9 +5,9 @@ import 'dart:typed_data';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:mpax_flutter/models/settings_model.dart';
 import 'package:mpax_flutter/provider/database_provider.dart';
+import 'package:mpax_flutter/provider/player_provider.dart';
 import 'package:mpax_flutter/provider/playlist_provider.dart';
 import 'package:mpax_flutter/provider/settings_provider.dart';
-import 'package:mpax_flutter/widgets/play_state.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part '../generated/provider/app_state_provider.freezed.dart';
@@ -24,9 +24,7 @@ class State with _$State {
     required String currentMediaAlbum,
     required Uint8List? currentMediaArtwork,
     required int currentPlaylistId,
-    required PlayerState playerState,
-    required double playerPosition,
-    required double playerDuration,
+    required PlayerPlayState playerState,
     required double playerVolume,
     required double playerLastNotMuteVolume,
     required PlayMode playMode,
@@ -74,9 +72,7 @@ class AppState extends _$AppState {
       currentMediaAlbum: settingsProvider.lastPlayedAlbum,
       currentMediaArtwork: artworkData,
       currentPlaylistId: settingsProvider.lastPlaylistId,
-      playerState: PlayerState.stop,
-      playerPosition: 0,
-      playerDuration: 0,
+      playerState: PlayerPlayState.stop,
       playerVolume: settingsProvider.playerVolume,
       playerLastNotMuteVolume: settingsProvider.playerLastNotMuteVolume,
       playMode: playMode,
@@ -89,7 +85,7 @@ class AppState extends _$AppState {
     state = state.copyWith(screenIndex: index);
   }
 
-  void setPlayerState(PlayerState playerState) {
+  void setPlayerState(PlayerPlayState playerState) {
     state = state.copyWith(playerState: playerState);
   }
 
@@ -105,13 +101,6 @@ class AppState extends _$AppState {
       currentMediaArtist: artist,
       currentMediaAlbum: album,
       currentMediaArtwork: artwork,
-    );
-  }
-
-  void setPlayerPositionAndDuration(double position, double duration) {
-    state = state.copyWith(
-      playerPosition: position,
-      playerDuration: duration,
     );
   }
 
