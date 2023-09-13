@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mpax_flutter/screens/media_library_page.dart';
 import 'package:mpax_flutter/screens/playlist.dart';
 import 'package:mpax_flutter/screens/playlist_detail.dart';
+import 'package:mpax_flutter/screens/playlist_info.dart';
 import 'package:mpax_flutter/screens/settings/about_page.dart';
 import 'package:mpax_flutter/screens/settings/appearance_page.dart';
 import 'package:mpax_flutter/screens/settings/scan_page.dart';
@@ -48,7 +49,11 @@ final appRoute = GoRouter(
           appBarActionsBuilder: playlistPageActionsBuilder,
         ),
         AppRoute(
-          path: '${ScreenPaths.playlist}/:playlistId',
+          path: '${ScreenPaths.playlist}/info/:playlistId',
+          builder: (state) => const PlaylistInfoPage(),
+        ),
+        AppRoute(
+          path: '${ScreenPaths.playlist}/detail/:playlistId',
           builder: (state) => PlaylistDetailPage(
             routerState: state,
           ),

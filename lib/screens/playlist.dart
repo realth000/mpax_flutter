@@ -13,8 +13,7 @@ import 'package:mpax_flutter/widgets/entry_card.dart';
 enum PlaylistMenuAction {
   addMusic,
   delete,
-  rename,
-  detail,
+  info,
 }
 
 class PlaylistPage extends ConsumerStatefulWidget {
@@ -71,7 +70,7 @@ class _PlaylistPageState extends ConsumerState<PlaylistPage> {
                   description: allPlaylist[index].name,
                   onTap: () {
                     context.push(
-                      '${ScreenPaths.playlist}/${playlist.id}',
+                      '${ScreenPaths.playlist}/detail/${playlist.id}',
                       extra: <String, dynamic>{
                         'appBarTitle': playlist.name,
                         'playlistId': playlist.id,
@@ -87,16 +86,12 @@ class _PlaylistPageState extends ConsumerState<PlaylistPage> {
                       value: PlaylistMenuAction.addMusic,
                     ),
                     PopupMenuItem(
-                      child: Text('Rename'),
-                      value: PlaylistMenuAction.rename,
-                    ),
-                    PopupMenuItem(
                       child: Text('Delete'),
                       value: PlaylistMenuAction.delete,
                     ),
                     PopupMenuItem(
-                      child: Text('Detail'),
-                      value: PlaylistMenuAction.detail,
+                      child: Text('Info'),
+                      value: PlaylistMenuAction.info,
                     ),
                   ],
                   popupMenuOnSelected: (v) async {
@@ -113,12 +108,21 @@ class _PlaylistPageState extends ConsumerState<PlaylistPage> {
                           paths: [targetPath],
                         );
                         debug('add success');
-                      case PlaylistMenuAction.rename:
-                      // TODO: rename
                       case PlaylistMenuAction.delete:
                       // TODO: delete
-                      case PlaylistMenuAction.detail:
-                      // TODO: detail
+                      case PlaylistMenuAction.info:
+                        if (!mounted) {
+                          return;
+                        }
+                        await context.push(
+                          '${ScreenPaths.playlist}/info/${playlist.id}',
+                          extra: <String, dynamic>{
+                            'appBarTitle': 'Playlist Info',
+                            'playlistId': playlist.id,
+                            'playlistName': playlist.name,
+                            'playlistMusicList': playlist.musicList,
+                          },
+                        );
                     }
                   },
                 );
