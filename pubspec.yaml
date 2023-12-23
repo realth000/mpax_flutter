@@ -30,8 +30,6 @@ dependencies:
   go_router: ^12.1.1
   hooks_riverpod: ^2.4.6
   image_compression: ^1.0.4
-  isar: ^4.0.0-dev.14
-  isar_flutter_libs: ^4.0.0-dev.14
   isolate_pool_2: ^1.0.6
   metadata_god: ^0.5.2+1
   on_audio_query: ^2.9.0
@@ -39,6 +37,7 @@ dependencies:
   path: ^1.8.3
   path_provider: ^2.1.1
   permission_handler: ^11.0.1
+  realm: ^1.6.1
   responsive_framework: ^1.1.1
   riverpod: ^2.4.6
   riverpod_annotation: ^2.3.1

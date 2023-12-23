@@ -1,126 +1,82 @@
-import 'dart:async';
-import 'dart:io';
-
-import 'package:isar/isar.dart';
-import 'package:path/path.dart' as path;
+import 'package:realm/realm.dart';
 
 part '../generated/models/music_model.g.dart';
 
 /// Model class for audio content.
 ///
 /// Maintains audio info.
-@Collection()
-class Music {
-  /// Default empty constructor.
-  Music();
-
-  /// Construct by file path.
-  ///
-  /// Only make [fileName] and [fileSize].
-  Music.fromPath(this.filePath) {
-    fileName = path.basename(filePath);
-    fileSize = File(filePath).lengthSync();
-  }
-
-  /// Construct by file system entity.
-  ///
-  /// Including [fileSize].
-  Music.fromEntry(FileSystemEntity file) {
-    if (file.statSync().type != FileSystemEntityType.file) {
-      return;
-    }
-    final f = File(file.path);
-    filePath = f.path;
-    fileName = path.basename(f.path);
-    fileSize = f.lengthSync();
-  }
-
-  int? firstArtwork() {
-    return artworkFrontCover ??
-        artworkDisc ??
-        artworkBackCover ??
-        artworkArtist ??
-        artworkIcon ??
-        artworkUnknown;
-  }
-
-  Music makeGrowable() {
-    return this..artistList = artistList.toList();
-  }
-
-  /// Id in database.
-  Id id = Isar.autoIncrement;
-
+@RealmModel()
+class _Music {
   //////////////  File Properties //////////////
 
   /// File path of this audio.
-  @Index(unique: true)
-  String filePath = '';
+  @PrimaryKey()
+  late final String filePath;
 
   /// File name of this audio.
-  String fileName = '';
+  late String fileName;
 
   /// File size of this audio.
-  int fileSize = -1;
+  late int fileSize;
 
   //////////////  Music metadata Properties //////////////
 
   /// Title name of this audio.
-  String? title;
+  late String? title;
 
-  /// Artist or singer of this audio.
-  List<Id> artistList = <Id>[];
+  /// Artist or singer id of this audio.
+  late List<int> artistIdList;
 
   /// Audio lyrics.
-  String? lyrics;
+  late String? lyrics;
 
   /// Front cover artwork id.
-  int? artworkFrontCover;
+  late int? artworkFrontCoverId;
 
   /// Back cover artwork id.
-  int? artworkBackCover;
+  late int? artworkBackCoverId;
 
   /// Artist cover artwork id.
-  int? artworkArtist;
+  late int? artworkArtistId;
 
   /// Disc cover artwork id.
   ///
   /// Most used.
-  int? artworkDisc;
+  late int? artworkDiscId;
 
   /// Icon cover artwork id.
-  int? artworkIcon;
+  late int? artworkIconId;
 
   /// Artwork id at unknown position.
   ///
   /// Use as a default fallback image.
-  int? artworkUnknown;
+  late int? artworkUnknownId;
 
   //////////////  Album Properties //////////////
 
-  /// [Album] [Id] of this audio.
-  int? album;
+  /// Album id of this audio.
+  late int? albumId;
 
   /// Track number in album of this audio.
-  int? trackNumber = -1;
+  late int? trackNumberId;
 
   /// Genre of the album.
-  String? genre;
+  late String? genre;
 
   /// Comment of this audio.
-  String? comment;
+  late String? comment;
 
   //////////////  Audio Properties //////////////
 
   /// Bit rate, for *.mp3, usually 128kbps/240kbps/320kbps.
-  int? bitRate;
+  late int? bitRate;
 
   /// Sample rate of this audio, usually 44100kHz/48000kHz.
-  int? sampleRate;
+  late int? sampleRate;
 
   /// Channel numbers count, usually 2.
-  int? channels;
+  late int? channels;
 
   /// Audio duration in seconds..
-  int? length;
+  late int? length;
 }

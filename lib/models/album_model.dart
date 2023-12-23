@@ -1,54 +1,32 @@
-import 'package:isar/isar.dart';
+import 'package:realm/realm.dart';
 
 part '../generated/models/album_model.g.dart';
 
 /// Album model.
 ///
 /// [title] together with Artist can specify a certain [Album].
-@Collection()
-class Album {
-  /// Constructor
-  Album({
-    required this.title,
-    this.year,
-    this.trackCount,
-    List<Id>? artistIds,
-  }) {
-    if (artistIds != null) {
-      /// [addAll] will automatically filter duplicate [Id].
-      artistList.addAll(artistIds);
-    }
-  }
-
-  /// Id in database.
-  Id id = Isar.autoIncrement;
+@RealmModel()
+class _Album {
+  /// Primary key of [Album] model.
+  /// Format: "Album Name" + "Artist Id".
+  @PrimaryKey()
+  late final String _AlbumId;
 
   /// Album artist hash.
-  @Index(
-    unique: true,
-    composite: [CompositeIndex('title')],
-  )
-  List<int> artistList = <int>[];
+  late List<int> artistList;
 
   /// Album title
-  @Index()
-  String title;
+  late String title;
 
   /// Artwork cover id.
-  int? artwork;
+  late int? artwork;
 
   /// Album year.
-  int? year;
+  late int? year;
 
   /// Total track count.
-  int? trackCount;
+  late int? trackCount;
 
   /// Contained music.
   List<int> albumMusicList = <int>[];
-
-  Album makeGrowable() {
-    return this
-      ..artistList = artistList.toList()
-      ..albumMusicList = albumMusicList.toList();
-  }
 }
