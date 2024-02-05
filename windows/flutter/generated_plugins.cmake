@@ -5,15 +5,9 @@
 list(APPEND FLUTTER_PLUGIN_LIST
   permission_handler_windows
   realm
-  screen_retriever
-  simple_audio
-  url_launcher_windows
-  window_manager
 )
 
 list(APPEND FLUTTER_FFI_PLUGIN_LIST
-  metadata_god
-  taglib_ffi
 )
 
 set(PLUGIN_BUNDLED_LIBRARIES)
