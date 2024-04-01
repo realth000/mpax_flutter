@@ -7,8 +7,3 @@ targets:
         options:
           build_extensions:
             '^lib/{{}}.dart': 'lib/generated/{{}}.g.dart'
-      freezed|freezed:
-        enabled: true
-        options:
-          build_extensions:
-            '^lib/{{}}.dart': 'lib/generated/{{}}.freezed.dart'
