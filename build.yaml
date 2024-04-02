@@ -1,9 +1,10 @@
-targets:
-  $default:
-    builders:
-      source_gen|combining_builder:
-        generate_for:
-          - lib/**.dart
-        options:
-          build_extensions:
-            '^lib/{{}}.dart': 'lib/generated/{{}}.g.dart'
+# targets:
+#   $default:
+#     builders:
+#       source_gen|combining_builder:
+#         generate_for:
+#           - lib/**.dart
+#         options:
+#           build_extensions:
+#             '^lib/{{}}.dart': 'lib/generated/{{}}.g.dart'
+#

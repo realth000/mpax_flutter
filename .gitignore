@@ -1,5 +1,7 @@
 *.g.dart
 *.freezed.dart
+*.realm.dart
+*.mapper.dart
 *.isar
 *.isar-lck
 # Miscellaneous
