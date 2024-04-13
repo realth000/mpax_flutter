@@ -5,9 +5,11 @@
 list(APPEND FLUTTER_PLUGIN_LIST
   permission_handler_windows
   realm
+  taglib_ffi_dart_libs
 )
 
 list(APPEND FLUTTER_FFI_PLUGIN_LIST
+  taglib_ffi_dart
 )
 
 set(PLUGIN_BUNDLED_LIBRARIES)

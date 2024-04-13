@@ -1,3 +1,6 @@
 [submodule "package/taglib_ffi"]
 	path = package/taglib_ffi
 	url = https://github.com/realth000/taglib_ffi.git
+[submodule "packages/taglib_ffi_dart"]
+	path = packages/taglib_ffi_dart
+	url = https://github.com/realth000/taglib_ffi
