@@ -2,8 +2,8 @@ part of 'models.dart';
 
 /// Model of song used in all.
 @MappableClass()
-final class SongModel with SongModelMappable {
-  const SongModel({
+final class MusicModel with MusicModelMappable {
+  const MusicModel({
     required this.filePath,
     required this.filename,
     required this.title,

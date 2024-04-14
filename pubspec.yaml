@@ -31,6 +31,8 @@ dependencies:
   slang_flutter: ^3.30.0
   stream_transform: ^2.1.0
   uuid: ^4.3.3
+  # taglib_ffi_dart: ^0.0.1
+  # taglib_ffi_dart_libs: ^0.0.2
   taglib_ffi_dart:
     path: packages/taglib_ffi_dart/packages/taglib_ffi_dart
   taglib_ffi_dart_libs:

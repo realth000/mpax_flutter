@@ -13,7 +13,7 @@ final class RealmDatabaseProvider implements DatabaseProvider {
   RealmDatabaseProvider({String? path}) {
     config = Configuration.local(
       [
-        Song.schema,
+        Music.schema,
         Artist.schema,
         Album.schema,
         Playlist.schema,
@@ -37,10 +37,10 @@ final class RealmDatabaseProvider implements DatabaseProvider {
     realm.close();
   }
 
-  Future<void> addSong(SongModel songModel) async {
-    final song = SongKeys.fromModel(songModel);
+  Future<void> addSong(MusicModel songModel) async {
+    final song = MusicKeys.fromModel(songModel);
     await realm.writeAsync(() {
-      realm.add<Song>(song);
+      realm.add<Music>(song);
       if (song.album != null) {
         realm.add<Album>(song.album!);
       }
@@ -50,7 +50,7 @@ final class RealmDatabaseProvider implements DatabaseProvider {
     });
   }
 
-  /// Find [Song] by its [id] or [filePath].
+  /// Find [Music] by its [id] or [filePath].
   ///
   /// Return null if not found.
   ///
@@ -59,27 +59,27 @@ final class RealmDatabaseProvider implements DatabaseProvider {
   /// * [UnimplementedError]: If query field is not handled. This is an internal
   ///   error.
   @override
-  Future<SongModel?> findSongByPath(String filePath) async {
+  Future<MusicModel?> findSongByPath(String filePath) async {
     final song =
-        await realm.query<Song>(SongKeys.queryFromPath(filePath)).firstOrNull;
+        await realm.query<Music>(MusicKeys.queryFromPath(filePath)).firstOrNull;
     if (song == null) {
       return null;
     }
-    return SongKeys.toModel(song);
+    return MusicKeys.toModel(song);
   }
 
   /// Delete [song] from database.
   ///
   /// This will not delete the file on disk.
   @override
-  Future<void> deleteSong(SongModel songModel) async {
+  Future<void> deleteSong(MusicModel songModel) async {
     final song =
-        realm.query<Song>(SongKeys.queryFromModel(songModel)).firstOrNull;
+        realm.query<Music>(MusicKeys.queryFromModel(songModel)).firstOrNull;
     if (song == null) {
       return;
     }
     await realm.writeAsync(() {
-      realm.delete<Song>(song);
+      realm.delete<Music>(song);
     });
   }
 }
