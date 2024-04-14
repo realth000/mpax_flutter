@@ -4,12 +4,12 @@ import 'package:mpax_flutter/shared/models/models.dart';
 ///
 /// All database source should implement this class to ensure providing
 /// all required ability.
-abstract interface class DatabaseProvider {
-  Future<void> addSong(MusicModel songModel);
+abstract interface class StorageProvider {
+  Future<void> addMusic(MusicModel musicModel);
 
-  Future<MusicModel?> findSongByPath(String filePath);
+  Future<MusicModel?> findMusicByPath(String filePath);
 
-  Future<void> deleteSong(MusicModel songModel);
+  Future<void> deleteMusic(MusicModel musicModel);
 
   void dispose() {}
 }

@@ -1,4 +1,4 @@
-import 'package:mpax_flutter/features/storage/providers/database_provider.dart';
+import 'package:mpax_flutter/features/storage/providers/storage_provider.dart';
 import 'package:mpax_flutter/features/storage/schema/schema.dart';
 import 'package:mpax_flutter/shared/models/models.dart';
 import 'package:realm/realm.dart';
@@ -6,7 +6,7 @@ import 'package:realm/realm.dart';
 /// Realm database provider.
 ///
 /// Use realm to manage all audio related info.
-final class RealmDatabaseProvider implements DatabaseProvider {
+final class RealmDatabaseProvider implements StorageProvider {
   /// Constructor.
   ///
   /// [path] is the database store path.
@@ -37,8 +37,8 @@ final class RealmDatabaseProvider implements DatabaseProvider {
     realm.close();
   }
 
-  Future<void> addSong(MusicModel songModel) async {
-    final song = MusicKeys.fromModel(songModel);
+  Future<void> addMusic(MusicModel musicModel) async {
+    final song = MusicKeys.fromModel(musicModel);
     await realm.writeAsync(() {
       realm.add<Music>(song);
       if (song.album != null) {
@@ -59,7 +59,7 @@ final class RealmDatabaseProvider implements DatabaseProvider {
   /// * [UnimplementedError]: If query field is not handled. This is an internal
   ///   error.
   @override
-  Future<MusicModel?> findSongByPath(String filePath) async {
+  Future<MusicModel?> findMusicByPath(String filePath) async {
     final song =
         await realm.query<Music>(MusicKeys.queryFromPath(filePath)).firstOrNull;
     if (song == null) {
@@ -68,13 +68,13 @@ final class RealmDatabaseProvider implements DatabaseProvider {
     return MusicKeys.toModel(song);
   }
 
-  /// Delete [song] from database.
+  /// Delete [Music] from database.
   ///
   /// This will not delete the file on disk.
   @override
-  Future<void> deleteSong(MusicModel songModel) async {
+  Future<void> deleteMusic(MusicModel musicModel) async {
     final song =
-        realm.query<Music>(MusicKeys.queryFromModel(songModel)).firstOrNull;
+        realm.query<Music>(MusicKeys.queryFromModel(musicModel)).firstOrNull;
     if (song == null) {
       return;
     }
