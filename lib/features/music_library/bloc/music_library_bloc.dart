@@ -2,9 +2,10 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:dart_mappable/dart_mappable.dart';
-import 'package:mpax_flutter/features/music_library/repository/music_library_reposiroty.dart';
-import 'package:mpax_flutter/shared/basic_status.dart';
-import 'package:mpax_flutter/shared/models/models.dart';
+
+import '../../../shared/basic_status.dart';
+import '../../../shared/models/models.dart';
+import '../repository/music_library_repository.dart';
 
 part 'music_library_bloc.mapper.dart';
 part 'music_library_event.dart';

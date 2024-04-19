@@ -1,4 +1,4 @@
-import 'package:mpax_flutter/shared/models/models.dart';
+import '../../../shared/models/models.dart';
 
 /// Interface of database.
 ///

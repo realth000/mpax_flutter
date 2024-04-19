@@ -1,7 +1,8 @@
-import 'package:mpax_flutter/features/storage/providers/storage_provider.dart';
-import 'package:mpax_flutter/features/storage/schema/schema.dart';
-import 'package:mpax_flutter/shared/models/models.dart';
 import 'package:realm/realm.dart';
+
+import '../../../shared/models/models.dart';
+import '../schema/schema.dart';
+import 'storage_provider.dart';
 
 /// Realm database provider.
 ///
@@ -37,6 +38,7 @@ final class RealmDatabaseProvider implements StorageProvider {
     realm.close();
   }
 
+  @override
   Future<void> addMusic(MusicModel musicModel) async {
     final song = MusicKeys.fromModel(musicModel);
     await realm.writeAsync(() {
@@ -61,7 +63,7 @@ final class RealmDatabaseProvider implements StorageProvider {
   @override
   Future<MusicModel?> findMusicByPath(String filePath) async {
     final song =
-        await realm.query<Music>(MusicKeys.queryFromPath(filePath)).firstOrNull;
+        realm.query<Music>(MusicKeys.queryFromPath(filePath)).firstOrNull;
     if (song == null) {
       return null;
     }
