@@ -6,7 +6,7 @@ import 'music_library_repository.dart';
 /// Implementation of [MusicLibraryRepository].
 final class MusicLibraryRepositoryImpl implements MusicLibraryRepository {
   @override
-  Future<Either<String, List<MusicModel>>> loadDirectoryData(
+  Future<Either<String, List<MusicModel>>> loadDirectory(
     String directory,
   ) async {
     // TODO: Implement me
@@ -28,7 +28,7 @@ final class MusicLibraryRepositoryImpl implements MusicLibraryRepository {
   }
 
   @override
-  Future<Option<String>> saveDirectory(
+  Future<Option<String>> saveDirectoryInStorage(
     String directory,
     List<MusicModel> data,
   ) {

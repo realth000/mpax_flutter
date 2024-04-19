@@ -1,4 +1,5 @@
 import 'package:fpdart/fpdart.dart';
+
 import '../../../shared/models/models.dart';
 
 /// Repository of music library bloc.
@@ -11,7 +12,7 @@ abstract interface class MusicLibraryRepository {
   ///
   /// * A list of [MusicModel] if success.
   /// * A string if any error occurs.
-  Future<Either<String, List<MusicModel>>> loadDirectoryData(String directory);
+  Future<Either<String, List<MusicModel>>> loadDirectory(String directory);
 
   /// Scan [directory], parse supported music files and construct into.
   ///
@@ -27,7 +28,10 @@ abstract interface class MusicLibraryRepository {
   ///
   /// * void if success.
   /// * A string if any error occurs.
-  Future<Option<String>> saveDirectory(String directory, List<MusicModel> data);
+  Future<Option<String>> saveDirectoryInStorage(
+    String directory,
+    List<MusicModel> data,
+  );
 
   /// Remove [directory] from library.
   ///

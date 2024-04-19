@@ -9,7 +9,7 @@ sealed class MusicLibraryEvent with MusicLibraryEventMappable {
 /// Requested to load all data in music library.
 @MappableClass()
 final class MusicLibraryReloadRequested extends MusicLibraryEvent
-    with MusicLibraryReloadDataRequestedMappable {
+    with MusicLibraryReloadRequestedMappable {
   /// Constructor.
   const MusicLibraryReloadRequested({this.scanDirectory = false});
 
