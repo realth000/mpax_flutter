@@ -1,0 +1,33 @@
+{
+  "locale": "English",
+  "appName": "MPax",
+  "general": {
+    "ok": "OK",
+    "cancel": "Cancel",
+    "noData": "No Data",
+    "noMoreDaa": "No More Data",
+    "reset": "Reset to default"
+  },
+  "navigation": {
+    "musicLibrary": "Library",
+    "album": "Album",
+    "artist": "Artist",
+    "playlist": "Playlist",
+    "settings": "Settings"
+  },
+  "albumPage": {
+    "title": "Album"
+  },
+  "artistPage": {
+    "title": "Artist"
+  },
+  "libraryPage": {
+    "title": "Library"
+  },
+  "playlistPage": {
+    "title": "Playlist"
+  },
+  "settingsPage": {
+    "title": "Settings"
+  }
+}

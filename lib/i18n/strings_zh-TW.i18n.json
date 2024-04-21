@@ -1,0 +1,33 @@
+{
+  "locale": "繁體中文",
+  "appName": "MPax",
+  "general": {
+    "ok": "確定",
+    "cancel": "取消",
+    "noData": "沒有資料",
+    "noMoreDaa": "沒有更多資料",
+    "reset": "重設為預設值"
+  },
+  "navigation": {
+    "musicLibrary": "庫",
+    "album": "專輯",
+    "artist": "藝術家",
+    "playlist": "播放清單",
+    "settings": "設定"
+  },
+  "albumPage": {
+    "title": "專輯"
+  },
+  "artistPage": {
+    "title": "藝術家"
+  },
+  "libraryPage": {
+    "title": "庫"
+  },
+  "playlistPage": {
+    "title": "播放清單"
+  },
+  "settingsPage": {
+    "title": "設定"
+  }
+}
