@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 /// Music library UI page.
 final class MusicLibraryPage extends StatefulWidget {
+  /// Constructor.
   const MusicLibraryPage({super.key});
 
   @override

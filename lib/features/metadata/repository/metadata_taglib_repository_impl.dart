@@ -1,7 +1,9 @@
+import 'dart:async';
+
 import 'package:fpdart/fpdart.dart';
 import 'package:taglib_ffi_dart/taglib_ffi_dart.dart' as taglib;
 
-import '../../../shared/models/models.dart';
+import '../models/models.dart';
 import 'metadata_repository.dart';
 
 /// [MetadataRepository] implemented with taglib_ffi_dart.
@@ -9,16 +11,26 @@ import 'metadata_repository.dart';
 /// Provide all metadata related ability with a taglib_ffi_dart backend.
 final class MetadataTaglibRepositoryImpl implements MetadataRepository {
   @override
-  Future<Either<String, MetadataModel>> readMetadataFromFile(
+  FutureOr<void> init() async {
+    await taglib.initialize();
+  }
+
+  @override
+  FutureOr<void> dispose() {
+    // Do nothing.
+  }
+
+  @override
+  Future<Either<String, FileMetadataModel>> readMetadataFromFile(
       String filePath) async {
     // TODO: Test and implement.
     final data = await taglib.readMetadata(filePath);
     print(data);
-    return Either<String, MetadataModel>.left('testing');
+    return Either<String, FileMetadataModel>.left('testing');
   }
 
   @override
-  Future<Either<String, List<(String, MetadataModel)>>> readMetadataFromDir(
+  Future<Either<String, List<FileMetadataModel>>> readMetadataFromDir(
     String dirPath, {
     bool ignoreError = false,
   }) {

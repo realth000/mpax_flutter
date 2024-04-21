@@ -2,9 +2,12 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:dart_mappable/dart_mappable.dart';
+import 'package:fpdart/fpdart.dart';
 
+import '../../../instance.dart';
 import '../../../shared/basic_status.dart';
 import '../../../shared/models/models.dart';
+import '../../metadata/repository/metadata_repository.dart';
 import '../repository/music_library_repository.dart';
 
 part 'music_library_bloc.mapper.dart';
@@ -26,7 +29,10 @@ typedef Emit = Emitter<MusicLibraryState>;
 final class MusicLibraryBloc
     extends Bloc<MusicLibraryEvent, MusicLibraryState> {
   /// Constructor.
-  MusicLibraryBloc(this._musicLibraryRepository) : super(MusicLibraryState()) {
+  MusicLibraryBloc(
+    this._musicLibraryRepository,
+    this._metadataRepository,
+  ) : super(MusicLibraryState()) {
     on<MusicLibraryReloadRequested>(
       _onMusicLibraryReloadRequested,
     );
@@ -46,6 +52,9 @@ final class MusicLibraryBloc
 
   /// Repository to manage the music library.
   final MusicLibraryRepository _musicLibraryRepository;
+
+  /// Repository to access metadata in files.
+  final MetadataRepository _metadataRepository;
 
   /// Reload music library.
   ///
@@ -87,8 +96,14 @@ final class MusicLibraryBloc
     MusicLibraryAddDirectoryRequested event,
     Emit emit,
   ) async {
-    // TODO: Implement me
-    throw UnimplementedError();
+    final dirPath = event.directoryPath;
+    final data = await _metadataRepository.readMetadataFromDir(dirPath);
+    switch (data) {
+      case Left(value: final err):
+        logger.w('failed to read metadata from dir $dirPath: $err');
+      case Right(value: final data):
+        print('>>> data: $data');
+    }
   }
 
   /// Remove directory from music library.
