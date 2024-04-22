@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:mpax_flutter/themes/app_themes.dart';
 
 import 'features/theme/cubit/theme_cubit.dart';
 import 'i18n/strings.g.dart';
 import 'routes/routes.dart';
+import 'themes/app_themes.dart';
 
+/// App entry definition.
 class App extends StatelessWidget {
+  /// Constructor.
   const App({super.key});
 
   @override

@@ -6,7 +6,26 @@ final class SettingsModel with SettingsModelMappable {
   /// Constructor.
   SettingsModel({
     required this.themeMode,
+    required this.locale,
+    required this.accentColor,
   });
 
+  /// Theme mode index.
+  ///
+  /// # Values
+  ///
+  /// 0: system
+  /// 1: light
+  /// 2: dark
   final int themeMode;
+
+  /// User specified locale name.
+  ///
+  /// Empty locale means use system locale.
+  final String locale;
+
+  /// Accent color
+  ///
+  /// Zero value means default color.
+  final int accentColor;
 }
