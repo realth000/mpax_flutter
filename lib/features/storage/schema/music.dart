@@ -1,44 +1,26 @@
 part of 'schema.dart';
 
-@RealmModel()
-class _Music {
-  @PrimaryKey()
-  late ObjectId id;
+/// Music table
+class Music extends Table {
+  /// Id.
+  IntColumn get id => integer().autoIncrement()();
 
   ////////// File raw info //////////
-  late String filePath;
-  late String filename;
+  /// File path.
+  ///
+  /// Unique key.
+  TextColumn get filePath => text().unique()();
+
+  /// File name.
+  TextColumn get fileName => text()();
 
   ////////// Metadata //////////
-  late String? title;
+  /// Title.
+  TextColumn get title => text()();
 
-  /// All objects in [_Artist].
-  late Set<_Artist> artists;
-
-  /// Object in [_Album].
-  late _Album? album;
-}
-
-class MusicKeys {
-  static const _filePath = 'filePath';
-  static const _title = 'title';
-
-  static String queryFromModel(MusicModel model) =>
-      "${MusicKeys._filePath} == '${model.filePath}'";
-
-  static String queryFromPath(String filePath) =>
-      "${MusicKeys._filePath} == '$filePath'";
-
-  static MusicModel toModel(Music music) => MusicModel(
-        filePath: music.filePath,
-        filename: music.filename,
-        title: music.title,
-      );
-
-  static Music fromModel(MusicModel musicModel) => Music(
-        ObjectId(),
-        musicModel.filePath,
-        musicModel.filename,
-        title: musicModel.title,
-      );
+  /// Specify [filePath] can locate one unique [Music].
+  @override
+  List<Set<Column>> get uniqueKeys => [
+        {filePath},
+      ];
 }

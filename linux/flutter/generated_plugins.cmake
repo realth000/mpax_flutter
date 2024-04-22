@@ -3,7 +3,7 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
-  realm
+  sqlite3_flutter_libs
   taglib_ffi_dart_libs
 )
 

@@ -1,12 +1,10 @@
 part of 'schema.dart';
 
-@RealmModel()
-class _Playlist {
-  @PrimaryKey()
-  late ObjectId id;
+/// Playlist table.
+class Playlist extends Table {
+  /// Id.
+  IntColumn get id => integer().autoIncrement()();
 
-  late String name;
-
-  /// All objects in [_Music].
-  late Set<_Music> musics;
+  /// Playlist title.
+  TextColumn get title => text()();
 }

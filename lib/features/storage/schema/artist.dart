@@ -1,9 +1,16 @@
 part of 'schema.dart';
 
-@RealmModel()
-class _Artist {
-  @PrimaryKey()
-  late ObjectId id;
+/// Artist table.
+class Artist extends Table {
+  /// Id.
+  IntColumn get id => integer().autoIncrement()();
 
-  late String name;
+  /// Artist name
+  TextColumn get name => text()();
+
+  /// Specify [name] can locate one unique [Playlist].
+  @override
+  List<Set<Column>> get uniqueKeys => [
+        {name},
+      ];
 }

@@ -4,7 +4,7 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   permission_handler_windows
-  realm
+  sqlite3_flutter_libs
   taglib_ffi_dart_libs
 )
 
