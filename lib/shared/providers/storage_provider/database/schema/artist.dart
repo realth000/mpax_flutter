@@ -1,6 +1,7 @@
 part of 'schema.dart';
 
 /// Artist table.
+@DataClassName('ArtistEntity')
 class Artist extends Table {
   /// Id.
   IntColumn get id => integer().autoIncrement()();

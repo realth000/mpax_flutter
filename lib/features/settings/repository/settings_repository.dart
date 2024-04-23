@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:ui';
 
-/// Basic functionality required to settings providers.
-abstract interface class SettingsProvider {
+/// Basic functionality required to settings repository.
+abstract interface class SettingsRepository {
   /// Get current theme mode index;
   int getThemeMode();
 

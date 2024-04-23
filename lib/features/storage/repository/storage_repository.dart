@@ -1,4 +1,4 @@
-import '../providers/storage_provider.dart';
+import '../../../shared/providers/storage_provider/storage_provider.dart';
 
 /// Repository of all storage.
 final class StorageRepository {

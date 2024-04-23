@@ -1,7 +1,8 @@
 part of 'schema.dart';
 
 /// Settings table to save settings.
-class SettingsItem extends Table {
+@DataClassName('SettingsEntity')
+class Settings extends Table {
   /// Id.
   IntColumn get id => integer().autoIncrement()();
 

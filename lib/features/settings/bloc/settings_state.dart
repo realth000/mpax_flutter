@@ -13,7 +13,10 @@ enum SettingsStatus {
 @MappableClass()
 final class SettingsState with SettingsStateMappable {
   /// Constructor.
-  const SettingsState(this.status = SettingsStatus.initial,this.settingsModel = ,);
+  const SettingsState({
+    required this.settingsModel,
+    this.status = SettingsStatus.initial,
+  });
 
   /// State status.
   final SettingsStatus status;

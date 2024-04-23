@@ -1,6 +1,7 @@
 part of 'schema.dart';
 
 /// Music table
+@DataClassName('MusicEntity')
 class Music extends Table {
   /// Id.
   IntColumn get id => integer().autoIncrement()();
@@ -17,10 +18,4 @@ class Music extends Table {
   ////////// Metadata //////////
   /// Title.
   TextColumn get title => text()();
-
-  /// Specify [filePath] can locate one unique [Music].
-  @override
-  List<Set<Column>> get uniqueKeys => [
-        {filePath},
-      ];
 }
