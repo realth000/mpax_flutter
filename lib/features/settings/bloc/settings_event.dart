@@ -6,6 +6,15 @@ sealed class SettingsEvent with SettingsEventMappable {
   const SettingsEvent();
 }
 
+/// Force load all settings data.
+///
+/// Use this to initialize or refresh settings.
+@MappableClass()
+final class SettingsLoadAll extends SettingsEvent with SettingsLoadAllMappable {
+  /// Constructor.
+  const SettingsLoadAll() : super();
+}
+
 /// Settings value changed.
 ///
 /// This is a passive event triggered in bloc.

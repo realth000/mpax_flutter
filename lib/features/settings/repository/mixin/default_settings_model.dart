@@ -1,9 +1,18 @@
 import 'package:flutter/material.dart';
 
+import '../../../../shared/models/models.dart';
+
 /// Default values of app settings.
 ///
 /// All settings provider implementation MUST mix with this mixin.
 mixin DefaultSettingsModel {
+  /// Get default settings.
+  SettingsModel get allDefault => SettingsModel(
+        themeMode: defaultThemeMode,
+        locale: defaultLocale,
+        accentColor: defaultAccentColor,
+      );
+
   /// Theme mode index.
   ///
   /// 0: [ThemeMode.system].

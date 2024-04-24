@@ -3,14 +3,8 @@ part of 'schema.dart';
 /// Settings table to save settings.
 @DataClassName('SettingsEntity')
 class Settings extends Table {
-  /// Id.
-  IntColumn get id => integer().autoIncrement()();
-
-  /// Value type.
-  IntColumn get valueType => intEnum<SettingsValueType>()();
-
   /// Settings name.
-  TextColumn get name => text().unique()();
+  TextColumn get name => text()();
 
   /// Int value
   IntColumn get intValue => integer().nullable()();
@@ -20,16 +14,7 @@ class Settings extends Table {
 
   /// Bool value.
   BoolColumn get boolValue => boolean().nullable()();
-}
 
-/// Supported settings item value types.
-enum SettingsValueType {
-  /// Type is [String].
-  string,
-
-  /// Type is [int].
-  int,
-
-  /// Type is [bool].
-  bool,
+  @override
+  Set<Column> get primaryKey => {name};
 }

@@ -28,6 +28,22 @@
     "title": "播放列表"
   },
   "settingsPage": {
-    "title": "设置"
+    "title": "设置",
+    "appearance": {
+      "themeMode": {
+        "title": "主题模式",
+        "light": "浅色",
+        "dark": "深色",
+        "system": "跟随系统"
+      },
+      "languages": {
+        "title": "语言",
+        "followSystem": "跟随系统",
+        "selectLanguage": "选择语言"
+      },
+      "colorScheme": {
+        "title": "主题色"
+      }
+    }
   }
 }

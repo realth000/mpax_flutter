@@ -18,8 +18,20 @@ final class SettingsDao extends DatabaseAccessor<AppDatabase>
         .getSingleOrNull();
   }
 
+  /// Select all
+  Future<List<SettingsEntity>> selectAll() async {
+    return select(settings).get();
+  }
+
   /// Upsert.
-  Future<int> upsertSettings(SettingsEntity settingsEntity) async {
+  Future<int> upsertSettings(SettingsCompanion settingsEntity) async {
     return into(settings).insertOnConflictUpdate(settingsEntity);
+  }
+
+  /// Insert a list of settings.
+  Future<void> upsertManySettings(List<SettingsCompanion> settingsList) async {
+    await batch((batch) {
+      batch.insertAllOnConflictUpdate(settings, settingsList);
+    });
   }
 }

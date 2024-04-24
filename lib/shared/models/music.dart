@@ -3,6 +3,7 @@ part of 'models.dart';
 /// Model of song used in all.
 @MappableClass()
 final class MusicModel with MusicModelMappable {
+  /// Constructor.
   const MusicModel({
     required this.filePath,
     required this.filename,
@@ -10,9 +11,15 @@ final class MusicModel with MusicModelMappable {
   });
 
   ////////// File raw info //////////
+
+  /// File full path.
   final String filePath;
+
+  /// File name, for convenience use.
   final String filename;
 
   ////////// Metadata //////////
+
+  /// Title.
   final String? title;
 }

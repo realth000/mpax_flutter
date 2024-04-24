@@ -28,6 +28,22 @@
     "title": "Playlist"
   },
   "settingsPage": {
-    "title": "Settings"
+    "title": "Settings",
+    "appearance": {
+      "themeMode": {
+        "title": "Theme Mode",
+        "light": "Light",
+        "dark": "Dark",
+        "system": "Follow System"
+      },
+      "languages": {
+        "title": "Languages",
+        "followSystem": "Follow System",
+        "selectLanguage": "Select Language"
+      },
+      "colorScheme": {
+        "title": "Color Scheme"
+      }
+    }
   }
 }

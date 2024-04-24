@@ -28,6 +28,22 @@
     "title": "播放清單"
   },
   "settingsPage": {
-    "title": "設定"
+    "title": "設定",
+    "appearance": {
+      "themeMode": {
+        "title": "主題模式",
+        "light": "淺色",
+        "dark": "深色",
+        "system": "跟隨系統"
+      },
+      "languages": {
+        "title": "語言",
+        "followSystem": "跟隨系統",
+        "selectLanguage": "選擇語言"
+      },
+      "colorScheme": {
+        "title": "主題色"
+      }
+    }
   }
 }

@@ -29,3 +29,15 @@ final class SettingsModel with SettingsModelMappable {
   /// Zero value means default color.
   final int accentColor;
 }
+
+/// All keys in settings.
+final class SettingsKeys {
+  /// Theme mode index
+  static const themeMode = 'ThemeMode';
+
+  /// Locale name
+  static const locale = 'Locale';
+
+  /// Accent color value
+  static const accentColor = 'AccentColor';
+}

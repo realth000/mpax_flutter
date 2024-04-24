@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:ui';
 
+import '../../../shared/models/models.dart';
+import '../../../shared/providers/storage_provider/storage_provider.dart';
 import 'mixin/default_settings_model.dart';
 import 'settings_repository.dart';
 
@@ -8,45 +10,71 @@ import 'settings_repository.dart';
 final class SettingsRepositoryImpl
     with DefaultSettingsModel
     implements SettingsRepository {
+  /// Constructor.
+  SettingsRepositoryImpl(this._storageProvider);
+
+  final StorageProvider _storageProvider;
+
   @override
-  FutureOr<void> clearAccentColor() {
-    // TODO: implement clearAccentColor
-    throw UnimplementedError();
+  FutureOr<void> dispose() async {
+    await _storageProvider.dispose();
   }
 
   @override
-  int getAccentColorValue() {
-    // TODO: implement getAccentColorValue
-    throw UnimplementedError();
+  FutureOr<SettingsModel> getCurrentSettings() async {
+    final allSettings = await _storageProvider.getAllSettings();
+    var d = allDefault;
+    for (final s in allSettings) {
+      d = switch (s.name) {
+        SettingsKeys.themeMode => d.copyWith(themeMode: s.intValue),
+        SettingsKeys.locale => d.copyWith(locale: s.stringValue),
+        SettingsKeys.accentColor => d.copyWith(accentColor: s.intValue),
+        _ => d,
+      };
+    }
+    return d;
   }
 
   @override
-  String getLocale() {
-    // TODO: implement getLocale
-    throw UnimplementedError();
+  FutureOr<void> setSettings(SettingsModel settingsModel) async {
+    await _storageProvider.setSettings(settingsModel);
   }
 
   @override
-  int getThemeMode() {
-    // TODO: implement getThemeMode
-    throw UnimplementedError();
+  SettingsModel getDefaultSettings() => allDefault;
+
+  @override
+  FutureOr<int> getThemeMode() async {
+    return await _storageProvider.getThemeMode() ?? defaultThemeMode;
   }
 
   @override
-  FutureOr<void> setAccentColor(Color color) {
-    // TODO: implement setAccentColor
-    throw UnimplementedError();
+  FutureOr<void> setThemeMode(int themeMode) async {
+    await _storageProvider.setThemeMode(themeMode);
   }
 
   @override
-  FutureOr<void> setLocale(String locale) {
-    // TODO: implement setLocale
-    throw UnimplementedError();
+  FutureOr<int> getAccentColorValue() async {
+    return await _storageProvider.getAccentColor() ?? defaultAccentColor;
   }
 
   @override
-  FutureOr<void> setThemeMode(int themeMode) {
-    // TODO: implement setThemeMode
-    throw UnimplementedError();
+  FutureOr<void> setAccentColor(Color color) async {
+    await _storageProvider.setAccentColor(color);
+  }
+
+  @override
+  FutureOr<void> clearAccentColor() async {
+    await _storageProvider.clearAccentColor();
+  }
+
+  @override
+  FutureOr<String> getLocale() async {
+    return await _storageProvider.getLocale() ?? defaultLocale;
+  }
+
+  @override
+  FutureOr<void> setLocale(String locale) async {
+    await _storageProvider.setLocale(locale);
   }
 }
