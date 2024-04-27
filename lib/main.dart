@@ -34,7 +34,7 @@ Future<void> main() async {
   // Setup logger asap.
   logger = Logger(
     level: loglevel.toLevel,
-    printer: SimplePrinter(printTime: true),
+    printer: SimplePrinter(printTime: true, colors: false),
     output: sl(),
   );
   if (kDebugMode) {
