@@ -1,0 +1,132 @@
+name: Release build
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+env:
+  CI_FLUTTER_VERSION: '3.19.x'
+
+jobs:
+  release:
+    name: Create release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Extract release notes
+        id: extract-release-notes
+        uses: ffurrer2/extract-release-notes@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create release
+        uses: ncipollo/release-action@v1
+        with:
+          allowUpdates: true
+          body: '${{ steps.extract-release-notes.outputs.release_notes }}'
+
+  build-linux-android:
+    name: Build Linux and Android
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '11'
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{env.CI_FLUTTER_VERSION}}
+          cache: true
+      - run: |
+          sudo apt update -y
+          sudo apt install -y ninja-build libgtk-3-dev
+      - name: Precompile
+        run: |
+          git submodule update --init --recursive --force
+          flutter pub get
+          dart run build_runner build
+      - name: Build Linux
+        run: flutter build linux --release
+      - name: Pre Packing
+        run: |
+          pushd build/linux/x64/release/
+          mv bundle mpax_flutter
+          popd
+      - name: Pack Linux tarball
+        uses: thedoctor0/zip-release@master
+        with:
+          type: 'tar'
+          filename: mpax_flutter-linux.tar.gz
+          directory: build/linux/x64/release/
+          path: mpax_flutter
+      - name: Release Linux artifacts
+        uses: ncipollo/release-action@v1
+        with:
+          allowUpdates: true
+          omitBody: true
+          omitBodyDuringUpdate: true
+          artifacts: 'build/linux/x64/release/mpax_flutter-linux.tar.gz'
+      - name: Setup Android sign key
+        run: |
+          echo '${{ secrets.KEYSTORE }}' | base64 --decode > android/app/key.jks
+          echo '${{ secrets.KEY_PROPERTIES }}' > android/key.properties
+      - name: Build Android
+        run: |
+          flutter build apk --release
+      - name: Pack Android apk
+        run: |
+          pushd build/app/outputs/flutter-apk/
+          mv app-arm64-v8a-release.apk mpax_flutter-arm64_v8a.apk
+          mv app-armeabi-v7a-release.apk mpax_flutter-armeabi_v7a.apk
+          popd
+      - name: Release Android artifacts
+        uses: ncipollo/release-action@v1
+        with:
+          allowUpdates: true
+          omitBody: true
+          omitBodyDuringUpdate: true
+          artifacts: 'build/app/outputs/flutter-apk/mpax_flutter-arm64_v8a.apk,build/app/outputs/flutter-apk/mpax_flutter-armeabi_v7a.apk'
+
+  build-windows:
+    name: Build Windows
+    runs-on: windows-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{env.CI_FLUTTER_VERSION}}
+      - name: Precompile
+        run: |
+          git submodule update --init --recursive --force
+          flutter pub get
+          dart run build_runner build
+      - name: Build Windows
+        run: flutter build windows --release
+      - name: Pre Packing
+        shell: pwsh
+        run: |
+          cd build/windows/x64/runner
+          Rename-Item Release mpax_flutter
+          cd ../../../../
+      - name: Pack Windows tarball
+        uses: thedoctor0/zip-release@master
+        with:
+          type: 'zip'
+          filename: mpax_flutter-windows.zip
+          directory: build/windows/x64/runner
+          path: mpax_flutter
+      - name: Release Windows artifacts
+        uses: ncipollo/release-action@v1
+        with:
+          allowUpdates: true
+          omitBody: true
+          omitBodyDuringUpdate: true
+          artifacts: 'build/windows/x64/runner/mpax_flutter-windows.zip'
