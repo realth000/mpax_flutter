@@ -8,6 +8,7 @@ final class SettingsModel with SettingsModelMappable {
     required this.themeMode,
     required this.locale,
     required this.accentColor,
+    required this.loglevel,
   });
 
   /// Theme mode index.
@@ -28,6 +29,9 @@ final class SettingsModel with SettingsModelMappable {
   ///
   /// Zero value means default color.
   final int accentColor;
+
+  /// Loglevel value.
+  final Loglevel loglevel;
 }
 
 /// All keys in settings.
@@ -40,4 +44,7 @@ final class SettingsKeys {
 
   /// Accent color value
   static const accentColor = 'AccentColor';
+
+  /// Loglevel.
+  static const loglevel = 'Loglevel';
 }

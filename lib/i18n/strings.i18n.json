@@ -6,7 +6,9 @@
     "cancel": "Cancel",
     "noData": "No Data",
     "noMoreDaa": "No More Data",
-    "reset": "Reset to default"
+    "reset": "Reset to default",
+    "applyAfterRestart": "This change will apply after app restart",
+    "pleaseWait": "Please Wait"
   },
   "navigation": {
     "musicLibrary": "Library",
@@ -30,6 +32,7 @@
   "settingsPage": {
     "title": "Settings",
     "appearance": {
+      "title": "Appearance",
       "themeMode": {
         "title": "Theme Mode",
         "light": "Light",
@@ -43,6 +46,22 @@
       },
       "colorScheme": {
         "title": "Color Scheme"
+      }
+    },
+    "debug": {
+      "title": "Debug",
+      "loglevel": {
+        "title": "Log Level",
+        "debug": "Debug",
+        "info": "Info",
+        "warning": "Warning",
+        "error": "Error",
+        "off": "Off"
+      },
+      "saveLog": {
+        "title": "Save Log",
+        "saveToFile": "Save log as file",
+        "savedAs": "Log saved as $filePath"
       }
     }
   }

@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:drift/drift.dart';
 
+import '../../../instance.dart';
 import '../../models/models.dart';
 import 'database/dao/settings.dart';
 import 'database/database.dart';
@@ -16,6 +17,7 @@ final class StorageProviderImpl implements StorageProvider {
 
   @override
   Future<void> dispose() async {
+    logger.i('dispose SettingsProviderImpl');
     await _db.close();
   }
 
@@ -120,6 +122,24 @@ final class StorageProviderImpl implements StorageProvider {
       SettingsCompanion(
         name: const Value(SettingsKeys.locale),
         stringValue: Value(locale),
+      ),
+    );
+  }
+
+  @override
+  Future<int?> getLoglevel() async {
+    final entity = await SettingsDao(_db).selectSettingsByName(
+      SettingsKeys.loglevel,
+    );
+    return entity?.intValue;
+  }
+
+  @override
+  Future<void> setLoglevel(int loglevel) async {
+    await SettingsDao(_db).upsertSettings(
+      SettingsCompanion(
+        name: const Value(SettingsKeys.loglevel),
+        intValue: Value(loglevel),
       ),
     );
   }

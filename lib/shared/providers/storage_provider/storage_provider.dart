@@ -35,4 +35,8 @@ abstract interface class StorageProvider {
   Future<void> setAccentColor(Color color);
 
   Future<void> clearAccentColor();
+
+  Future<int?> getLoglevel();
+
+  Future<void> setLoglevel(int loglevel);
 }

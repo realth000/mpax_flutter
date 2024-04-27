@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../shared/models/models.dart';
+import '../../../logging/enums/loglevel.dart';
 
 /// Default values of app settings.
 ///
@@ -11,6 +12,7 @@ mixin DefaultSettingsModel {
         themeMode: defaultThemeMode,
         locale: defaultLocale,
         accentColor: defaultAccentColor,
+        loglevel: defaultLoglevel,
       );
 
   /// Theme mode index.
@@ -29,4 +31,9 @@ mixin DefaultSettingsModel {
   ///
   /// A less than zero values means using default accent color.
   int get defaultAccentColor => -1;
+
+  /// Loglevel.
+  ///
+  /// Only show errors.
+  Loglevel get defaultLoglevel => Loglevel.error;
 }

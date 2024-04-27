@@ -6,7 +6,9 @@
     "cancel": "取消",
     "noData": "沒有資料",
     "noMoreDaa": "沒有更多資料",
-    "reset": "重設為預設值"
+    "reset": "重設為預設值",
+    "applyAfterRestart": "重新啟動應用後生效",
+    "pleaseWait": "請稍候"
   },
   "navigation": {
     "musicLibrary": "庫",
@@ -30,6 +32,7 @@
   "settingsPage": {
     "title": "設定",
     "appearance": {
+      "title": "外觀",
       "themeMode": {
         "title": "主題模式",
         "light": "淺色",
@@ -43,6 +46,22 @@
       },
       "colorScheme": {
         "title": "主題色"
+      }
+    },
+    "debug": {
+      "title": "調試",
+      "loglevel": {
+        "title": "日誌等級",
+        "debug": "調試",
+        "info": "訊息",
+        "warning": "警告",
+        "error": "錯誤",
+        "off": "關"
+      },
+      "saveLog": {
+        "title": "保存日誌",
+        "saveToFile": "將日誌儲存為檔案",
+        "savedAs": "日誌已儲存到 $filePath"
       }
     }
   }

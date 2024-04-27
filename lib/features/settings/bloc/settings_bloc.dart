@@ -5,6 +5,7 @@ import 'package:bloc/bloc.dart';
 import 'package:dart_mappable/dart_mappable.dart';
 
 import '../../../shared/models/models.dart';
+import '../../logging/enums/loglevel.dart';
 import '../repository/settings_repository.dart';
 
 part 'settings_bloc.mapper.dart';
@@ -37,6 +38,9 @@ final class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     );
     on<SettingClearAccentColorRequested>(
       _onSettingClearAccentColorRequested,
+    );
+    on<SettingsChangeLoglevelRequested>(
+      _onSettingsChangeLoglevelRequested,
     );
   }
 
@@ -92,6 +96,15 @@ final class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     await _repo.clearAccentColor();
     // FIXME: NOT hardcode invalid settings value.
     final m = state.settingsModel.copyWith(accentColor: -1);
+    emit(state.copyWith(settingsModel: m));
+  }
+
+  FutureOr<void> _onSettingsChangeLoglevelRequested(
+    SettingsChangeLoglevelRequested event,
+    _Emit emit,
+  ) async {
+    await _repo.setLoglevel(event.loglevel);
+    final m = state.settingsModel.copyWith(loglevel: event.loglevel);
     emit(state.copyWith(settingsModel: m));
   }
 }

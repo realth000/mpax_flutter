@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:ui';
 
 import '../../../shared/models/models.dart';
+import '../../logging/enums/loglevel.dart';
 
 /// Basic functionality required to settings repository.
 abstract interface class SettingsRepository {
@@ -34,4 +35,10 @@ abstract interface class SettingsRepository {
 
   /// Clear the accent color settings.
   FutureOr<void> clearAccentColor();
+
+  /// Get loglevel.
+  FutureOr<Loglevel> getLoglevel();
+
+  /// Set loglevel.
+  FutureOr<void> setLoglevel(Loglevel loglevel);
 }

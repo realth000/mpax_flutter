@@ -1,8 +1,13 @@
 import 'dart:async';
 import 'dart:ui';
 
+import 'package:collection/collection.dart';
+import 'package:flutter/material.dart';
+
+import '../../../instance.dart';
 import '../../../shared/models/models.dart';
 import '../../../shared/providers/storage_provider/storage_provider.dart';
+import '../../logging/enums/loglevel.dart';
 import 'mixin/default_settings_model.dart';
 import 'settings_repository.dart';
 
@@ -17,6 +22,7 @@ final class SettingsRepositoryImpl
 
   @override
   FutureOr<void> dispose() async {
+    logger.i('dispose SettingsRepositoryImpl');
     await _storageProvider.dispose();
   }
 
@@ -29,6 +35,11 @@ final class SettingsRepositoryImpl
         SettingsKeys.themeMode => d.copyWith(themeMode: s.intValue),
         SettingsKeys.locale => d.copyWith(locale: s.stringValue),
         SettingsKeys.accentColor => d.copyWith(accentColor: s.intValue),
+        SettingsKeys.loglevel => d.copyWith(
+            loglevel: Loglevel.values
+                    .firstWhereOrNull((e) => e.index == s.intValue) ??
+                Loglevel.error,
+          ),
         _ => d,
       };
     }
@@ -76,5 +87,20 @@ final class SettingsRepositoryImpl
   @override
   FutureOr<void> setLocale(String locale) async {
     await _storageProvider.setLocale(locale);
+  }
+
+  @override
+  FutureOr<Loglevel> getLoglevel() async {
+    final levelValue = await _storageProvider.getLoglevel();
+    if (levelValue == null ||
+        Loglevel.values.none((e) => e.index == levelValue)) {
+      return defaultLoglevel;
+    }
+    return Loglevel.values[levelValue];
+  }
+
+  @override
+  FutureOr<void> setLoglevel(Loglevel loglevel) async {
+    await _storageProvider.setLoglevel(loglevel.index);
   }
 }

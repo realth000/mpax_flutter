@@ -68,3 +68,16 @@ final class SettingClearAccentColorRequested extends SettingsEvent
   /// Constructor.
   const SettingClearAccentColorRequested() : super();
 }
+
+/// User requested to change loglevel.
+///
+/// This only make effect after app reboot.
+@MappableClass()
+final class SettingsChangeLoglevelRequested extends SettingsEvent
+    with SettingsChangeLoglevelRequestedMappable {
+  /// Constructor.
+  const SettingsChangeLoglevelRequested(this.loglevel) : super();
+
+  /// [Loglevel] to apply.
+  final Loglevel loglevel;
+}
