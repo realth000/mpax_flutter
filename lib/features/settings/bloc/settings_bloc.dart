@@ -36,7 +36,7 @@ final class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     on<SettingsChangeAccentColorRequested>(
       _onSettingsChangeAccentColorRequested,
     );
-    on<SettingClearAccentColorRequested>(
+    on<SettingsClearAccentColorRequested>(
       _onSettingClearAccentColorRequested,
     );
     on<SettingsChangeLoglevelRequested>(
@@ -90,7 +90,7 @@ final class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
   }
 
   FutureOr<void> _onSettingClearAccentColorRequested(
-    SettingClearAccentColorRequested event,
+    SettingsClearAccentColorRequested event,
     _Emit emit,
   ) async {
     await _repo.clearAccentColor();

@@ -68,6 +68,7 @@ final class MusicLibraryBloc
     MusicLibraryReloadRequested event,
     Emit emit,
   ) async {
+    final _ = _musicLibraryRepository;
     // TODO: Implement me
     throw UnimplementedError();
   }
@@ -102,7 +103,7 @@ final class MusicLibraryBloc
       case Left(value: final err):
         logger.w('failed to read metadata from dir $dirPath: $err');
       case Right(value: final data):
-        print('>>> data: $data');
+        logger.e('>>> data: $data');
     }
   }
 

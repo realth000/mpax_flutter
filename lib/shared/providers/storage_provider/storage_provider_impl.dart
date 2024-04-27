@@ -93,8 +93,9 @@ final class StorageProviderImpl implements StorageProvider {
   Future<void> setAccentColor(Color color) async {
     await SettingsDao(_db).upsertSettings(
       SettingsCompanion(
-          name: const Value(SettingsKeys.accentColor),
-          intValue: Value(color.value)),
+        name: const Value(SettingsKeys.accentColor),
+        intValue: Value(color.value),
+      ),
     );
   }
 

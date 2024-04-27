@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:fpdart/fpdart.dart';
 import 'package:taglib_ffi_dart/taglib_ffi_dart.dart' as taglib;
 
+import '../../../instance.dart';
 import '../models/models.dart';
 import 'metadata_repository.dart';
 
@@ -22,10 +23,11 @@ final class MetadataTaglibRepositoryImpl implements MetadataRepository {
 
   @override
   Future<Either<String, FileMetadataModel>> readMetadataFromFile(
-      String filePath) async {
+    String filePath,
+  ) async {
     // TODO: Test and implement.
     final data = await taglib.readMetadata(filePath);
-    print(data);
+    logger.e(data);
     return Either<String, FileMetadataModel>.left('testing');
   }
 

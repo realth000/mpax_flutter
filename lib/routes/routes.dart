@@ -65,7 +65,7 @@ class _AppRoute extends GoRoute {
     required Widget Function(GoRouterState s) builder,
     List<GoRoute> routes = const [],
     super.parentNavigatorKey,
-    super.redirect,
+    //super.redirect,
   }) : super(
           name: path,
           routes: routes,

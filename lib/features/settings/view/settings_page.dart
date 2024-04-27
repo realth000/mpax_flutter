@@ -11,6 +11,8 @@ import '../../../widgets/section_title_text.dart';
 import '../../logging/enums/loglevel.dart';
 import '../../theme/cubit/theme_cubit.dart';
 import '../bloc/settings_bloc.dart';
+import '../widgets/select_accent_color_dialog.dart';
+import '../widgets/select_language_dialog.dart';
 import '../widgets/select_loglevel_dialog.dart';
 
 /// Page to show app settings.
@@ -37,9 +39,12 @@ final class _SettingsPageState extends State<SettingsPage> {
         .firstWhereOrNull((x) => x.languageTag == settingsLocale);
     final localeName =
         locale == null ? tr.languages.followSystem : context.t.locale;
+    final accentColorValue = state.settingsModel.accentColor;
 
     return [
       SectionTitleText(tr.title),
+
+      /// Theme mode.
       SectionListTile(
         leading: const Icon(Icons.contrast_outlined),
         title: Text(tr.themeMode.title),
@@ -85,7 +90,89 @@ final class _SettingsPageState extends State<SettingsPage> {
           },
         ),
       ),
+
+      /// Languages
+      SectionListTile(
+        leading: const Icon(Icons.translate_outlined),
+        title: Text(tr.languages.title),
+        subtitle: Text(localeName),
+        onTap: () async {
+          final result = await _showSelectLanguageDialog(
+            context,
+            locale?.languageTag ?? '',
+          );
+          if (result == null) {
+            return;
+          }
+          if (result.$2) {
+            LocaleSettings.useDeviceLocale();
+            if (!context.mounted) {
+              return;
+            }
+            context
+                .read<SettingsBloc>()
+                .add(const SettingsChangeLocaleRequested(''));
+            logger.i('[settings] set language to follow system');
+            return;
+          }
+          if (!context.mounted) {
+            return;
+          }
+          LocaleSettings.setLocale(result.$1!);
+          context
+              .read<SettingsBloc>()
+              .add(SettingsChangeLocaleRequested(result.$1!.languageTag));
+          logger.i('[settings] set language to ${result.$1!.languageTag}');
+        },
+      ),
+
+      /// Accent color
+      SectionListTile(
+        leading: const Icon(Icons.palette_outlined),
+        title: Text(tr.colorScheme.title),
+        onTap: () async {
+          final colorValue = await _showSelectAccentColorDialog(
+            context,
+            accentColorValue,
+          );
+          if (colorValue == null || !context.mounted) {
+            return;
+          }
+          context.read<ThemeCubit>().setAccentColor(Color(colorValue));
+          context
+              .read<SettingsBloc>()
+              .add(SettingsChangeAccentColorRequested(Color(colorValue)));
+        },
+      ),
     ];
+  }
+
+  /// Show a dialog to let user select locale.
+  ///
+  /// * Return null if user canceled the selection.
+  /// * Return (null, true) if user chose to use system locale.
+  /// * Return (locale, false) if user chose to use specified locale.
+  Future<(AppLocale?, bool)?> _showSelectLanguageDialog(
+    BuildContext context,
+    String currentLocale,
+  ) async {
+    return showDialog<(AppLocale?, bool)>(
+      context: context,
+      builder: (context) => SelectLanguageDialog(currentLocale),
+    );
+  }
+
+  Future<int?> _showSelectAccentColorDialog(
+    BuildContext context,
+    int colorValue,
+  ) async {
+    return showDialog<int>(
+      context: context,
+      builder: (_) => SelectAccentColorDialog(
+        currentColorValue: colorValue,
+        blocContext: context,
+      ),
+    );
   }
 
   List<Widget> _buildDebugSection(

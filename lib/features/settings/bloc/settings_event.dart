@@ -63,10 +63,10 @@ final class SettingsChangeAccentColorRequested extends SettingsEvent
 
 /// User required to unset the current app accent color.
 @MappableClass()
-final class SettingClearAccentColorRequested extends SettingsEvent
-    with SettingClearAccentColorRequestedMappable {
+final class SettingsClearAccentColorRequested extends SettingsEvent
+    with SettingsClearAccentColorRequestedMappable {
   /// Constructor.
-  const SettingClearAccentColorRequested() : super();
+  const SettingsClearAccentColorRequested() : super();
 }
 
 /// User requested to change loglevel.

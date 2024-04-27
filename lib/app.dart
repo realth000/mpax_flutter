@@ -31,8 +31,9 @@ class App extends StatelessWidget {
       child: BlocBuilder<ThemeCubit, ThemeState>(
         builder: (context, state) {
           final themeState = context.watch<ThemeCubit>().state;
-          final lightTheme = AppTheme.makeLight();
-          final darkTheme = AppTheme.makeDark();
+          final accentColor = themeState.accentColor;
+          final lightTheme = AppTheme.makeLight(accentColor);
+          final darkTheme = AppTheme.makeDark(accentColor);
           final themeModeIndex = themeState.themeModeIndex;
 
           return MaterialApp.router(

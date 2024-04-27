@@ -9,10 +9,13 @@ abstract interface class SettingsRepository {
   /// Dispose resources.
   FutureOr<void> dispose();
 
+  /// Get all current settings.
   FutureOr<SettingsModel> getCurrentSettings();
 
+  /// Set all settings from [settingsModel].
   FutureOr<void> setSettings(SettingsModel settingsModel);
 
+  /// Get default settings, without accessing database.
   SettingsModel getDefaultSettings();
 
   /// Get current theme mode index;
