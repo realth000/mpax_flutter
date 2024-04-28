@@ -6,6 +6,10 @@ import 'package:responsive_framework/responsive_framework.dart';
 
 import 'app.dart';
 import 'features/logging/repository/logging_repository_impl.dart';
+import 'features/metadata/repository/metadata_repository.dart';
+import 'features/metadata/repository/metadata_taglib_repository_impl.dart';
+import 'features/music_library/repository/music_library_repository.dart';
+import 'features/music_library/repository/music_library_repository_impl.dart';
 import 'features/settings/repository/settings_repository.dart';
 import 'features/settings/repository/settings_repository_impl.dart';
 import 'i18n/strings.g.dart';
@@ -20,7 +24,9 @@ Future<void> initializeDependencies() async {
     ..registerSingleton<LogOutput>(LoggingRepositoryImpl())
     ..registerFactory<AppDatabase>(AppDatabase.new)
     ..registerSingleton<StorageProvider>(StorageProviderImpl(sl()))
-    ..registerFactory<SettingsRepository>(() => SettingsRepositoryImpl(sl()));
+    ..registerFactory<SettingsRepository>(() => SettingsRepositoryImpl(sl()))
+    ..registerFactory<MusicLibraryRepository>(MusicLibraryRepositoryImpl.new)
+    ..registerFactory<MetadataRepository>(MetadataTaglibRepositoryImpl.new);
   await sl.allReady();
 }
 

@@ -103,7 +103,7 @@ final class MusicLibraryBloc
       case Left(value: final err):
         logger.w('failed to read metadata from dir $dirPath: $err');
       case Right(value: final data):
-        logger.e('>>> data: $data');
+        logger.e('data: $data');
     }
   }
 
