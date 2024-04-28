@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:responsive_framework/responsive_framework.dart';
 
 import '../cubit/home_cubit.dart';
 import '../widget/home_navigation_bar.dart';
+import '../widget/home_navigation_rail.dart';
 
 /// Root page of the app.
 ///
@@ -29,6 +31,18 @@ class HomePage extends StatelessWidget {
       create: (_) => HomeCubit(),
       child: Builder(
         builder: (context) {
+          if (ResponsiveBreakpoints.of(context).largerOrEqualTo(TABLET)) {
+            return Scaffold(
+              body: showNavigationBar
+                  ? Row(
+                      children: [
+                        const HomeNavigationRail(),
+                        Expanded(child: child),
+                      ],
+                    )
+                  : child,
+            );
+          }
           return Scaffold(
             body: child,
             bottomNavigationBar:
