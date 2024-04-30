@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:responsive_framework/responsive_framework.dart';
+import 'package:taglib_ffi_dart/taglib_ffi_dart.dart' as taglib;
 
 import 'app.dart';
 import 'features/logging/repository/logging_repository_impl.dart';
@@ -32,6 +33,7 @@ Future<void> initializeDependencies() async {
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await taglib.initialize();
   await initializeDependencies();
 
   // Preload part of settings.
