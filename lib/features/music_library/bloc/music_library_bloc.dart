@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:dart_mappable/dart_mappable.dart';
 import 'package:fpdart/fpdart.dart';
+import 'package:path/path.dart' as path;
 
 import '../../../instance.dart';
 import '../../../shared/basic_status.dart';
@@ -97,13 +98,35 @@ final class MusicLibraryBloc
     MusicLibraryAddDirectoryRequested event,
     Emit emit,
   ) async {
+    emit(state.copyWith(status: BasicStatus.loading));
     final dirPath = event.directoryPath;
     final data = await _metadataRepository.readMetadataFromDir(dirPath);
     switch (data) {
       case Left(value: final err):
-        logger.w('failed to read metadata from dir $dirPath: $err');
+        logger.e('failed to scan metadata in dir $dirPath: $err');
+        emit(state.copyWith(status: BasicStatus.failure));
       case Right(value: final data):
-        logger.e('data: $data');
+        emit(
+          state.copyWith(
+            status: BasicStatus.success,
+            musicDirectoryList: [
+              ...state.musicDirectoryList,
+              dirPath,
+            ],
+            musicList: [
+              ...state.musicList,
+              ...data.map(
+                (e) => MusicModel(
+                  filePath: e.filePath,
+                  filename: path.basename(e.filePath),
+                  title: e.metadataModel.title,
+                  artist: e.metadataModel.artist,
+                  album: e.metadataModel.album,
+                ),
+              ),
+            ],
+          ),
+        );
     }
   }
 

@@ -43,7 +43,7 @@ final class MetadataTaglibRepositoryImpl implements MetadataRepository {
     }
     final metadataList = data.map(
       (e) => FileMetadataModel(
-        '',
+        e.filePath,
         MetadataModel(
           title: e.title,
           artist: e.artist != null ? [e.artist!] : const [],

@@ -8,6 +8,8 @@ final class MusicModel with MusicModelMappable {
     required this.filePath,
     required this.filename,
     required this.title,
+    required this.artist,
+    required this.album,
   });
 
   ////////// File raw info //////////
@@ -22,4 +24,10 @@ final class MusicModel with MusicModelMappable {
 
   /// Title.
   final String? title;
+
+  /// Artist
+  final List<String> artist;
+
+  /// Album title
+  final String? album;
 }
