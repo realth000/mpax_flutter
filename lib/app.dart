@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
+import 'features/music_library/bloc/music_library_bloc.dart';
 import 'features/settings/bloc/settings_bloc.dart';
 import 'features/theme/cubit/theme_cubit.dart';
 import 'i18n/strings.g.dart';
+import 'instance.dart';
 import 'routes/routes.dart';
 import 'themes/app_themes.dart';
 
@@ -26,8 +28,19 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => ThemeCubit(themeModeIndex: themeMode),
+    logger.i('rebuild app');
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => MusicLibraryBloc(sl(), sl()),
+        ),
+        BlocProvider(
+          create: (context) => SettingsBloc(sl())..add(const SettingsLoadAll()),
+        ),
+        BlocProvider(
+          create: (context) => ThemeCubit(themeModeIndex: themeMode),
+        ),
+      ],
       child: BlocBuilder<ThemeCubit, ThemeState>(
         builder: (context, state) {
           final themeState = context.watch<ThemeCubit>().state;
