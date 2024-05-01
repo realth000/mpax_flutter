@@ -1,7 +1,7 @@
 import 'dart:ui';
 
-import '../../models/models.dart';
-import 'database/database.dart';
+import 'package:mpax_flutter/shared/models/models.dart';
+import 'package:mpax_flutter/shared/providers/storage_provider/database/database.dart';
 
 /// Interface of database.
 ///

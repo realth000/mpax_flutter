@@ -10,6 +10,8 @@ final class MusicModel with MusicModelMappable {
     required this.title,
     required this.artist,
     required this.album,
+    required this.duration,
+    required this.albumArtist,
   });
 
   ////////// File raw info //////////
@@ -30,4 +32,11 @@ final class MusicModel with MusicModelMappable {
 
   /// Album title
   final String? album;
+
+  /// Music duration.
+  final Duration duration;
+
+  // TODO: Use List<String>
+  /// Album artist.
+  final String? albumArtist;
 }

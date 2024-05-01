@@ -8,4 +8,9 @@ class Playlist extends Table {
 
   /// Playlist title.
   TextColumn get title => text()();
+
+  /// Optional description.
+  ///
+  /// Default keep empty.
+  TextColumn get description => text()();
 }

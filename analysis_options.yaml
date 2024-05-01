@@ -12,7 +12,4 @@ analyzer:
 linter:
   rules:
     flutter_style_todos: false
-    avoid_relative_lib_imports: false
-    prefer_relative_imports: true
-    always_use_package_imports: false
 

@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:fpdart/fpdart.dart';
 
-import '../models/models.dart';
+import 'package:mpax_flutter/shared/models/models.dart';
 
 /// Repository provides ability to access audio metadata.
 abstract interface class MetadataRepository {
@@ -18,9 +18,9 @@ abstract interface class MetadataRepository {
 
   /// Read metadata from file at [filePath].
   ///
-  /// * Return [FileMetadataModel] if read success.
+  /// * Return [MusicModel] if read success.
   /// * Return error in String type when failed.
-  Future<Either<String, FileMetadataModel>> readMetadataFromFile(
+  Future<Either<String, MusicModel>> readMetadataFromFile(
     String filePath,
   );
 
@@ -28,13 +28,13 @@ abstract interface class MetadataRepository {
   ///
   /// Convenience function to read from a directory.
   ///
-  /// * Return a list of [FileMetadataModel] and it's corresponding file path if
+  /// * Return a list of [MusicModel] and it's corresponding file path if
   ///   read succeed.
   /// * Return error in String type when failed to read any music format file
   ///   and [ignoreError] is true.
-  /// * Return all read [FileMetadataModel]s even failed on some files when
+  /// * Return all read [MusicModel]s even failed on some files when
   ///   [ignoreError] is false.
-  Future<Either<String, List<FileMetadataModel>>> readMetadataFromDir(
+  Future<Either<String, List<MusicModel>>> readMetadataFromDir(
     String dirPath, {
     bool ignoreError = false,
   });

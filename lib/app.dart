@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-
-import 'features/music_library/bloc/music_library_bloc.dart';
-import 'features/settings/bloc/settings_bloc.dart';
-import 'features/theme/cubit/theme_cubit.dart';
-import 'i18n/strings.g.dart';
-import 'instance.dart';
-import 'routes/routes.dart';
-import 'themes/app_themes.dart';
+import 'package:mpax_flutter/features/music_library/bloc/music_library_bloc.dart';
+import 'package:mpax_flutter/features/settings/bloc/settings_bloc.dart';
+import 'package:mpax_flutter/features/theme/cubit/theme_cubit.dart';
+import 'package:mpax_flutter/i18n/strings.g.dart';
+import 'package:mpax_flutter/instance.dart';
+import 'package:mpax_flutter/routes/routes.dart';
+import 'package:mpax_flutter/themes/app_themes.dart';
 
 /// App entry definition.
 class App extends StatelessWidget {
@@ -32,7 +31,7 @@ class App extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => MusicLibraryBloc(sl(), sl()),
+          create: (context) => MusicLibraryBloc(sl(), sl(), sl()),
         ),
         BlocProvider(
           create: (context) => SettingsBloc(sl())..add(const SettingsLoadAll()),

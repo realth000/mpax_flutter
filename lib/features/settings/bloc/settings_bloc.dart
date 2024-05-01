@@ -3,10 +3,9 @@ import 'dart:ui';
 
 import 'package:bloc/bloc.dart';
 import 'package:dart_mappable/dart_mappable.dart';
-
-import '../../../shared/models/models.dart';
-import '../../logging/enums/loglevel.dart';
-import '../repository/settings_repository.dart';
+import 'package:mpax_flutter/features/logging/enums/loglevel.dart';
+import 'package:mpax_flutter/features/settings/repository/settings_repository.dart';
+import 'package:mpax_flutter/shared/models/models.dart';
 
 part 'settings_bloc.mapper.dart';
 part 'settings_event.dart';

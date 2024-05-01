@@ -1,6 +1,6 @@
 import 'package:fpdart/fpdart.dart';
 
-import '../../../shared/models/models.dart';
+import 'package:mpax_flutter/shared/models/models.dart';
 
 /// Repository of music library bloc.
 ///

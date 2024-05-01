@@ -3,20 +3,19 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:dart_mappable/dart_mappable.dart';
 import 'package:fpdart/fpdart.dart';
-import 'package:path/path.dart' as path;
-
-import '../../../instance.dart';
-import '../../../shared/basic_status.dart';
-import '../../../shared/models/models.dart';
-import '../../metadata/repository/metadata_repository.dart';
-import '../repository/music_library_repository.dart';
+import 'package:mpax_flutter/features/metadata/repository/metadata_repository.dart';
+import 'package:mpax_flutter/features/music_library/repository/music_library_repository.dart';
+import 'package:mpax_flutter/instance.dart';
+import 'package:mpax_flutter/shared/basic_status.dart';
+import 'package:mpax_flutter/shared/models/models.dart';
+import 'package:mpax_flutter/shared/providers/storage_provider/storage_provider.dart';
 
 part 'music_library_bloc.mapper.dart';
 part 'music_library_event.dart';
 part 'music_library_state.dart';
 
 /// Emitter used in bloc.
-typedef Emit = Emitter<MusicLibraryState>;
+typedef _Emit = Emitter<MusicLibraryState>;
 
 /// Bloc of the music library feature.
 ///
@@ -33,6 +32,7 @@ final class MusicLibraryBloc
   MusicLibraryBloc(
     this._musicLibraryRepository,
     this._metadataRepository,
+    this._storageProvider,
   ) : super(MusicLibraryState()) {
     on<MusicLibraryReloadRequested>(
       _onMusicLibraryReloadRequested,
@@ -57,6 +57,10 @@ final class MusicLibraryBloc
   /// Repository to access metadata in files.
   final MetadataRepository _metadataRepository;
 
+  // TODO: Use repository?
+  /// Provider to update storage when events triggered.
+  final StorageProvider _storageProvider;
+
   /// Reload music library.
   ///
   /// # Params
@@ -67,7 +71,7 @@ final class MusicLibraryBloc
   /// * Load from indexed data when is false.
   FutureOr<void> _onMusicLibraryReloadRequested(
     MusicLibraryReloadRequested event,
-    Emit emit,
+    _Emit emit,
   ) async {
     final _ = _musicLibraryRepository;
     // TODO: Implement me
@@ -84,7 +88,7 @@ final class MusicLibraryBloc
   /// * Load from indexed data when is false.
   FutureOr<void> _onMusicLibraryReloadDirectoryRequested(
     MusicLibraryReloadDirectoryRequested event,
-    Emit emit,
+    _Emit emit,
   ) async {
     // TODO: Implement me
     throw UnimplementedError();
@@ -96,7 +100,7 @@ final class MusicLibraryBloc
   /// * Trigger a scan in the directory, not loading from storage data.
   FutureOr<void> _onMusicLibraryAddDirectoryRequested(
     MusicLibraryAddDirectoryRequested event,
-    Emit emit,
+    _Emit emit,
   ) async {
     emit(state.copyWith(status: BasicStatus.loading));
     final dirPath = event.directoryPath;
@@ -106,6 +110,9 @@ final class MusicLibraryBloc
         logger.e('failed to scan metadata in dir $dirPath: $err');
         emit(state.copyWith(status: BasicStatus.failure));
       case Right(value: final data):
+        for (final d in data) {
+          await _storageProvider.addMusic(d);
+        }
         emit(
           state.copyWith(
             status: BasicStatus.success,
@@ -115,15 +122,7 @@ final class MusicLibraryBloc
             ],
             musicList: [
               ...state.musicList,
-              ...data.map(
-                (e) => MusicModel(
-                  filePath: e.filePath,
-                  filename: path.basename(e.filePath),
-                  title: e.metadataModel.title,
-                  artist: e.metadataModel.artist,
-                  album: e.metadataModel.album,
-                ),
-              ),
+              ...data,
             ],
           ),
         );
@@ -136,7 +135,7 @@ final class MusicLibraryBloc
   /// * Music files should not be deleted.
   FutureOr<void> _onMusicLibraryRemoveDirectoryRequested(
     MusicLibraryRemoveDirectoryRequested event,
-    Emit emit,
+    _Emit emit,
   ) async {
     // TODO: Implement me
     throw UnimplementedError();

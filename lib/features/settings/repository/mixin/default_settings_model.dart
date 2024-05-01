@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-
-import '../../../../shared/models/models.dart';
-import '../../../logging/enums/loglevel.dart';
+import 'package:mpax_flutter/features/logging/enums/loglevel.dart';
+import 'package:mpax_flutter/shared/models/models.dart';
 
 /// Default values of app settings.
 ///

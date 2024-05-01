@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-import '../cubit/home_cubit.dart';
+import 'package:mpax_flutter/features/home/cubit/home_cubit.dart';
 
 /// Navigation bar or rail of the home page.
 ///

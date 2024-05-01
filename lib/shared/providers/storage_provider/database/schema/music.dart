@@ -16,6 +16,20 @@ class Music extends Table {
   TextColumn get fileName => text()();
 
   ////////// Metadata //////////
+  /// Only non-table metadata are stored here.
+  /// Some table metadata types (e.g. artist/album) are
+  /// stored in separate tables and keep a third table
+  /// to record relationships between those table records
+  /// and music records.
+
   /// Title.
-  TextColumn get title => text()();
+  TextColumn get title => text().nullable()();
+
+  /// Duration in milliseconds.
+  IntColumn get duration => integer()();
+
+  /// Album artists.
+  ///
+  /// Now is pure text.
+  TextColumn get albumArtist => text().nullable()();
 }

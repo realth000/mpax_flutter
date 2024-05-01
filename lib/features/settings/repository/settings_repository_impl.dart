@@ -3,13 +3,12 @@ import 'dart:ui';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-
-import '../../../instance.dart';
-import '../../../shared/models/models.dart';
-import '../../../shared/providers/storage_provider/storage_provider.dart';
-import '../../logging/enums/loglevel.dart';
-import 'mixin/default_settings_model.dart';
-import 'settings_repository.dart';
+import 'package:mpax_flutter/features/logging/enums/loglevel.dart';
+import 'package:mpax_flutter/features/settings/repository/mixin/default_settings_model.dart';
+import 'package:mpax_flutter/features/settings/repository/settings_repository.dart';
+import 'package:mpax_flutter/instance.dart';
+import 'package:mpax_flutter/shared/models/models.dart';
+import 'package:mpax_flutter/shared/providers/storage_provider/storage_provider.dart';
 
 /// Implement [SettingsRepository] with the drift database.
 final class SettingsRepositoryImpl

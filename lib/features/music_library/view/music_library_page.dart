@@ -1,11 +1,10 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../../../constants/layout.dart';
-import '../../../i18n/strings.g.dart';
-import '../../../shared/basic_status.dart';
-import '../bloc/music_library_bloc.dart';
+import 'package:mpax_flutter/constants/layout.dart';
+import 'package:mpax_flutter/features/music_library/bloc/music_library_bloc.dart';
+import 'package:mpax_flutter/i18n/strings.g.dart';
+import 'package:mpax_flutter/shared/basic_status.dart';
 
 /// Music library UI page.
 final class MusicLibraryPage extends StatefulWidget {

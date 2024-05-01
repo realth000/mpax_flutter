@@ -3,10 +3,9 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-
-import '../../../i18n/strings.g.dart';
-import '../../theme/cubit/theme_cubit.dart';
-import '../bloc/settings_bloc.dart';
+import 'package:mpax_flutter/features/settings/bloc/settings_bloc.dart';
+import 'package:mpax_flutter/features/theme/cubit/theme_cubit.dart';
+import 'package:mpax_flutter/i18n/strings.g.dart';
 
 const _colorBoxSize = 50.0;
 

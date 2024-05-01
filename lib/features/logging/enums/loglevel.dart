@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:logger/logger.dart' as l;
 
-import '../../../i18n/strings.g.dart';
+import 'package:mpax_flutter/i18n/strings.g.dart';
 
 /// App wide loglevel definition.
 enum Loglevel {

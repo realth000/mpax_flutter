@@ -2,22 +2,21 @@ import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
+import 'package:mpax_flutter/app.dart';
+import 'package:mpax_flutter/features/logging/repository/logging_repository_impl.dart';
+import 'package:mpax_flutter/features/metadata/repository/metadata_repository.dart';
+import 'package:mpax_flutter/features/metadata/repository/metadata_taglib_repository_impl.dart';
+import 'package:mpax_flutter/features/music_library/repository/music_library_repository.dart';
+import 'package:mpax_flutter/features/music_library/repository/music_library_repository_impl.dart';
+import 'package:mpax_flutter/features/settings/repository/settings_repository.dart';
+import 'package:mpax_flutter/features/settings/repository/settings_repository_impl.dart';
+import 'package:mpax_flutter/i18n/strings.g.dart';
+import 'package:mpax_flutter/instance.dart';
+import 'package:mpax_flutter/shared/providers/storage_provider/database/database.dart';
+import 'package:mpax_flutter/shared/providers/storage_provider/storage_provider.dart';
+import 'package:mpax_flutter/shared/providers/storage_provider/storage_provider_impl.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:taglib_ffi_dart/taglib_ffi_dart.dart' as taglib;
-
-import 'app.dart';
-import 'features/logging/repository/logging_repository_impl.dart';
-import 'features/metadata/repository/metadata_repository.dart';
-import 'features/metadata/repository/metadata_taglib_repository_impl.dart';
-import 'features/music_library/repository/music_library_repository.dart';
-import 'features/music_library/repository/music_library_repository_impl.dart';
-import 'features/settings/repository/settings_repository.dart';
-import 'features/settings/repository/settings_repository_impl.dart';
-import 'i18n/strings.g.dart';
-import 'instance.dart';
-import 'shared/providers/storage_provider/database/database.dart';
-import 'shared/providers/storage_provider/storage_provider.dart';
-import 'shared/providers/storage_provider/storage_provider_impl.dart';
 
 /// Initialize all dependencies.
 Future<void> initializeDependencies() async {

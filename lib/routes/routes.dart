@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../features/album/view/album_page.dart';
-import '../features/artist/view/artist_page.dart';
-import '../features/home/view/home_page.dart';
-import '../features/music_library/view/music_library_page.dart';
-import '../features/playlist/view/playlist_page.dart';
-import '../features/settings/view/settings_page.dart';
-import 'screen_paths.dart';
+import 'package:mpax_flutter/features/album/view/album_page.dart';
+import 'package:mpax_flutter/features/artist/view/artist_page.dart';
+import 'package:mpax_flutter/features/home/view/home_page.dart';
+import 'package:mpax_flutter/features/music_library/view/music_library_page.dart';
+import 'package:mpax_flutter/features/playlist/view/playlist_page.dart';
+import 'package:mpax_flutter/features/settings/view/settings_page.dart';
+import 'package:mpax_flutter/routes/screen_paths.dart';
 
 final _rootRouteKey = GlobalKey<NavigatorState>();
 final _shellRouteKey = GlobalKey<NavigatorState>();

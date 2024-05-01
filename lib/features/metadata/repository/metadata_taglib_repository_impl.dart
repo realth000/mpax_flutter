@@ -1,12 +1,11 @@
 import 'dart:async';
 
 import 'package:fpdart/fpdart.dart';
+import 'package:mpax_flutter/features/metadata/repository/metadata_repository.dart';
+import 'package:mpax_flutter/instance.dart';
+import 'package:mpax_flutter/shared/models/models.dart';
+import 'package:path/path.dart' as path;
 import 'package:taglib_ffi_dart/taglib_ffi_dart.dart' as taglib;
-
-import '../../../instance.dart';
-import '../../../shared/models/models.dart';
-import '../models/models.dart';
-import 'metadata_repository.dart';
 
 /// [MetadataRepository] implemented with taglib_ffi_dart.
 ///
@@ -23,17 +22,17 @@ final class MetadataTaglibRepositoryImpl implements MetadataRepository {
   }
 
   @override
-  Future<Either<String, FileMetadataModel>> readMetadataFromFile(
+  Future<Either<String, MusicModel>> readMetadataFromFile(
     String filePath,
   ) async {
     // TODO: Test and implement.
     final data = await taglib.readMetadata(filePath);
     logger.e(data);
-    return Either<String, FileMetadataModel>.left('testing');
+    return Either<String, MusicModel>.left('testing');
   }
 
   @override
-  Future<Either<String, List<FileMetadataModel>>> readMetadataFromDir(
+  Future<Either<String, List<MusicModel>>> readMetadataFromDir(
     String dirPath, {
     bool ignoreError = false,
   }) async {
@@ -42,14 +41,14 @@ final class MetadataTaglibRepositoryImpl implements MetadataRepository {
       return Either.left('failed to read metadata from $dirPath');
     }
     final metadataList = data.map(
-      (e) => FileMetadataModel(
-        e.filePath,
-        MetadataModel(
-          title: e.title,
-          artist: e.artist != null ? [e.artist!] : const [],
-          album: e.album,
-          duration: Duration(seconds: e.length ?? 0),
-        ),
+      (e) => MusicModel(
+        filePath: e.filePath,
+        filename: path.basename(e.filePath),
+        title: e.title,
+        artist: e.artist != null ? [e.artist!] : const [],
+        album: e.album,
+        albumArtist: e.albumArtist,
+        duration: Duration(seconds: e.length ?? 0),
       ),
     );
     return Either.right(metadataList.toList());

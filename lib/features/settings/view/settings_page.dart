@@ -2,18 +2,17 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
-
-import '../../../i18n/strings.g.dart';
-import '../../../instance.dart';
-import '../../../utils/show_dialog.dart';
-import '../../../widgets/section_list_tile.dart';
-import '../../../widgets/section_title_text.dart';
-import '../../logging/enums/loglevel.dart';
-import '../../theme/cubit/theme_cubit.dart';
-import '../bloc/settings_bloc.dart';
-import '../widgets/select_accent_color_dialog.dart';
-import '../widgets/select_language_dialog.dart';
-import '../widgets/select_loglevel_dialog.dart';
+import 'package:mpax_flutter/features/logging/enums/loglevel.dart';
+import 'package:mpax_flutter/features/settings/bloc/settings_bloc.dart';
+import 'package:mpax_flutter/features/settings/widgets/select_accent_color_dialog.dart';
+import 'package:mpax_flutter/features/settings/widgets/select_language_dialog.dart';
+import 'package:mpax_flutter/features/settings/widgets/select_loglevel_dialog.dart';
+import 'package:mpax_flutter/features/theme/cubit/theme_cubit.dart';
+import 'package:mpax_flutter/i18n/strings.g.dart';
+import 'package:mpax_flutter/instance.dart';
+import 'package:mpax_flutter/utils/show_dialog.dart';
+import 'package:mpax_flutter/widgets/section_list_tile.dart';
+import 'package:mpax_flutter/widgets/section_title_text.dart';
 
 /// Page to show app settings.
 final class SettingsPage extends StatefulWidget {

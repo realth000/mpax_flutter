@@ -1,7 +1,6 @@
 import 'package:drift/drift.dart';
-
-import '../database.dart';
-import '../schema/schema.dart';
+import 'package:mpax_flutter/shared/providers/storage_provider/database/database.dart';
+import 'package:mpax_flutter/shared/providers/storage_provider/database/schema/schema.dart';
 
 part 'settings.g.dart';
 

@@ -3,8 +3,8 @@ import 'package:dart_mappable/dart_mappable.dart';
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
-import '../../../i18n/strings.g.dart';
-import '../../../routes/screen_paths.dart';
+import 'package:mpax_flutter/i18n/strings.g.dart';
+import 'package:mpax_flutter/routes/screen_paths.dart';
 
 part 'home_cubit.mapper.dart';
 part 'home_state.dart';

@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mpax_flutter/features/home/cubit/home_cubit.dart';
+import 'package:mpax_flutter/features/home/widget/home_navigation_bar.dart';
+import 'package:mpax_flutter/features/home/widget/home_navigation_rail.dart';
 import 'package:responsive_framework/responsive_framework.dart';
-
-import '../cubit/home_cubit.dart';
-import '../widget/home_navigation_bar.dart';
-import '../widget/home_navigation_rail.dart';
 
 /// Root page of the app.
 ///

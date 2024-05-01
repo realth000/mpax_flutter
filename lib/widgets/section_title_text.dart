@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../constants/layout.dart';
+import 'package:mpax_flutter/constants/layout.dart';
 
 /// Text used as a title of section.
 class SectionTitleText extends StatelessWidget {

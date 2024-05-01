@@ -1,7 +1,6 @@
 import 'package:fpdart/fpdart.dart';
-
-import '../../../shared/models/models.dart';
-import 'music_library_repository.dart';
+import 'package:mpax_flutter/features/music_library/repository/music_library_repository.dart';
+import 'package:mpax_flutter/shared/models/models.dart';
 
 /// Implementation of [MusicLibraryRepository].
 final class MusicLibraryRepositoryImpl implements MusicLibraryRepository {

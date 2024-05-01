@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:ui';
 
-import '../../../shared/models/models.dart';
-import '../../logging/enums/loglevel.dart';
+import 'package:mpax_flutter/features/logging/enums/loglevel.dart';
+import 'package:mpax_flutter/shared/models/models.dart';
 
 /// Basic functionality required to settings repository.
 abstract interface class SettingsRepository {

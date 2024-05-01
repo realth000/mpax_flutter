@@ -3,9 +3,8 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:logger/logger.dart';
-
-import '../../../instance.dart';
-import 'logging_repository.dart';
+import 'package:mpax_flutter/features/logging/repository/logging_repository.dart';
+import 'package:mpax_flutter/instance.dart';
 
 /// The implementation of [LoggingRepository].
 final class LoggingRepositoryImpl implements LoggingRepository {

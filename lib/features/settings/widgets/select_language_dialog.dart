@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../i18n/strings.g.dart';
+import 'package:mpax_flutter/i18n/strings.g.dart';
 
 /// Dialog to let user choose app locale.
 ///

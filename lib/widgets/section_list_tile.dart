@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../constants/layout.dart';
+import 'package:mpax_flutter/constants/layout.dart';
 
 /// [ListTile] with certain style used as sections.
 class SectionListTile extends ListTile {

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-
-import '../../../i18n/strings.g.dart';
-import '../../logging/enums/loglevel.dart';
+import 'package:mpax_flutter/features/logging/enums/loglevel.dart';
+import 'package:mpax_flutter/i18n/strings.g.dart';
 
 /// Show dialog.
 class SelectLoglevelDialog extends StatelessWidget {

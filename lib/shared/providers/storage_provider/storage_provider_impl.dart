@@ -1,12 +1,15 @@
 import 'dart:ui';
 
 import 'package:drift/drift.dart';
-
-import '../../../instance.dart';
-import '../../models/models.dart';
-import 'database/dao/settings.dart';
-import 'database/database.dart';
-import 'storage_provider.dart';
+import 'package:mpax_flutter/instance.dart';
+import 'package:mpax_flutter/shared/models/models.dart';
+import 'package:mpax_flutter/shared/providers/storage_provider/database/dao/album.dart';
+import 'package:mpax_flutter/shared/providers/storage_provider/database/dao/artist.dart';
+import 'package:mpax_flutter/shared/providers/storage_provider/database/dao/music.dart';
+import 'package:mpax_flutter/shared/providers/storage_provider/database/dao/relationship.dart';
+import 'package:mpax_flutter/shared/providers/storage_provider/database/dao/settings.dart';
+import 'package:mpax_flutter/shared/providers/storage_provider/database/database.dart';
+import 'package:mpax_flutter/shared/providers/storage_provider/storage_provider.dart';
 
 /// Implementation of [StorageProvider].
 final class StorageProviderImpl implements StorageProvider {
@@ -22,9 +25,69 @@ final class StorageProviderImpl implements StorageProvider {
   }
 
   @override
-  Future<void> addMusic(MusicModel musicModel) {
-    // TODO: implement addMusic
-    throw UnimplementedError();
+  Future<void> addMusic(MusicModel musicModel) async {
+    // Save music.
+    final musicId = await MusicDao(_db).upsertMusic(
+      MusicCompanion(
+        filePath: Value(musicModel.filePath),
+        fileName: Value(musicModel.filename),
+        title: Value(musicModel.title),
+        duration: Value(musicModel.duration.inMilliseconds),
+        albumArtist: Value(musicModel.albumArtist),
+      ),
+    );
+
+    // Sync album.
+    int? albumId;
+    if (musicModel.album != null) {
+      final albumModel =
+          await AlbumDao(_db).selectAlbumByTitle(musicModel.album!);
+      if (albumModel.isEmpty) {
+        // Add new album
+        albumId = await AlbumDao(_db).upsertAlbum(
+          AlbumCompanion(
+            title: Value(musicModel.album!),
+            artist: musicModel.albumArtist != null
+                ? Value(musicModel.albumArtist!)
+                : const Value.absent(),
+          ),
+        );
+      } else {
+        // Album already exists.
+        albumId = albumModel.first.id;
+      }
+      // Sync music-album
+      await RelationshipDao(_db)
+          .upsertMusicAlbum(musicId: musicId, albumId: albumId);
+    }
+
+    // Sync artist.
+    for (final artist in musicModel.artist) {
+      final int artistId;
+      final artistModel = await ArtistDao(_db).selectArtistByName(artist);
+      if (artistModel == null) {
+        // Add new artist.
+        artistId = await ArtistDao(_db).upsertArtist(
+          ArtistCompanion(
+            name: Value(artist),
+          ),
+        );
+      } else {
+        // Artist already exists.
+        artistId = artistModel.id;
+      }
+      // Sync music-artist.
+      await RelationshipDao(_db).upsertMusicArtist(
+        musicId: musicId,
+        artistId: artistId,
+      );
+
+      // Sync artist-album.
+      if (albumId != null) {
+        await RelationshipDao(_db)
+            .upsertArtistAlbum(artistId: artistId, albumId: albumId);
+      }
+    }
   }
 
   @override

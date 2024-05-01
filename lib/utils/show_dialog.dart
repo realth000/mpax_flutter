@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-import '../i18n/strings.g.dart';
+import 'package:mpax_flutter/i18n/strings.g.dart';
 
 /// Show a dialog with given [title] and [message], with a ok button to navigate
 /// back.
