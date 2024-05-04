@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:drift/drift.dart';
+import 'package:image/image.dart' as image;
 import 'package:mpax_flutter/instance.dart';
 import 'package:mpax_flutter/shared/models/models.dart';
 import 'package:mpax_flutter/shared/models/shared_models.dart';
@@ -64,16 +65,17 @@ final class StorageProviderImpl implements StorageProvider {
   /// 7. Fulfill music metadata: `album`, `artist` and `albumArtist`.
   @override
   Future<MusicModel> addMusic(MetadataModel metadataModel) async {
+    logger.i('add music: ${metadataModel.filePath}');
     final oldMusic =
         await MusicDao(_db).selectMusicByFilePath(metadataModel.filePath);
     // Though music already recorded, still update it because the file info
     // may changed.
     if (oldMusic != null) {
       // Here we delete all existing images.
-      for (final image
+      for (final imagePair
           in oldMusic.albumCover?.values ?? const <ImageDbInfo>{}) {
-        await ImageDao(_db).deleteImageById(image.intValue);
-        final imageFile = File('$imageCacheDir/${image.stringValue}');
+        await ImageDao(_db).deleteImageById(imagePair.intValue);
+        final imageFile = File('$imageCacheDir/${imagePair.stringValue}');
         if (imageFile.existsSync()) {
           await imageFile.delete();
         }
@@ -82,10 +84,23 @@ final class StorageProviderImpl implements StorageProvider {
 
     // Save images.
     final imageDbInfoList = ImageDbInfoSet({});
-    for (final image in metadataModel.images ?? const <Uint8List>[]) {
+    for (final imageData in metadataModel.images ?? const <Uint8List>[]) {
       final fileName = uuid.v4();
-      await (await File('$imageCacheDir/$fileName').create(recursive: true))
-          .writeAsBytes(image);
+      final fullPath = '$imageCacheDir/$fileName';
+      final f = await File(fullPath).create(recursive: true);
+      await f.writeAsBytes(imageData, flush: true);
+
+      final _ = image.Command();
+
+      // final data2 = await File(fullPath).readAsBytes();
+      // final decodeType = image.findDecoderForData(imageData);
+      // print('>>> ${metadataModel.filePath} ,decodeType=$decodeType');
+
+      // await (image.Command()
+      //       ..decodeImage(imageData)
+      //       ..copyResize(width: 60, height: 60)
+      //       ..writeToFile(fullPath))
+      //     .execute();
       final imageEntity = await ImageDao(_db)
           .upsertImageEx(ImageCompanion(filePath: Value(fileName)));
       imageDbInfoList.add(ImageDbInfo(imageEntity.id, imageEntity.filePath));
