@@ -73,7 +73,6 @@ final class MusicLibraryBloc
     MusicLibraryReloadRequested event,
     _Emit emit,
   ) async {
-    final _ = _musicLibraryRepository;
     // TODO: Implement me
     throw UnimplementedError();
   }

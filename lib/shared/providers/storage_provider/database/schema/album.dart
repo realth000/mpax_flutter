@@ -10,7 +10,10 @@ class Album extends Table {
   TextColumn get title => text()();
 
   /// Album artists.
-  TextColumn get artist => text()();
+  TextColumn get artist => text().map(IntStringPairSet.converter).nullable()();
+
+  /// All id and name pairs of [Music] belongs to this album.
+  TextColumn get musicList => text().map(IntStringPairSet.converter)();
 
   /// Specify [title] and [artist] can locate one unique [Album].
   @override

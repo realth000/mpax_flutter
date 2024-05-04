@@ -12,5 +12,8 @@ class Playlist extends Table {
   /// Optional description.
   ///
   /// Default keep empty.
-  TextColumn get description => text()();
+  TextColumn get description => text().nullable()();
+
+  /// All id and name of [Music] in the playlist.
+  TextColumn get musicList => text().map(IntStringPairSet.converter)();
 }

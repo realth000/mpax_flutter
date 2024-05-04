@@ -20,8 +20,9 @@ final class ArtistDao extends DatabaseAccessor<AppDatabase>
   }
 
   /// Upsert.
-  Future<int> upsertArtist(ArtistCompanion artistCompanion) async {
-    return into(artist).insertOnConflictUpdate(artistCompanion);
+  Future<ArtistEntity> upsertArtist(ArtistCompanion artistCompanion) async {
+    return into(artist)
+        .insertReturning(artistCompanion, mode: InsertMode.insertOrReplace);
   }
 
   /// Delete unique [Artist] which [Artist.name] is [name].

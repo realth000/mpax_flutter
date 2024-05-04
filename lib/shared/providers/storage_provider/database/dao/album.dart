@@ -1,4 +1,5 @@
 import 'package:drift/drift.dart';
+import 'package:drift/extensions/json1.dart';
 import 'package:mpax_flutter/shared/providers/storage_provider/database/database.dart';
 import 'package:mpax_flutter/shared/providers/storage_provider/database/schema/schema.dart';
 
@@ -10,6 +11,11 @@ final class AlbumDao extends DatabaseAccessor<AppDatabase>
     with _$AlbumDaoMixin {
   /// Constructor.
   AlbumDao(super.db);
+
+  /// Select the unique [Album] by it's [id].
+  Future<AlbumEntity?> selectAlbumById(int id) async {
+    return (select(album)..where((x) => x.id.equals(id))).getSingleOrNull();
+  }
 
   /// Select all [Album]s those [Album.title] is [title].
   ///
@@ -26,16 +32,25 @@ final class AlbumDao extends DatabaseAccessor<AppDatabase>
   /// Return null is no record matches.
   Future<AlbumEntity?> selectAlbumByTitleAndArtist({
     required String title,
-    required String artist,
+    required List<String> artist,
   }) async {
     return (select(album)
-          ..where((x) => x.title.equals(title) & x.artist.equals(artist)))
+          ..where(
+            (x) =>
+                x.title.equals(title) &
+                x.artist
+                    .jsonEach(this, r'#$.values.stringValue')
+                    .value
+                    .cast<String>()
+                    .isIn(artist),
+          ))
         .getSingleOrNull();
   }
 
   /// Upsert.
-  Future<int> upsertAlbum(AlbumCompanion albumCompanion) async {
-    return into(album).insertOnConflictUpdate(albumCompanion);
+  Future<AlbumEntity> upsertAlbum(AlbumCompanion albumCompanion) async {
+    return into(album)
+        .insertReturning(albumCompanion, mode: InsertMode.insertOrReplace);
   }
 
   /// Delete.

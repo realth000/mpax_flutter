@@ -22,17 +22,17 @@ final class MetadataTaglibRepositoryImpl implements MetadataRepository {
   }
 
   @override
-  Future<Either<String, MusicModel>> readMetadataFromFile(
+  Future<Either<String, MetadataModel>> readMetadataFromFile(
     String filePath,
   ) async {
     // TODO: Test and implement.
     final data = await taglib.readMetadata(filePath);
     logger.e(data);
-    return Either<String, MusicModel>.left('testing');
+    return Either<String, MetadataModel>.left('testing');
   }
 
   @override
-  Future<Either<String, List<MusicModel>>> readMetadataFromDir(
+  Future<Either<String, List<MetadataModel>>> readMetadataFromDir(
     String dirPath, {
     bool ignoreError = false,
   }) async {
@@ -41,14 +41,24 @@ final class MetadataTaglibRepositoryImpl implements MetadataRepository {
       return Either.left('failed to read metadata from $dirPath');
     }
     final metadataList = data.map(
-      (e) => MusicModel(
+      (e) => MetadataModel(
         filePath: e.filePath,
-        filename: path.basename(e.filePath),
+        fileName: path.basename(e.filePath),
+        sourceDir: dirPath,
         title: e.title,
         artist: e.artist != null ? [e.artist!] : const [],
         album: e.album,
-        albumArtist: e.albumArtist,
-        duration: Duration(seconds: e.length ?? 0),
+        track: e.track,
+        year: e.year,
+        genre: e.genre,
+        comment: e.comment,
+        sampleRate: e.sampleRate,
+        bitrate: e.bitrate,
+        channels: e.channels,
+        duration: Duration(milliseconds: e.length ?? 0),
+        albumArtist: e.albumArtist != null ? [e.albumArtist!] : const [],
+        albumTotalTracks: e.albumTotalTrack,
+        images: e.albumCover != null ? [e.albumCover!] : const [],
       ),
     );
     return Either.right(metadataList.toList());

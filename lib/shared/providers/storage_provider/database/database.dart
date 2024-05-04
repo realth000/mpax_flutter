@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 import 'package:mpax_flutter/shared/providers/storage_provider/database/connection/native.dart';
 import 'package:mpax_flutter/shared/providers/storage_provider/database/schema/schema.dart';
+import 'package:mpax_flutter/shared/providers/storage_provider/database/shared_model.dart';
 
 part 'database.g.dart';
 
@@ -12,13 +13,6 @@ part 'database.g.dart';
     Image,
     Music,
     Playlist,
-    MusicAlbumEntries,
-    MusicArtistEntries,
-    ArtistAlbumEntries,
-    PlaylistMusicEntries,
-    MusicImageEntries,
-    AlbumImageEntries,
-    PlaylistImageEntries,
     Settings,
   ],
 )

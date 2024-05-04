@@ -24,6 +24,11 @@ final class MusicDao extends DatabaseAccessor<AppDatabase>
     return (select(music)..where((x) => x.title.equals(title))).get();
   }
 
+  /// Select all [Music]s those [Music.sourceDir] is [sourceDir].
+  Future<List<MusicEntity>> selectMusicBySourceDir(String sourceDir) async {
+    return (select(music)..where((x) => x.sourceDir.equals(sourceDir))).get();
+  }
+
   /// Upsert.
   Future<int> upsertMusic(MusicCompanion musicCompanion) async {
     return into(music).insertOnConflictUpdate(musicCompanion);

@@ -18,6 +18,9 @@ abstract interface class StorageProvider {
   /// Add a [MusicModel] to storage.
   Future<void> addMusic(MusicModel musicModel);
 
+  /// Load all music in [dirPath].
+  Future<List<MusicModel>> loadMusicFromDir(String dirPath);
+
   /// Find cached info about file at [filePath].
   ///
   /// Return `null` if not found.
