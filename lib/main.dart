@@ -31,7 +31,9 @@ Future<void> initializeDependencies() async {
       StorageProviderImpl(sl(), imageCacheDir),
     )
     ..registerFactory<SettingsRepository>(() => SettingsRepositoryImpl(sl()))
-    ..registerFactory<MusicLibraryRepository>(MusicLibraryRepositoryImpl.new)
+    ..registerFactory<MusicLibraryRepository>(
+      () => MusicLibraryRepositoryImpl(sl()),
+    )
     ..registerFactory<MetadataRepository>(MetadataTaglibRepositoryImpl.new);
   await sl.allReady();
 }

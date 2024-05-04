@@ -1,36 +1,36 @@
 import 'package:fpdart/fpdart.dart';
-
 import 'package:mpax_flutter/shared/models/models.dart';
 
 /// Repository of music library bloc.
 ///
 /// Provide ability to manage the music library.
 abstract interface class MusicLibraryRepository {
-  /// Load indexed data of [directory] from disk.
+  /// Load indexed data of [directory] from storage.
   ///
   /// # Return
   ///
   /// * A list of [MusicModel] if success.
   /// * A string if any error occurs.
-  Future<Either<String, List<MusicModel>>> loadDirectory(String directory);
-
-  /// Scan [directory], parse supported music files and construct into.
-  ///
-  /// # Return
-  ///
-  /// * A list of [MusicModel] if success.
-  /// * A string if any error occurs.
-  Future<Either<String, List<MusicModel>>> scanDirectory(String directory);
-
-  /// Save [data] and [directory] info into music library.
-  ///
-  /// # Return
-  ///
-  /// * void if success.
-  /// * A string if any error occurs.
-  Future<Option<String>> saveDirectoryInStorage(
+  Future<Either<String, List<MusicModel>>> loadDirectoryFromStorage(
     String directory,
-    List<MusicModel> data,
+  );
+
+  /// Load all indexed data from storage.
+  ///
+  /// # Return
+  ///
+  /// * A list of [MusicModel] that contains all indexed data if success.
+  /// * A string if any error occurs.
+  Future<Either<String, List<MusicModel>>> loadAllDirectoryFromStorage();
+
+  /// Save a list of [MetadataModel] to storage.
+  ///
+  /// # Return
+  ///
+  /// * A list of [MusicModel] if success.
+  /// * A string if any error occurs.
+  Future<Either<String, List<MusicModel>>> saveMetadataToStorage(
+    List<MetadataModel> metadataModelList,
   );
 
   /// Remove [directory] from library.
@@ -39,5 +39,5 @@ abstract interface class MusicLibraryRepository {
   ///
   /// * void if success.
   /// * A string if any error occurs.
-  Future<Option<String>> removeDirectory(String directory);
+  Future<Option<String>> removeDirectoryFromStorage(String directory);
 }

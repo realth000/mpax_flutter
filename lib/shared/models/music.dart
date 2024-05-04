@@ -25,6 +25,27 @@ final class MusicModel with MusicModelMappable {
     required this.images,
   });
 
+  /// Constructor from entity.
+  MusicModel.fromEntity(MusicEntity musicEntity)
+      : id = musicEntity.id,
+        filePath = musicEntity.filePath,
+        fileName = musicEntity.fileName,
+        sourceDir = musicEntity.sourceDir,
+        title = musicEntity.title,
+        artist = ArtistDbInfoSet.fromValue(musicEntity.artist),
+        album = AlbumDbInfo.fromValue(musicEntity.album),
+        track = musicEntity.track,
+        year = musicEntity.year,
+        genre = musicEntity.genre,
+        comment = musicEntity.comment,
+        sampleRate = musicEntity.sampleRate,
+        bitrate = musicEntity.bitrate,
+        channels = musicEntity.channels,
+        duration = musicEntity.duration,
+        albumTotalTracks = musicEntity.albumTotalTracks,
+        images = ImageDbInfoSet.fromValue(musicEntity.albumCover),
+        albumArtist = ArtistDbInfoSet.fromValue(musicEntity.albumArtist);
+
   /// Unique id.
   final int id;
 

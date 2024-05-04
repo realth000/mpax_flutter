@@ -25,7 +25,10 @@ abstract interface class StorageProvider {
   Future<MusicModel> addMusic(MetadataModel metadataModel);
 
   /// Load all music in [dirPath].
-  Future<List<MusicModel>> loadMusicFromDir(String dirPath);
+  Future<List<MusicModel>> loadMusicFromStorage(String dirPath);
+
+  /// Load all music in storage, all path version of [loadMusicFromStorage].
+  Future<List<MusicModel>> loadAllMusicFromStorage();
 
   /// Find cached info about file at [filePath].
   ///

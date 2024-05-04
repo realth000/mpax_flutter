@@ -31,7 +31,10 @@ class App extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => MusicLibraryBloc(sl(), sl(), sl()),
+          create: (context) => MusicLibraryBloc(sl(), sl())
+            ..add(
+              const MusicLibraryReloadRequested(),
+            ),
         ),
         BlocProvider(
           create: (context) => SettingsBloc(sl())..add(const SettingsLoadAll()),

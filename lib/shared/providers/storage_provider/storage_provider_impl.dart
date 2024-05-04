@@ -209,41 +209,19 @@ final class StorageProviderImpl implements StorageProvider {
       ),
     );
 
-    return MusicModel(
-      id: ret.id,
-      filePath: ret.filePath,
-      fileName: ret.fileName,
-      sourceDir: ret.sourceDir,
-      title: ret.title,
-      artist: ArtistDbInfoSet.fromValue(ret.artist),
-      album: AlbumDbInfo.fromValue(ret.album),
-      track: ret.track,
-      year: ret.year,
-      genre: ret.genre,
-      comment: ret.comment,
-      sampleRate: ret.sampleRate,
-      bitrate: ret.bitrate,
-      channels: ret.channels,
-      duration: ret.duration,
-      albumTotalTracks: ret.albumTotalTracks,
-      images: ImageDbInfoSet.fromValue(ret.albumCover),
-      albumArtist: ArtistDbInfoSet.fromValue(ret.albumArtist),
-    );
+    return MusicModel.fromEntity(ret);
   }
 
   @override
-  Future<List<MusicModel>> loadMusicFromDir(String dirPath) async {
-    // final music =
-    //     (await MusicDao(_db).selectMusicBySourceDir(dirPath)).map((x) async {
-    //   final artists = await RelationshipDao(_db).selectArtistByMusic(x.id);
-    //   return MusicModel(
-    //     filePath: x.filePath,
-    //     fileName: x.fileName,
-    //     sourceDir: x.sourceDir,
-    //     title: x.title,
-    //   );
-    // });
-    return [];
+  Future<List<MusicModel>> loadMusicFromStorage(String dirPath) async {
+    final musicEntities = await MusicDao(_db).selectMusicBySourceDir(dirPath);
+    return musicEntities.map(MusicModel.fromEntity).toList();
+  }
+
+  @override
+  Future<List<MusicModel>> loadAllMusicFromStorage() async {
+    final musicEntities = await MusicDao(_db).selectAll();
+    return musicEntities.map(MusicModel.fromEntity).toList();
   }
 
   @override

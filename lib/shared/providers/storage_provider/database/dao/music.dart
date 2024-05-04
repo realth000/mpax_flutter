@@ -19,6 +19,11 @@ final class MusicDao extends DatabaseAccessor<AppDatabase>
         .getSingleOrNull();
   }
 
+  /// Select all music in [Music] table.
+  Future<List<MusicEntity>> selectAll() async {
+    return select(music).get();
+  }
+
   /// Select all [Music]s those [Music.title] is [title].
   Future<List<MusicEntity>> selectMusicByTitle(String title) async {
     return (select(music)..where((x) => x.title.equals(title))).get();
