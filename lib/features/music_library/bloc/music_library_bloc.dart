@@ -109,8 +109,9 @@ final class MusicLibraryBloc
         logger.e('failed to scan metadata in dir $dirPath: $err');
         emit(state.copyWith(status: BasicStatus.failure));
       case Right(value: final data):
+        final musicData = <MusicModel>[];
         for (final d in data) {
-          await _storageProvider.addMusic(d);
+          musicData.add(await _storageProvider.addMusic(d));
         }
         emit(
           state.copyWith(
@@ -121,7 +122,7 @@ final class MusicLibraryBloc
             ],
             musicList: [
               ...state.musicList,
-              ...data,
+              ...musicData,
             ],
           ),
         );

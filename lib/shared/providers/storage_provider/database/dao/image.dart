@@ -21,9 +21,10 @@ class ImageDao extends DatabaseAccessor<AppDatabase> with _$ImageDaoMixin {
         .getSingleOrNull();
   }
 
-  /// Upsert.
-  Future<int> upsertImage(ImageCompanion imageCompanion) async {
-    return into(image).insertOnConflictUpdate(imageCompanion);
+  /// Upsert and return the inserted [ImageEntity].
+  Future<ImageEntity> upsertImageEx(ImageCompanion imageCompanion) async {
+    return into(image)
+        .insertReturning(imageCompanion, mode: InsertMode.insertOrReplace);
   }
 
   /// Delete the unique [Image] which [Image.id] is [id].

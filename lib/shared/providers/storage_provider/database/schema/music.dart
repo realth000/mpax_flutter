@@ -84,5 +84,6 @@ class Music extends Table {
   ///
   /// Store as a list.
   /// We do not know the album cover position, but it's ok for now.
-  TextColumn get albumCover => text().map(IntSet.converter).nullable()();
+  TextColumn get albumCover =>
+      text().map(IntStringPairSet.converter).nullable()();
 }

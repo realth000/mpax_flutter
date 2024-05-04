@@ -31,7 +31,13 @@ final class MusicDao extends DatabaseAccessor<AppDatabase>
 
   /// Upsert.
   Future<int> upsertMusic(MusicCompanion musicCompanion) async {
-    return into(music).insertOnConflictUpdate(musicCompanion);
+    return into(music).insert(musicCompanion, mode: InsertMode.insertOrReplace);
+  }
+
+  /// Upsert and return the inserted model.
+  Future<MusicEntity> upsertMusicEx(MusicCompanion musicCompanion) async {
+    return into(music)
+        .insertReturning(musicCompanion, mode: InsertMode.insertOrReplace);
   }
 
   /// Delete the unique [Music] which [Music.filePath] is [filePath].

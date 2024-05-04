@@ -43,6 +43,7 @@ dependencies:
     path: packages/taglib_ffi_dart/packages/taglib_ffi_dart
   taglib_ffi_dart_libs:
     path: packages/taglib_ffi_dart/packages/taglib_ffi_dart_libs
+  thumbnailer: ^2.2.0
   uuid: ^4.4.0
 
 dev_dependencies:

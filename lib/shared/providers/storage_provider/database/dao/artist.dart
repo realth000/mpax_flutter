@@ -19,8 +19,8 @@ final class ArtistDao extends DatabaseAccessor<AppDatabase>
         .getSingleOrNull();
   }
 
-  /// Upsert.
-  Future<ArtistEntity> upsertArtist(ArtistCompanion artistCompanion) async {
+  /// Upsert and return the inserted [ArtistEntity].
+  Future<ArtistEntity> upsertArtistEx(ArtistCompanion artistCompanion) async {
     return into(artist)
         .insertReturning(artistCompanion, mode: InsertMode.insertOrReplace);
   }

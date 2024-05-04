@@ -15,8 +15,14 @@ abstract interface class StorageProvider {
   /// Must call this to ensure all resources released.
   Future<void> dispose() async {}
 
-  /// Add a [MusicModel] to storage.
-  Future<void> addMusic(MusicModel musicModel);
+  /// Add a [MusicModel] from [metadataModel] to storage.
+  ///
+  /// Use [MetadataModel] as parameter because when we call this function,
+  /// we are not inside the database, all "material" should be raw data that
+  /// not related to database. For example there is no music id nor album id.
+  ///
+  /// Return added [MusicModel].
+  Future<MusicModel> addMusic(MetadataModel metadataModel);
 
   /// Load all music in [dirPath].
   Future<List<MusicModel>> loadMusicFromDir(String dirPath);

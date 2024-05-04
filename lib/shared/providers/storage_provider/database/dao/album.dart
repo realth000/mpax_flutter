@@ -1,5 +1,4 @@
 import 'package:drift/drift.dart';
-import 'package:drift/extensions/json1.dart';
 import 'package:mpax_flutter/shared/providers/storage_provider/database/database.dart';
 import 'package:mpax_flutter/shared/providers/storage_provider/database/schema/schema.dart';
 
@@ -34,21 +33,12 @@ final class AlbumDao extends DatabaseAccessor<AppDatabase>
     required String title,
     required List<String> artist,
   }) async {
-    return (select(album)
-          ..where(
-            (x) =>
-                x.title.equals(title) &
-                x.artist
-                    .jsonEach(this, r'#$.values.stringValue')
-                    .value
-                    .cast<String>()
-                    .isIn(artist),
-          ))
+    return (select(album)..where((x) => x.title.equals(title)))
         .getSingleOrNull();
   }
 
-  /// Upsert.
-  Future<AlbumEntity> upsertAlbum(AlbumCompanion albumCompanion) async {
+  /// Upsert and return the inserted [AlbumEntity].
+  Future<AlbumEntity> upsertAlbumEx(AlbumCompanion albumCompanion) async {
     return into(album)
         .insertReturning(albumCompanion, mode: InsertMode.insertOrReplace);
   }

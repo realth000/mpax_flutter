@@ -26,8 +26,7 @@ final class _MusicLibraryPageState extends State<MusicLibraryPage> {
         return ListTile(
           leading: const Icon(Icons.music_note),
           title: Text(item.title ?? item.fileName),
-          subtitle: Text(
-              '${item.artist.isEmpty ? "<unknown>" : item.artist.join(", ")} - '
+          subtitle: Text('${item.artist?.toString() ?? "<unknown>"} - '
               '${item.album ?? "<unknown>"}'),
         );
       },

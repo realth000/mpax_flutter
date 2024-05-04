@@ -15,15 +15,21 @@ import 'package:mpax_flutter/instance.dart';
 import 'package:mpax_flutter/shared/providers/storage_provider/database/database.dart';
 import 'package:mpax_flutter/shared/providers/storage_provider/storage_provider.dart';
 import 'package:mpax_flutter/shared/providers/storage_provider/storage_provider_impl.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:taglib_ffi_dart/taglib_ffi_dart.dart' as taglib;
 
 /// Initialize all dependencies.
 Future<void> initializeDependencies() async {
+  final imageCacheDir =
+      '${(await getApplicationSupportDirectory()).path}/image';
+
   sl
     ..registerSingleton<LogOutput>(LoggingRepositoryImpl())
     ..registerFactory<AppDatabase>(AppDatabase.new)
-    ..registerSingleton<StorageProvider>(StorageProviderImpl(sl()))
+    ..registerSingleton<StorageProvider>(
+      StorageProviderImpl(sl(), imageCacheDir),
+    )
     ..registerFactory<SettingsRepository>(() => SettingsRepositoryImpl(sl()))
     ..registerFactory<MusicLibraryRepository>(MusicLibraryRepositoryImpl.new)
     ..registerFactory<MetadataRepository>(MetadataTaglibRepositoryImpl.new);

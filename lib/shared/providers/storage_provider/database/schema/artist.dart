@@ -12,6 +12,9 @@ class Artist extends Table {
   /// All id and name pairs of [Music] belongs to this artist.
   TextColumn get musicList => text().map(IntStringPairSet.converter)();
 
+  /// All id and title pairs of [Album] belongs to this artist.
+  TextColumn get albumList => text().map(IntStringPairSet.converter)();
+
   /// Specify [name] can locate one unique [Playlist].
   @override
   List<Set<Column>> get uniqueKeys => [

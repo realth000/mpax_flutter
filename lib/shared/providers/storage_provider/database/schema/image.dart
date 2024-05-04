@@ -15,16 +15,4 @@ class Image extends Table {
 
   /// Cache file path.
   TextColumn get filePath => text().unique()();
-
-  /// All ids of [Music] that use this image.
-  TextColumn get musicList => text().map(IntSet.converter)();
-
-  /// All ids of [Album] that use this image.
-  TextColumn get albumList => text().map(IntSet.converter)();
-
-  /// All ids of [Artist] that use this image.
-  TextColumn get artistList => text().map(IntSet.converter)();
-
-  /// All ids of [Playlist] that use this image.
-  TextColumn get playlistList => text().map(IntSet.converter)();
 }

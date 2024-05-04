@@ -3,6 +3,7 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  pdfx
   permission_handler_windows
   sqlite3_flutter_libs
   taglib_ffi_dart_libs

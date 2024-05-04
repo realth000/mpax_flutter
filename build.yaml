@@ -4,6 +4,7 @@ targets:
       drift_dev:
         options:
           sql:
+            dialect: sqlite
             options:
               modules:
                 - json1
