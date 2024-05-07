@@ -55,7 +55,7 @@ final class MetadataTaglibRepositoryImpl implements MetadataRepository {
         sampleRate: e.sampleRate,
         bitrate: e.bitrate,
         channels: e.channels,
-        duration: Duration(milliseconds: e.length ?? 0),
+        duration: Duration(milliseconds: e.lengthInSeconds ?? 0),
         albumArtist: e.albumArtist != null ? [e.albumArtist!] : const [],
         albumTotalTracks: e.albumTotalTrack,
         images: e.albumCover != null ? [e.albumCover!] : const [],

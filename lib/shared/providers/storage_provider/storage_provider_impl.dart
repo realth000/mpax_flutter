@@ -65,166 +65,168 @@ final class StorageProviderImpl implements StorageProvider {
   /// 7. Fulfill music metadata: `album`, `artist` and `albumArtist`.
   @override
   Future<MusicModel> addMusic(MetadataModel metadataModel) async {
-    logger.i('add music: ${metadataModel.filePath}');
-    final oldMusic =
-        await MusicDao(_db).selectMusicByFilePath(metadataModel.filePath);
-    // Though music already recorded, still update it because the file info
-    // may changed.
-    if (oldMusic != null) {
-      // Here we delete all existing images.
-      for (final imagePair
-          in oldMusic.albumCover?.values ?? const <ImageDbInfo>{}) {
-        await ImageDao(_db).deleteImageById(imagePair.intValue);
-        final imageFile = File('$imageCacheDir/${imagePair.stringValue}');
-        if (imageFile.existsSync()) {
-          await imageFile.delete();
+    return _db.transaction(() async {
+      logger.i('add music: ${metadataModel.filePath}');
+      final oldMusic =
+          await MusicDao(_db).selectMusicByFilePath(metadataModel.filePath);
+      // Though music already recorded, still update it because the file info
+      // may changed.
+      if (oldMusic != null) {
+        // Here we delete all existing images.
+        for (final imagePair
+            in oldMusic.albumCover?.values ?? const <ImageDbInfo>{}) {
+          await ImageDao(_db).deleteImageById(imagePair.intValue);
+          final imageFile = File('$imageCacheDir/${imagePair.stringValue}');
+          if (imageFile.existsSync()) {
+            await imageFile.delete();
+          }
         }
       }
-    }
 
-    // Save images.
-    final imageDbInfoList = ImageDbInfoSet({});
-    for (final imageData in metadataModel.images ?? const <Uint8List>[]) {
-      final fileName = uuid.v4();
-      final fullPath = '$imageCacheDir/$fileName';
-      final f = await File(fullPath).create(recursive: true);
-      await f.writeAsBytes(imageData, flush: true);
+      // Save images.
+      final imageDbInfoList = ImageDbInfoSet({});
+      for (final imageData in metadataModel.images ?? const <Uint8List>[]) {
+        final fileName = uuid.v4();
+        final fullPath = '$imageCacheDir/$fileName';
+        final f = await File(fullPath).create(recursive: true);
+        await f.writeAsBytes(imageData, flush: true);
 
-      final _ = image.Command();
+        final _ = image.Command();
 
-      // final data2 = await File(fullPath).readAsBytes();
-      // final decodeType = image.findDecoderForData(imageData);
-      // print('>>> ${metadataModel.filePath} ,decodeType=$decodeType');
+        // final data2 = await File(fullPath).readAsBytes();
+        // final decodeType = image.findDecoderForData(imageData);
+        // print('>>> ${metadataModel.filePath} ,decodeType=$decodeType');
 
-      // await (image.Command()
-      //       ..decodeImage(imageData)
-      //       ..copyResize(width: 60, height: 60)
-      //       ..writeToFile(fullPath))
-      //     .execute();
-      final imageEntity = await ImageDao(_db)
-          .upsertImageEx(ImageCompanion(filePath: Value(fileName)));
-      imageDbInfoList.add(ImageDbInfo(imageEntity.id, imageEntity.filePath));
-    }
+        // await (image.Command()
+        //       ..decodeImage(imageData)
+        //       ..copyResize(width: 60, height: 60)
+        //       ..writeToFile(fullPath))
+        //     .execute();
+        final imageEntity = await ImageDao(_db)
+            .upsertImageEx(ImageCompanion(filePath: Value(fileName)));
+        imageDbInfoList.add(ImageDbInfo(imageEntity.id, imageEntity.filePath));
+      }
 
-    final musicCompanion = MusicCompanion(
-      filePath: Value(metadataModel.filePath),
-      fileName: Value(metadataModel.fileName),
-      sourceDir: Value(metadataModel.sourceDir),
-      title: Value(metadataModel.title),
-      // artist: Value(metadataModel.artist),
-      // album: Value(metadataModel.album),
-      track: Value(metadataModel.track),
-      year: Value(metadataModel.year),
-      genre: Value(metadataModel.genre),
-      comment: Value(metadataModel.comment),
-      sampleRate: Value(metadataModel.sampleRate),
-      bitrate: Value(metadataModel.bitrate),
-      channels: Value(metadataModel.channels),
-      duration: Value(metadataModel.duration?.inMilliseconds),
-      // albumArtist: Value(metadataModel.albumArtist),
-      albumTotalTracks: Value(metadataModel.albumTotalTracks),
-      albumCover: Value(imageDbInfoList),
-    );
-
-    // Save music.
-    // Update artist/album/albumArtist later.
-    final musicId = await MusicDao(_db).upsertMusic(musicCompanion);
-    final musicDbInfo = MusicDbInfo(
-      musicId,
-      metadataModel.title ?? metadataModel.fileName,
-    );
-
-    // Save album.
-    AlbumEntity? albumEntity;
-    // Flag indicating whether we inserted a new album record or not.
-    //
-    // * If we do, the album's artist info need update later.
-    // * If we do not, means album info already exists, artist info will not
-    //   change since we distinguish albums by album artists.
-    var isNewAlbum = true;
-    if (metadataModel.album != null) {
-      albumEntity = await AlbumDao(_db).selectAlbumByTitleAndArtist(
-        title: metadataModel.album!,
-        artist: metadataModel.albumArtist,
+      final musicCompanion = MusicCompanion(
+        filePath: Value(metadataModel.filePath),
+        fileName: Value(metadataModel.fileName),
+        sourceDir: Value(metadataModel.sourceDir),
+        title: Value(metadataModel.title),
+        // artist: Value(metadataModel.artist),
+        // album: Value(metadataModel.album),
+        track: Value(metadataModel.track),
+        year: Value(metadataModel.year),
+        genre: Value(metadataModel.genre),
+        comment: Value(metadataModel.comment),
+        sampleRate: Value(metadataModel.sampleRate),
+        bitrate: Value(metadataModel.bitrate),
+        channels: Value(metadataModel.channels),
+        duration: Value(metadataModel.duration?.inMilliseconds),
+        // albumArtist: Value(metadataModel.albumArtist),
+        albumTotalTracks: Value(metadataModel.albumTotalTracks),
+        albumCover: Value(imageDbInfoList),
       );
-      if (albumEntity == null) {
-        // Add new album.
-        // Update artist later.
-        albumEntity = await AlbumDao(_db).upsertAlbumEx(
-          AlbumCompanion(
-            title: Value(metadataModel.album!),
-            musicList: Value(MusicDbInfoSet({musicDbInfo})),
-          ),
+
+      // Save music.
+      // Update artist/album/albumArtist later.
+      final musicId = await MusicDao(_db).upsertMusic(musicCompanion);
+      final musicDbInfo = MusicDbInfo(
+        musicId,
+        metadataModel.title ?? metadataModel.fileName,
+      );
+
+      // Save album.
+      AlbumEntity? albumEntity;
+      // Flag indicating whether we inserted a new album record or not.
+      //
+      // * If we do, the album's artist info need update later.
+      // * If we do not, means album info already exists, artist info will not
+      //   change since we distinguish albums by album artists.
+      var isNewAlbum = true;
+      if (metadataModel.album != null) {
+        albumEntity = await AlbumDao(_db).selectAlbumByTitleAndArtist(
+          title: metadataModel.album!,
+          artist: metadataModel.albumArtist,
         );
-      } else {
-        // Album already exists, all info updated,
-        // no need to update artist info later.
-        isNewAlbum = false;
-        albumEntity.musicList.add(musicDbInfo);
+        if (albumEntity == null) {
+          // Add new album.
+          // Update artist later.
+          albumEntity = await AlbumDao(_db).upsertAlbumEx(
+            AlbumCompanion(
+              title: Value(metadataModel.album!),
+              musicList: Value(MusicDbInfoSet({musicDbInfo})),
+            ),
+          );
+        } else {
+          // Album already exists, all info updated,
+          // no need to update artist info later.
+          isNewAlbum = false;
+          albumEntity.musicList.add(musicDbInfo);
+          await AlbumDao(_db).upsertAlbumEx(
+            albumEntity.toCompanion(false).copyWith(
+                  musicList: Value(albumEntity.musicList),
+                ),
+          );
+        }
+      }
+      final albumDbInfo = albumEntity != null
+          ? AlbumDbInfo(albumEntity.id, albumEntity.title)
+          : null;
+
+      // Save artist.
+      final artistEntityList = <ArtistEntity>[];
+      for (final artist in metadataModel.artist) {
+        var artistEntity = await ArtistDao(_db).selectArtistByName(artist);
+        if (artistEntity == null) {
+          // Add new artist.
+          artistEntity = await ArtistDao(_db).upsertArtistEx(
+            ArtistCompanion(
+              name: Value(artist),
+              musicList: Value(MusicDbInfoSet({musicDbInfo})),
+              albumList: albumDbInfo != null
+                  ? Value(AlbumDbInfoSet({albumDbInfo}))
+                  : const Value.absent(),
+            ),
+          );
+        } else {
+          // Update existing artist.
+          artistEntity.musicList.add(musicDbInfo);
+          if (albumDbInfo != null) {
+            artistEntity.albumList.add(albumDbInfo);
+          }
+          await ArtistDao(_db).upsertArtistEx(
+            artistEntity.toCompanion(false).copyWith(
+                  musicList: Value(artistEntity.musicList),
+                  albumList: albumDbInfo != null
+                      ? Value(artistEntity.albumList)
+                      : const Value.absent(),
+                ),
+          );
+        }
+        artistEntityList.add(artistEntity);
+      }
+      final artistDbInfoSet = ArtistDbInfoSet(
+        artistEntityList.map((x) => ArtistDbInfo(x.id, x.name)).toSet(),
+      );
+
+      // Now fulfill music and album record.
+      if (isNewAlbum && albumEntity != null) {
         await AlbumDao(_db).upsertAlbumEx(
           albumEntity.toCompanion(false).copyWith(
-                musicList: Value(albumEntity.musicList),
+                artist: Value(artistDbInfoSet),
               ),
         );
       }
-    }
-    final albumDbInfo = albumEntity != null
-        ? AlbumDbInfo(albumEntity.id, albumEntity.title)
-        : null;
-
-    // Save artist.
-    final artistEntityList = <ArtistEntity>[];
-    for (final artist in metadataModel.artist) {
-      var artistEntity = await ArtistDao(_db).selectArtistByName(artist);
-      if (artistEntity == null) {
-        // Add new artist.
-        artistEntity = await ArtistDao(_db).upsertArtistEx(
-          ArtistCompanion(
-            name: Value(artist),
-            musicList: Value(MusicDbInfoSet({musicDbInfo})),
-            albumList: albumDbInfo != null
-                ? Value(AlbumDbInfoSet({albumDbInfo}))
-                : const Value.absent(),
-          ),
-        );
-      } else {
-        // Update existing artist.
-        artistEntity.musicList.add(musicDbInfo);
-        if (albumDbInfo != null) {
-          artistEntity.albumList.add(albumDbInfo);
-        }
-        await ArtistDao(_db).upsertArtistEx(
-          artistEntity.toCompanion(false).copyWith(
-                musicList: Value(artistEntity.musicList),
-                albumList: albumDbInfo != null
-                    ? Value(artistEntity.albumList)
-                    : const Value.absent(),
-              ),
-        );
-      }
-      artistEntityList.add(artistEntity);
-    }
-    final artistDbInfoSet = ArtistDbInfoSet(
-      artistEntityList.map((x) => ArtistDbInfo(x.id, x.name)).toSet(),
-    );
-
-    // Now fulfill music and album record.
-    if (isNewAlbum && albumEntity != null) {
-      await AlbumDao(_db).upsertAlbumEx(
-        albumEntity.toCompanion(false).copyWith(
-              artist: Value(artistDbInfoSet),
-            ),
+      final ret = await MusicDao(_db).upsertMusicEx(
+        musicCompanion.copyWith(
+          artist: Value(artistDbInfoSet),
+          album: Value(albumDbInfo),
+          albumArtist: Value(albumEntity?.artist),
+        ),
       );
-    }
-    final ret = await MusicDao(_db).upsertMusicEx(
-      musicCompanion.copyWith(
-        artist: Value(artistDbInfoSet),
-        album: Value(albumDbInfo),
-        albumArtist: Value(albumEntity?.artist),
-      ),
-    );
 
-    return MusicModel.fromEntity(ret);
+      return MusicModel.fromEntity(ret);
+    });
   }
 
   @override
