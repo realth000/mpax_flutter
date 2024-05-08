@@ -11,14 +11,18 @@ final class MusicLibraryState with MusicLibraryStateMappable {
     this.status = MusicLibraryStatus.initial,
     this.musicList = const [],
     this.musicDirectoryList = const [],
+    this.currentLoadingFile,
   });
 
   /// Status.
   final MusicLibraryStatus status;
 
   /// All loaded [MusicModel].
-  List<MusicModel> musicList;
+  final List<MusicModel> musicList;
 
   /// All watching directory path.
-  List<String> musicDirectoryList;
+  final List<String> musicDirectoryList;
+
+  /// Record current loading music file path.
+  final String? currentLoadingFile;
 }

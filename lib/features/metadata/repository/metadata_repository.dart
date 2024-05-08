@@ -33,7 +33,7 @@ abstract interface class MetadataRepository {
   ///   and [ignoreError] is true.
   /// * Return all read [MetadataModel]s even failed on some files when
   ///   [ignoreError] is false.
-  Future<Either<String, List<MetadataModel>>> readMetadataFromDir(
+  Stream<MetadataModel> readMetadataStreamFromDir(
     String dirPath, {
     bool ignoreError = false,
   });

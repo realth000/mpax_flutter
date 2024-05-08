@@ -32,16 +32,14 @@ final class MetadataTaglibRepositoryImpl implements MetadataRepository {
   }
 
   @override
-  Future<Either<String, List<MetadataModel>>> readMetadataFromDir(
+  Stream<MetadataModel> readMetadataStreamFromDir(
     String dirPath, {
     bool ignoreError = false,
-  }) async {
-    final data = await taglib.readMetadataFromDir(dirPath);
-    if (data == null) {
-      return Either.left('failed to read metadata from $dirPath');
-    }
-    final metadataList = data.map(
-      (e) => MetadataModel(
+  }) async* {
+    logger.i('loading metadata from directory $dirPath');
+    yield* taglib.readMetadataStreamFromDir(dirPath).asyncMap((d) async {
+      final e = await d;
+      return MetadataModel(
         filePath: e.filePath,
         fileName: path.basename(e.filePath),
         sourceDir: dirPath,
@@ -59,8 +57,7 @@ final class MetadataTaglibRepositoryImpl implements MetadataRepository {
         albumArtist: e.albumArtist != null ? [e.albumArtist!] : const [],
         albumTotalTracks: e.albumTotalTrack,
         images: e.albumCover != null ? [e.albumCover!] : const [],
-      ),
-    );
-    return Either.right(metadataList.toList());
+      );
+    });
   }
 }

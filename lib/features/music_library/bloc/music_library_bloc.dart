@@ -118,20 +118,14 @@ final class MusicLibraryBloc
     final timeStart = DateTime.now();
     emit(state.copyWith(status: BasicStatus.loading));
     final dirPath = event.directoryPath;
-    final data = await _metadataRepository.readMetadataFromDir(dirPath);
-    if (data.isLeft()) {
-      logger.e('failed to scan metadata in dir $dirPath: ${data.unwrapErr()}');
-      emit(state.copyWith(status: BasicStatus.failure));
-      return;
-    }
+    final data = await _metadataRepository
+        .readMetadataStreamFromDir(dirPath)
+        .asyncMap((e) async {
+      emit(state.copyWith(currentLoadingFile: e.fileName));
+      return _musicLibraryRepository.saveMetadataToStorage(e);
+    }).toList();
 
-    final musicData =
-        await _musicLibraryRepository.saveMetadataToStorage(data.unwrap());
-    if (musicData.isLeft()) {
-      logger.e('failed to save metadata to storage: ${musicData.unwrapErr()}');
-      emit(state.copyWith(status: BasicStatus.failure));
-      return;
-    }
+    final musicData = data.where((e) => e.isLeft()).map((e) => e.unwrap());
 
     emit(
       state.copyWith(
@@ -142,7 +136,7 @@ final class MusicLibraryBloc
         ],
         musicList: [
           ...state.musicList,
-          ...musicData.unwrap(),
+          ...musicData,
         ],
       ),
     );

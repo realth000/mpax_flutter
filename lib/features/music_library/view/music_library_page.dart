@@ -39,9 +39,15 @@ final class _MusicLibraryPageState extends State<MusicLibraryPage> {
     return BlocBuilder<MusicLibraryBloc, MusicLibraryState>(
       builder: (context, state) {
         final body = switch (state.status) {
-          BasicStatus.initial ||
-          BasicStatus.loading =>
-            centerCircularProgressIndicator,
+          BasicStatus.initial || BasicStatus.loading => Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  centerCircularProgressIndicator,
+                  Text(state.currentLoadingFile ?? ''),
+                ],
+              ),
+            ),
           BasicStatus.success ||
           BasicStatus.failure =>
             _buildBody(context, state),

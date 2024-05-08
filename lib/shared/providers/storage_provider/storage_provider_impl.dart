@@ -1,14 +1,11 @@
-import 'dart:io';
 import 'dart:ui';
 
 import 'package:drift/drift.dart';
-import 'package:image/image.dart' as image;
 import 'package:mpax_flutter/instance.dart';
 import 'package:mpax_flutter/shared/models/models.dart';
 import 'package:mpax_flutter/shared/models/shared_models.dart';
 import 'package:mpax_flutter/shared/providers/storage_provider/database/dao/album.dart';
 import 'package:mpax_flutter/shared/providers/storage_provider/database/dao/artist.dart';
-import 'package:mpax_flutter/shared/providers/storage_provider/database/dao/image.dart';
 import 'package:mpax_flutter/shared/providers/storage_provider/database/dao/music.dart';
 import 'package:mpax_flutter/shared/providers/storage_provider/database/dao/settings.dart';
 import 'package:mpax_flutter/shared/providers/storage_provider/database/database.dart';
@@ -73,39 +70,36 @@ final class StorageProviderImpl implements StorageProvider {
       // may changed.
       if (oldMusic != null) {
         // Here we delete all existing images.
-        for (final imagePair
-            in oldMusic.albumCover?.values ?? const <ImageDbInfo>{}) {
-          await ImageDao(_db).deleteImageById(imagePair.intValue);
-          final imageFile = File('$imageCacheDir/${imagePair.stringValue}');
-          if (imageFile.existsSync()) {
-            await imageFile.delete();
-          }
-        }
+        // for (final imagePair
+        //     in oldMusic.albumCover?.values ?? const <ImageDbInfo>{}) {
+        //   await ImageDao(_db).deleteImageById(imagePair.intValue);
+        //   final imageFile = File('$imageCacheDir/${imagePair.stringValue}');
+        //   if (imageFile.existsSync()) {
+        //     await imageFile.delete();
+        //   }
+        // }
       }
 
       // Save images.
       final imageDbInfoList = ImageDbInfoSet({});
-      for (final imageData in metadataModel.images ?? const <Uint8List>[]) {
-        final fileName = uuid.v4();
-        final fullPath = '$imageCacheDir/$fileName';
-        final f = await File(fullPath).create(recursive: true);
-        await f.writeAsBytes(imageData, flush: true);
+      // for (final imageData in metadataModel.images ?? const <Uint8List>[]) {
+      // final fileName = uuid.v4();
+      // final fullPath = '$imageCacheDir/$fileName';
+      // final f = await File(fullPath).create(recursive: true);
+      // await f.writeAsBytes(imageData, flush: true);
 
-        final _ = image.Command();
+      // final _ = image.Command();
 
-        // final data2 = await File(fullPath).readAsBytes();
-        // final decodeType = image.findDecoderForData(imageData);
-        // print('>>> ${metadataModel.filePath} ,decodeType=$decodeType');
-
-        // await (image.Command()
-        //       ..decodeImage(imageData)
-        //       ..copyResize(width: 60, height: 60)
-        //       ..writeToFile(fullPath))
-        //     .execute();
-        final imageEntity = await ImageDao(_db)
-            .upsertImageEx(ImageCompanion(filePath: Value(fileName)));
-        imageDbInfoList.add(ImageDbInfo(imageEntity.id, imageEntity.filePath));
-      }
+      // // print('>>> ${metadataModel.filePath} ,decodeType=$decodeType');
+      // await (image.Command()
+      //       ..decodeImage(imageData)
+      //       ..copyResize(width: 60, height: 60)
+      //       ..writeToFile(fullPath))
+      //     .execute();
+      // final imageEntity = await ImageDao(_db)
+      //     .upsertImageEx(ImageCompanion(filePath: Value(fileName)));
+      // imageDbInfoList.add(ImageDbInfo(imageEntity.id, imageEntity.filePath));
+      // }
 
       final musicCompanion = MusicCompanion(
         filePath: Value(metadataModel.filePath),

@@ -29,8 +29,8 @@ abstract interface class MusicLibraryRepository {
   ///
   /// * A list of [MusicModel] if success.
   /// * A string if any error occurs.
-  Future<Either<String, List<MusicModel>>> saveMetadataToStorage(
-    List<MetadataModel> metadataModelList,
+  Future<Either<String, MusicModel>> saveMetadataToStorage(
+    MetadataModel metadataModel,
   );
 
   /// Remove [directory] from library.

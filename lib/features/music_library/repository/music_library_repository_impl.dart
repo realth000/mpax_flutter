@@ -25,16 +25,10 @@ final class MusicLibraryRepositoryImpl implements MusicLibraryRepository {
   }
 
   @override
-  Future<Either<String, List<MusicModel>>> saveMetadataToStorage(
-    List<MetadataModel> metadataModelList,
+  Future<Either<String, MusicModel>> saveMetadataToStorage(
+    MetadataModel metadataModel,
   ) async {
-    // TODO: Optimize this loop.
-    final musicData = <MusicModel>[];
-    for (final metadataModel in metadataModelList) {
-      final music = await _storageProvider.addMusic(metadataModel);
-      musicData.add(music);
-    }
-    return Right(musicData);
+    return Right(await _storageProvider.addMusic(metadataModel));
   }
 
   @override
