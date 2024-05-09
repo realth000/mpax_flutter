@@ -35,9 +35,15 @@ final class MetadataTaglibRepositoryImpl implements MetadataRepository {
   Stream<MetadataModel> readMetadataStreamFromDir(
     String dirPath, {
     bool ignoreError = false,
+    bool readImage = false,
   }) async* {
     logger.i('loading metadata from directory $dirPath');
-    yield* taglib.readMetadataStreamFromDir(dirPath).asyncMap((d) async {
+    yield* taglib
+        .readMetadataStreamFromDir(
+      dirPath,
+      readImage: readImage,
+    )
+        .asyncMap((d) async {
       final e = await d;
       return MetadataModel(
         filePath: e.filePath,
