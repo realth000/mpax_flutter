@@ -10,7 +10,6 @@ part 'database.g.dart';
   tables: [
     Album,
     Artist,
-    Image,
     Music,
     Playlist,
     Settings,

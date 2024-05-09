@@ -3,7 +3,6 @@ import 'package:mpax_flutter/shared/providers/storage_provider/database/shared_m
 
 part 'album.dart';
 part 'artist.dart';
-part 'image.dart';
 part 'music.dart';
 part 'playlist.dart';
 part 'settings.dart';
