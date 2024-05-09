@@ -125,7 +125,7 @@ final class MusicLibraryBloc
       return _musicLibraryRepository.saveMetadataToStorage(e);
     }).toList();
 
-    final musicData = data.where((e) => e.isLeft()).map((e) => e.unwrap());
+    final musicData = data.where((e) => e.isRight()).map((e) => e.unwrap());
 
     emit(
       state.copyWith(

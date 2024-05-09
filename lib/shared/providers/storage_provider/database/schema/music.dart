@@ -79,11 +79,4 @@ class Music extends Table {
 
   /// All track count in album.
   IntColumn get albumTotalTracks => integer().nullable()();
-
-  /// All album [Image] id.
-  ///
-  /// Store as a list.
-  /// We do not know the album cover position, but it's ok for now.
-  TextColumn get albumCover =>
-      text().map(IntStringPairSet.converter).nullable()();
 }
