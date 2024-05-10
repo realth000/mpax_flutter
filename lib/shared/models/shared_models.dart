@@ -58,19 +58,16 @@ final class ArtistDbInfo extends IntStringPair {
   String get name => super.stringValue;
 }
 
-/// Wrapper class for a [Set] of artist id-name pair.
-final class ArtistDbInfoSet extends IntStringPairSet {
+/// Wrapper class for a [Set] of artist name
+final class ArtistDbInfoSet extends StringSet {
   /// Constructor.
   ArtistDbInfoSet(super.values);
 
   /// Nullable constructor.
-  static ArtistDbInfoSet? fromValue(IntStringPairSet? intStringPairSet) =>
+  static ArtistDbInfoSet? fromValue(StringSet? intStringPairSet) =>
       intStringPairSet != null
           ? ArtistDbInfoSet(intStringPairSet.values)
           : null;
-
-  @override
-  String toString() => super.values.map((x) => x.stringValue).join('; ');
 }
 
 /// Wrapper class for image id-filePath pair.

@@ -19,6 +19,35 @@ final class ArtistDao extends DatabaseAccessor<AppDatabase>
         .getSingleOrNull();
   }
 
+  /// Insert.
+  Future<int> insertArtist(ArtistCompanion artistCompanion) async {
+    return into(artist).insert(artistCompanion);
+  }
+
+  /// Update.
+  ///
+  /// Return the inserted entity.
+  Future<ArtistEntity> insertArtistEx(ArtistCompanion artistCompanion) async {
+    return into(artist).insertReturning(artistCompanion);
+  }
+
+  /// Update.
+  ///
+  /// Write [artistEntity], all absent fields will not change.
+  Future<int> updateArtistIgnoreAbsent(
+    ArtistEntity artistEntity,
+  ) async {
+    return (update(artist)..where((e) => e.id.equals(artistEntity.id)))
+        .write(artistEntity);
+  }
+
+  /// Update.
+  ///
+  /// Replace with [artistEntity], save all absent fields.
+  Future<bool> replaceArtist(ArtistEntity artistEntity) async {
+    return update(artist).replace(artistEntity);
+  }
+
   /// Upsert and return the inserted [ArtistEntity].
   Future<ArtistEntity> upsertArtistEx(ArtistCompanion artistCompanion) async {
     return into(artist)

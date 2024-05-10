@@ -1,6 +1,11 @@
 part of 'schema.dart';
 
 /// Artist table.
+///
+/// Artist name is the identity for an unique artist record.
+///
+/// Do NOT allow two or more artist have the same name, treated as a same
+/// artist.
 @DataClassName('ArtistEntity')
 class Artist extends Table {
   /// Id.

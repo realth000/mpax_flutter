@@ -27,8 +27,14 @@ class Music extends Table {
 
   /// Artists.
   ///
-  /// Store all artists' id and name.
-  TextColumn get artist => text().map(IntStringPairSet.converter).nullable()();
+  /// Store all artists' name.
+  ///
+  /// The source list of string SHOULD be sorted before serialized into
+  /// [StringSet].
+  ///
+  /// We do not store artist id here as we use artist name as the only key
+  /// to identify an artist.
+  TextColumn get artist => text().map(StringSet.converter).nullable()();
 
   /// Album.
   ///
@@ -74,8 +80,7 @@ class Music extends Table {
   /// Album artists.
   ///
   /// Store all artists' id and name.
-  TextColumn get albumArtist =>
-      text().map(IntStringPairSet.converter).nullable()();
+  TextColumn get albumArtist => text().map(StringSet.converter).nullable()();
 
   /// All track count in album.
   IntColumn get albumTotalTracks => integer().nullable()();

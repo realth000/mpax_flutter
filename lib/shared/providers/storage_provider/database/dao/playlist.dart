@@ -16,6 +16,29 @@ final class PlaylistDao extends DatabaseAccessor<AppDatabase>
     return (select(playlist)..where((x) => x.title.equals(title))).get();
   }
 
+  /// Insert.
+  Future<int> insertPlaylist(PlaylistCompanion playlistCompanion) async {
+    return into(playlist).insert(playlistCompanion);
+  }
+
+  /// Update.
+  ///
+  /// Write [playlistCompanion], all absent fields will not change.
+  Future<int> updatePlaylistIgnoreAbsent(
+    int id,
+    PlaylistCompanion playlistCompanion,
+  ) async {
+    return (update(playlist)..where((e) => e.id.equals(id)))
+        .write(playlistCompanion);
+  }
+
+  /// Update.
+  ///
+  /// Replace with [playlistEntity], save all absents fields.
+  Future<bool> replacePlaylist(PlaylistEntity playlistEntity) async {
+    return update(playlist).replace(playlistEntity);
+  }
+
   /// Upsert.
   Future<int> upsertPlaylist(PlaylistCompanion playlistCompanion) async {
     return into(playlist).insertOnConflictUpdate(playlistCompanion);

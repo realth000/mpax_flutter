@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:collection/collection.dart';
 import 'package:drift/drift.dart';
 import 'package:mpax_flutter/instance.dart';
 import 'package:mpax_flutter/shared/models/models.dart';
@@ -9,6 +10,7 @@ import 'package:mpax_flutter/shared/providers/storage_provider/database/dao/arti
 import 'package:mpax_flutter/shared/providers/storage_provider/database/dao/music.dart';
 import 'package:mpax_flutter/shared/providers/storage_provider/database/dao/settings.dart';
 import 'package:mpax_flutter/shared/providers/storage_provider/database/database.dart';
+import 'package:mpax_flutter/shared/providers/storage_provider/database/shared_model.dart';
 import 'package:mpax_flutter/shared/providers/storage_provider/storage_provider.dart';
 
 // Cache image thumbnail.
@@ -104,12 +106,18 @@ final class StorageProviderImpl implements StorageProvider {
       // imageDbInfoList.add(ImageDbInfo(imageEntity.id, imageEntity.filePath));
       // }
 
-      final musicCompanion = MusicCompanion(
+      // Artists are identified by their names. No id required.
+      final artistDbInfo =
+          ArtistDbInfoSet(metadataModel.artist.sorted().toSet());
+      final albumArtistDbInfo =
+          ArtistDbInfoSet(metadataModel.albumArtist.sorted().toSet());
+
+      var musicCompanion = MusicCompanion(
         filePath: Value(metadataModel.filePath),
         fileName: Value(metadataModel.fileName),
         sourceDir: Value(metadataModel.sourceDir),
         title: Value(metadataModel.title),
-        // artist: Value(metadataModel.artist),
+        artist: Value(artistDbInfo),
         // album: Value(metadataModel.album),
         track: Value(metadataModel.track),
         year: Value(metadataModel.year),
@@ -119,13 +127,25 @@ final class StorageProviderImpl implements StorageProvider {
         bitrate: Value(metadataModel.bitrate),
         channels: Value(metadataModel.channels),
         duration: Value(metadataModel.duration?.inMilliseconds),
-        // albumArtist: Value(metadataModel.albumArtist),
+        albumArtist: Value(albumArtistDbInfo),
         albumTotalTracks: Value(metadataModel.albumTotalTracks),
       );
 
       // Save music.
       // Update artist/album/albumArtist later.
-      final musicId = await MusicDao(_db).upsertMusic(musicCompanion);
+      var musicEntity =
+          await MusicDao(_db).selectMusicByFilePath(metadataModel.filePath);
+      var musicId = musicEntity?.id;
+      if (musicId == null) {
+        // Not exists.
+        musicEntity = await MusicDao(_db).insertMusicEx(musicCompanion);
+        musicId = musicEntity.id;
+        musicCompanion = musicCompanion.copyWith(id: Value(musicId));
+      } else {
+        // Update record.
+        musicCompanion = musicCompanion.copyWith(id: Value(musicId));
+        await MusicDao(_db).replaceMusicById(musicCompanion);
+      }
       final musicDbInfo = MusicDbInfo(
         musicId,
         metadataModel.title ?? metadataModel.fileName,
@@ -133,36 +153,28 @@ final class StorageProviderImpl implements StorageProvider {
 
       // Save album.
       AlbumEntity? albumEntity;
-      // Flag indicating whether we inserted a new album record or not.
-      //
-      // * If we do, the album's artist info need update later.
-      // * If we do not, means album info already exists, artist info will not
-      //   change since we distinguish albums by album artists.
-      var isNewAlbum = true;
       if (metadataModel.album != null) {
         albumEntity = await AlbumDao(_db).selectAlbumByTitleAndArtist(
           title: metadataModel.album!,
-          artist: metadataModel.albumArtist,
+          // Remember, which locating an album, use it's artist's name.
+          // In music metadata, album's related artist SHOULD use `AlbumArtist`
+          // property, not `Artist` property.
+          artistListString:
+              StringSet(metadataModel.albumArtist.sorted().toSet()),
         );
         if (albumEntity == null) {
           // Add new album.
-          // Update artist later.
-          albumEntity = await AlbumDao(_db).upsertAlbumEx(
+          albumEntity = await AlbumDao(_db).insertAlbumEx(
             AlbumCompanion(
               title: Value(metadataModel.album!),
               musicList: Value(MusicDbInfoSet({musicDbInfo})),
+              artist: Value(albumArtistDbInfo),
             ),
           );
         } else {
-          // Album already exists, all info updated,
-          // no need to update artist info later.
-          isNewAlbum = false;
+          // Album already exists, update info.
           albumEntity.musicList.add(musicDbInfo);
-          await AlbumDao(_db).upsertAlbumEx(
-            albumEntity.toCompanion(false).copyWith(
-                  musicList: Value(albumEntity.musicList),
-                ),
-          );
+          await AlbumDao(_db).updateAlbumIgnoreAbsent(albumEntity);
         }
       }
       final albumDbInfo = albumEntity != null
@@ -175,7 +187,7 @@ final class StorageProviderImpl implements StorageProvider {
         var artistEntity = await ArtistDao(_db).selectArtistByName(artist);
         if (artistEntity == null) {
           // Add new artist.
-          artistEntity = await ArtistDao(_db).upsertArtistEx(
+          artistEntity = await ArtistDao(_db).insertArtistEx(
             ArtistCompanion(
               name: Value(artist),
               musicList: Value(MusicDbInfoSet({musicDbInfo})),
@@ -190,38 +202,14 @@ final class StorageProviderImpl implements StorageProvider {
           if (albumDbInfo != null) {
             artistEntity.albumList.add(albumDbInfo);
           }
-          await ArtistDao(_db).upsertArtistEx(
-            artistEntity.toCompanion(false).copyWith(
-                  musicList: Value(artistEntity.musicList),
-                  albumList: albumDbInfo != null
-                      ? Value(artistEntity.albumList)
-                      : const Value.absent(),
-                ),
-          );
+          await ArtistDao(_db).updateArtistIgnoreAbsent(artistEntity);
         }
         artistEntityList.add(artistEntity);
       }
-      final artistDbInfoSet = ArtistDbInfoSet(
-        artistEntityList.map((x) => ArtistDbInfo(x.id, x.name)).toSet(),
-      );
 
-      // Now fulfill music and album record.
-      if (isNewAlbum && albumEntity != null) {
-        await AlbumDao(_db).upsertAlbumEx(
-          albumEntity.toCompanion(false).copyWith(
-                artist: Value(artistDbInfoSet),
-              ),
-        );
-      }
-      final ret = await MusicDao(_db).upsertMusicEx(
-        musicCompanion.copyWith(
-          artist: Value(artistDbInfoSet),
-          album: Value(albumDbInfo),
-          albumArtist: Value(albumEntity?.artist),
-        ),
-      );
-
-      return MusicModel.fromEntity(ret);
+      musicEntity = musicEntity!.copyWith(album: Value(albumDbInfo));
+      await MusicDao(_db).updateMusicIgnoreAbsent(musicEntity);
+      return MusicModel.fromEntity(musicEntity);
     });
   }
 

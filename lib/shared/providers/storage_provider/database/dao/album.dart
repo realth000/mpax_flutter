@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 import 'package:mpax_flutter/shared/providers/storage_provider/database/database.dart';
 import 'package:mpax_flutter/shared/providers/storage_provider/database/schema/schema.dart';
+import 'package:mpax_flutter/shared/providers/storage_provider/database/shared_model.dart';
 
 part 'album.g.dart';
 
@@ -26,15 +27,47 @@ final class AlbumDao extends DatabaseAccessor<AppDatabase>
   /// Select the single [Album] which:
   ///
   /// * [Album.title] is [title].
-  /// * [Album.artist] is [artist].
+  /// * [Album.artist] is a string serialized from `StringSet`.
   ///
   /// Return null is no record matches.
   Future<AlbumEntity?> selectAlbumByTitleAndArtist({
     required String title,
-    required List<String> artist,
+    required StringSet artistListString,
   }) async {
-    return (select(album)..where((x) => x.title.equals(title)))
+    return (select(album)
+          ..where(
+            (e) =>
+                e.title.equals(title) &
+                e.artist.equals(StringSet.converter.toSql(artistListString)),
+          ))
         .getSingleOrNull();
+  }
+
+  /// Insert.
+  Future<int> insertAlbum(AlbumCompanion albumCompanion) async {
+    return into(album).insert(albumCompanion);
+  }
+
+  /// Insert.
+  ///
+  /// Return the inserted entity.
+  Future<AlbumEntity> insertAlbumEx(AlbumCompanion albumCompanion) async {
+    return into(album).insertReturning(albumCompanion);
+  }
+
+  /// Update.
+  ///
+  /// Write [albumEntity], all absent fields will not change.
+  Future<int> updateAlbumIgnoreAbsent(AlbumEntity albumEntity) async {
+    return (update(album)..where((e) => e.id.equals(albumEntity.id)))
+        .write(albumEntity);
+  }
+
+  /// Update.
+  ///
+  /// Replace with [albumEntity], write all absents fields.
+  Future<bool> replaceAlbum(AlbumEntity albumEntity) async {
+    return update(album).replace(albumEntity);
   }
 
   /// Upsert and return the inserted [AlbumEntity].
