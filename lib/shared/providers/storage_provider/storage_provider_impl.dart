@@ -84,7 +84,7 @@ final class StorageProviderImpl implements StorageProvider {
       // }
 
       // Save images.
-      final imageDbInfoList = ImageDbInfoSet({});
+      // final imageDbInfoList = ImageDbInfoSet({});
       // for (final imageData in metadataModel.images ?? const <Uint8List>[]) {
       //   final fileName = uuid.v4();
       //   final fullPath = '$imageCacheDir/$fileName';
@@ -121,7 +121,6 @@ final class StorageProviderImpl implements StorageProvider {
         duration: Value(metadataModel.duration?.inMilliseconds),
         // albumArtist: Value(metadataModel.albumArtist),
         albumTotalTracks: Value(metadataModel.albumTotalTracks),
-        albumCover: Value(imageDbInfoList),
       );
 
       // Save music.

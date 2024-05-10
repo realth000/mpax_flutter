@@ -43,7 +43,7 @@ final class MusicModel with MusicModelMappable {
         channels = musicEntity.channels,
         duration = musicEntity.duration,
         albumTotalTracks = musicEntity.albumTotalTracks,
-        images = ImageDbInfoSet.fromValue(musicEntity.albumCover),
+        images = null,
         albumArtist = ArtistDbInfoSet.fromValue(musicEntity.albumArtist);
 
   /// Unique id.
@@ -114,5 +114,5 @@ final class MusicModel with MusicModelMappable {
   final int? albumTotalTracks;
 
   /// Cover images id;
-  final ImageDbInfoSet? images;
+  final Uint8List? images;
 }
