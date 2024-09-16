@@ -15,48 +15,50 @@ dependencies:
   # Blocked by flutter sdk
   collection: any
   dart_mappable: ^4.2.2
-  drift: ^2.17.0
-  drift_dev: ^2.17.0
-  file_picker: ^8.0.3
+  drift: ^2.20.2
+  drift_dev: ^2.20.3
+  file_picker: ^8.1.2
   flex_color_scheme: ^7.3.1
   flutter:
     sdk: flutter
-  flutter_bloc: ^8.1.5
+  flutter_bloc: ^8.1.6
   flutter_localizations:
     sdk: flutter
   fpdart: ^1.1.0
   get_it: ^7.7.0
-  go_router: ^13.2.4
-  image: ^4.1.7
-  logger: ^2.2.0
-  material_symbols_icons: ^4.2719.3
+  go_router: ^14.2.7
+  image: ^4.2.0
+  logger: ^2.4.0
+  material_symbols_icons: ^4.2785.1
   path: ^1.9.0
-  path_provider: ^2.1.3
+  path_provider: ^2.1.4
   permission_handler: ^11.3.1
-  responsive_framework: ^1.4.0
-  rxdart: ^0.27.7
-  slang: ^3.30.2
-  slang_flutter: ^3.30.0
-  sqlite3: ^2.4.2
-  sqlite3_flutter_libs: ^0.5.20
+  responsive_framework: ^1.5.1
+  rxdart: ^0.28.0
+  slang: ^3.31.2
+  slang_flutter: ^3.31.0
+  # For drift
+  sqlite3: ^2.4.6
+  # For drift
+  sqlite3_flutter_libs: ^0.5.24
   stream_transform: ^2.1.0
   taglib_ffi_dart:
     path: packages/taglib_ffi_dart/packages/taglib_ffi_dart
   taglib_ffi_dart_libs:
     path: packages/taglib_ffi_dart/packages/taglib_ffi_dart_libs
   thumbnailer: ^2.2.0
-  uuid: ^4.4.0
+  uuid: ^4.5.0
 
 dev_dependencies:
   bloc_test: ^9.1.7
-  build_runner: ^2.4.9
+  build_runner: ^2.4.12
   dart_mappable_builder: ^4.2.3
   flutter_launcher_icons: ^0.13.1
   flutter_test:
     sdk: flutter
   lint: ^2.3.0
-  slang_build_runner: ^3.30.0
-  very_good_analysis: ^5.1.0
+  slang_build_runner: ^3.31.0
+  very_good_analysis: ^6.0.0
 
 flutter_icons:
   image: assets/images/mpax_flutter_192.png
